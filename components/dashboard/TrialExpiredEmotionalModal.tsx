@@ -139,7 +139,7 @@ export function TrialExpiredEmotionalModal({
 
           {/* User handle & Status */}
           <div className="min-w-0">
-            <p className="truncate text-sm sm:text-base font-bold text-slate-900 leading-tight">
+            <p className="line-clamp-2 break-words text-sm sm:text-base font-bold text-slate-900 leading-tight">
               @{handle}
             </p>
             <div className="mt-1 inline-flex items-center gap-1 rounded-[5px] bg-[#FFF1F2] border border-[#FECDD3] px-2.5 py-0.5 text-[11px] font-bold text-[#E11D48]">

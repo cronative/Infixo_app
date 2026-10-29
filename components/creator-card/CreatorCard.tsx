@@ -24,6 +24,7 @@ export interface CreatorCardProps {
   appearance: CardAppearance;
   layout?: CardLayoutType;
   customMessage?: string;
+  platforms?: ("instagram" | "youtube" | "facebook")[];
 }
 
 const graphemeLength = (text: string) => {
@@ -1135,6 +1136,7 @@ function EditorialLayout({
   profileUrl,
   appearance: a,
   customMessage,
+  platforms = ["instagram", "youtube"],
 }: CreatorCardProps) {
   const name = displayName.trim() || username;
   const avatarSize = 124;
@@ -1305,69 +1307,56 @@ function EditorialLayout({
         {/* Social Icons Row */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12 }}>
           {/* Instagram */}
-          <div
-            style={{
-              width: 28,
-              height: 28,
-              borderRadius: 7,
-              background: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#FFFFFF",
-              boxShadow: "0 2px 5px rgba(220,39,67,0.25)",
-            }}
-          >
-            <InstagramIcon className="w-4 h-4 text-white" />
-          </div>
+          {(platforms.includes("instagram") || platforms.length === 0) && (
+            <div
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 5,
+                background: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#FFFFFF",
+              }}
+            >
+              <InstagramIcon className="w-4 h-4 text-white" />
+            </div>
+          )}
           {/* YouTube */}
-          <div
-            style={{
-              width: 28,
-              height: 28,
-              borderRadius: 7,
-              backgroundColor: "#FF0000",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#FFFFFF",
-              boxShadow: "0 2px 5px rgba(255,0,0,0.25)",
-            }}
-          >
-            <YoutubeIcon className="w-4 h-4 text-white" />
-          </div>
-          {/* X */}
-          <div
-            style={{
-              width: 28,
-              height: 28,
-              borderRadius: 7,
-              backgroundColor: "#000000",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#FFFFFF",
-              boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
-            }}
-          >
-            <XTwitterIcon className="w-3.5 h-3.5 text-white" />
-          </div>
+          {platforms.includes("youtube") && (
+            <div
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 5,
+                backgroundColor: "#FF0000",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#FFFFFF",
+              }}
+            >
+              <YoutubeIcon className="w-4 h-4 text-white" />
+            </div>
+          )}
           {/* Facebook */}
-          <div
-            style={{
-              width: 28,
-              height: 28,
-              borderRadius: 7,
-              backgroundColor: "#1877F2",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#FFFFFF",
-              boxShadow: "0 2px 5px rgba(24,119,242,0.25)",
-            }}
-          >
-            <FacebookIcon className="w-4 h-4 text-white" />
-          </div>
+          {platforms.includes("facebook") && (
+            <div
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 5,
+                backgroundColor: "#1877F2",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#FFFFFF",
+              }}
+            >
+              <FacebookIcon className="w-4 h-4 text-white" />
+            </div>
+          )}
         </div>
 
         {/* Category & Verified tag */}

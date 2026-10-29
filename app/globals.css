@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap');
 @import "tailwindcss";
 
 :root {
   /* Indian-language font stack (loaded on demand via next/font, see app/layout.tsx) */
-  --font-indic: var(--font-noto-devanagari), var(--font-noto-gujarati), var(--font-noto-tamil), var(--font-noto-telugu), var(--font-noto-kannada), var(--font-noto-bengali), var(--font-noto-gurmukhi);
+  /* Each var has a named fallback: an undefined var() would invalidate every font-family that uses --font-indic. */
+  --font-indic: var(--font-noto-devanagari, "Noto Sans Devanagari"), var(--font-noto-gujarati, "Noto Sans Gujarati"), var(--font-noto-tamil, "Noto Sans Tamil"), var(--font-noto-telugu, "Noto Sans Telugu"), var(--font-noto-kannada, "Noto Sans Kannada"), var(--font-noto-bengali, "Noto Sans Bengali"), var(--font-noto-gurmukhi, "Noto Sans Gurmukhi");
   /* PAGE & LAYOUT */
   --color-bg: #ffffff;
   --color-surface: #ffffff;
@@ -414,10 +414,10 @@
   --color-inflixo-gold: var(--warning);
   --color-inflixo-gold-light: #FEF3C7;
 
-  --font-sans: var(--font-plus-jakarta), "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-display: var(--font-plus-jakarta), "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-inter: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
-  --font-sora: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
+  --font-sans: var(--font-poppins), "Poppins", var(--font-indic), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-poppins), "Poppins", var(--font-indic), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-inter: var(--font-poppins), "Poppins", sans-serif;
+  --font-sora: var(--font-poppins), "Poppins", sans-serif;
 
   --radius-xs: 5px;
   --radius-sm: 5px;
@@ -1195,7 +1195,7 @@ body {
   --line: #E4E4E7;
   --bg: #FFFCFB;
 
-  font-family: var(--font-plus-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-poppins), "Poppins", var(--font-indic), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background-color: var(--bg);
   color: var(--ink);
   line-height: 1.6;
@@ -1373,4 +1373,96 @@ nextjs-portal,
     white-space: normal;
     word-break: break-word;
   }
+}
+/* ============================================================
+   DASHBOARD UI TOKENS (light). Scoped to .dash-ui (app/dashboard/layout.tsx);
+   the profile preview card sets its own theme tokens inline, so these never reach it.
+   ============================================================ */
+.dash-ui {
+  --bg: #F8F8FA;
+  --card: #FFFFFF;
+  --border: #ECECF0;
+  --text: #18181B;
+  --muted: #6B6B76;
+  --primary: #7A2253;
+  --primary-hover: #63193F;
+  --tint: #F7EEF2;
+  --success: #15803D;
+  --warning: #B45309;
+  --danger: #DC2626;
+
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.dash-ui h1,
+.dash-ui h2,
+.dash-ui h3,
+.dash-ui h4 {
+  line-height: 1.25;
+}
+
+/* Shared header/section buttons: 36px tall, 13px / 500, radius 8px. */
+.dash-btn-primary,
+.dash-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.25;
+  white-space: nowrap;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+/* Small row/action buttons: 32px tall, 13px / 500, radius 5px. */
+.dash-btn-sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.25;
+  white-space: nowrap;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.dash-btn-primary {
+  background: var(--primary);
+  color: #FFFFFF;
+  border: 1px solid var(--primary);
+}
+
+.dash-btn-primary:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.dash-btn-secondary {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.dash-btn-secondary:hover {
+  background: var(--bg);
+}
+
+.dash-btn-primary:disabled,
+.dash-btn-secondary:disabled,
+.dash-btn-sm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

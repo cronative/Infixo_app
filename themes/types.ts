@@ -31,6 +31,7 @@ export interface ThemeCardProps {
   setupItems?: CreatorSetupItem[];
   otherSocials?: OtherSocialAccount[];
   sections?: CreatorProfileSection[];
+  allSocialAccounts?: Array<{ id?: string | number; platform: string; username: string; followerCount?: number; isPrimary?: boolean; is_primary?: boolean; accountName?: string; isVerified?: boolean; url?: string }>;
   totalAudience: number;
   /** Compact renders a smaller preview card; full renders the public-profile-scale layout. */
   variant?: "compact" | "full";
@@ -45,6 +46,7 @@ export interface ThemeCardProps {
   reviewsPreviewLimit?: number;
   allReviewsHref?: string;
   reviewsOnlyMode?: boolean;
+  linksOnlyMode?: boolean;
   pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   onShare?: () => void;
   layoutMode?: "tabs" | "stacked";

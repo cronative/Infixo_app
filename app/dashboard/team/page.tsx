@@ -35,6 +35,7 @@ import { getInitials } from "@/lib/avatar";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import { resizeImageToDataUrl } from "@/lib/imageResize";
 
 export default function DashboardTeamPage() {
@@ -342,26 +343,16 @@ export default function DashboardTeamPage() {
   return (
     <PageContainer>
       <PageHeader
-        title="Team & Collaborators"
-        subtitle="Showcase the core creative crew behind your videos, content, and productions."
+        {...PAGE_COPY.team}
         actions={
           <>
-            <button
-              type="button"
-              onClick={handleOpenTeamModal}
-              className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 h-9 px-3.5 text-xs font-semibold text-[#7A2253] transition-colors cursor-pointer shadow-2xs"
-            >
-              <Pencil className="h-3.5 w-3.5 text-[#7A2253]" />
-              <span>Edit Team</span>
+            <button type="button" onClick={handleOpenTeamModal} className="dash-btn-secondary">
+              <Pencil className="h-3.5 w-3.5" />
+              <span>Edit team</span>
             </button>
-
-            <button
-              type="button"
-              onClick={() => handleOpenMemberModal()}
-              className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] text-white h-9 px-4 text-xs font-bold transition-colors cursor-pointer shadow-2xs"
-            >
+            <button type="button" onClick={() => handleOpenMemberModal()} className="dash-btn-primary">
               <Plus className="h-3.5 w-3.5" />
-              <span>Add Member</span>
+              <span>Add member</span>
             </button>
           </>
         }
@@ -391,50 +382,41 @@ export default function DashboardTeamPage() {
         />
       ) : (
         /* Main Team Container */
-        <div className="rounded-[5px] border border-[#e2e8f0] bg-white shadow-2xs overflow-hidden">
+        <div className="rounded-[5px] border border-[#ECECF0] bg-white shadow-none overflow-hidden">
           {/* Top Team Summary Row */}
           <div className="p-4 sm:px-5 sm:py-4 flex items-center justify-between gap-3 text-left">
             {/* Left: Avatar Squircle + Team Name & Members count */}
             <div className="flex items-center gap-3 min-w-0 flex-1">
-              <div className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-[#FFF5F7] text-[#7A2253] font-bold text-sm shrink-0 select-none">
+              <div className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] font-semibold text-sm shrink-0 select-none">
                 {getInitials(team.teamName)}
               </div>
               <div className="min-w-0 flex-1 space-y-0.5">
-                <h2 className="truncate text-base font-bold text-[#0f172a]">
+                <h2 className="line-clamp-2 break-words text-[16px] font-semibold text-[#18181B]">
                   {team.teamName}
                 </h2>
-                <p className="truncate text-xs text-[#64748b]">
+                <p className="line-clamp-2 break-words text-[12px] text-[#6B6B76]">
                   {team.members?.length || 0} team {team.members?.length === 1 ? "member" : "members"}
                 </p>
               </div>
             </div>
 
-            {/* Right: + Add Member, View ↗, Collapse/Expand */}
+            {/* Right: View ↗, Collapse/Expand ("Add member" lives in the page header) */}
             <div className="flex items-center gap-2 shrink-0">
-              <button
-                type="button"
-                onClick={() => handleOpenMemberModal()}
-                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 text-xs font-semibold text-[#0f172a] transition-colors shadow-2xs cursor-pointer"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                <span>Add Member</span>
-              </button>
-
               <a
                 href={`/${profile.username || "creator"}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 text-xs font-semibold text-[#7A2253] transition-colors shadow-2xs"
+                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-[13px] font-medium text-[#18181B] transition-colors"
                 title="View public profile"
               >
                 <span>View</span>
-                <ExternalLink className="h-3.5 w-3.5 text-[#7A2253]" />
+                <ExternalLink className="h-3.5 w-3.5 text-[#6B6B76]" />
               </a>
 
               <button
                 type="button"
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="h-8 w-8 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 text-[#64748b] hover:text-[#0f172a] flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
+                className="h-8 w-8 rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-[#6B6B76] hover:text-[#18181B] flex items-center justify-center transition-colors cursor-pointer"
                 aria-expanded={isExpanded}
                 title={isExpanded ? "Collapse" : "Expand"}
               >
@@ -482,10 +464,10 @@ export default function DashboardTeamPage() {
                         </div>
 
                         <div className="min-w-0 flex-1">
-                          <p className="truncate font-bold text-sm text-[#0f172a]">
+                          <p className="line-clamp-2 break-words font-bold text-sm text-[#0f172a]">
                             {member.name}
                           </p>
-                          <div className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#FFF5F7] text-[#7A2253] px-2.5 py-0.5 text-xs font-bold mt-0.5">
+                          <div className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#F7EEF2] text-[#7A2253] px-2 h-6 text-[12px] font-medium mt-0.5">
                             <span className="h-1.5 w-1.5 rounded-full bg-[#7A2253]"></span>
                             <span>{member.role}</span>
                           </div>
@@ -499,10 +481,10 @@ export default function DashboardTeamPage() {
                             href={member.instagramUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFF5F7] text-[#E1306C] hover:scale-105 transition-transform"
+                            className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#E1306C] hover:scale-105 transition-transform"
                             title="Instagram"
                           >
-                            <InstagramIcon className="h-3.5 w-3.5" />
+                            <InstagramIcon className="h-4 w-4" />
                           </a>
                         )}
                         {member.youtubeUrl && (
@@ -510,10 +492,10 @@ export default function DashboardTeamPage() {
                             href={member.youtubeUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFF5F7] text-[#FF0000] hover:scale-105 transition-transform"
+                            className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#FF0000] hover:scale-105 transition-transform"
                             title="YouTube"
                           >
-                            <YoutubeIcon className="h-3.5 w-3.5" />
+                            <YoutubeIcon className="h-4 w-4" />
                           </a>
                         )}
                         {member.facebookUrl && (
@@ -521,20 +503,20 @@ export default function DashboardTeamPage() {
                             href={member.facebookUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFF5F7] text-[#1877F2] hover:scale-105 transition-transform"
+                            className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#1877F2] hover:scale-105 transition-transform"
                             title="Facebook"
                           >
-                            <FacebookIcon className="h-3.5 w-3.5" />
+                            <FacebookIcon className="h-4 w-4" />
                           </a>
                         )}
                       </div>
 
                       {/* Right: 3 Action Buttons [ 👁️ ] [ ✏️ ] [ 🗑️ ] */}
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center gap-1.5 shrink-0">
                         <button
                           type="button"
                           onClick={() => handleToggleMember(member)}
-                          className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 transition-colors shadow-2xs cursor-pointer"
+                          className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-[#6B6B76] hover:text-[#18181B] transition-colors cursor-pointer"
                           title={member.isActive ? "Hide from profile" : "Show on profile"}
                         >
                           {member.isActive ? (
@@ -547,7 +529,7 @@ export default function DashboardTeamPage() {
                         <button
                           type="button"
                           onClick={() => handleOpenMemberModal(member)}
-                          className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 text-[#64748b] hover:text-[#0f172a] transition-colors shadow-2xs cursor-pointer"
+                          className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-[#6B6B76] hover:text-[#18181B] transition-colors cursor-pointer"
                           title="Edit member"
                         >
                           <Pencil className="h-3.5 w-3.5" />
@@ -556,7 +538,7 @@ export default function DashboardTeamPage() {
                         <button
                           type="button"
                           onClick={() => setMemberToDelete(member)}
-                          className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] hover:bg-rose-50 text-[#ef4444] hover:text-red-700 transition-colors shadow-2xs cursor-pointer"
+                          className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white hover:bg-rose-50 text-[#C2414B] transition-colors cursor-pointer"
                           title="Remove member"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -576,7 +558,7 @@ export default function DashboardTeamPage() {
         isOpen={isTeamModalOpen}
         onClose={() => setIsTeamModalOpen(false)}
         size="md"
-        title={team ? "Edit Team Details" : "Create Creator Team"}
+        title={team ? "Edit team details" : "Create creator team"}
         description="Set up your team name and identity for your public profile."
         icon={<Users className="h-5 w-5" />}
       >
@@ -703,7 +685,7 @@ export default function DashboardTeamPage() {
               disabled={isSubmitting}
               className="h-10 px-5 rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
             >
-              <span>{isSubmitting ? "Saving..." : team ? "Save Changes" : "+ Create Team"}</span>
+              <span>{isSubmitting ? "Saving..." : team ? "Save changes" : "+ Create team"}</span>
             </button>
           </ModalFooter>
         </form>
@@ -714,7 +696,7 @@ export default function DashboardTeamPage() {
         isOpen={isMemberModalOpen}
         onClose={() => setIsMemberModalOpen(false)}
         size="md"
-        title={editingMember ? "Edit Team Member" : "Add Team Member"}
+        title={editingMember ? "Edit team member" : "Add team member"}
         description="Add member information, role and social links."
         icon={<Users className="h-5 w-5" />}
       >
@@ -852,7 +834,7 @@ export default function DashboardTeamPage() {
               className="h-10 px-5 rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <UserPlus className="h-4 w-4" />
-              <span>{isSubmitting ? "Saving..." : editingMember ? "Save Changes" : "Add Member"}</span>
+              <span>{isSubmitting ? "Saving..." : editingMember ? "Save changes" : "Add member"}</span>
             </button>
           </ModalFooter>
         </form>

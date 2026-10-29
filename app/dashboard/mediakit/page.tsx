@@ -45,6 +45,10 @@ import { MediaKitPackage, MediaKitSettings } from "@/types";
 import { authRepository } from "@/repositories/localRepository";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { PAGE_COPY } from "@/components/dashboard/pageCopy";
+import { formatFans } from "@/lib/creatorEra";
+import { SectionCard } from "@/components/dashboard/SectionCard";
+import { StatGrid, StatTile } from "@/components/dashboard/StatTile";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { canCreateGig, getPlanQuota } from "@/services/subscriptionLimits";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
@@ -620,7 +624,7 @@ export default function DashboardMediaKitPage() {
   const handleSavePackage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formTitle.trim() || !formMinPrice.trim()) {
-      showToast("Please enter a service title and starting price", "error");
+      showToast("Please enter a package title and starting price", "error");
       return;
     }
 
@@ -682,7 +686,7 @@ export default function DashboardMediaKitPage() {
     if (activeEmail) {
       await MediaKitService.saveToDb(activeEmail, settings, updatedPkgs, activeCreatorId);
     }
-    showToast(editingPkgId ? "Service updated! ✨" : "New service created! 🚀");
+    showToast(editingPkgId ? "Package updated" : "Package created");
     setIsModalOpen(false);
   };
 
@@ -693,7 +697,7 @@ export default function DashboardMediaKitPage() {
     if (activeEmail) {
       await MediaKitService.saveToDb(activeEmail, settings, updated, activeCreatorId);
     }
-    showToast(`Service ${!currentActive ? "is now active" : "is now hidden"}.`);
+    showToast(`Package ${!currentActive ? "is now live" : "is now hidden"}`);
   };
 
   const handleDeletePackage = async () => {
@@ -703,7 +707,7 @@ export default function DashboardMediaKitPage() {
     if (activeEmail) {
       await MediaKitService.saveToDb(activeEmail, settings, updated, activeCreatorId);
     }
-    showToast(`Service "${packageToDelete.title}" deleted.`);
+    showToast("Package deleted");
     setPackageToDelete(null);
   };
 
@@ -723,55 +727,55 @@ export default function DashboardMediaKitPage() {
     const platform = (pkg.platform || "").toLowerCase();
     if (platform.includes("instagram")) {
       return (
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white shrink-0 shadow-xs">
+        <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white shrink-0 shadow-xs">
           <InstagramIcon className="h-5 w-5 text-white" />
         </div>
       );
     }
     if (platform.includes("youtube")) {
       return (
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF0000] text-white shrink-0 shadow-xs">
+        <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#FF0000] text-white shrink-0 shadow-xs">
           <YoutubeIcon className="h-5 w-5 text-white" />
         </div>
       );
     }
     if (platform.includes("facebook")) {
       return (
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1877F2] text-white shrink-0 shadow-xs">
+        <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#1877F2] text-white shrink-0 shadow-xs">
           <FacebookIcon className="h-5 w-5 text-white" />
         </div>
       );
     }
     if (platform.includes("linkedin")) {
       return (
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0A66C2] text-white shrink-0 shadow-xs">
+        <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#0A66C2] text-white shrink-0 shadow-xs">
           <LinkedinIcon className="h-5 w-5 text-white" />
         </div>
       );
     }
     if (platform.includes("twitter") || platform.includes("x ")) {
       return (
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black text-white shrink-0 shadow-xs">
+        <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-black text-white shrink-0 shadow-xs">
           <XTwitterIcon className="h-5 w-5 text-white" />
         </div>
       );
     }
     if (platform.includes("spotify") || platform.includes("podcast")) {
       return (
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1DB954] text-white shrink-0 shadow-xs">
+        <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#1DB954] text-white shrink-0 shadow-xs">
           <SpotifyIcon className="h-5 w-5 text-white" />
         </div>
       );
     }
     if (platform.includes("bundle") || platform.includes("gift")) {
       return (
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FAF5FF] border border-purple-200/80 text-purple-600 shrink-0 shadow-xs">
+        <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#FAF5FF] border border-purple-200/80 text-purple-600 shrink-0 shadow-xs">
           <Gift className="h-5 w-5 text-purple-600 stroke-[2.2]" />
         </div>
       );
     }
     return (
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#7A2253]/10 text-[#7A2253] shrink-0">
+      <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#7A2253]/10 text-[#7A2253] shrink-0">
         <Briefcase className="h-5 w-5" />
       </div>
     );
@@ -788,12 +792,10 @@ export default function DashboardMediaKitPage() {
   const mediaKitPath = `/${cleanHandle}/media-kit`;
   const mediaKitUrl = typeof window !== "undefined" ? `${window.location.origin}${mediaKitPath}` : mediaKitPath;
   const activePackages = packages.filter((p) => p.isActive).length;
-  // Same "connected" rule as the Socials page.
-  const connectedPlatforms = [
-    socials?.instagram?.url || socials?.instagram?.username || (socials?.instagram?.followers ?? 0) > 0,
-    socials?.youtube?.url || socials?.youtube?.username || (socials?.youtube?.subscribers ?? 0) > 0,
-    socials?.facebook?.url || socials?.facebook?.username || (socials?.facebook?.followers ?? 0) > 0,
-  ].filter(Boolean).length;
+  const hasInstagram = Boolean(socials?.instagram?.url || socials?.instagram?.username || (socials?.instagram?.followers ?? 0) > 0);
+  const hasYoutube = Boolean(socials?.youtube?.url || socials?.youtube?.username || (socials?.youtube?.subscribers ?? 0) > 0);
+  const hasFacebook = Boolean(socials?.facebook?.url || socials?.facebook?.username || (socials?.facebook?.followers ?? 0) > 0);
+  const connectedPlatforms = [hasInstagram, hasYoutube, hasFacebook].filter(Boolean).length;
 
   const handleCopyMediaKit = async () => {
     const ok = await copyToClipboard(mediaKitUrl);
@@ -814,7 +816,7 @@ export default function DashboardMediaKitPage() {
   };
 
   const kitStats: { label: string; value: string; ok: boolean; href?: string; onClick?: () => void }[] = [
-    { label: "Total fanbase", value: totalAudience > 0 ? formatCount(totalAudience) : "Not connected", ok: totalAudience > 0, href: "/dashboard/socials" },
+    { label: "Total fanbase", value: totalAudience > 0 ? formatFans(totalAudience) : "Not connected", ok: totalAudience > 0, href: "/dashboard/socials" },
     { label: "Platforms", value: `${connectedPlatforms} connected`, ok: connectedPlatforms > 0, href: "/dashboard/socials" },
     { label: "Packages", value: `${activePackages} active`, ok: activePackages > 0 },
     { label: "Brand contact", value: hasContactConfigured ? contactMethodsLabel || "Enabled" : "Not set up", ok: hasContactConfigured, onClick: () => setIsContactModalOpen(true) },
@@ -824,150 +826,101 @@ export default function DashboardMediaKitPage() {
     <PageContainer className="text-left">
       {/* 1. PAGE HEADER */}
       <PageHeader
-        title={
-          <div className="flex items-center gap-2">
-            <span>Media Kit</span>
-            <span className="inline-flex items-center justify-center h-6 w-6 rounded-[5px] bg-[#FFF0F5] text-xs">
-              👜
-            </span>
-          </div>
-        }
-        subtitle="Create and manage your brand collaboration packages and rates."
+        {...PAGE_COPY.mediakit}
         actions={
           <>
-            <a
-              href={mediaKitPath}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer"
-              title="Preview public media kit"
-            >
-              <Eye className="h-3.5 w-3.5 text-[#64748b]" />
-              <span className="hidden sm:inline">Preview</span>
-            </a>
-            <button
-              type="button"
-              onClick={handleShareMediaKit}
-              className="inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer"
-              title="Share public media kit"
-            >
-              <Share2 className="h-3.5 w-3.5 text-[#64748b]" />
-              <span className="hidden sm:inline">Share</span>
+            <button type="button" onClick={handleShareMediaKit} className="dash-btn-secondary" title="Share public media kit">
+              <Share2 className="h-3.5 w-3.5" />
+              <span>Share</span>
             </button>
-            <button
-              type="button"
-              onClick={handleOpenAddModal}
-              className="inline-flex h-9 items-center gap-1.5 rounded-[5px] bg-[#7A2253] px-3.5 text-xs font-semibold text-white shadow-xs hover:opacity-95 transition-opacity cursor-pointer"
-            >
+            <button type="button" onClick={handleOpenAddModal} className="dash-btn-primary">
               <Plus className="h-4 w-4" />
-              <span>New Package</span>
+              <span>New package</span>
             </button>
           </>
         }
       />
 
       {/* 2. STAT CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-        {/* Card 1: Total Fanbase */}
-        <div className="flex items-center gap-3.5 rounded-[5px] border border-[#e2e8f0] bg-white p-4 shadow-2xs">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] text-[#7A2253]">
-            <Users className="h-5 w-5" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-medium text-[#64748b]">Total Fanbase</p>
-            <p className="text-lg font-bold text-[#0f172a] leading-tight mt-0.5">
-              {totalAudience > 0 ? formatCount(totalAudience) : "14.3K"}
-            </p>
-            <p className="text-[11px] font-semibold text-[#10b981] flex items-center gap-1 mt-0.5">
-              <span>↑ 12%</span>
-              <span className="font-normal text-[#64748b]">from last month</span>
-            </p>
-          </div>
-        </div>
-
-        {/* Card 2: Connected Platforms */}
-        <div className="flex items-center gap-3.5 rounded-[5px] border border-[#e2e8f0] bg-white p-4 shadow-2xs">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] text-[#7A2253]">
-            <Share2 className="h-5 w-5" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-medium text-[#64748b]">Connected Platforms</p>
-            <p className="text-lg font-bold text-[#0f172a] leading-tight mt-0.5">
-              {connectedPlatforms > 0 ? connectedPlatforms : 3}
-            </p>
-            <div className="flex items-center gap-1.5 mt-1">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white">
-                <InstagramIcon className="h-3 w-3 text-white" />
-              </span>
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FF0000] text-white">
-                <YoutubeIcon className="h-3 w-3 text-white" />
-              </span>
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-black text-white text-[9px] font-bold">
-                <XTwitterIcon className="h-3 w-3 text-white" />
-              </span>
+      <StatGrid className="lg:grid-cols-4">
+        <StatTile
+          icon={<Users className="h-4 w-4" />}
+          value={totalAudience > 0 ? formatFans(totalAudience) : "0"}
+          label="Total fanbase"
+        />
+        <StatTile
+          icon={<Share2 className="h-4 w-4" />}
+          value={connectedPlatforms}
+          label="Connected platforms"
+          extra={
+            <div className="flex items-center gap-1.5">
+              {hasInstagram && (
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white" title="Instagram">
+                  <InstagramIcon className="h-3 w-3 text-white" />
+                </span>
+              )}
+              {hasYoutube && (
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FF0000] text-white" title="YouTube">
+                  <YoutubeIcon className="h-3 w-3 text-white" />
+                </span>
+              )}
+              {hasFacebook && (
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#1877F2] text-white" title="Facebook">
+                  <FacebookIcon className="h-3 w-3 text-white" />
+                </span>
+              )}
+              {connectedPlatforms === 0 && (
+                <span className="text-[11px] text-[#94a3b8]">None connected</span>
+              )}
             </div>
-          </div>
-        </div>
-
-        {/* Card 3: Active Packages */}
-        <div className="flex items-center gap-3.5 rounded-[5px] border border-[#e2e8f0] bg-white p-4 shadow-2xs">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] text-[#7A2253]">
-            <Briefcase className="h-5 w-5" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-medium text-[#64748b]">Active Packages</p>
-            <p className="text-lg font-bold text-[#0f172a] leading-tight mt-0.5">
-              {activePackages}
-            </p>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
-              <span className="text-[11px] font-medium text-[#10b981]">
-                {activePackages > 0 ? "Active" : "None active"}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Card 4: Contact Email */}
-        <div className="flex items-center gap-3.5 rounded-[5px] border border-[#e2e8f0] bg-white p-4 shadow-2xs relative group">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] text-[#7A2253]">
-            <Mail className="h-5 w-5" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-[#64748b]">Contact Email</p>
-              <button
-                type="button"
-                onClick={() => setIsContactModalOpen(true)}
-                className="text-[#94a3b8] hover:text-[#7A2253] transition-colors cursor-pointer p-0.5"
-                title="Configure Brand Contact"
-              >
-                <ExternalLink className="h-3.5 w-3.5" />
-              </button>
-            </div>
-            <p className="text-sm font-bold text-[#0f172a] leading-tight mt-0.5 truncate">
-              Business email
-            </p>
-            <p className="text-[11px] text-[#64748b] truncate mt-0.5" title={settings.sponsorEmail || profile.email || "nikunj.appz@gmail.com"}>
+          }
+        />
+        <StatTile
+          icon={<Briefcase className="h-4 w-4" />}
+          value={activePackages}
+          label="Active packages"
+          extra={
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-(--success)">
+              <span className="h-1.5 w-1.5 rounded-full bg-(--success)" />
+              {activePackages > 0 ? "Active" : "None active"}
+            </span>
+          }
+        />
+        <StatTile
+          icon={<Mail className="h-4 w-4" />}
+          value={
+            <span className="line-clamp-2 break-all" title={settings.sponsorEmail || profile.email || "nikunj.appz@gmail.com"}>
               {settings.sponsorEmail || profile.email || "nikunj.appz@gmail.com"}
-            </p>
-          </div>
-        </div>
-      </div>
+            </span>
+          }
+          valueClassName="text-sm font-semibold leading-snug text-(--text)"
+          label="Contact email"
+          action={
+            <button
+              type="button"
+              onClick={() => setIsContactModalOpen(true)}
+              className="cursor-pointer p-0.5 text-(--muted) transition-colors hover:text-(--primary)"
+              title="Configure brand contact"
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+            </button>
+          }
+        />
+      </StatGrid>
 
       {/* 3. COLLAB PACKAGES (NO TABS) */}
-      <section className="space-y-3 text-left">
-        <div className="flex items-end justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="text-[15px] sm:text-base font-bold text-[#0f172a]">
-              Collab Packages {packages.length > 0 && <span className="font-normal text-[#64748b]">({packages.length})</span>}
-            </h2>
-            <p className="text-xs text-[#64748b] mt-0.5">
-              Create different packages for brand reels, restaurant visits, product features and more.
-            </p>
-          </div>
-        </div>
-
+      <SectionCard
+        title={`Collab packages${packages.length > 0 ? ` (${packages.length})` : ""}`}
+        subtitle="Create different packages for brand reels, restaurant visits, product features and more."
+        icon={<Briefcase className="h-4 w-4" />}
+        action={
+          <a href={mediaKitPath} target="_blank" rel="noopener noreferrer" className="text-[13px] font-medium text-[#7A2253] hover:underline">
+            View public media kit
+          </a>
+        }
+        className="text-left"
+        bodyClassName="p-4 space-y-3"
+      >
         {/* 4. SERVICES LIST OR EMPTY STATE */}
         {packages.length === 0 ? (
           <EmptyState
@@ -1093,7 +1046,7 @@ export default function DashboardMediaKitPage() {
                             <button
                               type="button"
                               onClick={() => handleOpenEditModal(pkg)}
-                              className="inline-flex h-8 items-center gap-1 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#475569] hover:bg-[#f8fafc] hover:text-[#7A2253] transition-colors cursor-pointer"
+                              className="inline-flex h-8 items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-[13px] font-medium text-[#3F3F46] hover:bg-[#FAFAFB] hover:text-[#7A2253] transition-colors cursor-pointer"
                             >
                               <Pencil className="h-3.5 w-3.5" />
                               <span>Edit</span>
@@ -1106,7 +1059,7 @@ export default function DashboardMediaKitPage() {
                                   e.stopPropagation();
                                   setActiveMenuId(activeMenuId === pkg.id ? null : pkg.id);
                                 }}
-                                className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white text-[#64748b] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer"
+                                className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white text-[#6B6B76] hover:bg-[#FAFAFB] hover:text-[#18181B] transition-colors cursor-pointer"
                                 aria-label="More options"
                                 aria-expanded={activeMenuId === pkg.id}
                               >
@@ -1116,36 +1069,36 @@ export default function DashboardMediaKitPage() {
                               {activeMenuId === pkg.id && (
                                 <div
                                   onClick={(e) => e.stopPropagation()}
-                                  className="absolute right-0 top-full mt-1.5 w-44 rounded-[5px] border border-[#e2e8f0] bg-white p-1.5 shadow-lg z-50 space-y-0.5 animate-in fade-in text-left"
+                                  className="absolute right-0 top-full mt-1.5 w-44 rounded-[5px] border border-[#ECECF0] bg-white p-1.5 shadow-lg z-50 space-y-0.5 animate-in fade-in text-left"
                                 >
                                   <button
                                     type="button"
                                     onClick={() => handleShareService(pkg)}
-                                    className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                                    className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-[13px] font-medium text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer"
                                   >
-                                    <Copy className="h-3.5 w-3.5 text-[#64748b]" />
+                                    <Copy className="h-3.5 w-3.5 text-[#6B6B76]" />
                                     <span>Share Link</span>
                                   </button>
 
                                   <button
                                     type="button"
                                     onClick={() => handleTogglePackageActive(pkg.id, pkg.isActive)}
-                                    className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                                    className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-[13px] font-medium text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer"
                                   >
                                     {pkg.isActive ? (
                                       <>
-                                        <EyeOff className="h-3.5 w-3.5 text-[#64748b]" />
+                                        <EyeOff className="h-3.5 w-3.5 text-[#6B6B76]" />
                                         <span>Hide from profile</span>
                                       </>
                                     ) : (
                                       <>
-                                        <Eye className="h-3.5 w-3.5 text-[#64748b]" />
+                                        <Eye className="h-3.5 w-3.5 text-[#6B6B76]" />
                                         <span>Set as active</span>
                                       </>
                                     )}
                                   </button>
 
-                                  <div className="my-1 border-t border-[#e2e8f0]" />
+                                  <div className="my-1 border-t border-[#ECECF0]" />
 
                                   <button
                                     type="button"
@@ -1153,10 +1106,10 @@ export default function DashboardMediaKitPage() {
                                       setActiveMenuId(null);
                                       setPackageToDelete(pkg);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#C2414B] hover:bg-[#fef2f2] transition-colors cursor-pointer"
+                                    className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-[13px] font-medium text-[#C2414B] hover:bg-[#fef2f2] transition-colors cursor-pointer"
                                   >
                                     <Trash2 className="h-3.5 w-3.5" />
-                                    <span>Delete Service</span>
+                                    <span>Delete package</span>
                                   </button>
                                 </div>
                               )}
@@ -1242,7 +1195,7 @@ export default function DashboardMediaKitPage() {
                         <button
                           type="button"
                           onClick={() => handleOpenEditModal(pkg)}
-                          className="inline-flex h-8 items-center gap-1 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-semibold text-[#475569] hover:bg-[#f8fafc] hover:text-[#7A2253] transition-colors cursor-pointer"
+                          className="inline-flex h-8 items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-[13px] font-medium text-[#3F3F46] hover:bg-[#FAFAFB] hover:text-[#7A2253] transition-colors cursor-pointer"
                         >
                           <Pencil className="h-3.5 w-3.5" />
                           <span>Edit</span>
@@ -1253,7 +1206,7 @@ export default function DashboardMediaKitPage() {
                             setActiveMenuId(null);
                             setPackageToDelete(pkg);
                           }}
-                          className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white text-[#C2414B] hover:bg-rose-50 cursor-pointer"
+                          className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white text-[#C2414B] hover:bg-rose-50 cursor-pointer"
                           aria-label="Delete package"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -1265,52 +1218,28 @@ export default function DashboardMediaKitPage() {
               })}
             </div>
 
-            {/* Bottom Banner (from screenshot) */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F3] p-4 text-left shadow-2xs">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-white border border-[#FCE7F3] text-[#7A2253]">
-                  <Sparkles className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-xs sm:text-sm font-bold text-[#0f172a]">
-                    Want to add more packages?
-                  </p>
-                  <p className="text-[11px] sm:text-xs text-[#64748b] mt-0.5">
-                    Create tailored packages for different brands and collaboration types.
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={handleOpenAddModal}
-                className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-[5px] bg-[#7A2253] px-3.5 text-xs font-semibold text-white shadow-xs hover:opacity-95 transition-opacity cursor-pointer self-end sm:self-auto"
-              >
-                <Plus className="h-4 w-4" />
-                <span>New Package</span>
-              </button>
-            </div>
           </div>
         )}
-      </section>
+      </SectionCard>
 
       {/* 4.5. COLLAB REQUESTS INBOX */}
-      <section className="space-y-4 pt-2">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-base font-bold text-[#0f172a]">Collab Requests</h2>
-            <p className="text-xs text-[#64748b]">Inquiries submitted by brands and agencies from your public profile.</p>
-          </div>
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#f1f5f9] text-[#475569]">
+      <SectionCard
+        title="Collab requests"
+        subtitle="Requests brands send from your public profile."
+        icon={<Mail className="h-4 w-4" />}
+        action={
+          <span className="text-[12px] text-[#6B6B76]">
             {collabRequests.length} {collabRequests.length === 1 ? "request" : "requests"}
           </span>
-        </div>
-
+        }
+        bodyClassName="p-4"
+      >
         {loadingRequests ? (
-          <div className="p-8 text-center text-xs text-[#64748b] bg-white rounded-xl border border-[#e2e8f0]">
+          <div className="p-8 text-center text-xs text-[#64748b] bg-white rounded-[5px] border border-[#e2e8f0]">
             Loading collab requests...
           </div>
         ) : collabRequests.length === 0 ? (
-          <div className="p-8 text-center bg-white rounded-xl border border-dashed border-[#cbd5e1]">
+          <div className="p-8 text-center bg-white rounded-[5px] border border-dashed border-[#cbd5e1]">
             <Mail className="h-8 w-8 text-[#94a3b8] mx-auto mb-2" />
             <p className="text-xs font-bold text-[#0f172a]">No collab requests yet</p>
             <p className="text-[11px] text-[#64748b] mt-1 max-w-sm mx-auto">
@@ -1320,14 +1249,14 @@ export default function DashboardMediaKitPage() {
         ) : (
           <div className="space-y-3">
             {collabRequests.map((req) => (
-              <div key={req.id} className="p-4 bg-white rounded-xl border border-[#e2e8f0] shadow-2xs space-y-2 text-left">
+              <div key={req.id} className="p-4 bg-white rounded-[5px] border border-[#e2e8f0] shadow-2xs space-y-2 text-left">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
                     <span className="font-bold text-sm text-[#0f172a]">{req.brand_name || req.brandName}</span>
                     <span className="text-xs text-[#64748b] ml-2">by {req.contact_name || req.contactName}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-[5px] ${
                       (req.status === "new" || !req.status)
                         ? "bg-amber-50 text-amber-700 border border-amber-200"
                         : req.status === "replied"
@@ -1356,7 +1285,7 @@ export default function DashboardMediaKitPage() {
                   )}
                 </div>
                 {req.message && (
-                  <p className="text-xs text-[#334155] bg-[#f8fafc] p-2.5 rounded-lg border border-[#f1f5f9] whitespace-pre-wrap">
+                  <p className="text-xs text-[#334155] bg-[#f8fafc] p-2.5 rounded-[5px] border border-[#f1f5f9] whitespace-pre-wrap">
                     {req.message}
                   </p>
                 )}
@@ -1364,14 +1293,14 @@ export default function DashboardMediaKitPage() {
             ))}
           </div>
         )}
-      </section>
+      </SectionCard>
 
       {/* 5. CREATE / EDIT SERVICE MODAL */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         size="lg"
-        title={editingPkgId ? "Edit Collab Package" : "Create Collab Package"}
+        title={editingPkgId ? "Edit Collab Package" : "Create collab package"}
         description="Set up your promotional reel package, deliverables, and rates for brands, cafes, and shops."
         icon={<Briefcase className="h-4 w-4" />}
       >
@@ -1721,7 +1650,7 @@ export default function DashboardMediaKitPage() {
               form="service-form"
               className="h-10 px-5 rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5"
             >
-              <span>{editingPkgId ? "Save Changes" : "Create Collab Package"}</span>
+              <span>{editingPkgId ? "Save changes" : "Create collab package"}</span>
             </button>
           </ModalFooter>
         </form>
@@ -1740,12 +1669,12 @@ export default function DashboardMediaKitPage() {
           {SERVICE_EXAMPLES.map((example, idx) => (
             <div
               key={idx}
-              className="rounded-xl border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2 hover:border-[#cbd5e1] transition-colors"
+              className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2 hover:border-[#cbd5e1] transition-colors"
             >
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <h4 className="text-sm font-bold text-[#7A2253]">{example.title}</h4>
-                  <span className="text-[10px] font-semibold text-[#7A2253] bg-[#7A2253]/[0.08] px-2 py-0.5 rounded-md">
+                  <span className="text-[10px] font-semibold text-[#7A2253] bg-[#7A2253]/[0.08] px-2 py-0.5 rounded-[5px]">
                     {example.badge}
                   </span>
                 </div>
@@ -1759,7 +1688,7 @@ export default function DashboardMediaKitPage() {
                 <button
                   type="button"
                   onClick={() => handleApplyTemplate(example)}
-                  className="px-3 py-1 rounded-lg bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 shadow-sm shadow-[#7A2253]/20 transition-all cursor-pointer"
+                  className="px-3 py-1 rounded-[5px] bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 shadow-sm shadow-[#7A2253]/20 transition-all cursor-pointer"
                 >
                   Use Template
                 </button>
@@ -1767,6 +1696,15 @@ export default function DashboardMediaKitPage() {
             </div>
           ))}
         </ModalBody>
+        <ModalFooter className="px-5 sm:px-6 py-3.5">
+          <button
+            type="button"
+            onClick={() => setIsExamplesModalOpen(false)}
+            className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+        </ModalFooter>
       </Modal>
 
       {/* 7. CONTACT & MEDIA KIT SETTINGS MODAL */}
@@ -1791,7 +1729,7 @@ export default function DashboardMediaKitPage() {
                     value={settingAvgReelViews}
                     onChange={(e) => setSettingAvgReelViews(e.target.value)}
                     placeholder="e.g., 45K or 1.2M"
-                    className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                    className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1">
@@ -1801,7 +1739,7 @@ export default function DashboardMediaKitPage() {
                     value={settingEngagementRate}
                     onChange={(e) => setSettingEngagementRate(e.target.value)}
                     placeholder="e.g., 4.8%"
-                    className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                    className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
                   />
                 </div>
               </div>
@@ -1813,7 +1751,7 @@ export default function DashboardMediaKitPage() {
                   value={settingTopCities}
                   onChange={(e) => setSettingTopCities(e.target.value)}
                   placeholder="e.g., Mumbai, Delhi, Bengaluru (up to 3)"
-                  className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                  className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
                 />
               </div>
 
@@ -1825,7 +1763,7 @@ export default function DashboardMediaKitPage() {
                     value={settingLanguages}
                     onChange={(e) => setSettingLanguages(e.target.value)}
                     placeholder="e.g., Hindi, English (comma-separated)"
-                    className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                    className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1">
@@ -1835,7 +1773,7 @@ export default function DashboardMediaKitPage() {
                     value={settingCategories}
                     onChange={(e) => setSettingCategories(e.target.value)}
                     placeholder="e.g., Street Food, Travel, Vlogs"
-                    className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                    className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
                   />
                 </div>
               </div>
@@ -1847,7 +1785,7 @@ export default function DashboardMediaKitPage() {
                   value={settingPastBrands}
                   onChange={(e) => setSettingPastBrands(e.target.value)}
                   placeholder="e.g., Chai Tapri Co., Masala Munch Snacks, Monsoon Sips"
-                  className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                  className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
                 />
                 <p className="text-[11px] text-[#64748b]">Separate multiple brands with commas.</p>
               </div>
@@ -1866,7 +1804,7 @@ export default function DashboardMediaKitPage() {
                   value={settings.whatsappNumber || ""}
                   onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
                   placeholder="+91 9876543210"
-                  className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                  className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
                 />
               </div>
 
@@ -1879,7 +1817,7 @@ export default function DashboardMediaKitPage() {
                   value={settings.sponsorEmail || ""}
                   onChange={(e) => setSettings({ ...settings, sponsorEmail: e.target.value })}
                   placeholder={profile.email || "collabs@yourdomain.com"}
-                  className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                  className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
                 />
               </div>
 
@@ -1913,7 +1851,7 @@ export default function DashboardMediaKitPage() {
                   value={settings.minBudget || ""}
                   onChange={(e) => setSettings({ ...settings, minBudget: e.target.value })}
                   placeholder="₹0 (Accept all deals)"
-                  className="w-full h-9 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                  className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
                 />
               </div>
             </div>
@@ -1923,13 +1861,13 @@ export default function DashboardMediaKitPage() {
             <button
               type="button"
               onClick={() => setIsContactModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-[5px] border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="h-9 px-5 rounded-xl bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+              className="h-9 px-5 rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-xs inline-flex items-center gap-1.5"
             >
               Save Settings
             </button>
@@ -1949,9 +1887,9 @@ export default function DashboardMediaKitPage() {
         isOpen={Boolean(packageToDelete)}
         onClose={() => setPackageToDelete(null)}
         onConfirm={handleDeletePackage}
-        title="Delete this service?"
+        title="Delete this package?"
         description={`"${packageToDelete?.title}" will be permanently removed from your services and public profile.`}
-        confirmText="Delete Service"
+        confirmText="Delete package"
         cancelText="Cancel"
       />
     </PageContainer>

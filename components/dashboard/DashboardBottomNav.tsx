@@ -32,7 +32,7 @@ export function DashboardBottomNav() {
             >
               <Icon className={`h-5 w-5 shrink-0 ${active ? "stroke-[2.2]" : ""}`} />
             </span>
-            <span className="truncate leading-none">{item.label}</span>
+            <span className="line-clamp-2 break-words leading-none" title={item.label}>{item.label}</span>
           </Link>
         );
       })}

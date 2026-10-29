@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { UserX } from "lucide-react";
 import { ThemeCard } from "@/themes/registry";
 import { SocialService } from "@/services/SocialService";
@@ -97,7 +97,9 @@ function buildSocialAccounts(rows: Array<Record<string, unknown>>): SocialAccoun
 export default function AllProductsClient() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { showToast } = useToast();
+  const isPreview = searchParams?.get("preview") === "true";
 
   const [profile, setProfile] = useState<CreatorProfile>(EMPTY_PROFILE);
   const [socials, setSocials] = useState<SocialAccounts>(EMPTY_SOCIAL_ACCOUNTS);
@@ -143,8 +145,8 @@ export default function AllProductsClient() {
 
       try {
         const [profRes, socialsRes, productsRes] = await Promise.all([
-          fetch(`/api/creator/profile?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
-          fetch(`/api/creator/socials?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/creator/profile?username=${encodeURIComponent(usernameParam)}`, { cache: isPreview ? "no-store" : "default" }).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/creator/socials?username=${encodeURIComponent(usernameParam)}`, { cache: isPreview ? "no-store" : "default" }).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/public/products?username=${encodeURIComponent(usernameParam)}`, { cache: "no-store" }).then((r) => r.json()).catch(() => ({ status: 0 })),
         ]);
 
@@ -155,12 +157,28 @@ export default function AllProductsClient() {
         const subData = profRes.data?.subscription || profRes.subscription;
 
         if (!isProfOk || !profData) {
+          try {
+            const { profileRepository } = await import("@/repositories/localRepository");
+            const { ProductService } = await import("@/services/ProductService");
+            const localProfile = profileRepository.get();
+            if (localProfile && localProfile.username) {
+              const localProducts = await ProductService.list().catch(() => []);
+              setProfile(localProfile);
+              setSocials(SocialService.getAccounts() || EMPTY_SOCIAL_ACCOUNTS);
+              setProducts(localProducts || []);
+              setTheme(resolveThemeKey(localProfile.themeKey));
+              setLoading(false);
+              setNotFound(false);
+              return;
+            }
+          } catch {}
+
           setNotFound(true);
           setLoading(false);
           return;
         }
 
-        if (isFreeTrialExpired(subData)) {
+        if (!isPreview && isFreeTrialExpired(subData)) {
           setIsPrivate(true);
           setLoading(false);
           return;

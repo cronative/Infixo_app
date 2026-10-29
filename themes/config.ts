@@ -108,7 +108,7 @@ export type ThemeInput = Omit<ThemeDefinition, "tokens"> & {
 };
 
 /** Same family as the dashboard; --font-indic keeps Indian scripts rendering. */
-const DASHBOARD_FONT = "var(--font-plus-jakarta), 'Plus Jakarta Sans', var(--font-indic), system-ui, sans-serif";
+const DASHBOARD_FONT = "var(--font-poppins), 'Poppins', var(--font-indic), system-ui, sans-serif";
 
 export const INFLIXO_MAROON: ThemeDefinition = {
   id: "inflixo-maroon",

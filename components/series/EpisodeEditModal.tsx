@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Film, Loader2, Link2 } from "lucide-react";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { useToast } from "@/contexts/ToastContext";
 import { SeriesService } from "@/services/SeriesService";
@@ -91,46 +92,54 @@ export function EpisodeEditModal({
         if (!saving) onClose();
       }}
       size="md"
-      title="Edit Episode"
+      title={`Edit Episode ${episode.episodeNumber || ""}`.trim()}
+      description="Update the title or video URL for this episode."
+      icon={<Film className="h-5 w-5" />}
       showCloseButton={!saving}
     >
-      <form onSubmit={handleSubmit}>
-        <ModalBody className="p-5 sm:p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+        <ModalBody className="p-5 sm:p-6 space-y-4 flex-1 min-h-0 overflow-y-auto">
           <div>
             <label className="block text-[13px] font-medium text-[#0f172a] mb-1.5">
-              Episode Title
+              Episode Title <span className="text-[#C2414B]">*</span>
             </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Day 1: Spicy Street Food Challenge"
-              className="w-full rounded-[5px] border border-[#e2e8f0] bg-white px-3 py-2 text-sm text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20"
-              required
-              disabled={saving}
-            />
+            <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <Film className="h-4 w-4" />
+              </span>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g. Day 1: Spicy Street Food Challenge"
+                className="flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                required
+                disabled={saving}
+              />
+            </div>
           </div>
 
           <div>
             <label className="block text-[13px] font-medium text-[#0f172a] mb-1.5">
-              Video Link (YouTube, Instagram, or Facebook)
+              Video Link (YouTube, Instagram, or Facebook) <span className="text-[#C2414B]">*</span>
             </label>
-            <input
-              type="url"
-              value={url}
-              onChange={(e) => {
-                setUrl(e.target.value);
-                setUrlError(null);
-              }}
-              placeholder="https://www.youtube.com/watch?v=..."
-              className={`w-full rounded-[5px] border px-3 py-2 text-sm text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none focus:ring-1 ${
-                urlError
-                  ? "border-rose-400 focus:border-rose-500 focus:ring-rose-500/20"
-                  : "border-[#e2e8f0] bg-white focus:border-[#7A2253] focus:ring-[#7A2253]/20"
-              }`}
-              required
-              disabled={saving}
-            />
+            <div className={`flex items-center rounded-[5px] border ${urlError ? "border-rose-400 focus-within:border-rose-500 focus-within:ring-rose-500/10" : "border-[#e2e8f0] focus-within:border-[#7A2253] focus-within:ring-[#7A2253]/10"} bg-white focus-within:ring-2 overflow-hidden transition-colors`}>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <Link2 className="h-4 w-4" />
+              </span>
+              <input
+                type="url"
+                value={url}
+                onChange={(e) => {
+                  setUrl(e.target.value);
+                  setUrlError(null);
+                }}
+                placeholder="https://www.youtube.com/watch?v=..."
+                className="flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                required
+                disabled={saving}
+              />
+            </div>
             {urlError && <p className="mt-1 text-xs text-rose-500">{urlError}</p>}
             <p className="mt-1 text-[11px] text-[#64748b]">
               Enter a direct link to a video, reel, or short. Tracking parameters will be automatically removed.
@@ -138,20 +147,21 @@ export function EpisodeEditModal({
           </div>
         </ModalBody>
 
-        <ModalFooter className="px-5 sm:px-6 py-3.5 flex justify-end gap-2 border-t border-slate-100">
+        <ModalFooter className="px-5 sm:px-6 py-3.5 flex justify-end gap-2 border-t border-[#e2e8f0]">
           <button
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="h-9 px-4 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-50"
+            className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="h-9 px-5 rounded-[5px] bg-[#7A2253] text-xs font-semibold text-white shadow-xs hover:bg-[#601a41] transition-colors cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5"
+            className="h-10 px-5 rounded-[5px] bg-[#7A2253] text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 hover:opacity-95 transition-all cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5"
           >
+            {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
             <span>{saving ? "Saving..." : "Save Changes"}</span>
           </button>
         </ModalFooter>

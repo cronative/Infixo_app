@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Poppins } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { ToastProvider } from "@/contexts/ToastContext";
@@ -9,11 +9,11 @@ import { PwaInstallPrompt } from "@/components/shared/PwaInstallPrompt";
 import { CookieConsentBanner } from "@/components/shared/CookieConsentBanner";
 import { themeTokensCss } from "@/themes/config";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-plus-jakarta",
+const poppins = Poppins({
+  subsets: ["latin", "devanagari"],
+  variable: "--font-poppins",
   display: "swap",
-  weight: ["400", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -179,7 +179,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`min-h-full antialiased ${plusJakartaSans.variable}`}
+      className={`min-h-full antialiased ${poppins.variable}`}
     >
       <head>
         {/* Default theme tokens for shared profile widgets outside a profile root; lower priority than the dashboard vars. */}

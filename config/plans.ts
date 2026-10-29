@@ -22,6 +22,7 @@ export interface PlanLimits {
   reviews: number;
   gearItems: number;
   teamSeats: number;
+  socialAccountsPerPlatform: number;
 }
 
 export interface PlanConfig {
@@ -46,7 +47,7 @@ export const PLANS: Record<PlanKey, PlanConfig> = {
     price: { monthly: { INR: 0, USD: 0 }, yearly: null },
     trialDays: 7,
     publicProfile: "during-trial",
-    limits: { series: 3, episodesPerSeries: 5, products: 1, links: 5, collabPackages: 1, reviews: 1, gearItems: 5, teamSeats: 0 },
+    limits: { series: 3, episodesPerSeries: 5, products: 1, links: 5, collabPackages: 1, reviews: 1, gearItems: 5, teamSeats: 0, socialAccountsPerPlatform: 5 },
     themes: "basics-rainbow",
     prioritySupport: false,
   },
@@ -56,7 +57,7 @@ export const PLANS: Record<PlanKey, PlanConfig> = {
     subtitle: "Keep your profile public",
     price: { monthly: { INR: 99, USD: 2.99 }, yearly: { INR: 799, USD: 24 } },
     publicProfile: "yes",
-    limits: { series: 3, episodesPerSeries: 5, products: 1, links: 5, collabPackages: 1, reviews: 1, gearItems: 5, teamSeats: 0 },
+    limits: { series: 3, episodesPerSeries: 5, products: 1, links: 5, collabPackages: 1, reviews: 1, gearItems: 5, teamSeats: 0, socialAccountsPerPlatform: 5 },
     themes: "basics-rainbow",
     prioritySupport: false,
   },
@@ -66,7 +67,7 @@ export const PLANS: Record<PlanKey, PlanConfig> = {
     subtitle: "For growing creators",
     price: { monthly: { INR: 199, USD: 4.99 }, yearly: { INR: 1499, USD: 39 } },
     publicProfile: "yes",
-    limits: { series: 20, episodesPerSeries: 20, products: 20, links: 20, collabPackages: 3, reviews: 10, gearItems: 20, teamSeats: 0 },
+    limits: { series: 20, episodesPerSeries: 20, products: 20, links: 20, collabPackages: 3, reviews: 10, gearItems: 20, teamSeats: 0, socialAccountsPerPlatform: 10 },
     themes: "all",
     prioritySupport: false,
     popular: true,
@@ -79,7 +80,7 @@ export const PLANS: Record<PlanKey, PlanConfig> = {
     publicProfile: "yes",
     limits: {
       series: Infinity, episodesPerSeries: Infinity, products: Infinity, links: Infinity,
-      collabPackages: 10, reviews: Infinity, gearItems: Infinity, teamSeats: 3,
+      collabPackages: 10, reviews: Infinity, gearItems: Infinity, teamSeats: 3, socialAccountsPerPlatform: 20,
     },
     themes: "all",
     prioritySupport: true,

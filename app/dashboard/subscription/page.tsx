@@ -4,6 +4,7 @@ import { Suspense, useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
+  Activity,
   Briefcase,
   CalendarClock,
   CreditCard,
@@ -44,11 +45,12 @@ import { RazorpayCheckoutButton } from "@/components/checkout/RazorpayCheckoutBu
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import type { Subscription } from "@/types";
 
 type PlanState = "trial" | "active" | "expired" | "cancelled";
 
-const ICON_BOX = "flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F3] text-[#7A2253]";
+const ICON_BOX = "flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]";
 const PLAN_ICONS: Record<PaidPlanKey, ReactNode> = {
   starter: <Sparkles className="h-4 w-4" />,
   pro: <Crown className="h-4 w-4" />,
@@ -91,17 +93,17 @@ function UsageRow({ icon, label, used, limit, detail }: { icon: ReactNode; label
   const pct = used === null || unlimited || limit <= 0 ? 0 : Math.min(100, Math.round((used / limit) * 100));
   const barColor = pct >= 100 ? "bg-[#E11D48]" : pct >= 80 ? "bg-amber-500" : "bg-[#7A2253]";
   return (
-    <div className="flex items-center gap-3 rounded-[5px] border border-[#e2e8f0] bg-white p-3 shadow-2xs min-w-0">
+    <div className="flex items-center gap-3 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] p-3 shadow-none min-w-0">
       <div className={ICON_BOX}>{icon}</div>
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-2">
-          <p className="truncate text-xs font-semibold text-[#0f172a]">{label}</p>
-          <p className="shrink-0 text-xs font-bold text-[#0f172a] tabular-nums">
+          <p className="line-clamp-2 break-words text-[13px] font-semibold text-[#18181B]" title={label}>{label}</p>
+          <p className="shrink-0 text-[12px] font-medium text-[#18181B] tabular-nums">
             {used === null ? "–" : unlimited ? `${used} · Unlimited` : `${used} of ${limit}`}
           </p>
         </div>
-        {detail && <p className="truncate text-[11px] text-[#64748b]">{detail}</p>}
-        <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-[#f1f5f9]">
+        {detail && <p className="line-clamp-2 break-words text-[12px] text-[#6B6B76]" title={detail}>{detail}</p>}
+        <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-[#ECECF0]">
           <div className={`h-full rounded-full transition-all ${barColor}`} style={{ width: `${unlimited ? 0 : pct}%` }} />
         </div>
       </div>
@@ -111,9 +113,9 @@ function UsageRow({ icon, label, used, limit, detail }: { icon: ReactNode; label
 
 function InfoBox({ label, value }: { label: string; value: string }) {
   return (
-    <div className="min-w-0 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] px-3 py-2">
-      <p className="text-[11px] text-[#64748b]">{label}</p>
-      <p className="truncate text-xs font-bold text-[#0f172a]">{value}</p>
+    <div className="min-w-0 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] px-3 py-2">
+      <p className="text-[12px] text-[#6B6B76]">{label}</p>
+      <p className="line-clamp-2 break-words text-[13px] font-semibold text-[#18181B]" title={value}>{value}</p>
     </div>
   );
 }
@@ -226,19 +228,19 @@ function PlanPage() {
 
   return (
     <PageContainer>
-      <PageHeader title="Plan" subtitle="Your plan, billing and usage." />
+      <PageHeader {...PAGE_COPY.plan} />
 
       {/* b. Current plan */}
       <section className="space-y-2">
-        <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 shadow-2xs flex flex-col lg:flex-row lg:items-center gap-4">
+        <div className="rounded-[5px] border border-[#ECECF0] bg-white p-4 shadow-none flex flex-col lg:flex-row lg:items-center gap-4">
           <div className="flex items-center gap-3 min-w-0 flex-1">
             <div className={ICON_BOX}>{planKey === "trial" ? <CalendarClock className="h-4 w-4" /> : PLAN_ICONS[planKey]}</div>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <p className="text-base font-bold text-[#0f172a]">{plan.name}</p>
-                <span className={`inline-flex items-center rounded-[5px] border px-1.5 py-0.5 text-[11px] font-semibold ${statusChip.cls}`}>{statusChip.text}</span>
+                <p className="text-[16px] font-semibold text-[#18181B]">{plan.name}</p>
+                <span className={`inline-flex items-center h-6 rounded-[5px] border px-2 text-[12px] font-medium ${statusChip.cls}`}>{statusChip.text}</span>
               </div>
-              <p className="text-xs text-[#64748b]">{priceLine}</p>
+              <p className="text-[12px] text-[#6B6B76]">{priceLine}</p>
             </div>
           </div>
           <div className="grid grid-cols-1 min-[420px]:grid-cols-3 gap-2 lg:w-[420px]">
@@ -249,19 +251,19 @@ function PlanPage() {
         </div>
 
         {state === "trial" && (
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 justify-between rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] px-3 py-2.5">
-            <p className="text-xs text-[#7A2253]">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 justify-between rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] px-3.5 py-2.5">
+            <p className="text-[13px] text-[#3F3F46]">
               Trial ends in {trial.daysLeft ?? 0} {trial.daysLeft === 1 ? "day" : "days"}. After that your profile goes private. Keep it public from {cheapest}/month.
             </p>
-            <a href="#plans" className="inline-flex h-8 shrink-0 items-center justify-center rounded-[5px] bg-[#7A2253] px-3 text-xs font-semibold text-white hover:bg-[#681c46] transition-colors">
+            <a href="#plans" className="inline-flex h-8 shrink-0 items-center justify-center rounded-[5px] bg-[#7A2253] px-3 text-[13px] font-medium text-white hover:bg-[#681c46] transition-colors">
               Choose plan
             </a>
           </div>
         )}
         {state === "expired" && (
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 justify-between rounded-[5px] border border-rose-200 bg-rose-50 px-3 py-2.5">
-            <p className="text-xs font-medium text-rose-700">Your profile is private. Pick a plan to make it public again.</p>
-            <a href="#plans" className="inline-flex h-8 shrink-0 items-center justify-center rounded-[5px] bg-rose-600 px-3 text-xs font-semibold text-white hover:bg-rose-700 transition-colors">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 justify-between rounded-[5px] border border-rose-200 bg-rose-50 px-3.5 py-2.5">
+            <p className="text-[13px] font-medium text-rose-700">Your profile is private. Pick a plan to make it public again.</p>
+            <a href="#plans" className="inline-flex h-8 shrink-0 items-center justify-center rounded-[5px] bg-rose-600 px-3 text-[13px] font-medium text-white hover:bg-rose-700 transition-colors">
               Choose plan
             </a>
           </div>
@@ -269,8 +271,13 @@ function PlanPage() {
       </section>
 
       {/* c. Usage */}
-      <section className="space-y-2.5">
-        <h2 className="text-sm font-bold text-[#0f172a]">Usage</h2>
+      <section className="space-y-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
+            <Activity className="h-4 w-4" />
+          </div>
+          <h2 className="text-[16px] font-semibold text-[#18181B]">Usage</h2>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {usageRows.map((row) => <UsageRow key={row.label} {...row} />)}
         </div>
@@ -279,8 +286,13 @@ function PlanPage() {
       {/* d. Plans */}
       <section id="plans" className="space-y-3 scroll-mt-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-bold text-[#0f172a]">Plans</h2>
-          <div className="inline-flex rounded-[5px] border border-[#e2e8f0] bg-white p-0.5" role="tablist" aria-label="Billing cycle">
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
+              <Crown className="h-4 w-4" />
+            </div>
+            <h2 className="text-[16px] font-semibold text-[#18181B]">Plans</h2>
+          </div>
+          <div className="inline-flex h-8 items-center rounded-[5px] border border-[#ECECF0] bg-white p-0.5" role="tablist" aria-label="Billing cycle">
             {(["monthly", "yearly"] as const).map((value) => (
               <button
                 key={value}
@@ -288,8 +300,8 @@ function PlanPage() {
                 role="tab"
                 aria-selected={billingCycle === value}
                 onClick={() => setBillingCycle(value)}
-                className={`h-8 px-3 rounded-[5px] text-xs font-semibold transition-colors cursor-pointer ${
-                  billingCycle === value ? "bg-[#7A2253] text-white" : "text-[#64748b] hover:text-[#0f172a]"
+                className={`h-7 px-3 rounded-[5px] text-[13px] font-medium transition-colors cursor-pointer ${
+                  billingCycle === value ? "bg-[#7A2253] text-white" : "text-[#6B6B76] hover:text-[#18181B]"
                 }`}
               >
                 {value === "monthly" ? "Monthly" : "Yearly"}
@@ -307,37 +319,37 @@ function PlanPage() {
             return (
               <div
                 key={key}
-                className={`relative flex flex-col rounded-[5px] border bg-white p-4 shadow-2xs ${p.popular ? "border-[#7A2253] ring-1 ring-[#7A2253]" : "border-[#e2e8f0]"}`}
+                className={`relative flex flex-col rounded-[5px] border bg-white p-4 shadow-none ${p.popular ? "border-[#7A2253] ring-1 ring-[#7A2253]" : "border-[#ECECF0]"}`}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className={ICON_BOX}>{PLAN_ICONS[key]}</div>
                     <div className="min-w-0">
-                      <p className="text-sm font-bold text-[#0f172a]">{p.name}</p>
-                      <p className="truncate text-[11px] text-[#64748b]">{p.subtitle}</p>
+                      <p className="text-[14px] font-semibold text-[#18181B]">{p.name}</p>
+                      <p className="line-clamp-2 break-words text-[12px] text-[#6B6B76]" title={p.subtitle}>{p.subtitle}</p>
                     </div>
                   </div>
                   {p.popular && (
-                    <span className="shrink-0 rounded-[5px] bg-[#7A2253] px-1.5 py-0.5 text-[10px] font-bold text-white">Popular</span>
+                    <span className="shrink-0 h-6 inline-flex items-center rounded-[5px] bg-[#7A2253] px-2 text-[12px] font-medium text-white">Popular</span>
                   )}
                 </div>
 
                 <div className="mt-3">
-                  <p className="text-2xl font-black text-[#0f172a] tabular-nums">
+                  <p className="text-2xl font-bold text-[#18181B] tabular-nums">
                     {formatMoney(price)}
-                    <span className="text-xs font-medium text-[#64748b]"> / month</span>
+                    <span className="text-[12px] font-normal text-[#6B6B76]"> / month</span>
                   </p>
-                  <p className="min-h-4 text-[11px] text-[#64748b]">
+                  <p className="min-h-4 text-[12px] text-[#6B6B76]">
                     {billingCycle === "yearly" && (
                       <>
                         {formatMoney(planPrice(key, "yearly"))} billed yearly ·{" "}
-                        <span className="font-semibold text-[#7A2253]">Save {yearlySavingsPercent(key)}%</span>
+                        <span className="font-medium text-[#7A2253]">Save {yearlySavingsPercent(key)}%</span>
                       </>
                     )}
                   </p>
                 </div>
 
-                <ul className="mt-3 flex-1 space-y-1.5 border-t border-[#f1f5f9] pt-3 text-xs text-[#334155]">
+                <ul className="mt-3 flex-1 space-y-1.5 border-t border-[#ECECF0] pt-3 text-[13px] text-[#3F3F46]">
                   {planFeatureLines(key).map((line) => (
                     <li key={line} className="flex gap-1.5">
                       <span aria-hidden="true" className="text-[#7A2253]">•</span>
@@ -348,7 +360,7 @@ function PlanPage() {
 
                 <div className="mt-4">
                   {isCurrent ? (
-                    <button type="button" disabled className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] text-xs font-semibold text-[#64748b] cursor-not-allowed">
+                    <button type="button" disabled className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] text-[13px] font-medium text-[#6B6B76] cursor-not-allowed">
                       Current plan
                     </button>
                   ) : (
@@ -360,8 +372,8 @@ function PlanPage() {
                       prefill={{ email: profile.email, name: profile.displayName }}
                       className={
                         isHigher
-                          ? "w-full h-9 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] text-white text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-                          : "w-full h-9 rounded-[5px] border border-[#7A2253] bg-white text-[#7A2253] hover:bg-[#FFF5F7] text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                          ? "w-full h-9 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] text-white text-[13px] font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-none"
+                          : "w-full h-9 rounded-[5px] border border-[#7A2253] bg-white text-[#7A2253] hover:bg-[#F7EEF2] text-[13px] font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-none"
                       }
                       onSuccess={() => handlePurchaseSuccess(key)}
                     />

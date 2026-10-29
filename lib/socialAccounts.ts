@@ -1,4 +1,5 @@
 import { SocialAccounts, EMPTY_SOCIAL_ACCOUNTS, GenericSocialStats } from "@/types";
+import { calculateTotalFanbase } from "@/lib/creatorEra";
 const PLATFORMS_LIST: { key: keyof SocialAccounts; platform: string; urlPrefix: string }[] = [
   { key: "twitter", platform: "twitter", urlPrefix: "https://x.com/" },
   { key: "linkedin", platform: "linkedin", urlPrefix: "https://linkedin.com/in/" },
@@ -77,18 +78,6 @@ const dates = socials.map(account => account.lastSyncedAt).filter((date): date i
 if (dates.length) updated.updatedAt = new Date(Math.max(...dates.map(Date.parse))).toISOString();
 return updated;
 }
-export function calculateTotalAudience(accounts: SocialAccounts): number {
-    let total =
-      (accounts.instagram?.followers ?? 0) +
-      (accounts.youtube?.subscribers ?? 0) +
-      (accounts.facebook?.followers ?? 0);
-
-    PLATFORMS_LIST.forEach(({ key }) => {
-      const item = accounts[key] as GenericSocialStats | undefined;
-      if (item && item.followers) {
-        total += item.followers;
-      }
-    });
-
-    return total;
-  }
+export function calculateTotalAudience(accounts: SocialAccounts | any): number {
+  return calculateTotalFanbase(accounts) ?? 0;
+}

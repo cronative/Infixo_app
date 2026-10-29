@@ -1,7 +1,8 @@
 "use client";
 
 import type { CreatorProduct } from "@/types";
-import { ProductImage, formatProductPrice } from "@/components/products/ProductImage";
+import { formatProductPrice } from "@/components/products/ProductImage";
+import { ProductGrid, ProductGridCard } from "@/components/products/ProductGridCard";
 
 import { useState, useEffect, useRef, Fragment, useMemo } from "react";
 import Link from "next/link";
@@ -53,6 +54,7 @@ import {
   Crown,
   Rocket,
   Compass,
+  Info,
 } from "lucide-react";
 import { TabSectionHeader, TabSectionBody } from "@/components/profile/TabSectionHeader";
 import { PackageCard } from "@/components/collab/PackageCard";
@@ -134,6 +136,14 @@ import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
 import { trackPublicEvent } from "@/lib/publicTrack";
 import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
 import { ThemeService, getThemeCssVariables } from "@/services/ThemeService";
+import {
+  calculateTotalFanbase,
+  getCreatorEra,
+  formatFans,
+  getMedalGradient,
+} from "@/lib/creatorEra";
+import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
+import { CreatorEraBottomSheet } from "@/components/shared/CreatorEraBottomSheet";
 
 
 function formatIndianPackagePrice(pkg: MediaKitPackage): string {
@@ -330,6 +340,17 @@ export interface LivePreviewCardProps {
   setupItems?: CreatorSetupItem[];
   otherSocials?: OtherSocialAccount[];
   sections?: CreatorProfileSection[];
+  allSocialAccounts?: Array<{
+    id?: string | number;
+    platform: string;
+    username: string;
+    followerCount?: number;
+    isPrimary?: boolean;
+    is_primary?: boolean;
+    accountName?: string;
+    isVerified?: boolean;
+    url?: string;
+  }>;
   totalAudience?: number;
   themeKey?: ThemeKey;
   compact?: boolean;
@@ -347,6 +368,7 @@ export interface LivePreviewCardProps {
   reviewsPreviewLimit?: number;
   allReviewsHref?: string;
   reviewsOnlyMode?: boolean;
+  linksOnlyMode?: boolean;
   /** Secondary public page (series list, reviews, products): compact creator header instead of the full profile header. */
   pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   showSettingsIcon?: boolean;
@@ -577,6 +599,7 @@ export function LivePreviewCard({
   setupItems: passedSetupItems,
   otherSocials: passedOtherSocials,
   sections: passedSections,
+  allSocialAccounts: passedAllSocialAccounts,
   totalAudience: passedTotalAudience,
   themeKey = DEFAULT_THEME_KEY,
   compact = false,
@@ -594,6 +617,7 @@ export function LivePreviewCard({
   reviewsPreviewLimit,
   allReviewsHref,
   reviewsOnlyMode = false,
+  linksOnlyMode = false,
   pageHeader,
   showSettingsIcon: showSettingsIconProp,
   onShare,
@@ -938,6 +962,15 @@ export function LivePreviewCard({
           showSeries: false,
           showReviews: false,
         }
+      : linksOnlyMode
+        ? {
+          ...visibilitySettings,
+          showFanbase: false,
+          showCustomLinks: true,
+          showCollabGigs: false,
+          showSeries: false,
+          showReviews: false,
+        }
         : visibilitySettings;
 
 
@@ -1043,6 +1076,12 @@ export function LivePreviewCard({
     (safeSocials.spotify?.followers || 0);
 
   const totalAudience = passedTotalAudience !== undefined ? passedTotalAudience : calculatedTotal;
+  const totalFanbase = useMemo(() => calculateTotalFanbase(socials || safeSocials), [socials, safeSocials]);
+  const effectiveFanbase = typeof profile.peakFanbase === "number" && profile.peakFanbase >= (totalFanbase ?? 0)
+    ? profile.peakFanbase
+    : totalFanbase;
+  const creatorEra = useMemo(() => getCreatorEra(effectiveFanbase), [effectiveFanbase]);
+  const [bentoEraSheetOpen, setBentoEraSheetOpen] = useState(false);
 
   const instaHandle = safeSocials.instagram?.username || getHandle(safeSocials.instagram?.url || "");
   const ytHandle = safeSocials.youtube?.username || getHandle(safeSocials.youtube?.url || "");
@@ -1214,6 +1253,52 @@ export function LivePreviewCard({
   const fanbaseSocialCards = activeSocialList.filter((s) => s.hasAccount || s.count > 0);
   const fanbaseSocialGridColumns = `repeat(${Math.min(Math.max(fanbaseSocialCards.length, 1), 3)}, minmax(0, 1fr))`;
 
+  const aboutSocialCards = useMemo(() => {
+    if (passedAllSocialAccounts && passedAllSocialAccounts.length > 0) {
+      return passedAllSocialAccounts
+        .filter((acc) => acc.username || (acc.followerCount && acc.followerCount > 0))
+        .map((acc: any) => {
+          const platform = (acc.platform || "").toLowerCase();
+          const rawHandle = (acc.username || acc.accountName || "").replace(/^@/, "");
+          const count = acc.followerCount || 0;
+          const isYoutube = platform === "youtube";
+          const isInstagram = platform === "instagram";
+          const isFacebook = platform === "facebook";
+          const url =
+            acc.url ||
+            (isInstagram
+              ? `https://instagram.com/${rawHandle}`
+              : isYoutube
+              ? `https://youtube.com/@${rawHandle}`
+              : isFacebook
+              ? `https://facebook.com/${rawHandle}`
+              : buildSocialUrl(platform, rawHandle));
+          const isPrimary = Boolean(acc.isPrimary || acc.is_primary);
+          const label =
+            platform === "youtube"
+              ? "YouTube"
+              : platform === "instagram"
+              ? "Instagram"
+              : platform === "facebook"
+              ? "Facebook"
+              : platform;
+          const unit = isYoutube ? "Subscribers" : "Followers";
+          return {
+            id: acc.id,
+            platform,
+            label,
+            handle: rawHandle,
+            name: acc.accountName || rawHandle,
+            count,
+            unit,
+            url,
+            isPrimary,
+          };
+        });
+    }
+    return fanbaseSocialCards;
+  }, [passedAllSocialAccounts, fanbaseSocialCards]);
+
   const handleCopyClick = async (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
     if (isInformationalMode) {
@@ -1324,7 +1409,7 @@ export function LivePreviewCard({
   );
   const validLinksCount = validLinksList.length;
 
-  const isListingPage = Boolean(seriesOnlyMode || productsOnlyMode || reviewsOnlyMode);
+  const isListingPage = Boolean(seriesOnlyMode || productsOnlyMode || reviewsOnlyMode || linksOnlyMode);
 
   const hasSeriesContent = !isListingPage && effectiveVisibilitySettings.showSeries !== false && series.length > 0;
   const hasLinksContent = !isListingPage && (
@@ -1603,7 +1688,7 @@ export function LivePreviewCard({
           isVerified={profile.isVerified !== false}
           tagline={
             effectiveVisibilitySettings.showContentCategory !== false && formattedCategories
-              ? formattedCategories.replace(/,\s*/g, " • ")
+              ? formattedCategories.replace(/\s*[•·,]\s*/g, " . ")
               : null
           }
           socialList={headerSocialList}
@@ -1625,7 +1710,10 @@ export function LivePreviewCard({
           }))}
           fansLabel={landingDemo ? "total fans" : undefined}
           showPlatformBreakdown={landingDemo}
+          eraBadge={creatorEra?.badge}
+          creatorEra={creatorEra}
           pageHeader={pageHeader}
+          isListingPage={isListingPage}
           mediaKitHref={
             containedScroll && cleanHandle && cleanHandle !== "demo_creator" && !isDashboardPreview && !pageHeader
               ? `/${cleanHandle}/media-kit`
@@ -1873,18 +1961,37 @@ export function LivePreviewCard({
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   {/* Left Column: Metric & Subtitle */}
                   <div className="flex-1 min-w-0">
-                    <span
-                      style={{ fontFamily: typ.headingFontFamily }}
-                      className="text-xs sm:text-[13px] font-bold text-(--accent-text) tracking-tight"
-                    >
-                      Combined followers
-                    </span>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span
+                        style={{ fontFamily: typ.headingFontFamily }}
+                        className="text-xs sm:text-[13px] font-bold text-(--accent-text) tracking-tight"
+                      >
+                        Total fans
+                      </span>
+                      {creatorEra && (
+                        <button
+                          type="button"
+                          onClick={() => setBentoEraSheetOpen(true)}
+                          className="tap-scale inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[10px] border border-(--surface-border) bg-(--surface) hover:bg-(--accent-soft) transition-colors cursor-pointer group select-none"
+                        >
+                          <span
+                            className="w-[10px] h-[10px] rounded-full shrink-0 border border-black/20"
+                            style={{ background: getMedalGradient(creatorEra.stage) }}
+                            aria-hidden="true"
+                          />
+                          <span className="text-[12px] font-semibold text-(--accent-text)">
+                            {creatorEra.badge}
+                          </span>
+                          <Info className="h-3 w-3 text-(--icon) group-hover:text-(--icon-active) transition-colors" />
+                        </button>
+                      )}
+                    </div>
                     <div className="mt-1 flex items-center gap-2">
                       <span
                         style={{ fontFamily: typ.headingFontFamily, color: c.primaryText }}
                         className="text-3xl sm:text-4xl font-black tabular-nums tracking-tight leading-none"
                       >
-                        {formatCount(totalAudience)}
+                        {formatFans(totalAudience)}
                       </span>
                     </div>
                     <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-medium mt-1.5">
@@ -1920,7 +2027,7 @@ export function LivePreviewCard({
             )}
 
             {/* C. Social Accounts Bento Card (matching screenshot) */}
-            {effectiveVisibilitySettings.showFanbase !== false && fanbaseSocialCards.length > 0 && (
+            {effectiveVisibilitySettings.showFanbase !== false && aboutSocialCards.length > 0 && (
               <div
                 style={{
                   backgroundColor: "var(--surface)",
@@ -1947,7 +2054,7 @@ export function LivePreviewCard({
 
                 {/* Social Accounts List */}
                 <div className="space-y-2">
-                  {fanbaseSocialCards.map((item) => {
+                  {aboutSocialCards.map((item: any, idx: number) => {
                     const rawHandle = (item.handle || item.name || item.label).replace(/^@/, "");
                     const isServiceOnly = item.platform === "spotify" && rawHandle.toLowerCase() === "spotify";
                     const displayHandle = isServiceOnly ? "Spotify Artist" : `@${rawHandle}`;
@@ -1967,7 +2074,7 @@ export function LivePreviewCard({
 
                     return (
                       <a
-                        key={item.platform}
+                        key={item.id ? `soc-${item.id}` : `${item.platform}-${item.handle || item.name}-${idx}`}
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -2039,7 +2146,7 @@ export function LivePreviewCard({
         )}
 
         {/* 3. Links Section */}
-        {!isListingPage && (!isTabsLayout || activeNavTab === "explore" || activeNavTab === "links") && (
+        {(linksOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "explore" || activeNavTab === "links"))) && (
           (() => {
             const validLinks = (customLinksList || []).filter(
               (l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url)))
@@ -2047,16 +2154,18 @@ export function LivePreviewCard({
 
             // Empty state for owner preview; hide for public
             if (validLinks.length === 0) {
-              if (isDashboardPreview) {
+              if (isDashboardPreview || linksOnlyMode) {
                 return (
-                  <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7"}`}>
-                    <TabSectionHeader
-                      title="Links"
-                      subtitle="Everything your fans should find — tickets, accounts, websites."
-                      primaryTextColor={c.primaryText}
-                      secondaryTextColor={c.secondaryText}
-                      headingFontFamily={typ.headingFontFamily}
-                    />
+                  <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${linksOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7"}`}>
+                    {!linksOnlyMode && (
+                      <TabSectionHeader
+                        title="Links"
+                        subtitle="Everything your fans should find — tickets, accounts, websites."
+                        primaryTextColor={c.primaryText}
+                        secondaryTextColor={c.secondaryText}
+                        headingFontFamily={typ.headingFontFamily}
+                      />
+                    )}
                     <div className="rounded-xl border border-dashed border-(--surface-border) p-8 text-center my-2">
                       <div className="w-10 h-10 rounded-full bg-(--surface) flex items-center justify-center mx-auto mb-2 text-(--text-muted)">
                         <LinkIcon className="h-5 w-5" />
@@ -2122,14 +2231,16 @@ export function LivePreviewCard({
               });
 
             return (
-              <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7"}`}>
-                <TabSectionHeader
-                  title="Links"
-                  subtitle="Everything your fans should find — tickets, accounts, websites."
-                  primaryTextColor={c.primaryText}
-                  secondaryTextColor={c.secondaryText}
-                  headingFontFamily={typ.headingFontFamily}
-                />
+              <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${linksOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-3 sm:mt-3.5" : "mt-6 sm:mt-7"}`}>
+                {!linksOnlyMode && (
+                  <TabSectionHeader
+                    title="Links"
+                    subtitle="Everything your fans should find — tickets, accounts, websites."
+                    primaryTextColor={c.primaryText}
+                    secondaryTextColor={c.secondaryText}
+                    headingFontFamily={typ.headingFontFamily}
+                  />
+                )}
 
                 <div className="space-y-2 w-full">
                   {/* 3. Pinned Link */}
@@ -2455,13 +2566,16 @@ export function LivePreviewCard({
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
-                {(isProductsExpanded || productsOnlyMode ? sortedProducts : sortedProducts.slice(0, 4)).map((product: CreatorProduct) => (
-                  <a
+              <ProductGrid>
+                {(isProductsExpanded || productsOnlyMode ? sortedProducts : sortedProducts.slice(0, 6)).map((product: CreatorProduct) => (
+                  <ProductGridCard
                     key={product.id}
+                    name={product.name}
+                    imageUrl={product.imageUrl}
                     href={product.productUrl}
-                    target="_blank"
-                    rel={product.isAffiliate !== false ? "sponsored noopener" : "noopener"}
+                    price={formatProductPrice(product.pricePaise)}
+                    note={product.note}
+                    isAffiliate={product.isAffiliate !== false}
                     onClick={(e) => {
                       if (isInformationalMode) {
                         e.preventDefault();
@@ -2470,48 +2584,12 @@ export function LivePreviewCard({
                       }
                       trackPublicEvent("product_click", String(product.id));
                     }}
-                    className="tap-scale group flex flex-col rounded-[5px] border border-(--surface-border)/80 bg-(--card-bg) p-2.5 shadow-none hover:border-(--surface-border)/20  transition-all duration-200 cursor-pointer"
-                  >
-                    <ProductImage
-                      src={product.imageUrl}
-                      name={product.name}
-                      className="aspect-square w-full rounded-[5px] bg-(--surface) "
-                    />
-
-                    {/* Title: exactly 2 lines min-height so every card title aligns */}
-                    <h3
-                      className="mt-2 text-xs sm:text-[13px] font-bold text-(--text) line-clamp-2 leading-snug tracking-tight min-h-[34px] break-words"
-                      title={product.name}
-                    >
-                      {product.name}
-                    </h3>
-
-                    {product.pricePaise !== null && (
-                      <p className="mt-1 text-xs sm:text-[13px] font-extrabold text-(--accent-text) tabular-nums">
-                        {formatProductPrice(product.pricePaise)}
-                      </p>
-                    )}
-
-                    {product.note && (
-                      <p className="mt-0.5 text-[11px] sm:text-xs text-(--text-muted) line-clamp-1" title={product.note}>
-                        {product.note}
-                      </p>
-                    )}
-
-                    <div className="mt-auto flex items-center justify-between gap-1 pt-2">
-                      {product.isAffiliate !== false ? (
-                        <span className="rounded-[4px] bg-(--surface) px-1.5 py-0.5 text-[10px] font-semibold text-(--text-muted) ">
-                          Affiliate
-                        </span>
-                      ) : <span />}
-                      <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-(--icon) group-hover:text-(--icon-active) transition-colors" aria-hidden="true" />
-                    </div>
-                  </a>
+                  />
                 ))}
-              </div>
+              </ProductGrid>
             )}
 
-            {!productsOnlyMode && sortedProducts.length > 4 && (
+            {!productsOnlyMode && sortedProducts.length > 6 && (
               <div className="pt-2.5 w-full text-center">
                 <button
                   type="button"
@@ -2892,79 +2970,22 @@ export function LivePreviewCard({
                   </p>
                 </div>
 
-                <div className="space-y-2 w-full pt-1">
-                  {visibleSetupItems.map((item) => (
-                    <div
-                      key={item.id}
-                      style={{
-                        backgroundColor: "var(--surface)",
-                        borderColor: "var(--surface-border)",
-                        boxShadow: "none",
-                      }}
-                      className="rounded-[5px] border p-2.5 sm:p-3 flex items-start justify-between gap-3 transition-all hover:border-(--surface-border)/20 shadow-none text-left"
-                    >
-                      <div className="min-w-0 flex-1">
-                        {/* Category & Brand */}
-                        <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                          <span
-                            style={{
-                              backgroundColor: "var(--surface)",
-                              color: c.secondaryText,
-                            }}
-                            className="rounded-[5px] px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider"
-                          >
-                            {item.category}
-                          </span>
-                          {item.brand && (
-                            <span
-                              style={{ color: c.mutedText }}
-                              className="text-[11px] font-semibold truncate"
-                            >
-                              • {item.brand}
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Product Name */}
-                        <h4
-                          style={{ color: c.primaryText }}
-                          className="text-xs sm:text-[13.5px] font-bold text-(--text) line-clamp-2 break-words leading-snug"
-                          title={item.name}
-                        >
-                          {item.name}
-                        </h4>
-
-                        {/* Short Usage Description */}
-                        {(item.usedFor || item.modelOrPlan) && (
-                          <p
-                            style={{ color: c.secondaryText }}
-                            className="text-[11px] sm:text-xs text-(--text-muted) mt-1 line-clamp-2 break-words leading-relaxed"
-                          >
-                            {item.usedFor || item.modelOrPlan}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* View Product Link */}
-                      {item.linkUrl && (
-                        <div className="shrink-0 self-center sm:self-start pt-0.5">
-                          <a
-                            href={item.linkUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => {
-                              if (isInformationalMode) e.preventDefault();
-                              else trackPublicEvent("setup_click", String(item.id));
-                            }}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-[5px] bg-(--surface) hover:bg-(--surface-border) text-(--text) border border-(--surface-border)/80 text-xs font-bold transition-all cursor-pointer shadow-none whitespace-nowrap"
-                          >
-                            <span>View Product</span>
-                            <ArrowUpRight className="h-3 w-3 shrink-0" />
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                <div className="w-full pt-1">
+                  <ProductGrid>
+                    {visibleSetupItems.map((item) => (
+                      <ProductGridCard
+                        key={item.id}
+                        name={item.name}
+                        imageUrl={item.imageUrl}
+                        href={item.linkUrl}
+                        note={item.usedFor || item.modelOrPlan || item.brand}
+                        onClick={(e) => {
+                          if (isInformationalMode) e.preventDefault();
+                          else trackPublicEvent("setup_click", String(item.id));
+                        }}
+                      />
+                    ))}
+                  </ProductGrid>
                 </div>
 
                 {activeSetupItems.length > 3 && (
@@ -3079,6 +3100,24 @@ export function LivePreviewCard({
             : `${baseUrl.replace(/\/$/, "")}/${cleanUsername}`;
         })()}
       />
+
+      {creatorEra && (
+        <CreatorEraBottomSheet
+          isOpen={bentoEraSheetOpen}
+          onClose={() => setBentoEraSheetOpen(false)}
+          era={creatorEra}
+          totalFans={totalAudience}
+          creatorName={profile.displayName || "Creator"}
+          creatorUsername={cleanHandle}
+          isCreatorView={isDashboardPreview || false}
+          primaryAccounts={fanbaseSocialCards.map((s) => ({
+            platform: s.platform,
+            username: s.handle || s.name || s.label,
+            count: s.count,
+            url: s.url,
+          }))}
+        />
+      )}
     </div>
   );
 }

@@ -264,10 +264,10 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
           </div>
 
           <div className="min-w-0 flex-1 text-left leading-tight">
-            <p className="truncate text-[14px] font-semibold text-[#18181B]" title={displayName}>
+            <p className="line-clamp-2 break-words text-[14px] font-semibold text-[#18181B]" title={displayName}>
               {displayName}
             </p>
-            <p className="truncate text-[12px] text-[#71717A] mt-0.5">
+            <p className="line-clamp-2 break-words text-[12px] text-[#71717A] mt-0.5">
               @{handleStr}
             </p>
           </div>
@@ -317,7 +317,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                         }`}
                       />
 
-                      <span className="truncate text-[14px] font-medium leading-normal">
+                      <span className="line-clamp-2 break-words text-[14px] font-medium leading-normal">
                         {item.label}
                       </span>
                     </Link>
@@ -360,7 +360,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                   }`}
                 />
 
-                <span className="truncate text-[14px] font-medium leading-normal">
+                <span className="line-clamp-2 break-words text-[14px] font-medium leading-normal">
                   {item.label}
                 </span>
               </Link>
@@ -375,7 +375,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
               className="flex h-[40px] items-center rounded-[5px] bg-[#7A2253]/[0.08] hover:bg-[#7A2253]/[0.12] text-[#7A2253] transition-colors px-3 gap-2.5"
             >
               <Sparkles className="h-[18px] w-[18px] shrink-0 text-[#7A2253]" strokeWidth={1.75} />
-              <span className="truncate text-[14px] font-semibold leading-none">
+              <span className="line-clamp-2 break-words text-[14px] font-semibold leading-none">
                 Upgrade to Pro
               </span>
             </Link>

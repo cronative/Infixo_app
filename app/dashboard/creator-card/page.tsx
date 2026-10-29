@@ -5,9 +5,7 @@ import Link from "next/link";
 import {
   ArrowRight,
   Check,
-  Copy,
   Download,
-  ExternalLink,
   Heart,
   Loader2,
   Palette,
@@ -20,7 +18,6 @@ import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { ThemeService } from "@/services/ThemeService";
 import { buildProfileUrl, formatCount, formatCategoryDots } from "@/utils/format";
-import { copyToClipboard } from "@/lib/copyToClipboard";
 import { CARD_HEIGHT, CARD_WIDTH, CreatorCard } from "@/components/creator-card/CreatorCard";
 import {
   CardLayoutType,
@@ -30,6 +27,7 @@ import {
 import { cardFileName, downloadBlob, renderCardPng } from "@/components/creator-card/cardExport";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 
 const MAX_PREVIEW_WIDTH = 380;
 
@@ -83,6 +81,7 @@ const QUICK_TAGS: QuickTag[] = [
 export default function CreatorCardPage() {
   const {
     profile,
+    socials,
     totalAudience,
     theme,
     loading,
@@ -96,6 +95,14 @@ export default function CreatorCardPage() {
   const [selectedPresetId, setSelectedPresetId] = useState<string>("journey");
   const [customTagline, setCustomTagline] = useState<string>("");
   const [aspectRatio, setAspectRatio] = useState<"portrait" | "square">("portrait");
+
+  const primaryPlatforms = useMemo<("instagram" | "youtube" | "facebook")[]>(() => {
+    const list: ("instagram" | "youtube" | "facebook")[] = [];
+    if (socials.instagram?.username || (socials.instagram?.followers ?? 0) > 0) list.push("instagram");
+    if (socials.youtube?.username || (socials.youtube?.subscribers ?? 0) > 0) list.push("youtube");
+    if (socials.facebook?.username || (socials.facebook?.followers ?? 0) > 0) list.push("facebook");
+    return list.length > 0 ? list : ["instagram", "youtube"];
+  }, [socials]);
 
   const username = (profile.username || "").replace(/^@/, "");
   const profileUrl = username ? buildProfileUrl(username) : "";
@@ -115,13 +122,6 @@ export default function CreatorCardPage() {
   // Active message & sharing text
   const activePreset = QUICK_TAGS.find((p) => p.id === selectedPresetId) ?? QUICK_TAGS[0];
   const activeTagline = customTagline.trim() || activePreset.tagline;
-  const shareText = `Hey friends! 👋 Check out my official Inflixo Creator Card!
-${activeTagline}
-
-🔗 Tap to explore my series, shop, reviews & links:
-${profileUrl}
-
-⚡ Created with Inflixo — Create your own free Creator Card at https://inflixo.com`;
 
   // Scale frame
   const frameRef = useRef<HTMLDivElement>(null);
@@ -153,7 +153,6 @@ ${profileUrl}
   ].join("|");
   const cached = useRef<{ key: string; blob: Blob } | null>(null);
   const [busy, setBusy] = useState<"download" | null>(null);
-  const [linkCopied, setLinkCopied] = useState(false);
 
   const getBlob = useCallback(async () => {
     if (cached.current?.key === renderKey) return cached.current.blob;
@@ -190,57 +189,11 @@ ${profileUrl}
     }
   };
 
-  const handleCopyLink = async () => {
-    if (isTrialExpired) {
-      showToast("Your public profile is hidden (Trial ended) — Reactivate now ❤️", "error");
-      openTrialExpiredModal();
-      return;
-    }
-    const ok = await copyToClipboard(shareText);
-    if (ok) {
-      setLinkCopied(true);
-      setTimeout(() => setLinkCopied(false), 2000);
-      showToast("Card pitch & profile link copied! ✨");
-    } else {
-      showToast("Could not copy link", "error");
-    }
-    return ok;
-  };
-
   const disabled = !assetsReady || busy !== null;
 
   return (
     <PageContainer>
-      <PageHeader
-        title="Creator Card"
-        subtitle="Design your custom card with emotional taglines, curated layouts, and high-impact themes to share on Stories & Status."
-        actions={
-          <>
-            <button
-              type="button"
-              onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 h-9 text-xs font-semibold text-[#0f172a] shadow-2xs hover:bg-[#f8fafc] transition-colors cursor-pointer"
-            >
-              {linkCopied ? (
-                <Check className="h-3.5 w-3.5 text-[#10B981]" />
-              ) : (
-                <Copy className="h-3.5 w-3.5 text-[#64748b]" />
-              )}
-              <span>{linkCopied ? "Copied!" : "Copy link"}</span>
-            </button>
-
-            <a
-              href={profileUrl || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 h-9 text-xs font-semibold text-[#0f172a] shadow-2xs hover:bg-[#f8fafc] transition-colors cursor-pointer"
-            >
-              <span>View profile</span>
-              <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
-            </a>
-          </>
-        }
-      />
+      <PageHeader {...PAGE_COPY.creatorCard} />
 
       {/* Trial Expired Alert Banner */}
       {isTrialExpired && (
@@ -273,7 +226,7 @@ ${profileUrl}
       )}
 
       {!username ? (
-        <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-5 text-sm text-[#475569] shadow-2xs">
+        <div className="rounded-[5px] border border-(--border) bg-white p-5 text-sm text-[#475569] shadow-2xs">
           Set your username first so your card can link to your public profile.{" "}
           <Link href="/dashboard/profile" className="font-semibold text-[#7A2253] underline underline-offset-2">
             Go to Profile
@@ -285,7 +238,7 @@ ${profileUrl}
           <div className="lg:col-span-5 flex flex-col items-center">
             <div ref={frameRef} className="w-full max-w-[380px]">
               <div
-                className="relative mx-auto overflow-hidden rounded-[20px] shadow-[0_20px_50px_rgba(0,0,0,0.12)] ring-1 ring-black/5"
+                className="relative mx-auto overflow-hidden rounded-[5px] shadow-[0_20px_50px_rgba(0,0,0,0.12)] ring-1 ring-black/5"
                 style={{
                   width: CARD_WIDTH * scale,
                   height: aspectRatio === "portrait" ? CARD_HEIGHT * scale : CARD_WIDTH * scale,
@@ -311,6 +264,7 @@ ${profileUrl}
                     appearance={appearance}
                     layout={selectedLayout}
                     customMessage={activeTagline}
+                    platforms={primaryPlatforms}
                   />
                 </div>
                 {!assetsReady && (
@@ -322,14 +276,14 @@ ${profileUrl}
             </div>
 
             {/* Segmented Aspect Ratio Toggle */}
-            <div className="mt-4 inline-flex items-center p-1 bg-white border border-[#e2e8f0] rounded-[5px] shadow-2xs">
+            <div className="mt-4 inline-flex h-8 items-center p-0.5 bg-white border border-[#ECECF0] rounded-[5px]">
               <button
                 type="button"
                 onClick={() => setAspectRatio("portrait")}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[5px] text-xs font-semibold transition-all cursor-pointer ${
+                className={`inline-flex items-center gap-1.5 h-7 px-3 rounded-[5px] text-[13px] font-medium transition-all cursor-pointer ${
                   aspectRatio === "portrait"
-                    ? "bg-white border border-[#e2e8f0] text-[#7A2253] shadow-2xs font-bold"
-                    : "text-[#64748b] hover:text-[#0f172a] border border-transparent"
+                    ? "bg-[#7A2253] text-white"
+                    : "text-[#6B6B76] hover:text-[#18181B]"
                 }`}
               >
                 <Smartphone className="h-3.5 w-3.5" />
@@ -338,10 +292,10 @@ ${profileUrl}
               <button
                 type="button"
                 onClick={() => setAspectRatio("square")}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[5px] text-xs font-semibold transition-all cursor-pointer ${
+                className={`inline-flex items-center gap-1.5 h-7 px-3 rounded-[5px] text-[13px] font-medium transition-all cursor-pointer ${
                   aspectRatio === "square"
-                    ? "bg-white border border-[#e2e8f0] text-[#7A2253] shadow-2xs font-bold"
-                    : "text-[#64748b] hover:text-[#0f172a] border border-transparent"
+                    ? "bg-[#7A2253] text-white"
+                    : "text-[#6B6B76] hover:text-[#18181B]"
                 }`}
               >
                 <Square className="h-3.5 w-3.5" />
@@ -353,16 +307,18 @@ ${profileUrl}
           {/* ── Right Column: Layouts, Themes, Messages & Download ── */}
           <div className="lg:col-span-7 space-y-4">
             {/* 1. Card Layout Style */}
-            <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-2xs">
+            <div className="rounded-[5px] border border-[#ECECF0] bg-white p-4 sm:p-5">
               <div className="flex items-center justify-between pb-3.5">
-                <div className="flex items-center gap-2">
-                  <Wand2 className="h-4 w-4 text-[#7A2253]" />
-                  <h2 className="text-sm font-bold text-[#0f172a]">1. Card Layout Style</h2>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] shrink-0">
+                    <Wand2 className="h-4 w-4" />
+                  </div>
+                  <h2 className="text-[16px] font-semibold text-[#18181B]">1. Card Layout Style</h2>
                 </div>
-                <span className="text-xs font-medium text-[#64748b]">5 styles</span>
+                <span className="text-[12px] text-[#6B6B76] font-normal">5 styles</span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-2.5">
                 {LAYOUT_OPTIONS.map((layout) => {
                   const active = selectedLayout === layout.id;
                   return (
@@ -372,18 +328,18 @@ ${profileUrl}
                       onClick={() => setSelectedLayout(layout.id)}
                       className={`group relative flex flex-col items-center rounded-[5px] border p-2 text-center transition-all cursor-pointer ${
                         active
-                          ? "border-2 border-[#7A2253] bg-white ring-1 ring-[#7A2253]/20"
-                          : "border-[#e2e8f0] bg-white hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
+                          ? "border-2 border-[#7A2253] bg-white shadow-none"
+                          : "border-[#ECECF0] bg-[#FAFAFB] hover:border-[#cbd5e1] hover:bg-white"
                       }`}
                     >
                       {active && (
-                        <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-[#7A2253] text-white flex items-center justify-center shadow-2xs z-10">
+                        <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-[#7A2253] text-white flex items-center justify-center z-10">
                           <Check className="h-2.5 w-2.5 stroke-[3]" />
                         </span>
                       )}
 
                       {/* Mini Mockup Illustration */}
-                      <div className="w-full aspect-[9/13] rounded-[4px] relative overflow-hidden border border-[#e2e8f0] mb-2 flex flex-col items-center justify-center">
+                      <div className="w-full aspect-[9/13] rounded-[5px] relative overflow-hidden border border-[#ECECF0] mb-2 flex flex-col items-center justify-center">
                         {layout.id === "classic" && (
                           <div className="w-full h-full bg-[#F0F7FF] flex flex-col">
                             <div className="h-[32%] w-full bg-[#BFDBFE]" />
@@ -451,13 +407,13 @@ ${profileUrl}
                       </div>
 
                       <span
-                        className={`text-xs font-bold truncate max-w-full ${
+                        className={`text-xs font-bold line-clamp-2 break-words max-w-full ${
                           active ? "text-[#7A2253]" : "text-[#0f172a]"
                         }`}
                       >
                         {layout.name}
                       </span>
-                      <span className="text-[10px] text-[#64748b] truncate max-w-full mt-0.5">
+                      <span className="text-[10px] text-[#64748b] line-clamp-2 break-words max-w-full mt-0.5">
                         {layout.subtitle}
                       </span>
                     </button>
@@ -467,22 +423,24 @@ ${profileUrl}
             </div>
 
             {/* 2. Color Theme */}
-            <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-2xs">
+            <div className="rounded-[5px] border border-[#ECECF0] bg-white p-4 sm:p-5">
               <div className="flex items-center justify-between pb-3.5">
-                <div className="flex items-center gap-2">
-                  <Palette className="h-4 w-4 text-[#7A2253]" />
-                  <h2 className="text-sm font-bold text-[#0f172a]">2. Color Theme</h2>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] shrink-0">
+                    <Palette className="h-4 w-4" />
+                  </div>
+                  <h2 className="text-[16px] font-semibold text-[#18181B]">2. Color Theme</h2>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSelectedThemeId("profile")}
-                  className="text-xs font-semibold text-[#7A2253] hover:underline cursor-pointer"
+                  className="text-[12px] font-medium text-[#7A2253] hover:underline cursor-pointer"
                 >
                   Profile Theme
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-2.5">
                 {THEME_OPTIONS.map((t) => {
                   const active = selectedThemeId === t.id;
                   const dots =
@@ -497,22 +455,22 @@ ${profileUrl}
                       onClick={() => setSelectedThemeId(t.id)}
                       className={`flex flex-col items-center justify-center gap-2 rounded-[5px] border p-2.5 text-center transition-all cursor-pointer ${
                         active
-                          ? "border-2 border-[#7A2253] bg-white ring-1 ring-[#7A2253]/20"
-                          : "border-[#e2e8f0] bg-white hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
+                          ? "border-2 border-[#7A2253] bg-white shadow-none"
+                          : "border-[#ECECF0] bg-[#FAFAFB] hover:border-[#cbd5e1] hover:bg-white"
                       }`}
                     >
                       <div className="flex items-center gap-1.5">
                         {dots.map((color, idx) => (
                           <span
                             key={idx}
-                            className="h-3.5 w-3.5 rounded-full border border-black/10 shadow-2xs"
+                            className="h-3.5 w-3.5 rounded-full border border-black/10"
                             style={{ backgroundColor: color }}
                           />
                         ))}
                       </div>
                       <span
-                        className={`text-xs font-semibold truncate max-w-full ${
-                          active ? "text-[#7A2253]" : "text-[#0f172a]"
+                        className={`text-[12px] font-medium break-words max-w-full ${
+                          active ? "text-[#7A2253]" : "text-[#18181B]"
                         }`}
                       >
                         {t.name}
@@ -524,17 +482,19 @@ ${profileUrl}
             </div>
 
             {/* 3. Message & Tagline */}
-            <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-2xs">
+            <div className="rounded-[5px] border border-[#ECECF0] bg-white p-4 sm:p-5">
               <div className="flex items-center justify-between pb-3.5">
-                <div className="flex items-center gap-2">
-                  <Heart className="h-4 w-4 text-[#E11D48] fill-[#E11D48]" />
-                  <h2 className="text-sm font-bold text-[#0f172a]">3. Message &amp; Tagline</h2>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] shrink-0">
+                    <Heart className="h-4 w-4" />
+                  </div>
+                  <h2 className="text-[16px] font-semibold text-[#18181B]">3. Message &amp; Tagline</h2>
                 </div>
-                <span className="text-xs font-medium text-[#E11D48]">Use quick tags</span>
+                <span className="text-[12px] font-medium text-[#7A2253]">Use quick tags</span>
               </div>
 
               {/* 6 Quick Tag Pills */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3.5">
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-2 mb-3.5">
                 {QUICK_TAGS.map((tag) => {
                   const active = selectedPresetId === tag.id && !customTagline.trim();
                   return (
@@ -545,14 +505,14 @@ ${profileUrl}
                         setSelectedPresetId(tag.id);
                         setCustomTagline("");
                       }}
-                      className={`inline-flex items-center justify-center gap-1.5 rounded-[5px] border px-2.5 py-2 text-xs font-medium transition-all cursor-pointer ${
+                      className={`inline-flex items-center justify-center gap-1.5 rounded-[5px] border px-2.5 py-2 text-[12px] font-medium transition-all cursor-pointer ${
                         active
-                          ? "border-[#FCE7F3] bg-[#FFF5F7] text-[#7A2253] ring-1 ring-[#7A2253]/20 font-bold"
-                          : "border-[#e2e8f0] bg-white text-[#334155] hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
+                          ? "border-[#7A2253] bg-[#F7EEF2] text-[#7A2253]"
+                          : "border-[#ECECF0] bg-[#FAFAFB] text-[#3F3F46] hover:border-[#cbd5e1] hover:bg-white"
                       }`}
                     >
-                      <span>{tag.emoji}</span>
-                      <span className="truncate">{tag.label}</span>
+                      <span className="shrink-0">{tag.emoji}</span>
+                      <span className="break-words text-center leading-tight whitespace-normal">{tag.label}</span>
                     </button>
                   );
                 })}
@@ -560,7 +520,7 @@ ${profileUrl}
 
               {/* Custom Tagline Input */}
               <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs text-[#64748b]">
+                <div className="flex items-center justify-between text-[12px] text-[#6B6B76]">
                   <label htmlFor="custom-tagline-input" className="font-medium">
                     Custom tag line (optional)
                   </label>
@@ -577,20 +537,20 @@ ${profileUrl}
                     onChange={(e) => setCustomTagline(e.target.value)}
                     placeholder={activePreset.tagline}
                     maxLength={60}
-                    className="w-full rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-2.5 text-sm text-[#0f172a] placeholder-[#94a3b8] shadow-2xs transition-colors focus:border-[#7A2253] focus:outline-none"
+                    className="w-full rounded-[5px] border border-[#ECECF0] bg-white px-3.5 py-2 text-[13px] text-[#18181B] placeholder-[#94a3b8] transition-colors focus:border-[#7A2253] focus:outline-none"
                   />
                   {customTagline && (
                     <button
                       type="button"
                       onClick={() => setCustomTagline("")}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-[#64748b] hover:text-[#0f172a]"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[12px] font-medium text-[#6B6B76] hover:text-[#18181B]"
                     >
                       Reset
                     </button>
                   )}
                 </div>
 
-                <p className="text-xs text-[#64748b]">
+                <p className="text-[12px] text-[#6B6B76]">
                   Appears under the QR code on your card and in your shared Story caption.
                 </p>
               </div>
@@ -601,7 +561,7 @@ ${profileUrl}
               type="button"
               onClick={handleDownload}
               disabled={disabled}
-              className="w-full h-12 rounded-[5px] bg-[#7A2253] hover:bg-[#661842] text-white font-bold text-sm shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full h-9 rounded-[5px] bg-[#7A2253] hover:bg-[#661842] text-white font-medium text-[13px] shadow-none flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
             >
               {busy === "download" ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

@@ -36,9 +36,8 @@ function DesktopTopHeader() {
   const pathname = usePathname();
 
   const handleStr = profile.username || "username";
-  const [greeting] = useState(() => getGreeting());
-  const isHome = pathname === "/dashboard";
   const group = NAV_GROUPS.find((g) => g.items.some((item) => isNavActive(pathname, item.href) && item.href !== "/dashboard"));
+  const navTitle = pathname === "/dashboard" ? "Dashboard" : getNavTitle(pathname);
 
   const handleCopy = async () => {
     if (isTrialExpired) {
@@ -51,43 +50,31 @@ function DesktopTopHeader() {
     showToast(success ? "Profile link copied! ✨" : "Could not copy link", success ? "success" : "error");
   };
 
-
   return (
-    <header className="hidden h-13 shrink-0 items-center justify-between border-b border-[#e2e8f0] bg-white px-6 lg:flex lg:px-8">
-      {isHome ? (
-        <p className="text-sm font-semibold text-[#0f172a]">
-          {greeting}
-          <span className="ml-2 font-normal text-[#64748b]">Here&apos;s how your Inflixo profile is doing today.</span>
-        </p>
-      ) : (
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-[13px] text-[#64748b]">
-          <span>{group?.title ?? "Studio"}</span>
-          <ChevronRight className="h-3.5 w-3.5 text-[#cbd5e1]" />
-          <span className="font-medium text-[#0f172a]">{getNavTitle(pathname)}</span>
-        </nav>
-      )}
+    <header className="hidden h-13 shrink-0 items-center justify-between border-b border-[#ECECF0] bg-white px-6 lg:flex lg:px-8">
+      <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-[13px] text-[#6B6B76]">
+        <span>{pathname === "/dashboard" ? "Studio" : (group?.title ?? "Studio")}</span>
+        <ChevronRight className="h-3.5 w-3.5 text-[#cbd5e1]" />
+        <span className="font-medium text-[#18181B]">{navTitle}</span>
+      </nav>
 
-      <div className="flex items-center gap-1.5">
-        {!isHome && (
-          <>
-            <button
-              type="button"
-              onClick={handleCopy}
-              className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-medium text-[#475569] transition-colors hover:bg-[#fdf2f8] hover:text-[#7A2253]"
-            >
-              <Copy className="h-3.5 w-3.5" />
-              <span>Copy link</span>
-            </button>
-            <button
-              type="button"
-              onClick={handleViewProfile}
-              className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-semibold text-[#0f172a] transition-colors hover:border-[#fbcfe8] hover:bg-[#fdf2f8] hover:text-[#7A2253]"
-            >
-              <span>View profile</span>
-              <ExternalLink className="h-3.5 w-3.5 text-[#64748b] group-hover:text-[#7A2253]" />
-            </button>
-          </>
-        )}
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-[13px] font-medium text-[#3F3F46] transition-colors hover:bg-[#FAFAFB] hover:text-[#7A2253]"
+        >
+          <Copy className="h-3.5 w-3.5" />
+          <span>Copy link</span>
+        </button>
+        <button
+          type="button"
+          onClick={handleViewProfile}
+          className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-[13px] font-medium text-[#18181B] transition-colors hover:border-[#fbcfe8] hover:bg-[#fdf2f8] hover:text-[#7A2253]"
+        >
+          <span>View profile</span>
+          <ExternalLink className="h-3.5 w-3.5 text-[#6B6B76]" />
+        </button>
         <LogoutButton />
       </div>
     </header>
@@ -111,7 +98,7 @@ function TrialAccessBar() {
   return (
     <div className={`flex min-h-9 shrink-0 items-center justify-center gap-2 border-b px-4 py-1.5 text-center text-xs ${trialStatus.isExpired ? "border-[#fecaca] bg-[#fef2f2] text-[#991b1b]" : "border-[#fde68a] bg-[#fffbeb] text-[#78350f]"}`}>
       <Zap className="hidden h-3.5 w-3.5 shrink-0 sm:block" />
-      <p className="min-w-0 truncate font-medium">{message}</p>
+      <p className="min-w-0 line-clamp-2 break-words font-medium" title={message}>{message}</p>
       <Link
         href="/dashboard/subscription"
         className="shrink-0 font-semibold underline underline-offset-2 hover:no-underline"
@@ -155,12 +142,12 @@ function Shell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex h-dvh w-full overflow-hidden bg-white">
+    <div className="dash-ui flex h-dvh w-full overflow-hidden bg-white">
       {/* Desktop Sidebar */}
       <DashboardSidebar />
 
       {/* Main Content Area */}
-      <div className="flex h-dvh flex-1 flex-col overflow-hidden min-w-0 bg-[#f8fafc]">
+      <div className="flex h-dvh flex-1 flex-col overflow-hidden min-w-0 bg-(--bg)">
         <TrialAccessBar />
 
         {/* Desktop Top Header */}

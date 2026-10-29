@@ -19,6 +19,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
     setupItems,
     otherSocials,
     sections,
+    allSocialAccounts,
     totalAudience,
     variant,
     containedScroll,
@@ -32,6 +33,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
     reviewsPreviewLimit,
     allReviewsHref,
     reviewsOnlyMode,
+    linksOnlyMode,
     pageHeader,
     onShare,
     layoutMode,
@@ -53,6 +55,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       setupItems={setupItems}
       otherSocials={otherSocials}
       sections={sections}
+      allSocialAccounts={allSocialAccounts}
       totalAudience={totalAudience}
       compact={variant === "compact"}
       variant={variant}
@@ -69,6 +72,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       reviewsPreviewLimit={reviewsPreviewLimit}
       allReviewsHref={allReviewsHref}
       reviewsOnlyMode={reviewsOnlyMode}
+      linksOnlyMode={linksOnlyMode}
       pageHeader={pageHeader}
       onShare={onShare}
       layoutMode={layoutMode}

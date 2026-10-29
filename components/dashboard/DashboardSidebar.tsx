@@ -193,83 +193,87 @@ export function DashboardSidebar() {
   return (
     <aside
       className={`hidden lg:flex flex-col shrink-0 border-r border-[#E4E4E7] bg-white h-dvh transition-all duration-200 select-none ${
-        collapsed ? "w-[64px] p-2" : "w-[248px] p-3"
+        collapsed ? "w-[64px]" : "w-[248px]"
       }`}
     >
-      {/* 4. TOP AREA: Fixed */}
-      <div className="shrink-0 space-y-2.5 mb-2">
-        {/* Logo: wordmark only, height 28px, tagline removed */}
-        <div className={`flex items-center h-8 ${collapsed ? "justify-center" : "px-2"}`}>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center transition-transform hover:opacity-90"
-            title="Inflixo Dashboard"
-          >
-            {collapsed ? (
-              <Image
-                src="/images/inflixo-logo-icon-brand.png"
-                alt="Inflixo"
-                width={56}
-                height={56}
-                className="h-7 w-7 object-contain select-none rounded-[6px]"
-                priority
-              />
-            ) : (
-              <Image
-                src="/images/inflixo-wordmark-title.png"
-                alt="Inflixo"
-                width={628}
-                height={186}
-                className="h-7 w-auto object-contain select-none"
-                priority
-              />
-            )}
-          </Link>
-        </div>
-
-        {/* Profile Card -> Compact row (height 48px, clicks to /dashboard/profile) */}
+      {/* 1. Logo block: height 64px, Inflixo wordmark vertically + horizontally centred, no tagline */}
+      <div className="h-16 shrink-0 flex items-center justify-center px-4">
         <Link
-          href="/dashboard/profile"
-          title={`My Profile (@${handleStr})`}
-          className={`flex h-12 items-center rounded-[5px] hover:bg-[#F4F4F5] transition-colors group cursor-pointer ${
-            collapsed ? "justify-center px-0" : "px-2 gap-2.5"
-          }`}
+          href="/dashboard"
+          className="inline-flex items-center justify-center transition-transform hover:opacity-90"
+          title="Inflixo Dashboard"
         >
-          <div className="relative shrink-0">
-            {profile.photoDataUrl ? (
-              <CreatorAvatar
-                src={profile.photoDataUrl}
-                name={displayName}
-                className="h-8 w-8 rounded-full border border-[#E4E4E7] object-cover"
-              />
-            ) : (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#7A2253] text-white font-bold text-xs shrink-0 select-none">
-                {getInitials(displayName)}
-              </div>
-            )}
-            {/* Small green dot next to avatar for Live */}
-            <span
-              className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-[#10b981] ring-2 ring-white"
-              title="Profile is live"
+          {collapsed ? (
+            <Image
+              src="/images/inflixo-logo-icon-brand.png"
+              alt="Inflixo"
+              width={56}
+              height={56}
+              className="h-8 w-8 object-contain select-none rounded-[5px]"
+              priority
             />
-          </div>
-
-          {!collapsed && (
-            <div className="min-w-0 flex-1 text-left leading-tight">
-              <p className="truncate text-[14px] font-semibold text-[#18181B]" title={displayName}>
-                {displayName}
-              </p>
-              <p className="truncate text-[12px] text-[#71717A] mt-0.5">
-                @{handleStr}
-              </p>
-            </div>
+          ) : (
+            <Image
+              src="/images/inflixo-wordmark-title.png"
+              alt="Inflixo"
+              width={628}
+              height={186}
+              className="h-7 w-auto object-contain select-none"
+              priority
+            />
           )}
         </Link>
       </div>
 
-      {/* 2 & 3. MIDDLE NAV LIST: Scrolls on its own if needed (hidden scrollbar until hover) */}
+      {/* 1px divider (--border), full sidebar width */}
+      <div className="h-px w-full bg-[#E4E4E7] shrink-0" />
+
+      {/* Profile row: avatar 36px + name (14px/600) + @handle (12px muted), padding 12px 16px; click → /dashboard/profile */}
+      <Link
+        href="/dashboard/profile"
+        title={`My Profile (@${handleStr})`}
+        className={`flex items-center hover:bg-[#F4F4F5] transition-colors group cursor-pointer shrink-0 ${
+          collapsed ? "justify-center p-3" : "py-3 px-4 gap-3"
+        }`}
+      >
+        <div className="relative shrink-0">
+          {profile.photoDataUrl ? (
+            <CreatorAvatar
+              src={profile.photoDataUrl}
+              name={displayName}
+              className="h-9 w-9 rounded-full border border-[#E4E4E7] object-cover"
+            />
+          ) : (
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#7A2253] text-white font-bold text-xs shrink-0 select-none">
+              {getInitials(displayName)}
+            </div>
+          )}
+          <span
+            className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-[#10b981] ring-2 ring-white"
+            title="Profile is live"
+          />
+        </div>
+
+        {!collapsed && (
+          <div className="min-w-0 flex-1 text-left leading-tight">
+            <p className="truncate text-[14px] font-semibold text-[#18181B]" title={displayName}>
+              {displayName}
+            </p>
+            <p className="truncate text-[12px] text-[#71717A] mt-0.5">
+              @{handleStr}
+            </p>
+          </div>
+        )}
+      </Link>
+
+      {/* 1px divider again, then the menu */}
+      <div className="h-px w-full bg-[#E4E4E7] shrink-0" />
+
+      {/* 2 & 3. MIDDLE NAV LIST */}
       <nav
-        className="flex-1 overflow-y-auto no-scrollbar space-y-3 pr-0.5"
+        className={`flex-1 overflow-y-auto no-scrollbar space-y-3 ${
+          collapsed ? "p-2" : "p-3"
+        }`}
         aria-label="Sidebar navigation"
       >
         {SIDEBAR_GROUPS.map((group) => (
@@ -319,7 +323,7 @@ export function DashboardSidebar() {
                     />
 
                     {!collapsed && (
-                      <span className="truncate text-[14px] font-medium leading-normal">
+                      <span className="line-clamp-2 break-words text-[14px] font-medium leading-normal">
                         {item.label}
                       </span>
                     )}
@@ -332,7 +336,7 @@ export function DashboardSidebar() {
       </nav>
 
       {/* 5. BOTTOM AREA: Fixed (sticky) */}
-      <div className="shrink-0 pt-2 border-t border-[#E4E4E7] space-y-1 mt-1">
+      <div className={`shrink-0 border-t border-[#E4E4E7] space-y-1 ${collapsed ? "p-2" : "p-3"}`}>
         {/* Plain items: My Plan, Settings (same item style) */}
         {BOTTOM_NAV_ITEMS.map((item) => {
           const active = isNavActive(pathname, item.href);
@@ -366,7 +370,7 @@ export function DashboardSidebar() {
 
               {!collapsed && (
                 <span
-                  className={`truncate text-[14px] leading-normal ${
+                  className={`line-clamp-2 break-words text-[14px] leading-normal ${
                     active
                       ? "text-[#7A2253] font-semibold"
                       : "text-[#52525B] font-medium group-hover:text-[#18181B]"
@@ -390,7 +394,7 @@ export function DashboardSidebar() {
           >
             <Sparkles className="h-[18px] w-[18px] shrink-0 text-[#7A2253]" strokeWidth={1.75} />
             {!collapsed && (
-              <span className="truncate text-[14px] font-semibold leading-none">
+              <span className="line-clamp-2 break-words text-[14px] font-semibold leading-none">
                 Upgrade to Pro
               </span>
             )}

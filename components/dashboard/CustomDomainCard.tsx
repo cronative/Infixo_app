@@ -324,7 +324,7 @@ export function CustomDomainCard() {
             <div>
               <p className="text-[#64748b] font-medium">Target / Points To</p>
               <div className="flex items-center gap-1">
-                <span className="font-mono font-bold text-[#7A2253] truncate">{targetCname}</span>
+                <span className="font-mono font-bold text-[#7A2253] line-clamp-2 break-words" title={targetCname}>{targetCname}</span>
                 <button
                   type="button"
                   onClick={() => handleCopyCname(targetCname)}

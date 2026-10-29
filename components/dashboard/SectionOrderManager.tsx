@@ -175,7 +175,7 @@ export function SectionOrderManager() {
                   </span>
 
                   <div className="min-w-0 space-y-0.5">
-                    <p className="text-xs font-bold text-[#7A2253] truncate flex items-center gap-1.5">
+                    <p className="text-xs font-bold text-[#7A2253] line-clamp-2 break-words flex items-center gap-1.5">
                       {info.name}
                       {isAbout && (
                         <span className="text-[10px] font-semibold text-[#7A2253] bg-[#7A225314] border border-[#7A2253]/20 px-1.5 py-0.2 rounded-[5px]">
@@ -183,7 +183,7 @@ export function SectionOrderManager() {
                         </span>
                       )}
                     </p>
-                    <p className="text-[11px] text-[#64748b] truncate">{info.desc}</p>
+                    <p className="text-[11px] text-[#64748b] line-clamp-2 break-words" title={info.desc}>{info.desc}</p>
                   </div>
                 </div>
 

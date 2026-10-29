@@ -9,6 +9,8 @@ export function formatCount(value: number): string {
   return `${trimDecimal(m)}M`;
 }
 
+export { formatFans } from "@/lib/creatorEra";
+
 function trimDecimal(n: number): string {
   const rounded = Math.round(n * 10) / 10;
   return rounded % 1 === 0 ? `${rounded}` : rounded.toFixed(1);

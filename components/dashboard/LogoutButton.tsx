@@ -31,7 +31,7 @@ export function LogoutButton({ compact = false, className = "" }: { compact?: bo
     <button
       type="button"
       onClick={handleLogout}
-      className={`inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-medium text-[#475569] transition-colors hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 ${className}`}
+      className={`inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-[13px] font-medium text-[#3F3F46] transition-colors hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 ${className}`}
     >
       <LogOut className="h-3.5 w-3.5" />
       <span>Logout</span>

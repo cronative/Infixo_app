@@ -50,7 +50,7 @@ export function ConnectedAccountCard({
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <span className="font-display text-sm font-bold text-[#7A2253] truncate">
+            <span className="font-display text-sm font-bold text-[#7A2253] line-clamp-2 break-words">
               {cleanHandle}
             </span>
             <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-semibold px-2 py-0.5 rounded-full inline-flex items-center gap-1 shrink-0">

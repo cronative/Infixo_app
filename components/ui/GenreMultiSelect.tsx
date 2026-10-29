@@ -118,20 +118,22 @@ export function GenreMultiSelect({ value, onChange, max = 3 }: GenreMultiSelectP
       </div>
 
       {/* Search Input */}
-      <div className="relative">
-        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#94a3b8]" />
+      <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+          <Search className="h-3.5 w-3.5" />
+        </span>
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search 30+ genres…"
-          className="w-full rounded-[5px] border border-[#e2e8f0] bg-white pl-8 pr-7 py-1.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20"
+          className="h-9 flex-1 min-w-0 bg-transparent px-3 text-xs text-[#0f172a] placeholder:text-[#94a3b8] outline-none"
         />
         {search && (
           <button
             type="button"
             onClick={() => setSearch("")}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            className="pr-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
           >
             <X className="h-3.5 w-3.5" />
           </button>

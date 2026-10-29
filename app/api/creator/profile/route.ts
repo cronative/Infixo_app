@@ -133,6 +133,8 @@ export async function GET(req: Request) {
         isVerified: Boolean(creator.is_verified),
         publicProfileLayout,
         visibilitySettings,
+        peakFanbase: creator.peak_fanbase !== null && creator.peak_fanbase !== undefined ? Number(creator.peak_fanbase) : null,
+        eraUnlockedPending: Boolean(creator.era_unlocked_pending),
         updatedAt: creator.updated_at,
       },
       subscription: {

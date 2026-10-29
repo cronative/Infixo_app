@@ -80,6 +80,7 @@ export function FacebookFetcher({ username, onConfirmSync, onBeforeFetch, varian
     if (!previewData || previewData.platform !== "facebook") return;
     const fetchedPage = previewData.data;
 
+    if (saving) return;
     setSaving(true);
     const nowIso = new Date().toISOString();
 
@@ -94,21 +95,17 @@ export function FacebookFetcher({ username, onConfirmSync, onBeforeFetch, varian
           followers: fetchedPage.followers,
           posts: fetchedPage.likes,
           isVerified: Boolean(fetchedPage.verified),
-          avatarUrl: fetchedPage.image,
           intro: fetchedPage.intro,
           lastSyncedAt: nowIso,
         },
       };
 
       updateSocials(updatedSocials);
-      SocialService.saveAccounts(updatedSocials);
 
-      const email = authRepository.getPendingEmail() || profile.email;
-      await fetch("/api/creator/socials", {
+      const res = await fetch("/api/creator/socials", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: email || undefined,
           platform: "facebook",
           accountName: fetchedPage.name || fetchedPage.username,
           username: fetchedPage.username,
@@ -116,7 +113,15 @@ export function FacebookFetcher({ username, onConfirmSync, onBeforeFetch, varian
           mediaCount: fetchedPage.likes || 0,
           isVerified: Boolean(fetchedPage.verified),
         }),
-      }).catch((e) => console.error("Failed to save Facebook to DB:", e));
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => null);
+        throw new Error(errJson?.message || "Failed to link Facebook Page");
+      }
+
+      const resJson = await res.json();
+      const createdRow = resJson?.data;
 
       const patch: Partial<typeof profile> = {};
       if (!profile.displayName || profile.displayName === "Your name") {
@@ -124,9 +129,6 @@ export function FacebookFetcher({ username, onConfirmSync, onBeforeFetch, varian
       }
       if (!profile.bio && fetchedPage.intro) {
         patch.bio = fetchedPage.intro.slice(0, 160);
-      }
-      if (!profile.photoDataUrl && fetchedPage.image) {
-        patch.photoDataUrl = fetchedPage.image;
       }
 
       if (Object.keys(patch).length > 0) {
@@ -136,11 +138,11 @@ export function FacebookFetcher({ username, onConfirmSync, onBeforeFetch, varian
       showToast(`Facebook Page "${fetchedPage.name}" linked successfully! ✨🎉`);
 
       if (onConfirmSync) {
-        onConfirmSync(fetchedPage);
+        onConfirmSync(createdRow || fetchedPage);
       }
     } catch (err: any) {
       console.error("Facebook confirm error:", err);
-      showToast("Failed to connect Facebook Page. Please try again.", "error");
+      showToast(err.message || "Failed to connect Facebook Page. Please try again.", "error");
     } finally {
       setSaving(false);
       setModalOpen(false);

@@ -11,6 +11,7 @@ import {
   Trash2,
   User,
   X,
+  Mail,
 } from "lucide-react";
 import { AuthService } from "@/services/AuthService";
 import { useCreator } from "@/contexts/CreatorContext";
@@ -19,6 +20,7 @@ import { storage } from "@/utils/storage";
 import { DEFAULT_VISIBILITY_SETTINGS } from "@/types";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 
 export default function DashboardSettingsPage() {
   const router = useRouter();
@@ -139,34 +141,31 @@ export default function DashboardSettingsPage() {
 
   return (
     <PageContainer>
-      <PageHeader
-        title="Settings"
-        subtitle="Manage your account and profile visibility."
-      />
+      <PageHeader {...PAGE_COPY.settings} />
 
       {/* ── 2. Card 1: Account ── */}
-      <section className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-2xs">
+      <section className="rounded-[5px] border border-[#ECECF0] bg-white p-4 sm:p-5 shadow-none">
         {/* Header Row */}
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F3] text-[#7A2253] shadow-2xs">
-            <User className="h-5 w-5" />
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
+            <User className="h-4 w-4" />
           </div>
           <div>
-            <h2 className="text-sm sm:text-base font-bold text-[#0f172a]">Account</h2>
-            <p className="text-xs text-[#64748b] mt-0.5">
+            <h2 className="text-[16px] font-semibold text-[#18181B]">Account</h2>
+            <p className="text-[12px] text-[#6B6B76] mt-0.5">
               Your account information and access details.
             </p>
           </div>
         </div>
 
         {/* Divider */}
-        <div className="border-t border-[#f1f5f9] my-4" />
+        <div className="border-t border-[#ECECF0] my-4" />
 
         {/* Details Row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <span className="text-xs font-medium text-[#64748b] block">Email address</span>
-            <span className="text-xs sm:text-sm font-semibold text-[#0f172a] mt-0.5 block break-all">
+            <span className="text-[12px] font-medium text-[#6B6B76] block">Email address</span>
+            <span className="text-[14px] font-medium text-[#18181B] mt-0.5 block break-all">
               {accountEmail}
             </span>
           </div>
@@ -177,39 +176,39 @@ export default function DashboardSettingsPage() {
               setNewEmail(accountEmail);
               setShowEditEmailModal(true);
             }}
-            className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#0f172a] shadow-2xs hover:bg-[#f8fafc] transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
+            className="inline-flex h-8 items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-[13px] font-medium text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
           >
-            <Pencil className="h-3.5 w-3.5 text-[#0f172a]" />
+            <Pencil className="h-3.5 w-3.5 text-[#18181B]" />
             <span>Edit</span>
           </button>
         </div>
       </section>
 
       {/* ── 3. Card 2: Profile Visibility ── */}
-      <section className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-2xs">
+      <section className="rounded-[5px] border border-[#ECECF0] bg-white p-4 sm:p-5 shadow-none">
         {/* Header Row */}
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F3] text-[#7A2253] shadow-2xs">
-            <Eye className="h-5 w-5" />
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
+            <Eye className="h-4 w-4" />
           </div>
           <div>
-            <h2 className="text-sm sm:text-base font-bold text-[#0f172a]">Profile visibility</h2>
-            <p className="text-xs text-[#64748b] mt-0.5">
+            <h2 className="text-[16px] font-semibold text-[#18181B]">Profile visibility</h2>
+            <p className="text-[12px] text-[#6B6B76] mt-0.5">
               Control how your Inflixo profile appears online.
             </p>
           </div>
         </div>
 
         {/* Divider */}
-        <div className="border-t border-[#f1f5f9] my-4" />
+        <div className="border-t border-[#ECECF0] my-4" />
 
         {/* Toggle Row */}
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-0.5">
-            <h3 className="text-xs sm:text-sm font-bold text-[#0f172a]">
+            <h3 className="text-[14px] font-semibold text-[#18181B]">
               Show profile in search engines
             </h3>
-            <p className="text-xs text-[#64748b] leading-relaxed">
+            <p className="text-[12px] text-[#6B6B76] leading-relaxed">
               Allow Google and other search engines to show your Inflixo profile.
             </p>
           </div>
@@ -223,36 +222,36 @@ export default function DashboardSettingsPage() {
         </div>
 
         {/* Notice Info Box */}
-        <div className="rounded-[5px] bg-[#FFF5F7]/70 border border-[#FCE7F3] p-3 flex items-center gap-2.5 mt-4 text-xs text-[#7A2253] font-medium leading-relaxed">
+        <div className="rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0] p-3 flex items-center gap-2.5 mt-4 text-[12px] text-[#3F3F46] leading-relaxed">
           <Info className="h-4 w-4 shrink-0 text-[#7A2253]" />
           <span>When enabled, your public profile can appear in Google and other search engine results.</span>
         </div>
       </section>
 
       {/* ── 4. Card 3: Delete Account ── */}
-      <section className="rounded-[5px] border border-rose-200 bg-[#FFF5F7]/40 p-4 sm:p-5 shadow-2xs">
+      <section className="rounded-[5px] border border-rose-200 bg-white p-4 sm:p-5 shadow-none">
         {/* Header Row */}
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-rose-100/70 border border-rose-200 text-rose-600 shadow-2xs">
-            <Trash2 className="h-5 w-5 text-rose-600" />
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-rose-50 text-rose-600">
+            <Trash2 className="h-4 w-4" />
           </div>
           <div>
-            <h2 className="text-sm sm:text-base font-bold text-[#0f172a]">Delete account</h2>
-            <p className="text-xs text-[#64748b] mt-0.5">
+            <h2 className="text-[16px] font-semibold text-[#18181B]">Delete account</h2>
+            <p className="text-[12px] text-[#6B6B76] mt-0.5">
               Permanently delete your Inflixo account and all associated data.
             </p>
           </div>
         </div>
 
         {/* Warning & Action Box */}
-        <div className="rounded-[5px] bg-white/90 border border-rose-200 p-3.5 sm:p-4 mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 shadow-2xs">
+        <div className="rounded-[5px] bg-rose-50/50 border border-rose-200 p-3.5 sm:p-4 mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
           <div className="flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
             <div>
-              <h3 className="text-xs sm:text-sm font-bold text-rose-600">
+              <h3 className="text-[14px] font-semibold text-rose-600">
                 This action cannot be undone.
               </h3>
-              <p className="text-xs text-[#64748b] mt-0.5 leading-relaxed">
+              <p className="text-[12px] text-[#6B6B76] mt-0.5 leading-relaxed">
                 All your profile, content, links, products, and analytics data will be permanently removed.
               </p>
             </div>
@@ -261,7 +260,7 @@ export default function DashboardSettingsPage() {
           <button
             type="button"
             onClick={() => setShowDeleteModal(true)}
-            className="inline-flex items-center justify-center gap-1.5 rounded-[5px] border border-rose-200 bg-white hover:bg-rose-50 text-rose-600 px-3.5 py-1.5 text-xs font-bold shadow-2xs transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
+            className="inline-flex h-8 items-center justify-center gap-1.5 rounded-[5px] border border-rose-200 bg-white hover:bg-rose-50 text-rose-600 px-3 text-[13px] font-medium transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
           >
             <Trash2 className="h-3.5 w-3.5" />
             <span>Delete Account</span>
@@ -272,15 +271,15 @@ export default function DashboardSettingsPage() {
       {/* ── Edit Email Modal ── */}
       {showEditEmailModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md rounded-[5px] border border-[#e2e8f0] bg-white p-5 sm:p-6 shadow-2xl space-y-4 text-left">
+          <div className="relative w-full max-w-md rounded-[5px] border border-[#ECECF0] bg-white p-5 sm:p-6 shadow-xl space-y-4 text-left">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm sm:text-base font-bold text-[#0f172a]">
+              <h3 className="text-[16px] font-semibold text-[#18181B]">
                 Update Email Address
               </h3>
               <button
                 type="button"
                 onClick={() => setShowEditEmailModal(false)}
-                className="text-[#64748b] hover:text-[#0f172a] p-1 rounded-[5px]"
+                className="text-[#6B6B76] hover:text-[#18181B] p-1 rounded-[5px]"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -288,33 +287,38 @@ export default function DashboardSettingsPage() {
 
             <form onSubmit={handleUpdateEmail} className="space-y-4">
               <div>
-                <label className="text-xs font-medium text-[#64748b] block mb-1.5">
+                <label className="text-[12px] font-medium text-[#6B6B76] block mb-1.5">
                   Email Address
                 </label>
-                <input
-                  type="email"
-                  value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
-                  className="w-full rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-2 text-sm text-[#0f172a] focus:border-[#7A2253] focus:outline-none shadow-2xs"
-                  placeholder="name@example.com"
-                  required
-                />
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                    <Mail className="h-4 w-4" />
+                  </span>
+                  <input
+                    type="email"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    className="flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    placeholder="name@example.com"
+                    required
+                  />
+                </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#e2e8f0]">
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#ECECF0]">
                 <button
                   type="button"
                   onClick={() => setShowEditEmailModal(false)}
-                  className="rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] px-3.5 py-2 text-xs font-semibold text-[#0f172a] cursor-pointer"
+                  className="h-8 rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] px-3.5 text-[13px] font-medium text-[#18181B] cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isUpdatingEmail}
-                  className="rounded-[5px] bg-[#7A2253] hover:bg-[#661842] text-white px-4 py-2 text-xs font-bold transition-colors cursor-pointer disabled:opacity-50"
+                  className="h-8 rounded-[5px] bg-[#7A2253] hover:bg-[#661842] text-white px-4 text-[13px] font-medium transition-colors cursor-pointer disabled:opacity-50"
                 >
-                  {isUpdatingEmail ? "Saving..." : "Save Changes"}
+                  {isUpdatingEmail ? "Saving..." : "Save changes"}
                 </button>
               </div>
             </form>
@@ -325,18 +329,18 @@ export default function DashboardSettingsPage() {
       {/* ── Confirm Delete Account Modal ── */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md rounded-[5px] border border-[#e2e8f0] bg-white p-5 sm:p-6 shadow-2xl space-y-4 text-left">
+          <div className="relative w-full max-w-md rounded-[5px] border border-[#ECECF0] bg-white p-5 sm:p-6 shadow-xl space-y-4 text-left">
             {/* Header */}
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-[5px] bg-rose-100 text-rose-600 shrink-0">
-                  <AlertTriangle className="h-4.5 w-4.5" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-rose-50 text-rose-600 shrink-0">
+                  <AlertTriangle className="h-4 w-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-[#0f172a]">
+                  <h3 className="text-[16px] font-semibold text-[#18181B]">
                     Delete account
                   </h3>
-                  <p className="text-xs text-[#64748b]">
+                  <p className="text-[12px] text-[#6B6B76]">
                     This action cannot be undone.
                   </p>
                 </div>
@@ -345,7 +349,7 @@ export default function DashboardSettingsPage() {
               <button
                 type="button"
                 onClick={() => !isDeleting && setShowDeleteModal(false)}
-                className="text-[#64748b] hover:text-[#0f172a] p-1 rounded-[5px] transition-colors cursor-pointer"
+                className="text-[#6B6B76] hover:text-[#18181B] p-1 rounded-[5px] transition-colors cursor-pointer"
                 aria-label="Close modal"
               >
                 <X className="h-4 w-4" />
@@ -353,19 +357,19 @@ export default function DashboardSettingsPage() {
             </div>
 
             {/* Description */}
-            <p className="text-xs text-[#64748b] leading-relaxed">
+            <p className="text-[13px] text-[#3F3F46] leading-relaxed">
               Are you sure you want to permanently delete your Inflixo account?
               All your series, episodes, links, and public profile data will be
               permanently removed.
             </p>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#e2e8f0]">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#ECECF0]">
               <button
                 type="button"
                 disabled={isDeleting}
                 onClick={() => setShowDeleteModal(false)}
-                className="rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#0f172a] px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50"
+                className="h-8 rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-[#18181B] px-3.5 text-[13px] font-medium transition-colors cursor-pointer disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -374,7 +378,7 @@ export default function DashboardSettingsPage() {
                 type="button"
                 disabled={isDeleting}
                 onClick={handleConfirmDelete}
-                className="rounded-[5px] bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 text-xs font-bold transition-all cursor-pointer shadow-xs disabled:opacity-50 inline-flex items-center gap-1.5"
+                className="h-8 rounded-[5px] bg-rose-600 hover:bg-rose-700 text-white px-4 text-[13px] font-medium transition-all cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5"
               >
                 {isDeleting ? (
                   <>

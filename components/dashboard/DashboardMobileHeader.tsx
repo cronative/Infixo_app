@@ -6,7 +6,7 @@ import { ArrowLeft, Menu, ExternalLink, Copy } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
-import { Logo } from "@/components/shared/Logo";
+import Image from "next/image";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
 
 const ICON_BTN =
@@ -53,9 +53,16 @@ export function DashboardMobileHeader({
 
         <div className="min-w-0 flex-1 px-1">
           {title ? (
-            <p className="truncate text-[17px] font-semibold tracking-tight text-[#0f172a]">{title}</p>
+            <p className="line-clamp-2 break-words text-[17px] font-semibold tracking-tight text-[#0f172a]" title={title}>{title}</p>
           ) : (
-            <Logo size="sm" />
+            <Image
+              src="/images/inflixo-wordmark-title.png"
+              alt="Inflixo"
+              width={628}
+              height={186}
+              className="h-7 w-auto object-contain select-none"
+              priority
+            />
           )}
         </div>
 

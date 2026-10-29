@@ -77,6 +77,7 @@ export function InstagramFetcher({ username, onConfirmSync, onBeforeFetch, varia
     if (!previewData || previewData.platform !== "instagram") return;
     const fetchedUser = previewData.data;
 
+    if (saving) return;
     setSaving(true);
     const nowIso = new Date().toISOString();
 
@@ -91,21 +92,17 @@ export function InstagramFetcher({ username, onConfirmSync, onBeforeFetch, varia
           followers: fetchedUser.follower_count,
           posts: fetchedUser.media_count,
           isVerified: Boolean(fetchedUser.is_verified),
-          avatarUrl: fetchedUser.profile_pic_url,
           biography: fetchedUser.biography,
           lastSyncedAt: nowIso,
         },
       };
 
       updateSocials(updatedSocials);
-      SocialService.saveAccounts(updatedSocials);
 
-      const email = authRepository.getPendingEmail() || profile.email;
-      await fetch("/api/creator/socials", {
+      const res = await fetch("/api/creator/socials", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: email || undefined,
           platform: "instagram",
           accountName: fetchedUser.full_name || fetchedUser.username,
           username: fetchedUser.username,
@@ -113,7 +110,15 @@ export function InstagramFetcher({ username, onConfirmSync, onBeforeFetch, varia
           mediaCount: fetchedUser.media_count || 0,
           isVerified: Boolean(fetchedUser.is_verified),
         }),
-      }).catch((e) => console.error("Failed to save Instagram to DB:", e));
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => null);
+        throw new Error(errJson?.message || "Failed to link Instagram profile");
+      }
+
+      const resJson = await res.json();
+      const createdRow = resJson?.data;
 
       const patch: Partial<typeof profile> = {};
       if (!profile.displayName || profile.displayName === "Your name") {
@@ -121,9 +126,6 @@ export function InstagramFetcher({ username, onConfirmSync, onBeforeFetch, varia
       }
       if (!profile.bio && fetchedUser.biography) {
         patch.bio = fetchedUser.biography.slice(0, 160);
-      }
-      if (!profile.photoDataUrl && fetchedUser.profile_pic_url) {
-        patch.photoDataUrl = fetchedUser.profile_pic_url;
       }
 
       if (Object.keys(patch).length > 0) {
@@ -133,11 +135,11 @@ export function InstagramFetcher({ username, onConfirmSync, onBeforeFetch, varia
       showToast(`Instagram profile @${fetchedUser.username} linked successfully! ✨🎉`);
 
       if (onConfirmSync) {
-        onConfirmSync(fetchedUser);
+        onConfirmSync(createdRow || fetchedUser);
       }
     } catch (err: any) {
       console.error("Instagram confirm error:", err);
-      showToast("Failed to connect Instagram profile. Please try again.", "error");
+      showToast(err.message || "Failed to connect Instagram profile. Please try again.", "error");
     } finally {
       setSaving(false);
       setModalOpen(false);

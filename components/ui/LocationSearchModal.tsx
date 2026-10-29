@@ -119,15 +119,17 @@ export function LocationSearchModal({
         {mode === "search" ? (
           <div className="space-y-3">
             {/* Search Input */}
-            <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
+            <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <Search className="h-4 w-4" />
+              </span>
               <input
                 type="text"
                 autoFocus
                 placeholder="Search city, state, or country..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="w-full rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] py-2.5 pl-10 pr-4 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 focus:border-[#7A2253] focus:bg-white focus:outline-none transition-colors"
+                className="h-10 flex-1 min-w-0 bg-transparent px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 outline-none"
               />
             </div>
 
@@ -177,42 +179,48 @@ export function LocationSearchModal({
           <div className="space-y-3.5 text-left">
             <div className="space-y-1">
               <label className="block text-[13px] font-medium text-[#0f172a]">City <span className="text-rose-500">*</span></label>
-              <div className="relative">
-                <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
+              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                  <Building className="h-4 w-4" />
+                </span>
                 <input
                   type="text"
                   placeholder="e.g. Surat, Austin, Kyoto"
                   value={customCity}
                   onChange={(e) => setCustomCity(e.target.value)}
-                  className="w-full rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] py-2.5 pl-10 pr-3.5 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 focus:border-[#7A2253] focus:bg-white focus:outline-none transition-colors"
+                  className="h-10 flex-1 min-w-0 bg-transparent px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 outline-none"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
               <label className="block text-[13px] font-medium text-[#0f172a]">State or Region <span className="text-[#64748b] font-normal">(Optional)</span></label>
-              <div className="relative">
-                <Navigation className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
+              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                  <Navigation className="h-4 w-4" />
+                </span>
                 <input
                   type="text"
                   placeholder="e.g. Gujarat, California"
                   value={customState}
                   onChange={(e) => setCustomState(e.target.value)}
-                  className="w-full rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] py-2.5 pl-10 pr-3.5 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 focus:border-[#7A2253] focus:bg-white focus:outline-none transition-colors"
+                  className="h-10 flex-1 min-w-0 bg-transparent px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 outline-none"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
               <label className="block text-[13px] font-medium text-[#0f172a]">Country <span className="text-rose-500">*</span></label>
-              <div className="relative">
-                <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
+              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                  <Globe className="h-4 w-4" />
+                </span>
                 <input
                   type="text"
                   placeholder="e.g. India, United States, Japan"
                   value={customCountry}
                   onChange={(e) => setCustomCountry(e.target.value)}
-                  className="w-full rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] py-2.5 pl-10 pr-3.5 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 focus:border-[#7A2253] focus:bg-white focus:outline-none transition-colors"
+                  className="h-10 flex-1 min-w-0 bg-transparent px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 outline-none"
                 />
               </div>
             </div>

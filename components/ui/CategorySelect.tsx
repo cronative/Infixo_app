@@ -150,24 +150,24 @@ export function CategorySelect({
       {/* Field Label & Count Badge Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] text-[#7A2253] shrink-0">
-            <Tag className="h-5 w-5" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] shrink-0">
+            <Tag className="h-4 w-4" />
           </div>
           <div>
-            <h2 className="text-sm sm:text-base font-semibold text-[#0f172a]">
+            <h2 className="text-[16px] font-semibold text-[#18181B]">
               What do you create? <span className="text-red-500">*</span>
             </h2>
-            <p className="text-xs text-[#64748b] font-normal mt-0.5">
+            <p className="text-[12px] text-[#6B6B76] font-normal mt-0.5">
               Select up to {max} niches or creator types that best describe you.
             </p>
           </div>
         </div>
-        <span className="bg-[#FFF0F5] text-[#7A2253] border border-[#FCE7F3] text-xs font-semibold px-2.5 py-0.5 rounded-[5px] shrink-0">
+        <span className="h-6 inline-flex items-center bg-[#F7EEF2] text-[#7A2253] text-[12px] font-medium px-2 rounded-[5px] shrink-0">
           {selectedCategories.length} / {max} selected
         </span>
       </div>
 
-      {error && <p className="text-xs font-medium text-rose-500">{error}</p>}
+      {error && <p className="text-[12px] font-medium text-rose-500">{error}</p>}
 
       {/* Select Trigger Box with Selected Chips Inside */}
       <div
@@ -180,25 +180,25 @@ export function CategorySelect({
             openPicker();
           }
         }}
-        className={`flex min-h-[46px] w-full items-center justify-between gap-2.5 rounded-[5px] border bg-white px-3 py-2 text-left shadow-2xs transition-all cursor-pointer ${
+        className={`flex min-h-[46px] w-full items-center justify-between gap-2.5 rounded-[5px] border bg-white px-3 py-2 text-left shadow-none transition-all cursor-pointer ${
           isOpen
             ? "border-[#7A2253] ring-1 ring-[#7A2253]/20"
             : error
               ? "border-rose-400"
-              : "border-[#fbcfe8] hover:border-[#7A2253]"
+              : "border-[#ECECF0] hover:border-[#7A2253]"
         }`}
         aria-expanded={isOpen}
       >
         <div className="min-w-0 flex-1 flex flex-wrap gap-1.5 items-center">
           {selectedCategories.length === 0 ? (
-            <span className="text-xs sm:text-sm font-semibold text-[#94a3b8]">
+            <span className="text-[13px] font-medium text-[#94a3b8]">
               Select niches or creator types... (e.g. Food, Comedy, Tech)
             </span>
           ) : (
             selectedCategories.map((category) => (
               <span
                 key={category}
-                className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#FCE7F3] bg-[#FFF0F5] px-2.5 py-1 text-xs font-semibold text-[#7A2253]"
+                className="h-6 inline-flex items-center gap-1.5 rounded-[5px] bg-[#F7EEF2] px-2 text-[12px] font-medium text-[#7A2253]"
               >
                 <span>{getCategoryEmoji(category)}</span>
                 <span>{category === "Other" && customValue ? customValue : category}</span>
@@ -217,13 +217,13 @@ export function CategorySelect({
             ))
           )}
         </div>
-        <ChevronDown className={`h-4 w-4 shrink-0 text-[#64748b] transition-transform ${isOpen ? "rotate-180" : ""}`} />
+        <ChevronDown className={`h-4 w-4 shrink-0 text-[#6B6B76] transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </div>
 
       {/* Popular Niches Quick Row */}
       <div className="space-y-2 pt-0.5">
-        <div className="flex items-center gap-1.5 text-xs font-bold text-[#0f172a]">
-          <TrendingUp className="h-3.5 w-3.5 text-[#e11d48]" />
+        <div className="flex items-center gap-1.5 text-[12px] font-semibold text-[#18181B]">
+          <TrendingUp className="h-3.5 w-3.5 text-[#7A2253]" />
           <span>Popular niches</span>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -234,10 +234,10 @@ export function CategorySelect({
                 key={niche.name}
                 type="button"
                 onClick={() => toggleCategory(niche.name)}
-                className={`rounded-[5px] border px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
+                className={`h-8 rounded-[5px] border px-3 text-[12px] font-medium transition-all cursor-pointer ${
                   isSelected
-                    ? "bg-[#7A2253] text-white border-[#7A2253] shadow-xs"
-                    : "bg-[#f8fafc] hover:bg-[#f1f5f9] border-[#e2e8f0] text-[#1e293b]"
+                    ? "bg-[#7A2253] text-white border-[#7A2253] shadow-none"
+                    : "bg-[#FAFAFB] hover:bg-white border-[#ECECF0] text-[#3F3F46]"
                 }`}
               >
                 {niche.name}
@@ -284,14 +284,16 @@ export function CategorySelect({
           {/* Modal Body - Scrollable */}
           <div className="flex-1 min-h-0 overflow-y-auto px-5 sm:px-6 py-4 space-y-5">
             {/* Search Input */}
-            <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
+            <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <Search className="h-4 w-4" />
+              </span>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search niches... (e.g. Food, Comedy, Tech, Gaming)"
-                className="h-11 w-full rounded-[5px] border border-[#E2E8F0] bg-white pl-10 pr-4 text-sm font-medium text-[#0F172A] placeholder:text-[#94A3B8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]"
+                className="h-10 flex-1 min-w-0 bg-transparent px-3 text-xs sm:text-sm font-medium text-[#0F172A] placeholder:text-[#94A3B8] outline-none"
                 autoFocus
               />
             </div>

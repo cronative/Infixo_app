@@ -81,7 +81,14 @@ export function ShareProfileModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Share Profile" size="sm">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Share Profile"
+      description="Share your profile link or download your creator QR code."
+      icon={<Share2 className="h-5 w-5" />}
+      size="sm"
+    >
       <ModalBody>
         <div className="flex flex-col items-center text-center space-y-4 pt-1 pb-2">
           {/* QR Code Container */}

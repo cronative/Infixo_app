@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Trash2, Loader2 } from "lucide-react";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 
 interface ConfirmModalProps {
@@ -38,22 +38,26 @@ export function ConfirmModal({
       showCloseButton={!loading}
       closeOnEscape={!loading}
       closeOnBackdropClick={!loading}
+      title={title}
+      description={isDestructive ? "This action cannot be undone." : "Please review before proceeding."}
+      icon={
+        isDestructive ? (
+          <Trash2 className="h-5 w-5 text-rose-600" />
+        ) : (
+          <AlertCircle className="h-5 w-5 text-[#7A2253]" />
+        )
+      }
+      iconBoxClassName={
+        isDestructive
+          ? "bg-rose-50 border border-rose-200 text-rose-600"
+          : "bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]"
+      }
+      wrapHeader
     >
-      <ModalBody className="p-5 sm:p-6 space-y-3">
-        <div className="flex items-start gap-3.5">
-          <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] shadow-xs ${isDestructive ? "bg-rose-50 text-[#ef4444] border border-rose-200" : "bg-[#7A2253]/[0.08] text-[#7A2253] border border-[#7A2253]/10"
-            }`}>
-            <AlertCircle className="h-4.5 w-4.5" />
-          </div>
-          <div className="space-y-1 min-w-0 flex-1 text-left">
-            <h3 className="font-display text-base font-bold text-[#7A2253] leading-snug">
-              {title}
-            </h3>
-            <p className="text-xs font-medium text-[#64748b] leading-relaxed">
-              {description}
-            </p>
-          </div>
-        </div>
+      <ModalBody className="p-5 sm:p-6 text-left">
+        <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
+          {description}
+        </p>
       </ModalBody>
 
       <ModalFooter className="px-5 sm:px-6 py-3.5">
@@ -62,7 +66,7 @@ export function ConfirmModal({
           onClick={onClose}
           disabled={loading}
           autoFocus={focusCancel}
-          className="h-9 px-4 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer disabled:opacity-50"
+          className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer disabled:opacity-50"
         >
           {cancelText}
         </button>
@@ -70,9 +74,13 @@ export function ConfirmModal({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className={`h-9 font-semibold text-xs px-4.5 rounded-[5px] transition-all cursor-pointer shadow-md inline-flex items-center gap-1.5 disabled:opacity-50 text-white ${isDestructive ? "bg-rose-600 hover:bg-rose-700 shadow-rose-600/20" : "bg-[#7A2253] hover:opacity-95 shadow-[#7A2253]/20"
-            }`}
+          className={`h-10 font-semibold text-xs px-5 rounded-[5px] transition-all cursor-pointer shadow-md inline-flex items-center gap-1.5 disabled:opacity-50 text-white ${
+            isDestructive
+              ? "bg-rose-600 hover:bg-rose-700 shadow-rose-600/20"
+              : "bg-[#7A2253] hover:opacity-95 shadow-[#7A2253]/20"
+          }`}
         >
+          {loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
           <span>{loading ? "Processing..." : confirmText}</span>
         </button>
       </ModalFooter>

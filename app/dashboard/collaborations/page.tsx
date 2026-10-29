@@ -193,10 +193,10 @@ export default function DashboardCollaborationsPage() {
             <button
               type="button"
               onClick={() => handleOpenModal()}
-              className="inline-flex h-9 items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] px-4 text-xs font-bold text-white transition-colors cursor-pointer shadow-2xs"
+              className="dash-btn-primary"
             >
               <Plus className="h-3.5 w-3.5" />
-              <span>Add Collaboration</span>
+              <span>Add collaboration</span>
             </button>
           ) : null
         }
@@ -225,11 +225,11 @@ export default function DashboardCollaborationsPage() {
           }
         />
       ) : (
-        <div className="rounded-[5px] border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] shadow-xs">
+        <div className="rounded-[5px] border border-[#ECECF0] bg-white divide-y divide-[#ECECF0] shadow-none">
           {collaborations.map((collab) => (
             <div
               key={collab.id}
-              className={`px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#f1f5f9] transition-colors text-left ${collab.isActive ? "" : "opacity-60 bg-[#f8fafc]/40"
+              className={`px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#FAFAFB] transition-colors text-left ${collab.isActive ? "" : "opacity-60 bg-[#FAFAFB]/40"
                 }`}
             >
               {/* Left: Brand Logo / Handshake badge + Details */}
@@ -239,32 +239,32 @@ export default function DashboardCollaborationsPage() {
                   <img
                     src={collab.brandLogoUrl}
                     alt={collab.brandName}
-                    className="h-8.5 w-8.5 rounded-[5px] object-cover border border-[#e2e8f0] shrink-0"
+                    className="h-8 w-8 rounded-[5px] object-cover border border-[#ECECF0] shrink-0"
                   />
                 ) : (
-                  <div className="flex h-8.5 w-8.5 items-center justify-center rounded-[5px] bg-[#7A225314] border border-[#e2e8f0] text-[#7A2253] font-bold text-xs shrink-0">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] font-semibold text-[12px] shrink-0">
                     <Handshake className="h-4 w-4" />
                   </div>
                 )}
 
                 <div className="min-w-0 flex-1 space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <h3 className="truncate font-semibold text-xs sm:text-[13px] text-[#0f172a]">{collab.brandName}</h3>
+                    <h3 className="line-clamp-2 break-words font-semibold text-[14px] text-[#18181B]" title={collab.brandName}>{collab.brandName}</h3>
                     {collab.campaignTitle && (
-                      <span className="text-[11px] font-semibold text-[#7A2253] truncate">
+                      <span className="text-[12px] font-medium text-[#7A2253] line-clamp-2 break-words">
                         • {collab.campaignTitle}
                       </span>
                     )}
                     {!collab.isActive && (
-                      <span className="text-[10px] font-semibold text-[#64748b] bg-zinc-100 px-1.5 py-0.2 rounded-[5px] shrink-0">
+                      <span className="h-6 inline-flex items-center text-[12px] font-medium text-[#6B6B76] bg-[#FAFAFB] border border-[#ECECF0] px-2 rounded-[5px] shrink-0">
                         Hidden
                       </span>
                     )}
                   </div>
                   {collab.description ? (
-                    <p className="text-[11px] text-[#64748b] line-clamp-1 leading-snug">{collab.description}</p>
+                    <p className="text-[12px] text-[#6B6B76] line-clamp-1 leading-snug">{collab.description}</p>
                   ) : (
-                    <p className="text-[11px] font-medium text-[#64748b]">Brand Partnership</p>
+                    <p className="text-[12px] font-medium text-[#6B6B76]">Brand Partnership</p>
                   )}
                 </div>
               </div>
@@ -278,11 +278,11 @@ export default function DashboardCollaborationsPage() {
                       href={collab.campaignUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] px-2.5 py-1 text-xs font-semibold text-[#7A2253] transition-all hover:shadow-xs"
+                      className="inline-flex h-8 items-center gap-1 rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] px-2.5 text-[13px] font-medium text-[#18181B] transition-colors"
                       title="View Campaign Link"
                     >
                       <span>View</span>
-                      <ExternalLink className="h-3 w-3 text-[#7A2253]" />
+                      <ExternalLink className="h-3 w-3 text-[#6B6B76]" />
                     </a>
                   )}
 
@@ -290,9 +290,9 @@ export default function DashboardCollaborationsPage() {
                   <button
                     type="button"
                     onClick={() => handleToggleCollab(collab)}
-                    className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-1 rounded-[5px] border transition-colors cursor-pointer ${collab.isActive
+                    className={`inline-flex h-8 items-center gap-1 text-[12px] font-medium px-2.5 rounded-[5px] border transition-colors cursor-pointer ${collab.isActive
                       ? "bg-[#EAF7F0] text-[#17845B] border-[#17845B]/20"
-                      : "bg-zinc-100 text-[#64748b] border-[#e2e8f0]"
+                      : "bg-[#FAFAFB] text-[#6B6B76] border-[#ECECF0]"
                       }`}
                     title={collab.isActive ? "Visible on profile" : "Hidden from profile"}
                   >
@@ -304,7 +304,7 @@ export default function DashboardCollaborationsPage() {
                   <button
                     type="button"
                     onClick={() => handleOpenModal(collab)}
-                    className="flex h-7.5 w-7.5 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                    className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-[#6B6B76] hover:text-[#18181B] transition-colors cursor-pointer"
                     title="Edit collaboration"
                   >
                     <Pencil className="h-3.5 w-3.5" />
@@ -314,7 +314,7 @@ export default function DashboardCollaborationsPage() {
                   <button
                     type="button"
                     onClick={() => setCollabToDelete(collab)}
-                    className="flex h-7.5 w-7.5 items-center justify-center rounded-[5px] border border-rose-100 bg-white hover:bg-[#f1f5f9] text-[#C2414B] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                    className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-rose-200 bg-white hover:bg-rose-50 text-rose-600 transition-colors cursor-pointer"
                     title="Remove collaboration"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -414,7 +414,7 @@ export default function DashboardCollaborationsPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         size="md"
-        title={editingCollab ? "Edit Collaboration" : "Add Collaboration"}
+        title={editingCollab ? "Edit collaboration" : "Add collaboration"}
         description="Showcase a brand partnership or commercial campaign."
         icon={<Handshake className="h-4 w-4" />}
       >
@@ -520,7 +520,7 @@ export default function DashboardCollaborationsPage() {
               disabled={isSubmitting}
               className="h-9 bg-[#7A2253] hover:bg-brand-hover text-white font-semibold text-xs px-4 rounded-[5px] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
             >
-              <span>{isSubmitting ? "Saving..." : editingCollab ? "Save Changes" : "Add Collaboration"}</span>
+              <span>{isSubmitting ? "Saving..." : editingCollab ? "Save changes" : "Add collaboration"}</span>
             </button>
           </ModalFooter>
         </form>

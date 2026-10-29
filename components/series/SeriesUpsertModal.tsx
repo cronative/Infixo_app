@@ -10,6 +10,7 @@ import {
   AlertCircle,
   Pencil,
   Check,
+  Film,
 } from "lucide-react";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { useToast } from "@/contexts/ToastContext";
@@ -445,25 +446,32 @@ export function SeriesUpsertModal({
       }}
       size="lg"
       title={isEditing ? "Edit Series Details" : "Create New Series"}
+      description={isEditing ? "Update your series info and episodes." : "Add a video series with episodes for your audience."}
+      icon={<Film className="h-5 w-5" />}
       showCloseButton={!saving}
     >
-      <form onSubmit={handleSubmit}>
-        <ModalBody className="p-5 sm:p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+      <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+        <ModalBody className="p-5 sm:p-6 space-y-4 flex-1 min-h-0 overflow-y-auto">
           {/* 1. Series Title */}
           <div>
             <label className="block text-[13px] font-semibold text-[#0f172a] mb-1.5">
               Series Title <span className="text-rose-500">*</span>
             </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. 3 Days Street Food Challenge"
-              className="w-full rounded-[5px] border border-[#e2e8f0] bg-white px-3 py-2 text-sm text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20"
-              required
-              disabled={saving}
-              autoFocus
-            />
+            <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <Film className="h-4 w-4" />
+              </span>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g. 3 Days Street Food Challenge"
+                className="flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                required
+                disabled={saving}
+                autoFocus
+              />
+            </div>
           </div>
 
           {/* Platform Selector (Segmented 4 options: YouTube · Instagram · Facebook · Mix) */}
@@ -768,12 +776,12 @@ export function SeriesUpsertModal({
           </div>
         </ModalBody>
 
-        <ModalFooter className="flex items-center justify-between border-t border-slate-200 px-5 py-3">
+        <ModalFooter className="flex items-center justify-between border-t border-[#e2e8f0] px-5 sm:px-6 py-3.5">
           <button
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="rounded-[5px] border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-[#64748b] hover:bg-slate-50 transition-colors cursor-pointer"
+            className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -791,7 +799,7 @@ export function SeriesUpsertModal({
             <button
               type="submit"
               disabled={saving || !isFormSubmittable}
-              className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] px-5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-[#601a41] transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              className="h-10 inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] px-5 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 hover:opacity-95 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {saving ? (
                 <>

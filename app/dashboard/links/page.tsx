@@ -22,6 +22,9 @@ import {
 } from "lucide-react";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { PAGE_COPY } from "@/components/dashboard/pageCopy";
+import { useCreator } from "@/contexts/CreatorContext";
+import { PhonePreview } from "@/components/dashboard/PhonePreview";
 import { Chip } from "@/components/ui/Chip";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -36,7 +39,7 @@ import { OverLimitBadge } from "@/components/ui/OverLimitBadge";
 
 const MAX_TITLE = 60;
 const MAX_CHILDREN = 10;
-const primaryButton = "inline-flex items-center gap-1.5 h-9 px-4 rounded-[5px] bg-[#7A2253] text-white text-xs font-bold hover:bg-[#681c46] shadow-2xs transition-colors cursor-pointer";
+const primaryButton = "dash-btn-primary";
 const fieldClass = "relative flex items-center h-11 rounded-[5px] border border-slate-200 bg-white focus-within:border-[#7A2253] focus-within:ring-1 focus-within:ring-[#7A2253]/20 overflow-hidden";
 const fieldIconClass = "flex h-full w-12 shrink-0 items-center justify-center border-r border-slate-200 bg-white text-slate-500";
 const fieldInputClass = "w-full h-full px-3.5 text-xs sm:text-[13px] font-medium text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:outline-none bg-transparent";
@@ -73,11 +76,11 @@ function cacheLinks(items: LinkDto[]) {
 }
 
 function LinkIconBox({ kind, url, iconUrl, title, small = false }: { kind: "link" | "group"; url: string; iconUrl: string | null; title: string; small?: boolean }) {
-  const size = small ? "h-7 w-7" : "h-9 w-9";
+  const size = small ? "h-6 w-6" : "h-8 w-8";
   if (kind === "group") {
     return (
-      <div className={`${size} rounded-[5px] flex items-center justify-center shrink-0 bg-[#eef2f6] text-[#475569]`}>
-        <Folder className="h-4 w-4" />
+      <div className={`${size} rounded-[5px] flex items-center justify-center shrink-0 bg-[#F7EEF2] text-[#7A2253]`}>
+        <Folder className={small ? "h-3.5 w-3.5" : "h-4 w-4"} />
       </div>
     );
   }
@@ -87,20 +90,21 @@ function LinkIconBox({ kind, url, iconUrl, title, small = false }: { kind: "link
   }
   if (iconUrl) {
     return (
-      <div className={`${size} rounded-[5px] flex items-center justify-center shrink-0 overflow-hidden bg-white border border-[#e2e8f0]`}>
+      <div className={`${size} rounded-[5px] flex items-center justify-center shrink-0 overflow-hidden bg-white border border-[#ECECF0]`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={iconUrl} alt="" className={small ? "h-4 w-4 object-contain" : "h-5 w-5 object-contain"} />
+        <img src={iconUrl} alt="" className={small ? "h-3.5 w-3.5 object-contain" : "h-4 w-4 object-contain"} />
       </div>
     );
   }
   return (
-    <div className={`${size} rounded-[5px] flex items-center justify-center shrink-0 bg-[#FFF5F7] border border-[#FCE7F3]`}>
-      <span className="text-xs font-bold uppercase text-[#7A2253]">{(title.trim()[0] || extractBareDomain(url)[0] || "L").toUpperCase()}</span>
+    <div className={`${size} rounded-[5px] flex items-center justify-center shrink-0 bg-[#F7EEF2]`}>
+      <span className="text-[12px] font-semibold uppercase text-[#7A2253]">{(title.trim()[0] || extractBareDomain(url)[0] || "L").toUpperCase()}</span>
     </div>
   );
 }
 
 export default function DashboardLinksPage() {
+  const { profile } = useCreator();
   const { showToast } = useToast();
   const [links, setLinks] = useState<LinkDto[]>([]);
   const [limit, setLimit] = useState<number | null>(null);
@@ -282,13 +286,10 @@ export default function DashboardLinksPage() {
   return (
     <PageContainer className="text-left">
       <PageHeader
-        title="Links"
-        subtitle="Everything your fans should find — tickets, accounts, websites."
+        {...PAGE_COPY.links}
+        meta={!loading && !loadError ? `${limit === null ? used : `${used} of ${limit}`} · ${planName}` : undefined}
         actions={
           <>
-            {!loading && !loadError && (
-              <Chip variant="soft">{limit === null ? `${used}` : `${used} of ${limit}`} · {planName}</Chip>
-            )}
             {isLimitReached ? (
               <Link href="/dashboard/subscription" className={primaryButton}>
                 <Sparkles className="h-4 w-4" />
@@ -304,8 +305,10 @@ export default function DashboardLinksPage() {
         }
       />
 
-      {loading ? (
-        <div role="status" aria-label="Loading links" className="space-y-2">
+      <div className="flex items-start gap-8">
+        <div className="flex-1 min-w-0 space-y-5">
+          {loading ? (
+            <div role="status" aria-label="Loading links" className="space-y-2">
           {[1, 2, 3].map((id) => <div key={id} className="h-[58px] animate-pulse rounded-[5px] border border-[#e2e8f0] bg-slate-100" />)}
         </div>
       ) : loadError ? (
@@ -326,7 +329,7 @@ export default function DashboardLinksPage() {
           }
         />
       ) : (
-        <div className="rounded-[5px] border border-[#e2e8f0] bg-white divide-y divide-[#f1f5f9] shadow-2xs">
+        <div className="rounded-[5px] border border-[#ECECF0] bg-white divide-y divide-[#ECECF0] shadow-none">
           {links.map((link, index) => {
             const isGroup = link.kind === "group";
             const isOpen = expanded.has(link.id);
@@ -337,7 +340,7 @@ export default function DashboardLinksPage() {
                 onDrop={() => void drop(index)}
                 className={`text-left transition-colors ${dragIndex === index ? "opacity-50" : ""}`}
               >
-                <div className="flex items-center justify-between gap-3 px-3.5 sm:px-4 py-3 min-h-[58px] hover:bg-[#fafafa]">
+                <div className="flex items-center justify-between gap-3 px-3.5 sm:px-4 py-3 min-h-[58px] hover:bg-[#FAFAFB]">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <span
                       draggable
@@ -359,14 +362,14 @@ export default function DashboardLinksPage() {
                       className="min-w-0 flex-1 text-left cursor-pointer group"
                     >
                       <span className="flex items-center gap-1.5 min-w-0">
-                        <span className="truncate text-sm font-bold text-[#0f172a] group-hover:text-[#7A2253] transition-colors">{link.title}</span>
+                        <span className="line-clamp-2 break-words text-[14px] font-semibold text-[#18181B] group-hover:text-[#7A2253] transition-colors" title={link.title}>{link.title}</span>
                         {limit !== null && index >= limit && <OverLimitBadge />}
                         {link.pinned && (
-                          <span className="shrink-0 text-[10.5px] font-bold bg-[#FCE7F1] text-[#7A2253] px-1.5 py-0.5 rounded-[4px] leading-none">Pinned</span>
+                          <span className="shrink-0 h-6 inline-flex items-center text-[12px] font-medium bg-[#F7EEF2] text-[#7A2253] px-2 rounded-[5px] leading-none">Pinned</span>
                         )}
                         {isGroup && <ChevronDown className={`h-3.5 w-3.5 shrink-0 text-[#94a3b8] transition-transform ${isOpen ? "rotate-180" : ""}`} />}
                       </span>
-                      <span className="block truncate text-xs text-[#64748b]">
+                      <span className="block line-clamp-2 break-words text-[12px] text-[#6B6B76]">
                         {isGroup ? `${link.children.length} ${link.children.length === 1 ? "link" : "links"}` : extractBareDomain(link.url)}
                       </span>
                     </button>
@@ -376,7 +379,7 @@ export default function DashboardLinksPage() {
                     <button
                       type="button"
                       onClick={() => openEdit(link)}
-                      className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-[#64748b] hover:text-[#0f172a] transition-colors shadow-2xs cursor-pointer"
+                      className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-[#6B6B76] hover:text-[#18181B] transition-colors cursor-pointer"
                       title="Edit link"
                       aria-label={`Edit ${link.title}`}
                     >
@@ -385,7 +388,7 @@ export default function DashboardLinksPage() {
                     <button
                       type="button"
                       onClick={() => setMenuId((current) => (current === link.id ? null : link.id))}
-                      className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-[#64748b] hover:text-[#0f172a] transition-colors shadow-2xs cursor-pointer"
+                      className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-[#6B6B76] hover:text-[#18181B] transition-colors cursor-pointer"
                       aria-label={`More actions for ${link.title}`}
                       aria-haspopup="menu"
                       aria-expanded={menuId === link.id}
@@ -393,20 +396,20 @@ export default function DashboardLinksPage() {
                       <MoreVertical className="h-3.5 w-3.5" />
                     </button>
                     {menuId === link.id && (
-                      <div role="menu" className="absolute right-0 top-full mt-1.5 z-30 w-40 rounded-[5px] border border-[#e2e8f0] bg-white p-1 shadow-lg text-xs">
+                      <div role="menu" className="absolute right-0 top-full mt-1.5 z-30 w-40 rounded-[5px] border border-[#ECECF0] bg-white p-1 shadow-lg text-[13px]">
                         {!isGroup && (
                           <>
-                            <button type="button" role="menuitem" onClick={() => void togglePin(link)} className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-[5px] font-medium text-[#0f172a] hover:bg-[#f1f5f9] cursor-pointer">
+                            <button type="button" role="menuitem" onClick={() => void togglePin(link)} className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-[5px] font-medium text-[#18181B] hover:bg-[#FAFAFB] cursor-pointer">
                               {link.pinned ? <PinOff className="h-3.5 w-3.5" /> : <Pin className="h-3.5 w-3.5" />}
                               <span>{link.pinned ? "Unpin" : "Pin"}</span>
                             </button>
-                            <a role="menuitem" href={link.url} target="_blank" rel="noopener noreferrer" onClick={() => setMenuId(null)} className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-[5px] font-medium text-[#0f172a] hover:bg-[#f1f5f9]">
+                            <a role="menuitem" href={link.url} target="_blank" rel="noopener noreferrer" onClick={() => setMenuId(null)} className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-[5px] font-medium text-[#18181B] hover:bg-[#FAFAFB]">
                               <ExternalLink className="h-3.5 w-3.5" />
                               <span>Open</span>
                             </a>
                           </>
                         )}
-                        <button type="button" role="menuitem" onClick={() => { setMenuId(null); setDeleting(link); }} className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-[5px] font-medium text-[#ef4444] hover:bg-rose-50 cursor-pointer">
+                        <button type="button" role="menuitem" onClick={() => { setMenuId(null); setDeleting(link); }} className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-[5px] font-medium text-rose-600 hover:bg-rose-50 cursor-pointer">
                           <Trash2 className="h-3.5 w-3.5" />
                           <span>Delete</span>
                         </button>
@@ -423,12 +426,12 @@ export default function DashboardLinksPage() {
                         href={child.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 py-2 hover:bg-[#fafafa] transition-colors"
+                        className="flex items-center gap-2.5 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] px-3 py-2 hover:bg-white transition-colors"
                       >
                         <LinkIconBox kind="link" url={child.url} iconUrl={child.iconUrl} title={child.title} small />
                         <span className="min-w-0 flex-1">
-                          <span className="block truncate text-xs font-semibold text-[#0f172a]">{child.title}</span>
-                          <span className="block truncate text-[11px] text-[#64748b]">{extractBareDomain(child.url)}</span>
+                          <span className="block line-clamp-2 break-words text-[13px] font-semibold text-[#18181B]" title={child.title}>{child.title}</span>
+                          <span className="block line-clamp-2 break-words text-[12px] text-[#6B6B76]">{extractBareDomain(child.url)}</span>
                         </span>
                       </a>
                     ))}
@@ -439,6 +442,10 @@ export default function DashboardLinksPage() {
           })}
         </div>
       )}
+        </div>
+
+        <PhonePreview username={profile.username} subpath="links" refreshTrigger={links} links={links} />
+      </div>
 
       <ConfirmModal
         isOpen={Boolean(deleting)}

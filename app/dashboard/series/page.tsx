@@ -35,6 +35,8 @@ import { EpisodeEditModal } from "@/components/series/EpisodeEditModal";
 import { SeriesCsvImportModal } from "@/components/series/SeriesCsvImportModal";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { PAGE_COPY } from "@/components/dashboard/pageCopy";
+import { PhonePreview } from "@/components/dashboard/PhonePreview";
 import { slugifySeriesTitle, validateVideoUrl, validateUrlForSeriesPlatform } from "@/lib/videoUrl";
 import { OverLimitBadge } from "@/components/ui/OverLimitBadge";
 import { getPlanQuota } from "@/services/subscriptionLimits";
@@ -487,43 +489,33 @@ export default function MySeriesPage() {
     <PageContainer>
       {/* C1: Page Header */}
       <PageHeader
-        title="Series"
-        subtitle="Create, manage and share your video series"
-        actions={
+        {...PAGE_COPY.series}
+        meta={
           <>
-            {/* Usage Strip: "2 of 3 series · Starter" with Upgrade link at limit */}
-            <div className="flex items-center gap-1.5 text-xs text-[#64748b] bg-slate-50 border border-slate-200/80 px-3 py-1.5 rounded-[5px] h-9">
-              <span>
-                <strong className="text-[#0f172a]">{seriesList.length}</strong> of{" "}
-                {planData.limits.series === Infinity ? "Unlimited" : planData.limits.series} series ·{" "}
-                {planData.plan}
-              </span>
-              {isAtSeriesLimit && (
-                <button
-                  type="button"
-                  onClick={() => setLimitModalOpen(true)}
-                  className="ml-1 font-semibold text-[#7A2253] hover:underline cursor-pointer"
-                >
-                  Upgrade
-                </button>
-              )}
-            </div>
-
-            {/* Primary Action Button: "New series" */}
-            <button
-              type="button"
-              onClick={handleOpenCreateSeries}
-              className="inline-flex h-9 items-center gap-1.5 rounded-[5px] bg-[#7A2253] px-4 text-xs font-semibold text-white shadow-xs hover:bg-[#601a41] transition-colors cursor-pointer"
-            >
-              <Plus className="h-4 w-4" />
-              <span>New series</span>
-            </button>
+            {seriesList.length} of {planData.limits.series === Infinity ? "Unlimited" : planData.limits.series} series · {planData.plan}
+            {isAtSeriesLimit && (
+              <button
+                type="button"
+                onClick={() => setLimitModalOpen(true)}
+                className="ml-1.5 font-medium text-(--primary) hover:underline cursor-pointer"
+              >
+                Upgrade
+              </button>
+            )}
           </>
+        }
+        actions={
+          <button type="button" onClick={handleOpenCreateSeries} className="dash-btn-primary">
+            <Plus className="h-4 w-4" />
+            <span>New series</span>
+          </button>
         }
       />
 
-      {/* Search Input: Only when > 5 series */}
-      {seriesList.length > 5 && (
+      <div className="flex items-start gap-8">
+        <div className="flex-1 min-w-0 space-y-5">
+          {/* Search Input: Only when > 5 series */}
+          {seriesList.length > 5 && (
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94a3b8]" />
           <input
@@ -582,7 +574,7 @@ export default function MySeriesPage() {
               onDragStart={() => handleSeriesDragStart(sIndex)}
               onDragOver={(e) => e.preventDefault()}
               onDrop={() => handleSeriesDrop(sIndex)}
-              className="rounded-[5px] border border-[#e2e8f0] bg-white transition-all shadow-xs"
+              className="rounded-[5px] border border-[#ECECF0] bg-white transition-all shadow-none"
             >
               {/* C3: Series Row Header */}
               <div
@@ -601,7 +593,7 @@ export default function MySeriesPage() {
                   </div>
 
                   {/* 16:9 96px Cover Thumbnail or Platform Icon */}
-                  <div className="relative h-14 w-24 shrink-0 rounded-[4px] bg-slate-100 overflow-hidden border border-slate-200">
+                  <div className="relative h-14 w-24 shrink-0 rounded-[5px] bg-slate-100 overflow-hidden border border-[#ECECF0]">
                     {coverImg && !failedCovers.has(series.id) ? (
                       <img
                         src={coverImg}
@@ -619,11 +611,11 @@ export default function MySeriesPage() {
 
                   {/* Title & Info */}
                   <div className="min-w-0 flex-1">
-                    <h2 className="flex items-center gap-1.5 min-w-0 text-sm font-bold text-[#0f172a]">
-                      <span className="truncate">{series.title}</span>
+                    <h2 className="flex items-center gap-1.5 min-w-0 text-[14px] font-semibold text-[#18181B]">
+                      <span className="line-clamp-2 break-words" title={series.title}>{series.title}</span>
                       {seriesList.indexOf(series) >= getPlanQuota(subscription?.planKey).maxSeries && <OverLimitBadge />}
                     </h2>
-                    <p className="text-xs text-[#64748b] truncate mt-0.5">
+                    <p className="text-[12px] text-[#6B6B76] line-clamp-2 break-words mt-0.5">
                       {episodes.length} {episodes.length === 1 ? "episode" : "episodes"} ·{" "}
                       {series.language || "Hindi"} · {series.platform || "YouTube"}
                     </p>
@@ -643,7 +635,7 @@ export default function MySeriesPage() {
                         setActiveMenuId(null);
                         setActiveShareId(activeShareId === series.id ? null : series.id);
                       }}
-                      className="inline-flex h-8 items-center gap-1 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-medium text-[#475569] hover:bg-[#f8fafc] hover:text-[#7A2253] transition-colors cursor-pointer"
+                      className="inline-flex h-8 items-center gap-1 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-[13px] font-medium text-[#3F3F46] hover:bg-[#FAFAFB] hover:text-[#7A2253] transition-colors cursor-pointer"
                     >
                       <Share2 className="h-3.5 w-3.5" />
                       <span className="hidden sm:inline">Share</span>
@@ -714,7 +706,7 @@ export default function MySeriesPage() {
                           return (
                             <div
                               key={ep.id}
-                              className="group flex items-center justify-between gap-3 rounded-[5px] border border-[#e2e8f0] bg-white px-3 py-2 text-xs transition-colors hover:border-[#cbd5e1] hover:shadow-xs"
+                              className="group flex items-center justify-between gap-3 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] px-3 py-2 text-[13px] transition-colors hover:border-[#cbd5e1]"
                             >
                               {/* Left: Number + Title (Inline edit) */}
                               <div className="flex items-center gap-2.5 min-w-0 flex-1">
@@ -734,7 +726,7 @@ export default function MySeriesPage() {
                                         setInlineEditingEpNumberId(null);
                                       }
                                     }}
-                                    className="w-9 h-6 rounded-[3px] border border-[#7A2253] bg-white p-0 text-center font-mono text-[11px] font-bold text-[#0f172a] focus:outline-none"
+                                    className="w-9 h-6 rounded-[5px] border border-[#7A2253] bg-white p-0 text-center font-mono text-[12px] font-medium text-[#18181B] focus:outline-none"
                                     autoFocus
                                   />
                                 ) : (
@@ -743,7 +735,7 @@ export default function MySeriesPage() {
                                       setInlineEditingEpNumberId(ep.id);
                                       setInlineNumberValue(ep.episodeNumber || epIndex + 1);
                                     }}
-                                    className="font-mono text-[11px] font-bold text-[#64748b] hover:text-[#7A2253] hover:bg-slate-100 px-1 py-0.5 rounded cursor-pointer shrink-0 text-center select-none"
+                                    className="font-mono text-[12px] font-medium text-[#6B6B76] hover:text-[#7A2253] hover:bg-slate-100 px-1 py-0.5 rounded cursor-pointer shrink-0 text-center select-none"
                                     title="Click to edit episode number"
                                   >
                                     {formatEpisodeNumber(ep.episodeNumber || epIndex + 1)}
@@ -765,7 +757,7 @@ export default function MySeriesPage() {
                                           setInlineEditingEpId(null);
                                         }
                                       }}
-                                      className="w-full rounded-[3px] border border-[#7A2253] bg-white px-1.5 py-0.5 text-xs font-semibold text-[#0f172a] focus:outline-none"
+                                      className="w-full rounded-[5px] border border-[#7A2253] bg-white px-1.5 py-0.5 text-[13px] font-medium text-[#18181B] focus:outline-none"
                                       autoFocus
                                     />
                                   ) : (
@@ -774,7 +766,7 @@ export default function MySeriesPage() {
                                         setInlineEditingEpId(ep.id);
                                         setInlineTitleValue(ep.title);
                                       }}
-                                      className="font-medium text-[#0f172a] hover:text-[#7A2253] cursor-pointer truncate block hover:underline"
+                                      className="font-medium text-[#18181B] hover:text-[#7A2253] cursor-pointer line-clamp-2 break-words block hover:underline"
                                       title="Click to edit title inline"
                                     >
                                       {ep.title}
@@ -785,21 +777,21 @@ export default function MySeriesPage() {
 
                               {/* Right: Platform Icon + Actions (far right, no middle empty space) */}
                               <div className="flex items-center gap-1.5 shrink-0">
-                                {/* Platform Icon */}
-                                <div className="shrink-0 flex items-center justify-center w-5">
+                                {/* Platform Icon in 32px / 5px box */}
+                                <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] shrink-0" title={ep.platform || "Video"}>
                                   {ep.platform === "YouTube" && (
-                                    <YoutubeIcon className="h-3.5 w-3.5 text-red-500" />
+                                    <YoutubeIcon className="h-4 w-4 text-red-500" />
                                   )}
                                   {ep.platform === "Instagram" && (
-                                    <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />
+                                    <InstagramIcon className="h-4 w-4 text-pink-500" />
                                   )}
                                   {ep.platform === "Facebook" && (
-                                    <FacebookIcon className="h-3.5 w-3.5 text-blue-600" />
+                                    <FacebookIcon className="h-4 w-4 text-blue-600" />
                                   )}
                                 </div>
 
-                                {/* Actions visible at all times */}
-                                <div className="flex items-center gap-0.5">
+                                {/* Actions visible at all times: 32px buttons */}
+                                <div className="flex items-center gap-1">
                                   {/* Edit details */}
                                   <button
                                     type="button"
@@ -807,10 +799,10 @@ export default function MySeriesPage() {
                                       setEpisodeToEdit({ episode: ep, seriesId: series.id });
                                       setEpisodeEditModalOpen(true);
                                     }}
-                                    className="p-1 rounded text-slate-500 hover:text-[#7A2253] hover:bg-slate-100 cursor-pointer transition-colors"
+                                    className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#6B6B76] hover:text-[#7A2253] hover:bg-white border border-transparent hover:border-[#ECECF0] cursor-pointer transition-colors"
                                     title="Edit title and link"
                                   >
-                                    <Pencil className="h-3.5 w-3.5" />
+                                    <Pencil className="h-4 w-4" />
                                   </button>
 
                                   {/* Open link */}
@@ -819,10 +811,10 @@ export default function MySeriesPage() {
                                       href={ep.externalUrl}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="p-1 rounded text-slate-500 hover:text-[#0f172a] hover:bg-slate-100 transition-colors"
+                                      className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#6B6B76] hover:text-[#18181B] hover:bg-white border border-transparent hover:border-[#ECECF0] transition-colors"
                                       title="Open video"
                                     >
-                                      <ExternalLink className="h-3.5 w-3.5" />
+                                      <ExternalLink className="h-4 w-4" />
                                     </a>
                                   )}
 
@@ -830,10 +822,10 @@ export default function MySeriesPage() {
                                   <button
                                     type="button"
                                     onClick={() => handleDeleteEpisode(series.id, ep)}
-                                    className="p-1 rounded text-slate-500 hover:text-rose-600 hover:bg-rose-50 cursor-pointer transition-colors"
+                                    className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#6B6B76] hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100 cursor-pointer transition-colors"
                                     title="Delete episode"
                                   >
-                                    <Trash2 className="h-3.5 w-3.5" />
+                                    <Trash2 className="h-4 w-4" />
                                   </button>
                                 </div>
                               </div>
@@ -900,6 +892,10 @@ export default function MySeriesPage() {
             </div>
           );
         })}
+      </div>
+        </div>
+
+        <PhonePreview username={username || profile.username} subpath="series" refreshTrigger={seriesList} series={seriesList} />
       </div>
 
       {/* Create / Edit Series Modal */}

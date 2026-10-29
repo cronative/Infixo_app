@@ -46,6 +46,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { resizeImageToDataUrl } from "@/lib/imageResize";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import { OverLimitBadge } from "@/components/ui/OverLimitBadge";
 import { getPlanQuota } from "@/services/subscriptionLimits";
 
@@ -479,22 +480,13 @@ export default function DashboardSetupPage() {
   return (
     <PageContainer>
       <PageHeader
-        title="Gear & Tools"
-        subtitle="Showcase your cameras, mics, editing software, AI tools, and desk gear on your public profile."
+        {...PAGE_COPY.setup}
+        meta={`${items.length} ${items.length === 1 ? "item" : "items"}`}
         actions={
-          <>
-            <span className="inline-flex items-center rounded-[5px] bg-[#f1f5f9] border border-[#e2e8f0] px-2.5 h-9 text-xs font-semibold text-[#475569]">
-              {items.length} {items.length === 1 ? "item" : "items"}
-            </span>
-            <button
-              type="button"
-              onClick={() => handleOpenModal()}
-              className="inline-flex h-9 items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#601b41] px-4 text-xs font-semibold text-white shadow-xs transition-all hover:-translate-y-0.5 cursor-pointer shrink-0"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Add Gear / Tool</span>
-            </button>
-          </>
+          <button type="button" onClick={() => handleOpenModal()} className="dash-btn-primary">
+            <Plus className="h-4 w-4" />
+            <span>Add gear or tool</span>
+          </button>
         }
       />
 
@@ -602,15 +594,15 @@ export default function DashboardSetupPage() {
             return (
               <div
                 key={item.id}
-                className={`group relative flex flex-col justify-between rounded-[5px] border bg-white p-3.5 sm:p-4 shadow-2xs transition-all hover:shadow-xs ${
-                  item.isActive ? "border-[#e2e8f0]" : "border-[#e2e8f0] opacity-65 bg-[#f8fafc]"
+                className={`group relative flex flex-col justify-between rounded-[5px] border bg-white p-3.5 sm:p-4 shadow-none transition-all ${
+                  item.isActive ? "border-[#ECECF0]" : "border-[#ECECF0] opacity-65 bg-[#FAFAFB]"
                 }`}
               >
                 <div>
                   {/* Top Bar: Category Chip + Visibility Toggle */}
                   <div className="flex items-center justify-between gap-2 pb-1">
-                    <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#f8fafc] border border-[#e2e8f0] px-2 py-0.5 text-[11px] font-semibold text-[#475569]">
-                      <IconComponent className="h-3 w-3 text-[#64748b]" />
+                    <span className="inline-flex items-center gap-1.5 h-6 rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0] px-2 text-[12px] font-medium text-[#3F3F46]">
+                      <IconComponent className="h-3.5 w-3.5 text-[#6B6B76]" />
                       <span>{displayCategory}</span>
                     </span>
 
@@ -631,7 +623,7 @@ export default function DashboardSetupPage() {
                   {/* Middle Row: Product Image on Left + Info on Right */}
                   <div className="flex items-center gap-3 pt-2.5 pb-1.5">
                     {/* Image Container */}
-                    <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[6px] bg-[#fafafa] p-1.5 border border-[#f1f5f9]">
+                    <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[5px] bg-[#fafafa] p-1.5 border border-[#f1f5f9]">
                       {item.imageUrl ? (
                         <Image
                           src={item.imageUrl}
@@ -648,21 +640,21 @@ export default function DashboardSetupPage() {
                     {/* Product Details: Brand, Name, Year, Used For */}
                     <div className="min-w-0 flex-1 space-y-0.5">
                       {item.brand && (
-                        <p className="truncate text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">
+                        <p className="line-clamp-2 break-words text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">
                           {item.brand}
                         </p>
                       )}
                       <h3 className="flex items-center gap-1.5 min-w-0 font-display text-sm sm:text-[15px] font-bold text-[#0f172a] leading-tight" title={item.name}>
-                        <span className="truncate">{item.name}</span>
+                        <span className="line-clamp-2 break-words" title={item.name}>{item.name}</span>
                         {items.indexOf(item) >= getPlanQuota(subscription?.planKey).maxGearItems && <OverLimitBadge />}
                       </h3>
                       {item.modelOrPlan && (
-                        <p className="truncate text-[11px] text-[#94a3b8] font-normal leading-tight" title={item.modelOrPlan}>
+                        <p className="line-clamp-2 break-words text-[11px] text-[#94a3b8] font-normal leading-tight" title={item.modelOrPlan}>
                           {item.modelOrPlan}
                         </p>
                       )}
                       {item.usedFor && (
-                        <p className="text-[11px] text-[#475569] pt-1 leading-snug line-clamp-1">
+                        <p className="text-xs text-(--muted) pt-1 leading-snug line-clamp-2 break-words" title={item.usedFor}>
                           <span className="font-bold text-[#7A2253]">Used for: </span>
                           <span>{item.usedFor}</span>
                         </p>
@@ -701,18 +693,18 @@ export default function DashboardSetupPage() {
                     <button
                       type="button"
                       onClick={() => handleOpenModal(item)}
-                      className="flex h-7.5 w-7.5 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer shadow-2xs"
+                      className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white text-[#6B6B76] hover:bg-[#FAFAFB] hover:text-[#18181B] transition-colors cursor-pointer"
                       title="Edit item"
                     >
-                      <Pencil className="h-3 w-3" />
+                      <Pencil className="h-3.5 w-3.5" />
                     </button>
                     <button
                       type="button"
                       onClick={() => setItemToDelete(item)}
-                      className="flex h-7.5 w-7.5 items-center justify-center rounded-[5px] border border-rose-200 bg-white text-[#e11d48] hover:bg-rose-50 transition-colors cursor-pointer shadow-2xs"
+                      className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white text-[#C2414B] hover:bg-rose-50 transition-colors cursor-pointer"
                       title="Delete item"
                     >
-                      <Trash2 className="h-3 w-3" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 </div>
@@ -726,7 +718,7 @@ export default function DashboardSetupPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => !isSubmitting && setIsModalOpen(false)}
-        title={editingItem ? "Edit Setup Item" : "Add Gear or Tool"}
+        title={editingItem ? "Edit setup item" : "Add gear or tool"}
         description="Show the tools, gadgets and software you use to create your content."
         icon={<Briefcase className="h-5 w-5" />}
         size="lg"
@@ -774,7 +766,7 @@ export default function DashboardSetupPage() {
                       <div className={`mb-1 shrink-0 ${isSelected ? "text-[#7A2253]" : "text-[#64748b]"}`}>
                         {icon}
                       </div>
-                      <span className="text-[11px] font-semibold truncate w-full leading-tight">
+                      <span className="text-[11px] font-semibold line-clamp-2 break-words w-full leading-tight">
                         {cat}
                       </span>
                     </button>

@@ -21,6 +21,7 @@ import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
 import { ThemeKey, ThemeMeta } from "@/types";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import { ThemeBackgroundAnim } from "@/components/theme/ThemeBackgroundAnim";
 
 type GroupFilter = "all" | ThemeGroup;
@@ -60,7 +61,7 @@ function ProfilePreview({ themeKey, className = "" }: { themeKey: ThemeKey; clas
   return (
     <div
       style={{ ...themeTokenStyle(themeKey), background: "var(--page-bg)", transform: "translateZ(0)" }}
-      className={`relative min-h-0 overflow-hidden rounded-[12px] border border-[#E4E4E7] transition-colors duration-300 ${className}`}
+      className={`relative min-h-0 overflow-hidden rounded-[5px] border border-[#E4E4E7] transition-colors duration-300 ${className}`}
     >
       {/* translateZ(0) makes this box the containing block, so the profile's fixed elements stay inside it. */}
       <div
@@ -131,16 +132,11 @@ export default function DashboardThemesPage() {
   const isPreviewDifferent = previewThemeKey !== theme;
 
 
-  // The dashboard scrolls inside <main> (below the top bar). Size the sticky panel so the whole
-  // phone fits on screen at its resting position: main height − panel offset − 24px bottom gap,
-  // never taller than 100dvh − top bar − 48px.
+  // Full-screen sticky height matching viewport
   useLayoutEffect(() => {
-    const panel = panelRef.current;
-    const main = panel?.closest("main");
-    if (!panel || !main) return;
     const measure = () => {
-      const offset = panel.getBoundingClientRect().top - main.getBoundingClientRect().top + main.scrollTop;
-      setPanelHeight(Math.max(320, Math.min(main.clientHeight - 48, main.clientHeight - offset - 24)));
+      const vh = typeof window !== "undefined" ? window.innerHeight : 800;
+      setPanelHeight(Math.max(820, vh - 32));
     };
     measure();
     window.addEventListener("resize", measure);
@@ -201,7 +197,7 @@ export default function DashboardThemesPage() {
   const applyButton = isThemeLocked(previewThemeKey) ? (
     <Link
       href="/dashboard/subscription#plans"
-      className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#601b41] text-white px-4 h-9 text-xs font-semibold transition-all shadow-md shadow-[#7A2253]/20 cursor-pointer"
+      className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#601b41] text-white px-4 h-8 text-[13px] font-medium transition-colors cursor-pointer"
     >
       <Lock className="h-3.5 w-3.5" />
       <span>Upgrade to apply</span>
@@ -211,7 +207,7 @@ export default function DashboardThemesPage() {
       type="button"
       onClick={handleApplyTheme}
       disabled={isApplying}
-      className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#601b41] text-white px-4 h-9 text-xs font-semibold transition-all shadow-md shadow-[#7A2253]/20 cursor-pointer disabled:opacity-50"
+      className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#601b41] text-white px-4 h-8 text-[13px] font-medium transition-colors cursor-pointer disabled:opacity-50"
     >
       {isApplying ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5 stroke-[2.5]" />}
       <span>{isApplying ? "Applying..." : "Apply theme"}</span>
@@ -220,10 +216,7 @@ export default function DashboardThemesPage() {
 
   return (
     <PageContainer>
-      <PageHeader
-        title="Themes"
-        subtitle="Pick a look for your public profile. It goes live when you apply it."
-      />
+      <PageHeader {...PAGE_COPY.themes} />
 
       <div className="flex items-start gap-8">
         {/* LEFT: group filter + grouped theme grid */}
@@ -238,10 +231,10 @@ export default function DashboardThemesPage() {
                   role="tab"
                   aria-selected={isSelected}
                   onClick={() => setGroupFilter(filter.id)}
-                  className={`shrink-0 rounded-[5px] border px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
+                  className={`shrink-0 h-8 rounded-[5px] border px-3 text-[13px] font-medium transition-colors cursor-pointer ${
                     isSelected
-                      ? "border-[#7A2253] bg-[#7A2253] text-white shadow-xs"
-                      : "border-[#e2e8f0] bg-white text-[#475569] hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:text-[#0f172a]"
+                      ? "border-[#7A2253] bg-[#7A2253] text-white shadow-none"
+                      : "border-[#ECECF0] bg-white text-[#6B6B76] hover:border-[#cbd5e1] hover:bg-[#FAFAFB] hover:text-[#18181B]"
                   }`}
                 >
                   {filter.label}
@@ -276,10 +269,10 @@ export default function DashboardThemesPage() {
         <aside
           ref={panelRef}
           aria-label="Profile preview"
-          style={{ height: panelHeight ?? "calc(100dvh - 52px - 48px)" }}
-          className="hidden lg:flex flex-col gap-2 w-[380px] xl:w-[440px] shrink-0 sticky top-6"
+          style={{ height: panelHeight ? `${panelHeight}px` : "calc(100dvh - 2rem)" }}
+          className="hidden lg:flex flex-col gap-2 w-[380px] xl:w-[440px] shrink-0 sticky top-6 min-h-[820px] max-h-[1080px]"
         >
-          <p className="w-full text-xs text-[#64748b] text-center truncate">{statusLine}</p>
+          <p className="w-full text-xs text-[#64748b] text-center line-clamp-2 break-words">{statusLine}</p>
           <ProfilePreview themeKey={previewThemeKey} className="flex-1 w-full" />
         </aside>
       </div>
@@ -294,21 +287,21 @@ export default function DashboardThemesPage() {
           <div
             role="region"
             aria-label="Apply theme"
-            className="pointer-events-auto w-full max-w-[560px] flex items-center justify-between gap-3 rounded-[12px] border border-[#e2e8f0] bg-white px-3.5 py-2.5 shadow-[0_8px_24px_rgba(0,0,0,.12)] animate-in fade-in slide-in-from-bottom-4 duration-200"
+            className="pointer-events-auto w-full max-w-[560px] flex items-center justify-between gap-3 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-2.5 shadow-[0_8px_24px_rgba(0,0,0,.12)] animate-in fade-in slide-in-from-bottom-4 duration-200"
           >
             <p className="min-w-0 flex items-center gap-1.5 text-xs">
               <span className="h-2.5 w-2.5 shrink-0 rounded-full border border-black/10" style={{ background: getThemeDefinition(theme).listing.swatches[0] }} />
-              <span className="truncate text-[#64748b]">{getThemeDefinition(theme).name}</span>
+              <span className="line-clamp-2 break-words text-[#64748b]">{getThemeDefinition(theme).name}</span>
               <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[#94a3b8]" />
               <span className="h-2.5 w-2.5 shrink-0 rounded-full border border-black/10" style={{ background: getThemeDefinition(previewThemeKey).listing.swatches[0] }} />
-              <span className="truncate font-bold text-[#0f172a]">{previewDisplayName}</span>
+              <span className="line-clamp-2 break-words font-bold text-[#0f172a]" title={previewDisplayName}>{previewDisplayName}</span>
             </p>
             <div className="flex shrink-0 items-center gap-2">
               <button
                 type="button"
                 onClick={() => setPreviewThemeKey(resolveThemeKey(theme))}
                 disabled={isApplying}
-                className="h-9 px-3.5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer disabled:opacity-50"
+                className="h-8 px-3.5 rounded-[5px] border border-[#ECECF0] bg-white text-[13px] font-medium text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -321,7 +314,7 @@ export default function DashboardThemesPage() {
       {sheetOpen && (
         <div role="dialog" aria-modal="true" aria-label="Theme preview" className="lg:hidden fixed inset-0 z-[1000] flex flex-col bg-[#f8fafc]">
           <div className="flex items-center justify-between gap-3 border-b border-[#e2e8f0] bg-white px-4 py-3">
-            <p className="min-w-0 text-xs text-[#64748b] truncate">{statusLine}</p>
+            <p className="min-w-0 text-xs text-[#64748b] line-clamp-2 break-words">{statusLine}</p>
             <button
               type="button"
               onClick={() => setSheetOpen(false)}
@@ -384,10 +377,10 @@ function ThemeCard({
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)}
       onBlur={() => setHovered(false)}
-      className={`group relative flex flex-col justify-between w-full rounded-[5px] border p-2 text-left transition-all duration-200 cursor-pointer shadow-xs hover:shadow-md ${
+      className={`group relative flex flex-col justify-between w-full rounded-[5px] border p-2 text-left transition-all duration-200 cursor-pointer shadow-none ${
         isSelected
-          ? "border-[#7A2253] ring-1.5 ring-[#7A2253] bg-white"
-          : "border-[#e2e8f0] bg-white hover:border-[#cbd5e1]"
+          ? "border-2 border-[#7A2253] bg-white"
+          : "border-[#ECECF0] bg-white hover:border-[#cbd5e1]"
       }`}
     >
       {/* Visual Thumbnail */}
@@ -397,7 +390,7 @@ function ThemeCard({
       >
         {/* If selected (previewing), show circular maroon checkmark badge in top-right */}
         {isSelected && (
-          <div className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#7A2253] text-white shadow-md z-10">
+          <div className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#7A2253] text-white shadow-none z-10">
             <Check className="h-3.5 w-3.5 stroke-[3]" />
           </div>
         )}
@@ -421,7 +414,7 @@ function ThemeCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
             <p
-              className={`truncate text-sm font-bold ${
+              className={`line-clamp-2 break-words text-sm font-bold ${
                 isSelected ? "text-[#7A2253]" : "text-[#0f172a]"
               } leading-tight`}
             >
@@ -439,7 +432,7 @@ function ThemeCard({
               </span>
             )}
           </div>
-          <p className="mt-0.5 truncate text-xs text-[#64748b] font-medium leading-tight">
+          <p className="mt-0.5 line-clamp-2 break-words text-xs text-[#64748b] font-medium leading-tight">
             {subtitle}
           </p>
         </div>

@@ -77,6 +77,7 @@ export function YoutubeFetcher({ handle, onConfirmSync, onBeforeFetch, variant =
     if (!previewData || previewData.platform !== "youtube") return;
     const fetchedChannel = previewData.data;
 
+    if (saving) return;
     setSaving(true);
     const nowIso = new Date().toISOString();
 
@@ -90,21 +91,17 @@ export function YoutubeFetcher({ handle, onConfirmSync, onBeforeFetch, variant =
           channelTitle: fetchedChannel.title,
           subscribers: fetchedChannel.subscribers,
           isVerified: Boolean(fetchedChannel.verified),
-          avatarUrl: fetchedChannel.avatar_url,
           description: fetchedChannel.description,
           lastSyncedAt: nowIso,
         },
       };
 
       updateSocials(updatedSocials);
-      SocialService.saveAccounts(updatedSocials);
 
-      const email = authRepository.getPendingEmail() || profile.email;
-      await fetch("/api/creator/socials", {
+      const res = await fetch("/api/creator/socials", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: email || undefined,
           platform: "youtube",
           accountName: fetchedChannel.title || fetchedChannel.channel_name,
           username: fetchedChannel.channel_name,
@@ -112,7 +109,15 @@ export function YoutubeFetcher({ handle, onConfirmSync, onBeforeFetch, variant =
           mediaCount: 0,
           isVerified: Boolean(fetchedChannel.verified),
         }),
-      }).catch((e) => console.error("Failed to save YouTube to DB:", e));
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => null);
+        throw new Error(errJson?.message || "Failed to link YouTube channel");
+      }
+
+      const resJson = await res.json();
+      const createdRow = resJson?.data;
 
       const patch: Partial<typeof profile> = {};
       if (!profile.displayName || profile.displayName === "Your name") {
@@ -120,9 +125,6 @@ export function YoutubeFetcher({ handle, onConfirmSync, onBeforeFetch, variant =
       }
       if (!profile.bio && fetchedChannel.description) {
         patch.bio = fetchedChannel.description.slice(0, 160);
-      }
-      if (!profile.photoDataUrl && fetchedChannel.avatar_url) {
-        patch.photoDataUrl = fetchedChannel.avatar_url;
       }
 
       if (Object.keys(patch).length > 0) {
@@ -132,11 +134,11 @@ export function YoutubeFetcher({ handle, onConfirmSync, onBeforeFetch, variant =
       showToast(`YouTube channel @${fetchedChannel.channel_name} linked successfully! ✨🎉`);
 
       if (onConfirmSync) {
-        onConfirmSync(fetchedChannel);
+        onConfirmSync(createdRow || fetchedChannel);
       }
     } catch (err: any) {
       console.error("YouTube confirm error:", err);
-      showToast("Failed to connect YouTube channel. Please try again.", "error");
+      showToast(err.message || "Failed to connect YouTube channel. Please try again.", "error");
     } finally {
       setSaving(false);
       setModalOpen(false);

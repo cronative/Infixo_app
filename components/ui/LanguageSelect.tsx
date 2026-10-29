@@ -93,16 +93,20 @@ export function LanguageSelect({
       {isOpen && (
         <div className="absolute left-0 right-0 top-full z-50 mt-1.5 max-h-72 w-full overflow-hidden rounded-[5px] border border-[#e2e8f0] bg-white p-2 shadow-xl ring-1 ring-black/5 animate-in fade-in-50 slide-in-from-top-2">
           {/* Search Box */}
-          <div className="relative mb-2 px-1">
-            <Search className="absolute left-3.5 top-3 h-4 w-4 text-[#94a3b8]" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search language..."
-              className="h-9 w-full rounded-[5px] border border-slate-200 bg-slate-50 pl-9 pr-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:bg-white focus:outline-none"
-              autoFocus
-            />
+          <div className="mb-2 px-1">
+            <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <Search className="h-3.5 w-3.5" />
+              </span>
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search language..."
+                className="h-9 flex-1 min-w-0 bg-transparent px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] outline-none"
+                autoFocus
+              />
+            </div>
           </div>
 
           {/* Languages List */}

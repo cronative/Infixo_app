@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { UserX } from "lucide-react";
 import { ThemeCard } from "@/themes/registry";
 import { ThemeService } from "@/services/ThemeService";
@@ -112,11 +112,13 @@ const seriesListingMemoryCache = new Map<string, SeriesCacheData>();
 export default function AllSeriesClient() {
   const params = useParams<{ username: string }>();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { showToast } = useToast();
+  const isPreview = searchParams?.get("preview") === "true";
 
   const rawUser = decodeURIComponent(params.username ?? "").trim();
   const username = rawUser.replace(/^@/, "").toLowerCase();
-  const cachedData = username ? seriesListingMemoryCache.get(username) : undefined;
+  const cachedData = username && !isPreview ? seriesListingMemoryCache.get(username) : undefined;
 
   const [profile, setProfile] = useState<CreatorProfile>(cachedData?.profile || EMPTY_PROFILE);
   const [socials, setSocials] = useState<SocialAccounts>(cachedData?.socials || EMPTY_SOCIAL_ACCOUNTS);
@@ -135,16 +137,18 @@ export default function AllSeriesClient() {
         return;
       }
 
-      // If we have fresh cached data (less than 60s old), skip network fetch completely
-      const existingCache = seriesListingMemoryCache.get(username);
-      if (existingCache && Date.now() - existingCache.cachedAt < 60000) {
-        setProfile(existingCache.profile);
-        setSocials(existingCache.socials);
-        setSeries(existingCache.series);
-        setTheme(resolveThemeKey(existingCache.theme));
-        setLoaded(true);
-        setNotFound(false);
-        return;
+      // If we have fresh cached data (less than 60s old) and NOT in preview, skip network fetch completely
+      if (!isPreview) {
+        const existingCache = seriesListingMemoryCache.get(username);
+        if (existingCache && Date.now() - existingCache.cachedAt < 60000) {
+          setProfile(existingCache.profile);
+          setSocials(existingCache.socials);
+          setSeries(existingCache.series);
+          setTheme(resolveThemeKey(existingCache.theme));
+          setLoaded(true);
+          setNotFound(false);
+          return;
+        }
       }
 
       if (fetchingRef.current) return;
@@ -169,9 +173,9 @@ export default function AllSeriesClient() {
 
       try {
         const [profileRes, socialsRes, seriesRes] = await Promise.all([
-          fetch(`/api/creator/profile?username=${encodeURIComponent(username)}`).then((r) => r.json()).catch(() => ({ success: false })),
-          fetch(`/api/creator/socials?username=${encodeURIComponent(username)}`).then((r) => r.json()).catch(() => ({ success: false })),
-          fetch(`/api/series?username=${encodeURIComponent(username)}`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/creator/profile?username=${encodeURIComponent(username)}`, { cache: isPreview ? "no-store" : "default" }).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/creator/socials?username=${encodeURIComponent(username)}`, { cache: isPreview ? "no-store" : "default" }).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/series?username=${encodeURIComponent(username)}`, { cache: isPreview ? "no-store" : "default" }).then((r) => r.json()).catch(() => ({ success: false })),
         ]);
 
         const isProfOk = profileRes.status === 1 || profileRes.success === true;
@@ -181,9 +185,24 @@ export default function AllSeriesClient() {
         if (
           !isProfOk ||
           !freshProfile?.username ||
-          isFreeTrialExpired(freshSubscription) ||
-          freshProfile.visibilitySettings?.showSeries === false
+          (!isPreview && (isFreeTrialExpired(freshSubscription) || freshProfile.visibilitySettings?.showSeries === false))
         ) {
+          // If in preview or owner, try local repository fallback
+          try {
+            const { profileRepository, seriesRepository } = await import("@/repositories/localRepository");
+            const localProfile = profileRepository.get();
+            if (localProfile && localProfile.username) {
+              setProfile(localProfile);
+              setSeries(seriesRepository.getAll() || []);
+              setSocials(SocialService.getAccounts() || EMPTY_SOCIAL_ACCOUNTS);
+              setTheme(resolveThemeKey(localProfile.themeKey));
+              setNotFound(false);
+              setLoaded(true);
+              fetchingRef.current = false;
+              return;
+            }
+          } catch {}
+
           setNotFound(true);
           setLoaded(true);
           fetchingRef.current = false;
@@ -203,15 +222,31 @@ export default function AllSeriesClient() {
         setNotFound(false);
 
         // Update in-memory cache with timestamp
-        seriesListingMemoryCache.set(username, {
-          profile: freshProfile,
-          socials: freshSocials,
-          series: freshSeries,
-          theme: freshTheme,
-          cachedAt: Date.now(),
-        });
+        if (!isPreview) {
+          seriesListingMemoryCache.set(username, {
+            profile: freshProfile,
+            socials: freshSocials,
+            series: freshSeries,
+            theme: freshTheme,
+            cachedAt: Date.now(),
+          });
+        }
       } catch (error) {
         console.warn("Failed to load all series page:", error);
+        try {
+          const { profileRepository, seriesRepository } = await import("@/repositories/localRepository");
+          const localProfile = profileRepository.get();
+          if (localProfile && localProfile.username) {
+            setProfile(localProfile);
+            setSeries(seriesRepository.getAll() || []);
+            setSocials(SocialService.getAccounts() || EMPTY_SOCIAL_ACCOUNTS);
+            setTheme(resolveThemeKey(localProfile.themeKey));
+            setNotFound(false);
+            setLoaded(true);
+            return;
+          }
+        } catch {}
+
         if (!seriesListingMemoryCache.has(username)) {
           setNotFound(true);
         }
@@ -222,7 +257,7 @@ export default function AllSeriesClient() {
     }
 
     loadSeriesPage();
-  }, [username]);
+  }, [username, isPreview]);
 
   // Pre-fetch all series detail pages and main profile for instant navigation (only once per username)
   useEffect(() => {

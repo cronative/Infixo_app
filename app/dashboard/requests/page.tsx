@@ -162,17 +162,11 @@ export default function DashboardRequestsPage() {
       <PageHeader
         title="Collaboration Inquiries"
         subtitle='Incoming brand enquiries, partnership briefs, and messages received via your "Work With Me" profile form.'
-        actions={
-          unreadCount > 0 ? (
-            <span className="inline-flex items-center rounded-full bg-[#17845B] text-white text-xs font-bold px-3 h-8 shadow-2xs">
-              {unreadCount} New
-            </span>
-          ) : null
-        }
+        meta={unreadCount > 0 ? `${unreadCount} new` : undefined}
       />
 
       {/* Tabs Filter */}
-      <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white border border-[#e2e8f0] shadow-xs overflow-x-auto">
+      <div className="flex items-center gap-1.5 p-1 rounded-[5px] bg-white border border-[#ECECF0] shadow-none overflow-x-auto">
         {(["ALL", "NEW", "VIEWED", "REPLIED", "CLOSED"] as const).map((tab) => {
           const isSelected = activeTab === tab;
           const count = tab === "ALL" ? requests.length : requests.filter((r) => r.status === tab).length;
@@ -182,13 +176,13 @@ export default function DashboardRequestsPage() {
               key={tab}
               type="button"
               onClick={() => setActiveTab(tab)}
-              className={`tap-scale flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${isSelected
-                ? "bg-[#7A2253]/[0.08] text-[#7A2253]"
-                : "text-[#64748b] hover:text-[#7A2253] hover:bg-[#f1f5f9]"
+              className={`flex items-center gap-1.5 h-8 px-3 rounded-[5px] text-[13px] font-medium transition-all cursor-pointer whitespace-nowrap ${isSelected
+                ? "bg-[#F7EEF2] text-[#7A2253]"
+                : "text-[#6B6B76] hover:text-[#18181B] hover:bg-[#FAFAFB]"
                 }`}
             >
               <span>{tab === "ALL" ? "All Inquiries" : STATUS_CONFIG[tab].label}</span>
-              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-[#f8fafc] text-[#64748b]"}`}>
+              <span className={`text-[11px] px-1.5 py-0.2 rounded-[5px] ${isSelected ? "bg-[#7A2253]/10 text-[#7A2253]" : "bg-[#FAFAFB] text-[#6B6B76]"}`}>
                 {count}
               </span>
             </button>
@@ -198,7 +192,7 @@ export default function DashboardRequestsPage() {
 
       {/* Requests List */}
       {loading ? (
-        <div className="rounded-xl border border-[#e2e8f0] bg-white p-6 text-center text-xs text-[#64748b]">
+        <div className="rounded-[5px] border border-[#ECECF0] bg-white p-6 text-center text-[13px] text-[#6B6B76]">
           Loading collaboration requests...
         </div>
       ) : filteredRequests.length === 0 ? (
@@ -213,47 +207,47 @@ export default function DashboardRequestsPage() {
           }
         />
       ) : (
-        <div className="rounded-xl border border-[#e2e8f0] bg-white divide-y divide-[#e2e8f0] shadow-xs">
+        <div className="rounded-[5px] border border-[#ECECF0] bg-white divide-y divide-[#ECECF0] shadow-none">
           {filteredRequests.map((req) => {
             const conf = STATUS_CONFIG[req.status] || STATUS_CONFIG.NEW;
             return (
               <div
                 key={req.id}
                 onClick={() => handleOpenDetail(req)}
-                className="group px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#f1f5f9] transition-colors cursor-pointer text-left"
+                className="group px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#FAFAFB] transition-colors cursor-pointer text-left"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="flex h-8.5 w-8.5 items-center justify-center rounded-lg bg-[#7A225314] border border-[#e2e8f0] text-[#7A2253] font-bold text-xs shrink-0">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] font-semibold text-[12px] shrink-0">
                     {req.senderName.charAt(0).toUpperCase()}
                   </div>
 
                   <div className="min-w-0 flex-1 space-y-0.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-semibold text-xs sm:text-[13px] text-[#0f172a] truncate group-hover:text-[#7A2253] transition-colors">{req.senderName}</h3>
+                      <h3 className="font-semibold text-[14px] text-[#18181B] line-clamp-2 break-words group-hover:text-[#7A2253] transition-colors" title={req.senderName}>{req.senderName}</h3>
                       {req.companyName && (
-                        <span className="text-[11px] font-semibold text-[#64748b] truncate">
+                        <span className="text-[12px] font-medium text-[#6B6B76] line-clamp-2 break-words">
                           • {req.companyName}
                         </span>
                       )}
                       {req.approxBudget && (
-                        <span className="text-[10px] font-semibold text-[#7A2253] bg-[#7A2253]/[0.09] border border-[#7A2253]/20 px-1.5 py-0.5 rounded-md truncate">
+                        <span className="h-6 inline-flex items-center text-[12px] font-medium text-[#7A2253] bg-[#F7EEF2] px-2 rounded-[5px] line-clamp-2 break-words">
                           {req.approxBudget}
                         </span>
                       )}
                     </div>
 
-                    <p className="text-[11px] text-[#64748b] truncate max-w-xl">
+                    <p className="text-[12px] text-[#6B6B76] line-clamp-2 break-words max-w-xl">
                       {req.message}
                     </p>
 
-                    <div className="flex items-center gap-2.5 pt-0.5 text-[10px] text-[#64748b]">
-                      <span className="inline-flex items-center gap-1 font-medium truncate max-w-[180px]">
-                        <Mail className="h-3 w-3 text-[#64748b]" />
+                    <div className="flex items-center gap-2.5 pt-0.5 text-[11px] text-[#6B6B76]">
+                      <span className="inline-flex items-center gap-1 font-medium line-clamp-2 break-words max-w-[180px]">
+                        <Mail className="h-3 w-3 text-[#6B6B76]" />
                         {req.email}
                       </span>
                       <span>•</span>
                       <span className="inline-flex items-center gap-1">
-                        <Calendar className="h-3 w-3 text-[#64748b]" />
+                        <Calendar className="h-3 w-3 text-[#6B6B76]" />
                         {formatDate(req.createdAt)}
                       </span>
                     </div>
@@ -261,7 +255,7 @@ export default function DashboardRequestsPage() {
                 </div>
 
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${conf.bg} ${conf.text} ${conf.border}`}>
+                  <span className={`h-6 inline-flex items-center px-2 rounded-[5px] text-[12px] font-medium border ${conf.bg} ${conf.text} ${conf.border}`}>
                     {conf.label}
                   </span>
 
@@ -271,7 +265,7 @@ export default function DashboardRequestsPage() {
                       e.stopPropagation();
                       setRequestToDelete(req);
                     }}
-                    className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                    className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-rose-200 bg-white hover:bg-rose-50 text-rose-600 transition-colors cursor-pointer"
                     title="Delete inquiry"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -296,10 +290,10 @@ export default function DashboardRequestsPage() {
           <div className="flex flex-col flex-1 min-h-0">
             <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
               {/* Sender summary card */}
-              <div className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc]/60 p-3 space-y-2">
+              <div className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc]/60 p-3 space-y-2">
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold text-xs sm:text-sm text-[#0f172a]">{selectedRequest.senderName}</h3>
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${STATUS_CONFIG[selectedRequest.status].bg} ${STATUS_CONFIG[selectedRequest.status].text} ${STATUS_CONFIG[selectedRequest.status].border}`}>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-[5px] text-[10px] font-bold border ${STATUS_CONFIG[selectedRequest.status].bg} ${STATUS_CONFIG[selectedRequest.status].text} ${STATUS_CONFIG[selectedRequest.status].border}`}>
                     {STATUS_CONFIG[selectedRequest.status].label}
                   </span>
                 </div>
@@ -308,26 +302,26 @@ export default function DashboardRequestsPage() {
                   {selectedRequest.companyName && (
                     <div className="flex items-center gap-1.5">
                       <Building2 className="h-3.5 w-3.5 text-[#7A2253]" />
-                      <span className="truncate"><strong>Company:</strong> {selectedRequest.companyName}</span>
+                      <span className="line-clamp-2 break-words"><strong>Company:</strong> {selectedRequest.companyName}</span>
                     </div>
                   )}
 
                   <div className="flex items-center gap-1.5">
                     <Mail className="h-3.5 w-3.5 text-[#7A2253]" />
-                    <span className="truncate"><strong>Email:</strong> {selectedRequest.email}</span>
+                    <span className="line-clamp-2 break-words"><strong>Email:</strong> {selectedRequest.email}</span>
                   </div>
 
                   {selectedRequest.campaignType && (
                     <div className="flex items-center gap-1.5">
                       <MessageSquare className="h-3.5 w-3.5 text-[#7A2253]" />
-                      <span className="truncate"><strong>Type:</strong> {selectedRequest.campaignType}</span>
+                      <span className="line-clamp-2 break-words"><strong>Type:</strong> {selectedRequest.campaignType}</span>
                     </div>
                   )}
 
                   {selectedRequest.approxBudget && (
                     <div className="flex items-center gap-1.5">
                       <DollarSign className="h-3.5 w-3.5 text-[#7A2253]" />
-                      <span className="truncate"><strong>Budget:</strong> {selectedRequest.approxBudget}</span>
+                      <span className="line-clamp-2 break-words"><strong>Budget:</strong> {selectedRequest.approxBudget}</span>
                     </div>
                   )}
                 </div>
@@ -338,7 +332,7 @@ export default function DashboardRequestsPage() {
                 <label className="block text-[13px] font-medium text-[#0f172a]">
                   Message / Requirement:
                 </label>
-                <div className="rounded-xl border border-[#e2e8f0] bg-white p-3 text-xs text-[#7A2253] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
+                <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3 text-xs text-[#7A2253] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
                   {selectedRequest.message}
                 </div>
               </div>
@@ -355,7 +349,7 @@ export default function DashboardRequestsPage() {
                       type="button"
                       disabled={isUpdating}
                       onClick={() => handleStatusChange(st)}
-                      className={`tap-scale py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${selectedRequest.status === st
+                      className={`tap-scale py-1.5 px-2 rounded-[5px] text-xs font-bold transition-all border cursor-pointer ${selectedRequest.status === st
                         ? "bg-[#7A2253]/[0.08] text-[#7A2253] border-[#7A2253]/30"
                         : "border-[#e2e8f0] bg-white text-[#64748b] hover:bg-[#f1f5f9]"
                         }`}
@@ -379,7 +373,7 @@ export default function DashboardRequestsPage() {
               <div className="flex items-center gap-2">
                 <a
                   href={`mailto:${selectedRequest.email}?subject=Collaboration with ${encodeURIComponent(profile.displayName || "Inflixo Creator")}`}
-                  className="tap-scale bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs h-9 px-3.5 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5"
+                  className="tap-scale bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs h-9 px-3.5 rounded-[5px] transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5"
                 >
                   <Mail className="h-3.5 w-3.5" />
                   <span>Reply via Email</span>

@@ -21,6 +21,7 @@ const LABELS: Record<keyof PlanLimits, string> = {
   reviews: "brand reviews",
   gearItems: "gear items",
   teamSeats: "team seats",
+  socialAccountsPerPlatform: "social accounts per platform",
 };
 
 /** Standard 403 when a create would go past the plan limit from config/plans.ts. */

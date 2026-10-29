@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Check, Share2, Sparkles, MessageSquare } from "lucide-react";
+import { Copy, Check, Share2, Sparkles, MessageSquare, Link2 } from "lucide-react";
 import { FacebookIcon, XTwitterIcon } from "@/components/shared/BrandIcons";
 import { useToast } from "@/contexts/ToastContext";
 import { Series } from "@/types";
@@ -88,16 +88,21 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
         <div className="space-y-1 text-left">
           <label className="block text-[13px] font-medium text-[#0f172a]">Series Public Link</label>
           <div className="flex items-center gap-2">
-            <input
-              type="text"
-              readOnly
-              value={seriesUrl}
-              className="h-9.5 flex-1 rounded-lg border border-[#e2e8f0] bg-white px-3 text-xs font-mono text-[#7A2253] select-all focus:border-[#7A2253] focus:outline-none shadow-2xs"
-            />
+            <div className="flex-1 flex items-center rounded-[5px] border border-[#e2e8f0] bg-white overflow-hidden">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <Link2 className="h-4 w-4" />
+              </span>
+              <input
+                type="text"
+                readOnly
+                value={seriesUrl}
+                className="h-10 flex-1 px-3 text-xs font-mono text-[#7A2253] select-all outline-none bg-transparent"
+              />
+            </div>
             <button
               type="button"
               onClick={handleCopyLink}
-              className="h-9.5 inline-flex items-center gap-1.5 rounded-lg bg-[#7A2253] hover:bg-brand-hover px-4 text-xs font-semibold text-white shadow-2xs transition-all hover:shadow-xs shrink-0 cursor-pointer"
+              className="h-10 inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-brand-hover px-4 text-xs font-semibold text-white transition-all shrink-0 cursor-pointer"
             >
               {copiedLink ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               <span>{copiedLink ? "Copied" : "Copy"}</span>

@@ -1,23 +1,20 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Link from "next/link";
 import {
   ExternalLink,
   MoreVertical,
-  ShieldCheck,
   Trash2,
-  AtSign,
   RefreshCw,
-  Info,
-  Link as LinkIcon,
-  BarChart2,
-  Sparkles,
-  Unlink,
-  Eye,
-  Users,
-  TrendingUp,
+  Plus,
+  Share2,
   Calendar,
+  Sparkles,
+  ShieldCheck,
+  BarChart2,
+  Users,
+  X,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -30,877 +27,694 @@ import { InstagramFetcher } from "@/components/socials/InstagramFetcher";
 import { YoutubeFetcher } from "@/components/socials/YoutubeFetcher";
 import { FacebookFetcher } from "@/components/socials/FacebookFetcher";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
-import { Modal, ModalBody } from "@/components/ui/Modal";
-import { formatSimplifiedSyncDate } from "@/lib/socialSyncDate";
-import { formatCount } from "@/utils/format";
-import { SocialService } from "@/services/SocialService";
+import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { PAGE_COPY } from "@/components/dashboard/pageCopy";
+import { SectionCard } from "@/components/dashboard/SectionCard";
+import { getCreatorEra, getEraProgress, formatFans } from "@/lib/creatorEra";
+import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
+import { CreatorEraCelebrationModal } from "@/components/shared/CreatorEraCelebrationModal";
+import { PLANS } from "@/config/plans";
 
-function extractUsername(url: string): string {
-  if (!url) return "";
-  const cleaned = url.trim();
-  if (cleaned.includes("/")) {
-    const parts = cleaned.split("/").filter(Boolean);
-    const last = parts[parts.length - 1];
-    return last.replace(/^@/, "");
-  }
-  return cleaned.replace(/^@/, "");
+interface SocialAccountRow {
+  id: number;
+  platform: "instagram" | "youtube" | "facebook";
+  accountName: string;
+  username: string;
+  followerCount: number;
+  mediaCount?: number;
+  isVerified?: boolean;
+  isPrimary: boolean;
+  updatedAt?: string;
 }
 
-type ConfirmDisconnectModal = {
-  platform: "instagram" | "youtube" | "facebook";
-  platformName: string;
-  handle: string;
-} | null;
+function formatRelativeUpdate(dateStr?: string | null): string {
+  if (!dateStr) return "Updated recently";
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return "Updated recently";
+    const now = new Date();
+    const diffMs = now.getTime() - d.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    if (diffHours < 1) return "Updated just now";
+    if (diffHours < 24) return `Updated ${diffHours}h ago`;
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays === 1) return "Updated yesterday";
+    if (diffDays < 30) return `Updated ${diffDays} days ago`;
+    return `Updated ${d.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
+  } catch {
+    return "Updated recently";
+  }
+}
+
+function buildAccountProfileUrl(platform: string, username: string): string {
+  const clean = (username || "").replace(/^@/, "");
+  if (platform === "instagram") return `https://instagram.com/${clean}`;
+  if (platform === "youtube") return `https://youtube.com/@${clean}`;
+  if (platform === "facebook") return `https://facebook.com/${clean}`;
+  return "#";
+}
 
 export default function DashboardSocialsPage() {
-  const { profile, socials, totalAudience, updateSocials } = useCreator();
+  const { profile, subscription, refresh } = useCreator();
   const { showToast } = useToast();
 
-  const [syncingPlatform, setSyncingPlatform] = useState<string | null>(null);
-  const [disconnectModal, setDisconnectModal] = useState<ConfirmDisconnectModal>(null);
-  const [submittingDisconnect, setSubmittingDisconnect] = useState(false);
+  const [accounts, setAccounts] = useState<SocialAccountRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshingId, setRefreshingId] = useState<number | null>(null);
+
+  // Modals
+  const [celebrationOpen, setCelebrationOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [addPlatform, setAddPlatform] = useState<"instagram" | "youtube" | "facebook">("instagram");
 
-  // Draft handles for unconnected platforms
-  const [draftInsta, setDraftInsta] = useState(() => extractUsername(socials?.instagram?.url || ""));
-  const [draftYt, setDraftYt] = useState(() => extractUsername(socials?.youtube?.url || ""));
-  const [draftFb, setDraftFb] = useState(() => extractUsername(socials?.facebook?.url || ""));
+  // Account removal
+  const [accountToRemove, setAccountToRemove] = useState<SocialAccountRow | null>(null);
+  const [submittingRemove, setSubmittingRemove] = useState(false);
 
-  // Keep draft handles in sync when socials hydrate or change
-  useEffect(() => {
-    if (socials?.instagram?.url || socials?.instagram?.username) {
-      setDraftInsta(extractUsername(socials.instagram.url || "") || socials.instagram.username || "");
-    }
-    if (socials?.youtube?.url || socials?.youtube?.username) {
-      setDraftYt(extractUsername(socials.youtube.url || "") || socials.youtube.username || "");
-    }
-    if (socials?.facebook?.url || socials?.facebook?.username) {
-      setDraftFb(extractUsername(socials.facebook.url || "") || socials.facebook.username || "");
-    }
-  }, [socials]);
+  // Draft handles for add modal
+  const [draftInsta, setDraftInsta] = useState("");
+  const [draftYt, setDraftYt] = useState("");
+  const [draftFb, setDraftFb] = useState("");
 
-  // Connected handles & booleans (safe optional chaining)
-  const instaConnectedHandle = extractUsername(socials?.instagram?.url || "") || socials?.instagram?.username || "";
-  const ytConnectedHandle = extractUsername(socials?.youtube?.url || "") || socials?.youtube?.username || "";
-  const fbConnectedHandle = extractUsername(socials?.facebook?.url || "") || socials?.facebook?.username || "";
+  const rawPlanKey = (subscription?.planKey || "trial") as string;
+  const isTrial =
+    rawPlanKey === "trial" ||
+    rawPlanKey === "early_access" ||
+    rawPlanKey === "free" ||
+    subscription?.status === "trial";
 
-  const isInstaConnected = Boolean(socials?.instagram?.url || (socials?.instagram?.followers ?? 0) > 0 || instaConnectedHandle);
-  const isYtConnected = Boolean(socials?.youtube?.url || (socials?.youtube?.subscribers ?? 0) > 0 || ytConnectedHandle);
-  const isFbConnected = Boolean(socials?.facebook?.url || (socials?.facebook?.followers ?? 0) > 0 || fbConnectedHandle);
+  const maxPerPlatform =
+    (PLANS as any)[rawPlanKey]?.limits?.socialAccountsPerPlatform ?? 5;
 
-  const connectedCount = [isInstaConnected, isYtConnected, isFbConnected].filter(Boolean).length;
-
-  // Sync single platform trigger
-  const handleSyncPlatform = async (platform: "instagram" | "youtube" | "facebook") => {
-    setSyncingPlatform(platform);
+  const fetchAccounts = useCallback(async () => {
     try {
-      if (platform === "instagram" && instaConnectedHandle) {
-        const httpResponse = await fetch("/api/instagram/userInfo", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: instaConnectedHandle }),
-        });
-        const apiResponse = await httpResponse.json();
-        const u = apiResponse.data?.user || apiResponse.user;
-        if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && u) {
-          const followerCount = Number(u.follower_count || 0);
-          const mediaCount = Number(u.media_count || 0);
-          updateSocials({
-            instagram: {
-              ...socials.instagram,
-              username: u.username,
-              name: u.full_name,
-              followers: followerCount,
-              posts: mediaCount,
-              isVerified: u.is_verified,
-              lastSyncedAt: new Date().toISOString(),
-            },
-          });
-          await fetch("/api/creator/socials", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: profile.email || undefined,
-              platform: "instagram",
-              accountName: u.full_name || u.username,
-              username: u.username,
-              followerCount,
-              mediaCount,
-              isVerified: Boolean(u.is_verified),
-            }),
-          }).catch((err) => console.error("Failed to sync Instagram to DB:", err));
-          showToast("Instagram profile synced! 📸");
-        } else {
-          showToast("Could not refresh Instagram. Please check handle.", "error");
-        }
-      } else if (platform === "youtube" && ytConnectedHandle) {
-        const httpResponse = await fetch("/api/youtube/channelInfo", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ channelName: ytConnectedHandle }),
-        });
-        const apiResponse = await httpResponse.json();
-        const c = apiResponse.data?.channel || apiResponse.channel;
-        if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && c) {
-          const subscribers = Number(c.subscribers || 0);
-          const videoCount = Number(c.video_count || 0);
-          updateSocials({
-            youtube: {
-              ...socials.youtube,
-              username: c.channel_name || ytConnectedHandle,
-              channelTitle: c.title,
-              subscribers,
-              videos: videoCount,
-              isVerified: c.verified,
-              lastSyncedAt: new Date().toISOString(),
-            },
-          });
-          await fetch("/api/creator/socials", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: profile.email || undefined,
-              platform: "youtube",
-              accountName: c.title || c.channel_name || ytConnectedHandle,
-              username: c.channel_name || ytConnectedHandle,
-              followerCount: subscribers,
-              mediaCount: videoCount,
-              isVerified: Boolean(c.verified),
-            }),
-          }).catch((err) => console.error("Failed to sync YouTube to DB:", err));
-          showToast("YouTube channel synced! 📺");
-        } else {
-          showToast("Could not refresh YouTube. Please check handle.", "error");
-        }
-      } else if (platform === "facebook" && fbConnectedHandle) {
-        const httpResponse = await fetch("/api/facebook/pageInfo", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: fbConnectedHandle }),
-        });
-        const apiResponse = await httpResponse.json();
-        const p = apiResponse.data?.page || apiResponse.page;
-        if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && p) {
-          const followers = Number(p.followers || 0);
-          updateSocials({
-            facebook: {
-              ...socials.facebook,
-              username: p.username || fbConnectedHandle,
-              name: p.name,
-              followers,
-              isVerified: p.verified,
-              lastSyncedAt: new Date().toISOString(),
-            },
-          });
-          await fetch("/api/creator/socials", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: profile.email || undefined,
-              platform: "facebook",
-              accountName: p.name || fbConnectedHandle,
-              username: p.username || fbConnectedHandle,
-              followerCount: followers,
-              mediaCount: 0,
-              isVerified: Boolean(p.verified),
-            }),
-          }).catch((err) => console.error("Failed to sync Facebook to DB:", err));
-          showToast("Facebook page synced! 📘");
-        } else {
-          showToast("Could not refresh Facebook. Please check handle.", "error");
-        }
-      } else {
-        const updated = await SocialService.fetchFromDb({ email: profile.email, username: profile.username });
-        if (updated) {
-          updateSocials(updated);
-        }
-        showToast(`${platform.charAt(0).toUpperCase() + platform.slice(1)} stats refreshed! ✨`);
+      const res = await fetch("/api/creator/socials");
+      if (res.ok) {
+        const json = await res.json();
+        const list = json?.data?.socials || json?.socials || [];
+        setAccounts(list);
       }
-    } catch {
-      showToast(`Could not refresh ${platform}. Please check handle.`, "error");
+    } catch (err) {
+      console.error("Failed to load socials:", err);
     } finally {
-      setSyncingPlatform(null);
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAccounts();
+  }, [fetchAccounts]);
+
+  // Primary accounts & Total Fans Calculation
+  const primaryAccounts = useMemo(() => accounts.filter((a) => a.isPrimary), [accounts]);
+  const primaryTotal = useMemo(
+    () => primaryAccounts.reduce((sum, a) => sum + (Number(a.followerCount) || 0), 0),
+    [primaryAccounts]
+  );
+  const effectiveFanbase = useMemo(() => {
+    return typeof profile.peakFanbase === "number" && profile.peakFanbase >= primaryTotal
+      ? profile.peakFanbase
+      : primaryTotal;
+  }, [profile.peakFanbase, primaryTotal]);
+
+  const creatorEra = useMemo(() => getCreatorEra(effectiveFanbase), [effectiveFanbase]);
+  const eraProgress = useMemo(() => getEraProgress(effectiveFanbase), [effectiveFanbase]);
+
+  // Grouped by platform
+  const instagramAccounts = useMemo(() => accounts.filter((a) => a.platform === "instagram"), [accounts]);
+  const youtubeAccounts = useMemo(() => accounts.filter((a) => a.platform === "youtube"), [accounts]);
+  const facebookAccounts = useMemo(() => accounts.filter((a) => a.platform === "facebook"), [accounts]);
+
+  // Refresh single account count
+  const handleRefreshCount = async (account: SocialAccountRow) => {
+    setRefreshingId(account.id);
+    try {
+      let followerCount = account.followerCount;
+      let mediaCount = account.mediaCount || 0;
+      let isVerified = account.isVerified ?? false;
+
+      if (account.platform === "instagram") {
+        const res = await fetch("/api/instagram/userInfo", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: account.username }),
+        });
+        const json = await res.json();
+        const u = json.data?.user || json.user;
+        if (res.ok && u) {
+          followerCount = Number(u.follower_count || 0);
+          mediaCount = Number(u.media_count || 0);
+          isVerified = Boolean(u.is_verified);
+        }
+      } else if (account.platform === "youtube") {
+        const res = await fetch("/api/youtube/channelInfo", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ handle: account.username }),
+        });
+        const json = await res.json();
+        const c = json.data?.channel || json.channel;
+        if (res.ok && c) {
+          followerCount = Number(c.subscribers || 0);
+          isVerified = Boolean(c.verified);
+        }
+      } else if (account.platform === "facebook") {
+        const res = await fetch("/api/facebook/pageInfo", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: account.username }),
+        });
+        const json = await res.json();
+        const p = json.data?.page || json.page;
+        if (res.ok && p) {
+          followerCount = Number(p.followers || 0);
+          mediaCount = Number(p.likes || 0);
+          isVerified = Boolean(p.verified);
+        }
+      }
+
+      await fetch("/api/creator/socials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          platform: account.platform,
+          username: account.username,
+          accountName: account.accountName,
+          followerCount,
+          mediaCount,
+          isVerified,
+        }),
+      });
+
+      showToast(`Updated @${account.username} count to ${formatFans(followerCount)} fans ✨`);
+      await fetchAccounts();
+      refresh();
+    } catch (err: any) {
+      console.error("Failed to refresh count:", err);
+      showToast("Could not refresh count. Please try again.", "error");
+    } finally {
+      setRefreshingId(null);
     }
   };
 
-  // Disconnect Execution
-  const handleExecuteDisconnect = async () => {
-    if (!disconnectModal) return;
-    setSubmittingDisconnect(true);
-    const { platform } = disconnectModal;
-    const email = profile.email;
-
+  // Remove account handler
+  const handleExecuteRemove = async () => {
+    if (!accountToRemove) return;
+    setSubmittingRemove(true);
     try {
-      if (platform === "instagram") {
-        updateSocials({ instagram: { url: "", followers: 0, posts: 0, username: "", name: "", avatarUrl: "", biography: "", lastSyncedAt: "" } });
-        setDraftInsta("");
-      } else if (platform === "youtube") {
-        updateSocials({ youtube: { url: "", subscribers: 0, videos: 0, totalViews: 0, username: "", channelTitle: "", avatarUrl: "", description: "", lastSyncedAt: "" } });
-        setDraftYt("");
-      } else if (platform === "facebook") {
-        updateSocials({ facebook: { url: "", followers: 0, posts: 0, username: "", name: "", avatarUrl: "", intro: "", lastSyncedAt: "" } });
-        setDraftFb("");
+      const res = await fetch(`/api/creator/socials/${accountToRemove.id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        if (data?.error === "REMOVE_NOT_ALLOWED_IN_TRIAL") {
+          showToast("Account removal is not allowed on trial plans", "error");
+        } else if (data?.error === "HAS_EXTRA_ACCOUNTS") {
+          showToast("Cannot remove primary account while extra accounts exist", "error");
+        } else {
+          showToast(data?.message || "Failed to remove account", "error");
+        }
+        return;
       }
 
-      if (email) {
-        await fetch(`/api/creator/socials?email=${encodeURIComponent(email)}&platform=${platform}`, {
-          method: "DELETE",
-        });
-      }
-      showToast(`${disconnectModal.platformName} disconnected!`);
-      setDisconnectModal(null);
+      showToast(`@${accountToRemove.username} removed successfully`);
+      setAccountToRemove(null);
+      await fetchAccounts();
+      refresh();
     } catch (err) {
-      console.error("Failed to disconnect social account:", err);
-      showToast("Could not disconnect account. Please try again.", "error");
+      console.error("Failed to remove account:", err);
+      showToast("Could not remove account. Please try again.", "error");
     } finally {
-      setSubmittingDisconnect(false);
+      setSubmittingRemove(false);
     }
+  };
+
+  const openAddAccount = (platform?: "instagram" | "youtube" | "facebook") => {
+    if (platform) setAddPlatform(platform);
+    setAddModalOpen(true);
+  };
+
+  const handleConfirmedAdd = () => {
+    setAddModalOpen(false);
+    setDraftInsta("");
+    setDraftYt("");
+    setDraftFb("");
+    fetchAccounts();
+    refresh();
   };
 
   return (
     <PageContainer className="text-left">
-      {/* PAGE HEADER */}
+      {/* 1. PAGE HEADER */}
       <PageHeader
-        title={
-          <div className="flex items-center gap-2 flex-wrap">
-            <span>Social Accounts</span>
-            <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#ecfdf5] border border-[#d1fae5] px-2.5 py-0.5 text-xs font-semibold text-[#047857]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
-              <span>Live Fanbase Sync</span>
-            </span>
-          </div>
-        }
-        subtitle="Connect YouTube, Instagram, and Facebook to verify your audience and calculate your Total Fanbase."
+        {...PAGE_COPY.socials}
         actions={
-          <button
-            type="button"
-            onClick={() => {
-              const el = document.getElementById("connect-accounts-section");
-              if (el) {
-                el.scrollIntoView({ behavior: "smooth" });
-              } else {
-                showToast("All major social accounts are connected! 🎉");
-              }
-            }}
-            className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] px-4 py-2 text-xs sm:text-sm font-bold text-white shadow-2xs transition-colors cursor-pointer"
-          >
+          <button type="button" onClick={() => openAddAccount()} className="dash-btn-primary">
             <span>+</span>
-            <span>Connect Account</span>
+            <span>Add account</span>
           </button>
         }
       />
 
-      {/* 3. TOP STATS BANNER */}
-      <div className="rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7]/80 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs text-left">
-        {/* Left: Accounts Connected */}
-        <div className="flex items-center gap-3 sm:gap-4 flex-1">
-          <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] text-[#7A2253]">
-            <Users className="h-5 w-5" />
+      {/* 2. HERO CARD (Requirement D) */}
+      <SectionCard
+        title="Total fans"
+        subtitle="Across your primary accounts"
+        icon={<Users className="h-4 w-4" />}
+        action={
+          <button type="button" onClick={() => setCelebrationOpen(true)} className="dash-btn-sm bg-[#7A2253] text-white">
+            <Share2 className="h-3.5 w-3.5" />
+            <span>Share era</span>
+          </button>
+        }
+      >
+        <div className="space-y-1.5 min-w-0">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <span className="text-[28px] font-semibold text-(--text) tabular-nums leading-[1.25] whitespace-nowrap">
+              {formatFans(effectiveFanbase)}
+            </span>
+            {creatorEra && <CreatorEraBadge badge={creatorEra.badge} />}
           </div>
-          <div>
-            <h3 className="text-sm sm:text-base font-bold text-[#0f172a] leading-tight">
-              {connectedCount} social accounts connected
-            </h3>
-            <p className="text-xs text-[#64748b] font-medium mt-0.5">
-              Your audience across all platforms
+          <p className="text-[13px] text-(--muted)">fans across your primary accounts</p>
+          {eraProgress.nextBadge && eraProgress.fansNeeded > 0 && (
+            <p className="text-xs font-medium text-(--primary)">
+              {formatFans(eraProgress.fansNeeded)} more fans to{" "}
+              {eraProgress.nextBadge.replace(/ Creator$/, "")} 🌟
             </p>
-          </div>
+          )}
         </div>
+      </SectionCard>
 
-        {/* Divider */}
-        <div className="hidden sm:block h-8 w-px bg-[#FCE7F3]" />
+      {/* 3. GROUP BY PLATFORM (Instagram / YouTube / Facebook) */}
+      <div className="space-y-5">
+        {/* INSTAGRAM SECTION */}
+        <PlatformSection
+          title="Instagram"
+          platform="instagram"
+          icon={<InstagramIcon className="h-4 w-4 fill-white" />}
+          iconBg="bg-gradient-to-tr from-[#fd5949] via-[#d6249f] to-[#285AEB]"
+          accounts={instagramAccounts}
+          countLabel="Followers"
+          maxAllowed={maxPerPlatform}
+          isTrial={isTrial}
+          refreshingId={refreshingId}
+          onRefresh={handleRefreshCount}
+          onRemove={(acc) => {
+            if (acc.isPrimary && instagramAccounts.length > 1) {
+              showToast("Primary account cannot be removed while extra accounts exist", "error");
+              return;
+            }
+            setAccountToRemove(acc);
+          }}
+          onAdd={() => openAddAccount("instagram")}
+        />
 
-        {/* Right: Total Fanbase */}
-        <div className="flex items-center gap-3 sm:gap-4 sm:pl-4 flex-1 sm:justify-start">
-          <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] text-[#7A2253]">
-            <BarChart2 className="h-5 w-5" />
-          </div>
-          <div>
-            <div className="font-display text-base sm:text-lg font-bold text-[#0f172a] leading-none">
-              {formatCount(totalAudience || 0)}
-            </div>
-            <p className="text-xs text-[#64748b] font-medium mt-0.5">
-              Total Fanbase
-            </p>
-          </div>
-        </div>
+        {/* YOUTUBE SECTION */}
+        <PlatformSection
+          title="YouTube"
+          platform="youtube"
+          icon={<YoutubeIcon className="h-4 w-4 fill-white" />}
+          iconBg="bg-[#FF0000]"
+          accounts={youtubeAccounts}
+          countLabel="Subscribers"
+          maxAllowed={maxPerPlatform}
+          isTrial={isTrial}
+          refreshingId={refreshingId}
+          onRefresh={handleRefreshCount}
+          onRemove={(acc) => {
+            if (acc.isPrimary && youtubeAccounts.length > 1) {
+              showToast("Primary account cannot be removed while extra accounts exist", "error");
+              return;
+            }
+            setAccountToRemove(acc);
+          }}
+          onAdd={() => openAddAccount("youtube")}
+        />
+
+        {/* FACEBOOK SECTION */}
+        <PlatformSection
+          title="Facebook"
+          platform="facebook"
+          icon={<FacebookIcon className="h-4 w-4 fill-white" />}
+          iconBg="bg-[#1877F2]"
+          accounts={facebookAccounts}
+          countLabel="Followers"
+          maxAllowed={maxPerPlatform}
+          isTrial={isTrial}
+          refreshingId={refreshingId}
+          onRefresh={handleRefreshCount}
+          onRemove={(acc) => {
+            if (acc.isPrimary && facebookAccounts.length > 1) {
+              showToast("Primary account cannot be removed while extra accounts exist", "error");
+              return;
+            }
+            setAccountToRemove(acc);
+          }}
+          onAdd={() => openAddAccount("facebook")}
+        />
       </div>
 
-      {/* 4. CONNECTED SOCIAL CARDS (3 COLUMNS) */}
-      {connectedCount > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-          {/* INSTAGRAM CONNECTED CARD */}
-          {isInstaConnected && (
-            <ConnectedSocialCard
-              platformName="Instagram"
-              icon={
-                <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-gradient-to-tr from-[#fd5949] via-[#d6249f] to-[#285AEB] text-white shadow-2xs shrink-0">
-                  <InstagramIcon className="h-4.5 w-4.5 text-white" />
-                </div>
-              }
-              handle={instaConnectedHandle || (isInstaConnected ? profile.username : "")}
-              displayName={socials?.instagram?.name || "Instagram Profile"}
-              isVerified={socials?.instagram?.isVerified ?? true}
-              count={socials?.instagram?.followers || 0}
-              countLabel="Followers"
-              lastSyncedAt={socials?.instagram?.lastSyncedAt || socials?.updatedAt}
-              profileUrl={socials?.instagram?.url || (instaConnectedHandle ? `https://instagram.com/${instaConnectedHandle}` : "")}
-              isSyncing={syncingPlatform === "instagram"}
-              onSync={() => handleSyncPlatform("instagram")}
-              onDisconnect={() =>
-                setDisconnectModal({
-                  platform: "instagram",
-                  platformName: "Instagram",
-                  handle: instaConnectedHandle,
-                })
-              }
-            />
-          )}
-
-          {/* YOUTUBE CONNECTED CARD */}
-          {isYtConnected && (
-            <ConnectedSocialCard
-              platformName="YouTube"
-              icon={
-                <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FF0000] text-white shadow-2xs shrink-0">
-                  <YoutubeIcon className="h-4 w-4 fill-white" />
-                </div>
-              }
-              handle={ytConnectedHandle}
-              displayName={socials?.youtube?.channelTitle || "YouTube Channel"}
-              isVerified={socials?.youtube?.isVerified ?? true}
-              count={socials?.youtube?.subscribers || 0}
-              countLabel="Subscribers"
-              lastSyncedAt={socials?.youtube?.lastSyncedAt || socials?.updatedAt}
-              profileUrl={socials?.youtube?.url || (ytConnectedHandle ? `https://youtube.com/@${ytConnectedHandle}` : "")}
-              isSyncing={syncingPlatform === "youtube"}
-              onSync={() => handleSyncPlatform("youtube")}
-              onDisconnect={() =>
-                setDisconnectModal({
-                  platform: "youtube",
-                  platformName: "YouTube",
-                  handle: ytConnectedHandle,
-                })
-              }
-            />
-          )}
-
-          {/* FACEBOOK CONNECTED CARD */}
-          {isFbConnected && (
-            <ConnectedSocialCard
-              platformName="Facebook"
-              icon={
-                <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#1877F2] text-white shadow-2xs shrink-0">
-                  <FacebookIcon className="h-4 w-4 fill-white" />
-                </div>
-              }
-              handle={fbConnectedHandle || instaConnectedHandle}
-              displayName={socials?.facebook?.name || "Facebook Page"}
-              isVerified={socials?.facebook?.isVerified ?? true}
-              count={socials?.facebook?.followers || 0}
-              countLabel="Followers"
-              lastSyncedAt={socials?.facebook?.lastSyncedAt || socials?.updatedAt}
-              profileUrl={socials?.facebook?.url || (fbConnectedHandle ? `https://facebook.com/${fbConnectedHandle}` : "")}
-              isSyncing={syncingPlatform === "facebook"}
-              onSync={() => handleSyncPlatform("facebook")}
-              onDisconnect={() =>
-                setDisconnectModal({
-                  platform: "facebook",
-                  platformName: "Facebook",
-                  handle: fbConnectedHandle,
-                })
-              }
-            />
-          )}
-        </div>
-      )}
-
-      {/* 5. CONNECT ANOTHER PLATFORM SECTION */}
-      {connectedCount < 3 && (
-        <div id="connect-accounts-section" className="space-y-3 pt-1 text-left">
-          <h3 className="text-xs font-semibold text-[#64748b] uppercase tracking-wider">
-            {connectedCount === 0 ? "Connect your creator accounts" : "Connect another platform"}
-          </h3>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {/* Instagram Unconnected */}
-            {!isInstaConnected && (
-              <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2.5 shadow-xs text-left">
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-gradient-to-tr from-[#fd5949] via-[#d6249f] to-[#285AEB] text-white shadow-2xs shrink-0">
-                    <InstagramIcon className="h-4 w-4 fill-white" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs sm:text-sm font-bold text-[#0f172a]">Instagram</h4>
-                    <p className="text-[11px] text-[#64748b]">Show profile &amp; followers.</p>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#E1306C]">
-                      <InstagramIcon className="h-4 w-4" />
-                    </span>
-                    <input
-                      type="text"
-                      value={draftInsta}
-                      onChange={(e) => setDraftInsta(e.target.value.trim().replace(/^@/, ""))}
-                      placeholder="Instagram username"
-                      className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
-                    />
-                  </div>
-                  <InstagramFetcher username={draftInsta} />
-                </div>
-              </div>
-            )}
-
-            {/* YouTube Unconnected */}
-            {!isYtConnected && (
-              <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2.5 shadow-xs text-left">
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FF0000] text-white shadow-2xs shrink-0">
-                    <YoutubeIcon className="h-4 w-4 fill-white" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs sm:text-sm font-bold text-[#0f172a]">YouTube</h4>
-                    <p className="text-[11px] text-[#64748b]">Show channel &amp; subscribers.</p>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#FF0000]">
-                      <YoutubeIcon className="h-4 w-4" />
-                    </span>
-                    <input
-                      type="text"
-                      value={draftYt}
-                      onChange={(e) => setDraftYt(e.target.value.trim().replace(/^@/, ""))}
-                      placeholder="YouTube channel handle"
-                      className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
-                    />
-                  </div>
-                  <YoutubeFetcher handle={draftYt} />
-                </div>
-              </div>
-            )}
-
-            {/* Facebook Unconnected */}
-            {!isFbConnected && (
-              <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2.5 shadow-xs text-left">
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#1877F2] text-white shadow-2xs shrink-0">
-                    <FacebookIcon className="h-4 w-4 fill-white" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs sm:text-sm font-bold text-[#0f172a]">Facebook</h4>
-                    <p className="text-[11px] text-[#64748b]">Show page &amp; followers.</p>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#1877F2]">
-                      <FacebookIcon className="h-4 w-4" />
-                    </span>
-                    <input
-                      type="text"
-                      value={draftFb}
-                      onChange={(e) => setDraftFb(e.target.value.trim().replace(/^@/, ""))}
-                      placeholder="Facebook page username"
-                      className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
-                    />
-                  </div>
-                  <FacebookFetcher username={draftFb} />
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* 6. SHORTCUT TO CUSTOM LINKS */}
-      <section className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] text-[#7A2253]">
-            <LinkIcon className="h-5 w-5" />
-          </div>
-          <div>
-            <h3 className="text-xs sm:text-sm font-bold text-[#0f172a]">
-              Looking to add custom links &amp; bio buttons?
-            </h3>
-            <p className="text-[11px] text-[#64748b] font-medium">
-              Add affiliate products, brand stores, WhatsApp, and custom website links on your profile.
-            </p>
-          </div>
-        </div>
-        <Link
-          href="/dashboard/links"
-          className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-2 text-xs font-bold text-[#0f172a] hover:border-[#cbd5e1] hover:bg-[#f8fafc] transition-colors shrink-0 self-start sm:self-auto shadow-2xs"
-        >
-          <span>Custom Links Manager</span>
-          <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
-        </Link>
-      </section>
-
-      {/* 7. HOW SOCIAL DATA WORKS (Compact Info Row + Learn more Modal) */}
-      <section className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs text-left">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] text-[#7A2253]">
-            <Info className="h-5 w-5" />
-          </div>
-          <div>
-            <h3 className="text-xs sm:text-sm font-bold text-[#0f172a]">How social data works</h3>
-            <p className="text-[11px] text-[#64748b] font-medium">
-              Inflixo uses publicly available profile information to calculate your Total Fanbase.
-            </p>
-          </div>
-        </div>
+      {/* 4. FOOTER: HOW WE COUNT TEXT LINK */}
+      <div className="pt-2 pb-6 flex justify-center text-center">
         <button
           type="button"
           onClick={() => setIsInfoModalOpen(true)}
-          className="inline-flex items-center gap-1 text-xs font-bold text-[#7A2253] hover:underline cursor-pointer shrink-0 self-start sm:self-auto"
+          className="text-xs text-[#64748b] hover:text-[#7A2253] hover:underline cursor-pointer transition-colors"
         >
-          <span>Learn more</span>
-          <span>&rarr;</span>
+          How we count fans &amp; creator eras
         </button>
-      </section>
+      </div>
 
-      {/* LEARN MORE MODAL */}
+      {/* ==================================================================== */}
+      {/* ADD ACCOUNT MODAL                                                   */}
+      {/* ==================================================================== */}
+      <Modal
+        isOpen={addModalOpen}
+        onClose={() => setAddModalOpen(false)}
+        title="Add Social Account"
+        description="Connect your social media account to count your fanbase and showcase your verified reach."
+        icon={<Share2 className="h-5 w-5" />}
+        size="md"
+      >
+        <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <ModalBody className="p-5 sm:p-6 text-left space-y-4 flex-1 min-h-0 overflow-y-auto">
+            {/* Platform Tabs */}
+            <div className="flex items-stretch rounded-[5px] border border-[#E2E8F0] bg-[#F8FAFC] overflow-hidden divide-x divide-[#E2E8F0]">
+              {(["instagram", "youtube", "facebook"] as const).map((plat) => {
+                const active = addPlatform === plat;
+                const label = plat === "instagram" ? "Instagram" : plat === "youtube" ? "YouTube" : "Facebook";
+                return (
+                  <button
+                    key={plat}
+                    type="button"
+                    onClick={() => setAddPlatform(plat)}
+                    className={`group flex-1 flex items-center justify-center gap-2 py-2 px-3 text-xs font-bold transition-all cursor-pointer select-none ${
+                      active
+                        ? "bg-white text-[#7A2253] shadow-xs relative z-10"
+                        : "bg-[#F8FAFC] text-[#64748b] hover:bg-slate-100 hover:text-[#0f172a]"
+                    }`}
+                  >
+                    {plat === "instagram" && (
+                      <InstagramIcon
+                        className={`h-3.5 w-3.5 shrink-0 transition-colors ${
+                          active ? "text-[#E1306C]" : "text-[#64748b] group-hover:text-[#E1306C]"
+                        }`}
+                      />
+                    )}
+                    {plat === "youtube" && (
+                      <YoutubeIcon
+                        className={`h-3.5 w-3.5 shrink-0 transition-colors ${
+                          active ? "text-[#FF0000]" : "text-[#64748b] group-hover:text-[#FF0000]"
+                        }`}
+                      />
+                    )}
+                    {plat === "facebook" && (
+                      <FacebookIcon
+                        className={`h-3.5 w-3.5 shrink-0 transition-colors ${
+                          active ? "text-[#1877F2]" : "text-[#64748b] group-hover:text-[#1877F2]"
+                        }`}
+                      />
+                    )}
+                    <span>{label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Form based on platform */}
+            {addPlatform === "instagram" && (
+              <div className="space-y-3 pt-1">
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#E1306C]">
+                    <InstagramIcon className="h-4 w-4" />
+                  </span>
+                  <input
+                    type="text"
+                    value={draftInsta}
+                    onChange={(e) => setDraftInsta(e.target.value.trim().replace(/^@/, ""))}
+                    placeholder="Instagram username"
+                    className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
+                  />
+                </div>
+                <InstagramFetcher username={draftInsta} onConfirmSync={handleConfirmedAdd} />
+              </div>
+            )}
+
+            {addPlatform === "youtube" && (
+              <div className="space-y-3 pt-1">
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#FF0000]">
+                    <YoutubeIcon className="h-4 w-4" />
+                  </span>
+                  <input
+                    type="text"
+                    value={draftYt}
+                    onChange={(e) => setDraftYt(e.target.value.trim().replace(/^@/, ""))}
+                    placeholder="YouTube channel handle"
+                    className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
+                  />
+                </div>
+                <YoutubeFetcher handle={draftYt} onConfirmSync={handleConfirmedAdd} />
+              </div>
+            )}
+
+            {addPlatform === "facebook" && (
+              <div className="space-y-3 pt-1">
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#1877F2]">
+                    <FacebookIcon className="h-4 w-4" />
+                  </span>
+                  <input
+                    type="text"
+                    value={draftFb}
+                    onChange={(e) => setDraftFb(e.target.value.trim().replace(/^@/, ""))}
+                    placeholder="Facebook page username"
+                    className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
+                  />
+                </div>
+                <FacebookFetcher username={draftFb} onConfirmSync={handleConfirmedAdd} />
+              </div>
+            )}
+          </ModalBody>
+
+          <ModalFooter className="px-5 sm:px-6 py-3.5">
+            <button
+              type="button"
+              onClick={() => setAddModalOpen(false)}
+              className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
+          </ModalFooter>
+        </div>
+      </Modal>
+
+      {/* ==================================================================== */}
+      {/* REMOVE CONFIRMATION MODAL (Red Button)                               */}
+      {/* ==================================================================== */}
+      <ConfirmModal
+        isOpen={Boolean(accountToRemove)}
+        onClose={() => setAccountToRemove(null)}
+        onConfirm={handleExecuteRemove}
+        loading={submittingRemove}
+        title={`Remove ${accountToRemove?.platform === "youtube" ? "YouTube Channel" : accountToRemove?.platform === "instagram" ? "Instagram Profile" : "Facebook Page"}?`}
+        description={`@${accountToRemove?.username} will be removed from your profile.${
+          accountToRemove?.isPrimary
+            ? " As your primary account, its followers will no longer be counted toward your Total Fanbase."
+            : ""
+        }`}
+        confirmText="Remove Account"
+        cancelText="Cancel"
+      />
+
+      {/* ==================================================================== */}
+      {/* HOW WE COUNT INFO MODAL                                              */}
+      {/* ==================================================================== */}
       <Modal
         isOpen={isInfoModalOpen}
         onClose={() => setIsInfoModalOpen(false)}
-        title="How social data works"
-        description="Inflixo uses publicly available profile information to display connected account details and calculate your Total Fanbase."
-        icon={<Info className="h-5 w-5" />}
-        size="xl"
-        className="max-w-4xl lg:max-w-5xl"
+        title="How We Count Fans & Creator Eras"
+        description="Inflixo combines verified follower & subscriber counts from your public primary accounts."
+        size="lg"
       >
-        <ModalBody className="p-4 sm:p-6 text-left">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* LEFT COLUMN: 7 Explanatory Feature Items */}
-            <div className="lg:col-span-7 space-y-4">
-              {/* Item 1 */}
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]">
-                  <BarChart2 className="h-4 w-4" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0f172a] leading-tight">
-                    Reads public profile information
-                  </h4>
-                  <p className="mt-0.5 text-xs text-[#64748b] leading-relaxed">
-                    We access publicly available data like followers, subscribers, profile avatar, and username to show your stats.
-                  </p>
-                </div>
-              </div>
-
-              {/* Item 2 */}
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]">
-                  <Sparkles className="h-4 w-4" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h4 className="text-xs sm:text-[13px] font-bold text-[#0f172a] leading-tight">
-                      AI-powered data insights
-                    </h4>
-                    <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] px-2 py-0.5 text-[10px] font-bold text-[#7A2253]">
-                      ✨ Powered by AI
-                    </span>
-                  </div>
-                  <p className="mt-0.5 text-xs text-[#64748b] leading-relaxed">
-                    Our AI analyzes your connected accounts to get accurate follower and subscriber counts, detect anomalies, and keep your Total Fanbase up to date.
-                  </p>
-                </div>
-              </div>
-
-              {/* Item 3 */}
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]">
-                  <ShieldCheck className="h-4 w-4 text-[#10b981]" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0f172a] leading-tight">
-                    Secure &amp; read-only access
-                  </h4>
-                  <p className="mt-0.5 text-xs text-[#64748b] leading-relaxed">
-                    We never receive or store your social platform passwords. Your account remains safe and private.
-                  </p>
-                </div>
-              </div>
-
-              {/* Item 4 */}
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]">
-                  <RefreshCw className="h-4 w-4" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0f172a] leading-tight">
-                    Auto-sync &amp; update
-                  </h4>
-                  <p className="mt-0.5 text-xs text-[#64748b] leading-relaxed">
-                    Your follower counts and profile details are updated regularly using AI to ensure accurate Total Fanbase.
-                  </p>
-                </div>
-              </div>
-
-              {/* Item 5 */}
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]">
-                  <Unlink className="h-4 w-4" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0f172a] leading-tight">
-                    Disconnect anytime
-                  </h4>
-                  <p className="mt-0.5 text-xs text-[#64748b] leading-relaxed">
-                    You can disconnect any social account at any time with just one click.
-                  </p>
-                </div>
-              </div>
-
-              {/* Item 6 */}
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]">
-                  <Eye className="h-4 w-4" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0f172a] leading-tight">
-                    Only public data is used
-                  </h4>
-                  <p className="mt-0.5 text-xs text-[#64748b] leading-relaxed">
-                    We can only access information that is publicly visible on your social profiles.
-                  </p>
-                </div>
-              </div>
-
-              {/* Item 7 */}
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]">
-                  <Users className="h-4 w-4" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0f172a] leading-tight">
-                    Calculate Total Fanbase
-                  </h4>
-                  <p className="mt-0.5 text-xs text-[#64748b] leading-relaxed">
-                    We combine followers/subscribers from all connected platforms using AI to show your Total Fanbase.
-                  </p>
-                </div>
-              </div>
+        <ModalBody className="p-5 sm:p-6 text-left space-y-4 text-xs sm:text-sm text-[#475569] leading-relaxed">
+          <div className="space-y-3">
+            <div className="p-3 rounded-[5px] bg-[#F8FAFC] border border-[#E2E8F0] space-y-1">
+              <h4 className="font-bold text-[#0f172a]">Primary accounts count</h4>
+              <p className="text-xs text-[#64748b]">
+                Only primary accounts (one per platform) are added to your Total Fanbase and Creator Era. Extra accounts are showcased on your profile and About tab without inflating your total fans.
+              </p>
             </div>
 
-            {/* RIGHT COLUMN: Interactive Visual Diagram */}
-            <div className="lg:col-span-5 rounded-[5px] bg-[#FAF8FA] border border-[#F3E8EE] p-4 sm:p-5 flex flex-col justify-between space-y-3.5">
-              {/* Top AI Badge */}
-              <div className="flex justify-center">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FCE7F3] text-[#7A2253] px-3 py-1 text-xs font-bold shadow-2xs">
-                  <span className="text-sm">🤖</span>
-                  <span>AI Analyzes &amp; Syncs Data</span>
-                </span>
-              </div>
+            <div className="p-3 rounded-[5px] bg-[#F8FAFC] border border-[#E2E8F0] space-y-1">
+              <h4 className="font-bold text-[#0f172a]">Public data only</h4>
+              <p className="text-xs text-[#64748b]">
+                We fetch public follower and subscriber counts directly. No passwords or account permissions are ever requested or stored.
+              </p>
+            </div>
 
-              {/* Curved dotted pink connectors down to 3 cards */}
-              <div className="w-full flex justify-center -my-1">
-                <svg className="w-full max-w-[260px] h-9 overflow-visible" viewBox="0 0 260 36" fill="none">
-                  <path d="M 130 0 L 130 36" stroke="#F472B6" strokeWidth="1.5" strokeDasharray="3 3" />
-                  <path d="M 130 0 C 130 18 45 14 45 36" stroke="#F472B6" strokeWidth="1.5" strokeDasharray="3 3" />
-                  <path d="M 130 0 C 130 18 215 14 215 36" stroke="#F472B6" strokeWidth="1.5" strokeDasharray="3 3" />
-                </svg>
-              </div>
-
-              {/* 3 Connected Platform Cards */}
-              <div className="grid grid-cols-3 gap-2">
-                {/* Instagram */}
-                <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-2 sm:p-2.5 text-center flex flex-col items-center justify-center shadow-2xs">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-tr from-[#fd5949] via-[#d6249f] to-[#285AEB] text-white shadow-2xs mb-1">
-                    <InstagramIcon className="h-3.5 w-3.5 fill-white" />
-                  </div>
-                  <span className="font-display text-xs sm:text-sm font-bold text-[#0f172a] leading-none">
-                    {socials?.instagram?.followers ? formatCount(socials.instagram.followers) : "654"}
-                  </span>
-                  <span className="text-[10px] text-[#64748b] font-medium mt-0.5">Followers</span>
-                </div>
-
-                {/* YouTube */}
-                <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-2 sm:p-2.5 text-center flex flex-col items-center justify-center shadow-2xs">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FF0000] text-white shadow-2xs mb-1">
-                    <YoutubeIcon className="h-3.5 w-3.5 fill-white" />
-                  </div>
-                  <span className="font-display text-xs sm:text-sm font-bold text-[#0f172a] leading-none">
-                    {socials?.youtube?.subscribers ? formatCount(socials.youtube.subscribers) : "11.8K"}
-                  </span>
-                  <span className="text-[10px] text-[#64748b] font-medium mt-0.5">Subscribers</span>
-                </div>
-
-                {/* Facebook */}
-                <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-2 sm:p-2.5 text-center flex flex-col items-center justify-center shadow-2xs">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1877F2] text-white shadow-2xs mb-1">
-                    <FacebookIcon className="h-3.5 w-3.5 fill-white" />
-                  </div>
-                  <span className="font-display text-xs sm:text-sm font-bold text-[#0f172a] leading-none">
-                    {socials?.facebook?.followers ? formatCount(socials.facebook.followers) : "1.8K"}
-                  </span>
-                  <span className="text-[10px] text-[#64748b] font-medium mt-0.5">Followers</span>
-                </div>
-              </div>
-
-              {/* Curved dotted pink connectors down to Total Fanbase */}
-              <div className="w-full flex justify-center -my-1 relative">
-                <svg className="w-full max-w-[260px] h-9 overflow-visible" viewBox="0 0 260 36" fill="none">
-                  <path d="M 130 0 L 130 36" stroke="#F472B6" strokeWidth="1.5" strokeDasharray="3 3" />
-                  <path d="M 45 0 C 45 22 130 18 130 36" stroke="#F472B6" strokeWidth="1.5" strokeDasharray="3 3" />
-                  <path d="M 215 0 C 215 22 130 18 130 36" stroke="#F472B6" strokeWidth="1.5" strokeDasharray="3 3" />
-                </svg>
-                <span className="absolute left-4 top-1 text-[#F472B6] text-xs">✨</span>
-                <span className="absolute right-4 top-1 text-[#F472B6] text-xs">✨</span>
-              </div>
-
-              {/* Total Fanbase Card */}
-              <div className="rounded-[5px] border border-[#FCE7F3] bg-white p-3 sm:p-3.5 shadow-xs space-y-2.5">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFF0F5] text-[#7A2253]">
-                      <Users className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-[11px] font-semibold text-[#64748b] leading-tight">Total Fanbase</p>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="font-display text-lg sm:text-xl font-bold text-[#0f172a] leading-none">
-                          {totalAudience > 0 ? formatCount(totalAudience) : "14.3K"}
-                        </span>
-                        <TrendingUp className="h-3.5 w-3.5 text-[#7A2253]" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] px-2 py-0.5 text-[10px] font-bold text-[#7A2253]">
-                    ✨ Calculated by AI
-                  </span>
-                </div>
-
-                <div className="pt-2 border-t border-[#f1f5f9] flex items-center justify-between gap-2">
-                  <div className="flex -space-x-1.5 overflow-hidden shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img className="inline-block h-5 w-5 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=64&fit=crop&q=80" alt="Avatar 1" />
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img className="inline-block h-5 w-5 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=64&fit=crop&q=80" alt="Avatar 2" />
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img className="inline-block h-5 w-5 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&fit=crop&q=80" alt="Avatar 3" />
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img className="inline-block h-5 w-5 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=64&fit=crop&q=80" alt="Avatar 4" />
-                    <div className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#f1f5f9] text-[8px] font-bold text-[#475569] ring-2 ring-white">
-                      +12K
-                    </div>
-                  </div>
-                  <p className="text-[10px] text-[#64748b] font-medium truncate">
-                    Your total audience across platforms
-                  </p>
-                </div>
-              </div>
-
-              {/* Bottom Tip Callout */}
-              <div className="rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F1] p-2.5 flex items-start gap-2 text-left">
-                <span className="text-xs shrink-0">💡</span>
-                <p className="text-[11px] text-[#7A2253] font-medium leading-snug">
-                  V2 AI detects inactive or fake followers to give you more accurate and reliable numbers.
-                </p>
-              </div>
+            <div className="p-3 rounded-[5px] bg-[#F8FAFC] border border-[#E2E8F0] space-y-1">
+              <h4 className="font-bold text-[#0f172a]">Your era never goes down</h4>
+              <p className="text-xs text-[#64748b]">
+                Once you reach a Creator Era milestone, that achievement is preserved even if subscriber counts fluctuate over time.
+              </p>
             </div>
           </div>
         </ModalBody>
       </Modal>
 
-      {/* 6. DISCONNECT CONFIRMATION MODAL */}
-      <ConfirmModal
-        isOpen={Boolean(disconnectModal)}
-        onClose={() => setDisconnectModal(null)}
-        onConfirm={handleExecuteDisconnect}
-        loading={submittingDisconnect}
-        title={`Disconnect ${disconnectModal?.platformName}?`}
-        description={`@${disconnectModal?.handle} will be removed from your Inflixo profile, and its audience count will no longer be included in Total Fanbase.`}
-        confirmText="Disconnect Account"
-        cancelText="Cancel"
+      {/* Celebration Modal */}
+      <CreatorEraCelebrationModal
+        isOpen={celebrationOpen}
+        onClose={() => setCelebrationOpen(false)}
+        era={creatorEra}
+        username={profile.username || "creator"}
+        fanbase={effectiveFanbase}
       />
     </PageContainer>
   );
 }
 
 /* ==========================================================================
-   BLUE VERIFIED BADGE & LAST UPDATED HELPER
+   PLATFORM SECTION COMPONENT
    ========================================================================== */
-function BlueVerifiedBadge({ className = "h-3.5 w-3.5" }: { className?: string }) {
+interface PlatformSectionProps {
+  title: string;
+  platform: "instagram" | "youtube" | "facebook";
+  icon: React.ReactNode;
+  iconBg: string;
+  accounts: SocialAccountRow[];
+  countLabel: string;
+  maxAllowed: number;
+  isTrial: boolean;
+  refreshingId: number | null;
+  onRefresh: (acc: SocialAccountRow) => void;
+  onRemove: (acc: SocialAccountRow) => void;
+  onAdd: () => void;
+}
+
+function PlatformSection({
+  title,
+  platform,
+  icon,
+  iconBg,
+  accounts,
+  countLabel,
+  maxAllowed,
+  isTrial,
+  refreshingId,
+  onRefresh,
+  onRemove,
+  onAdd,
+}: PlatformSectionProps) {
+  // Primary card first, then extras
+  const primaryCard = accounts.find((a) => a.isPrimary);
+  const extraCards = accounts.filter((a) => !a.isPrimary);
+  const canAddMore = accounts.length < maxAllowed;
+
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none">
-      <path
-        d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.79-4-4-4-.495 0-.965.084-1.4.238C14.55 2.475 13.18 1.6 11.6 1.6c-1.58 0-2.95.875-3.6 2.148-.435-.154-.905-.238-1.4-.238-2.21 0-4 1.79-4 4 0 .495.084.965.238 1.4C1.575 9.55.7 10.92.7 12.5c0 1.58.875 2.95 2.148 3.6-.154.435-.238.905-.238 1.4 0 2.21 1.79 4 4 4 .495 0 .965-.084 1.4-.238.65 1.273 2.02 2.148 3.6 2.148 1.58 0 2.95-.875 3.6-2.148.435.154.905.238 1.4.238 2.21 0 4-1.79 4-4 0-.495-.084-.965-.238-1.4 1.273-.65 2.148-2.02 2.148-3.6z"
-        fill="#1D9BF0"
-      />
-      <path
-        d="M10.2 16.2l-3.5-3.5 1.4-1.4 2.1 2.1 5.3-5.3 1.4 1.4-6.7 6.7z"
-        fill="#ffffff"
-      />
-    </svg>
+    <div className="space-y-3 text-left">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className={`flex h-8 w-8 items-center justify-center rounded-[5px] ${iconBg}`}>
+            {icon}
+          </div>
+          <h3 className="text-[16px] font-semibold text-[#18181B]">{title}</h3>
+          <span className="text-[12px] text-[#6B6B76] font-normal">
+            ({accounts.length}/{maxAllowed})
+          </span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 items-stretch">
+        {/* Primary Account Card */}
+        {primaryCard && (
+          <SocialAccountCard
+            account={primaryCard}
+            platformTitle={title}
+            icon={icon}
+            iconBg={iconBg}
+            countLabel={countLabel}
+            isPrimary={true}
+            isTrial={isTrial}
+            isRefreshing={refreshingId === primaryCard.id}
+            onRefresh={() => onRefresh(primaryCard)}
+            onRemove={() => onRemove(primaryCard)}
+          />
+        )}
+
+        {/* Extra Account Cards */}
+        {extraCards.map((extra) => (
+          <SocialAccountCard
+            key={extra.id}
+            account={extra}
+            platformTitle={title}
+            icon={icon}
+            iconBg={iconBg}
+            countLabel={countLabel}
+            isPrimary={false}
+            isTrial={isTrial}
+            isRefreshing={refreshingId === extra.id}
+            onRefresh={() => onRefresh(extra)}
+            onRemove={() => onRemove(extra)}
+          />
+        ))}
+
+        {/* Dashed Add Another Card */}
+        {canAddMore && (
+          <button
+            type="button"
+            onClick={onAdd}
+            className="rounded-[5px] border-2 border-dashed border-[#ECECF0] hover:border-[#7A2253]/50 bg-[#FAFAFB] hover:bg-[#FFF0F5]/30 p-5 flex flex-col items-center justify-center gap-2 text-center transition-all cursor-pointer h-full min-h-[148px] group"
+          >
+            <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] transition-colors">
+              <Plus className="h-4 w-4" />
+            </div>
+            <span className="text-[13px] font-medium text-[#18181B] group-hover:text-[#7A2253] transition-colors">
+              + Add another {title}
+            </span>
+            <span className="text-[12px] text-[#6B6B76]">
+              {accounts.length === 0 ? "Connect your primary account" : "Connect secondary profile"}
+            </span>
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
 
-function formatLastUpdated(dateStr?: string | null): { label: string; time: string } {
-  if (!dateStr) return { label: "Last updated", time: "recently" };
-  try {
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return { label: "Last updated", time: "recently" };
-    const now = new Date();
-    const diffMs = now.getTime() - d.getTime();
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    if (diffHours < 1) return { label: "Last updated", time: "just now" };
-    if (diffHours < 24) return { label: "Last updated", time: `${diffHours} hours ago` };
-    const diffDays = Math.floor(diffHours / 24);
-    if (diffDays === 1) return { label: "Last updated", time: "yesterday" };
-    if (diffDays < 30) return { label: "Last updated", time: `${diffDays} days ago` };
-    return {
-      label: "Last updated",
-      time: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-    };
-  } catch {
-    return { label: "Last updated", time: "recently" };
-  }
-}
-
 /* ==========================================================================
-   CONNECTED SOCIAL CARD SUB-COMPONENT
+   INDIVIDUAL SOCIAL ACCOUNT CARD (Requirement D)
    ========================================================================== */
-interface ConnectedSocialCardProps {
-  platformName: string;
+interface SocialAccountCardProps {
+  account: SocialAccountRow;
+  platformTitle: string;
   icon: React.ReactNode;
-  handle: string;
-  displayName: string;
-  isVerified?: boolean;
-  count: number;
+  iconBg: string;
   countLabel: string;
-  lastSyncedAt?: string;
-  profileUrl: string;
-  isSyncing: boolean;
-  onSync: () => void;
-  onDisconnect: () => void;
+  isPrimary: boolean;
+  isTrial: boolean;
+  isRefreshing: boolean;
+  onRefresh: () => void;
+  onRemove: () => void;
 }
 
-function ConnectedSocialCard({
-  platformName,
+function SocialAccountCard({
+  account,
+  platformTitle,
   icon,
-  handle,
-  displayName,
-  isVerified = true,
-  count,
+  iconBg,
   countLabel,
-  lastSyncedAt,
-  profileUrl,
-  isSyncing,
-  onSync,
-  onDisconnect,
-}: ConnectedSocialCardProps) {
+  isPrimary,
+  isTrial,
+  isRefreshing,
+  onRefresh,
+  onRemove,
+}: SocialAccountCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -914,121 +728,116 @@ function ConnectedSocialCard({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [menuOpen]);
 
-  const updatedInfo = formatLastUpdated(lastSyncedAt);
+  const cleanHandle = (account.username || "").replace(/^@/, "");
+  const profileUrl = buildAccountProfileUrl(account.platform, cleanHandle);
+  const relativeUpdate = formatRelativeUpdate(account.updatedAt);
 
   return (
-    <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 shadow-2xs transition-all duration-200 hover:border-[#cbd5e1] hover:shadow-xs text-left flex flex-col justify-between">
-      {/* 1. TOP ROW: Platform Icon & Name + Connected Badge & 3-dots */}
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="shrink-0">{icon}</div>
-          <h3 className="text-xs sm:text-sm font-bold text-[#0f172a] truncate">
-            {platformName}
-          </h3>
-        </div>
+    <div className="rounded-[5px] border border-[#ECECF0] bg-white p-4 transition-all duration-200 hover:border-[#cbd5e1] text-left flex flex-col justify-between space-y-3 min-h-[148px]">
+      {/* Top: Icon + Handle + Primary Badge + ⋮ Menu */}
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] ${iconBg}`}>
+            {icon}
+          </div>
 
-        <div className="flex items-center gap-1.5 shrink-0">
-          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#047857] bg-[#ecfdf5] border border-[#d1fae5] px-2 py-0.5 rounded-[5px]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
-            Connected
-          </span>
-
-          {/* Three-dots menu */}
-          <div className="relative" ref={menuRef}>
-            <button
-              type="button"
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="flex h-6.5 w-6.5 sm:h-7 sm:w-7 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 text-[#64748b] hover:text-[#0f172a] transition-colors cursor-pointer shadow-2xs"
-              aria-label="More actions"
-            >
-              <MoreVertical className="h-3.5 w-3.5" />
-            </button>
-
-            {menuOpen && (
-              <div className="absolute right-0 top-full mt-1.5 w-40 rounded-[5px] border border-[#e2e8f0] bg-white p-1.5 shadow-lg z-50 space-y-0.5 animate-in fade-in">
-                <button
-                  type="button"
-                  disabled={isSyncing}
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onSync();
-                  }}
-                  className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-50"
-                >
-                  <RefreshCw
-                    className={`h-3.5 w-3.5 text-[#64748b] ${isSyncing ? "animate-spin text-[#7A2253]" : ""}`}
-                  />
-                  <span>{isSyncing ? "Syncing..." : "Refresh data"}</span>
-                </button>
-
-                <div className="my-1 border-t border-[#e2e8f0]" />
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onDisconnect();
-                  }}
-                  className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                  <span>Disconnect</span>
-                </button>
-              </div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <a
+                href={profileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[13px] font-semibold text-[#18181B] hover:text-[#7A2253] line-clamp-1 break-words hover:underline"
+              >
+                @{cleanHandle}
+              </a>
+              {isPrimary && (
+                <span className="inline-flex items-center h-6 rounded-[5px] bg-[#F7EEF2] border border-[#FCE7F3] px-2 text-[12px] font-medium text-[#7A2253]">
+                  Primary
+                </span>
+              )}
+            </div>
+            {!isPrimary && (
+              <p className="text-[12px] text-[#6B6B76] font-normal leading-tight">
+                Not counted in total fans
+              </p>
             )}
           </div>
         </div>
-      </div>
 
-      {/* 2. MIDDLE ROW: Username with Verified Badge + Count & Label */}
-      <div className="flex items-center justify-between gap-3 pt-2.5 pb-0.5">
-        <div className="flex items-center gap-1.5 min-w-0">
-          <span className="text-xs sm:text-sm font-bold text-[#0f172a] truncate">
-            {handle ? (handle.startsWith("@") ? handle : `@${handle}`) : `@${displayName}`}
-          </span>
-          {isVerified && <BlueVerifiedBadge className="h-3.5 w-3.5 shrink-0" />}
-        </div>
-
-        <div className="text-right shrink-0">
-          <div className="font-display text-base sm:text-lg font-bold text-[#0f172a] leading-none">
-            {formatCount(count)}
-          </div>
-          <div className="text-[10px] sm:text-[11px] font-medium text-[#64748b] mt-0.5">
-            {countLabel}
-          </div>
-        </div>
-      </div>
-
-      {/* 3. HORIZONTAL DIVIDER */}
-      <div className="border-t border-[#e2e8f0] my-2.5" />
-
-      {/* 4. SUB-ROW: Calendar icon + Sync title on left, sync timing on right */}
-      <div className="flex items-center justify-between text-xs text-[#64748b] pb-2.5">
-        <div className="flex items-center gap-1.5 font-medium">
-          <Calendar className="h-3.5 w-3.5 text-[#64748b] shrink-0" />
-          <span>{updatedInfo.label}</span>
-        </div>
-        <span className="text-xs text-[#64748b] font-medium">{updatedInfo.time}</span>
-      </div>
-
-      {/* 4. BOTTOM ACTION: Full width View Profile button */}
-      <div>
-        {profileUrl ? (
-          <a
-            href={profileUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] hover:bg-[#FCE7F3]/70 py-1.5 px-3 text-xs font-bold text-[#7A2253] flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
+        {/* Three dots menu */}
+        <div className="relative shrink-0" ref={menuRef}>
+          <button
+            type="button"
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#6B6B76] hover:text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer"
+            aria-label="Account actions"
           >
-            <span>View Profile</span>
-            <ExternalLink className="h-3.5 w-3.5 text-[#7A2253]" />
-          </a>
-        ) : (
-          <div className="w-full rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] py-1.5 px-3 text-xs font-bold text-[#7A2253]/60 flex items-center justify-center gap-1.5">
-            <span>View Profile</span>
-            <ExternalLink className="h-3.5 w-3.5" />
-          </div>
-        )}
+            <MoreVertical className="h-4 w-4" />
+          </button>
+
+          {menuOpen && (
+            <div className="absolute right-0 top-full mt-1 w-36 rounded-[5px] border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in duration-150">
+              <button
+                type="button"
+                disabled={isRefreshing}
+                onClick={() => {
+                  setMenuOpen(false);
+                  onRefresh();
+                }}
+                className="flex w-full items-center gap-2 rounded-[4px] px-2.5 py-1.5 text-xs font-semibold text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-50"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 text-[#64748b] ${isRefreshing ? "animate-spin text-[#7A2253]" : ""}`} />
+                <span>{isRefreshing ? "Refreshing..." : "Refresh count"}</span>
+              </button>
+
+              {/* Remove option: hidden on trial per Requirement C */}
+              {!isTrial && (
+                <>
+                  <div className="my-0.5 border-t border-[#f1f5f9]" />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      onRemove();
+                    }}
+                    className="flex w-full items-center gap-2 rounded-[4px] px-2.5 py-1.5 text-xs font-semibold text-[#ef4444] hover:bg-red-50 transition-colors cursor-pointer"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    <span>Remove</span>
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Middle: Count & Label */}
+      <div className="pt-1 flex items-baseline justify-between">
+        <div>
+          <span className="text-xl sm:text-2xl font-black text-[#0f172a] tabular-nums tracking-tight">
+            {formatFans(account.followerCount || 0)}
+          </span>
+          <span className="ml-1.5 text-xs text-[#64748b] font-medium">{countLabel}</span>
+        </div>
+      </div>
+
+      {/* Bottom: Relative updated time + View profile */}
+      <div className="pt-2 border-t border-[#f1f5f9] flex items-center justify-between text-[11px] text-[#94a3b8]">
+        <span className="flex items-center gap-1 font-medium">
+          <Calendar className="h-3 w-3" />
+          <span>{relativeUpdate}</span>
+        </span>
+        <a
+          href={profileUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#7A2253] font-bold hover:underline inline-flex items-center gap-0.5"
+        >
+          <span>View</span>
+          <ExternalLink className="h-3 w-3" />
+        </a>
       </div>
     </div>
   );

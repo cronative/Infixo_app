@@ -78,6 +78,7 @@ export default function PublicProfileClient() {
 
   const [profile, setProfile] = useState<CreatorProfile>(EMPTY_PROFILE);
   const [socials, setSocials] = useState<SocialAccounts>(EMPTY_SOCIAL_ACCOUNTS);
+  const [allSocialAccounts, setAllSocialAccounts] = useState<any[]>([]);
   const [theme, setTheme] = useState<ThemeKey>(DEFAULT_THEME_KEY);
   const queryTheme = (searchParams?.get("theme") || null) as ThemeKey | null;
   const effectiveTheme: ThemeKey =
@@ -238,35 +239,44 @@ export default function PublicProfileClient() {
 
           const socials = socRes.data?.socials || socRes.socials;
           if ((socRes.status === 1 || socRes.success) && Array.isArray(socials)) {
+            setAllSocialAccounts(socials);
             const accs: SocialAccounts = { ...EMPTY_SOCIAL_ACCOUNTS };
             socials.forEach((s: any) => {
+              const isPrimary = Boolean(s.isPrimary || s.is_primary);
               const handle = s.username || s.accountName || "";
               if (s.platform === "instagram") {
-                accs.instagram = {
-                  ...accs.instagram,
-                  followers: s.followerCount || 0,
-                  username: handle,
-                  url: handle ? `https://instagram.com/${handle.replace(/^@/, "")}` : "",
-                };
+                if (isPrimary || !accs.instagram.username) {
+                  accs.instagram = {
+                    ...accs.instagram,
+                    followers: s.followerCount || 0,
+                    username: handle,
+                    url: handle ? `https://instagram.com/${handle.replace(/^@/, "")}` : "",
+                  };
+                }
               } else if (s.platform === "youtube") {
-                accs.youtube = {
-                  ...accs.youtube,
-                  subscribers: s.followerCount || 0,
-                  username: handle,
-                  url: handle ? `https://youtube.com/@${handle.replace(/^@/, "")}` : "",
-                };
+                if (isPrimary || !accs.youtube.username) {
+                  accs.youtube = {
+                    ...accs.youtube,
+                    subscribers: s.followerCount || 0,
+                    username: handle,
+                    url: handle ? `https://youtube.com/@${handle.replace(/^@/, "")}` : "",
+                  };
+                }
               } else if (s.platform === "facebook") {
-                accs.facebook = {
-                  ...accs.facebook,
-                  followers: s.followerCount || 0,
-                  username: handle,
-                  url: handle ? `https://facebook.com/${handle.replace(/^@/, "")}` : "",
-                };
+                if (isPrimary || !accs.facebook.username) {
+                  accs.facebook = {
+                    ...accs.facebook,
+                    followers: s.followerCount || 0,
+                    username: handle,
+                    url: handle ? `https://facebook.com/${handle.replace(/^@/, "")}` : "",
+                  };
+                }
               }
             });
             setSocials(accs);
           } else {
             setSocials(EMPTY_SOCIAL_ACCOUNTS);
+            setAllSocialAccounts([]);
           }
 
           const series = serRes.data?.series || serRes.series;
@@ -713,6 +723,7 @@ export default function PublicProfileClient() {
           collaborations={collaborations}
           otherSocials={otherSocials}
           sections={sections}
+          allSocialAccounts={allSocialAccounts}
           totalAudience={totalAudience}
           variant="full"
           containedScroll={false}

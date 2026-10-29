@@ -212,6 +212,8 @@ export interface CreatorProfile {
   theme_key?: string;
   publicProfileLayout?: PublicProfileLayout;
   visibilitySettings?: VisibilitySettings;
+  peakFanbase?: number | null;
+  eraUnlockedPending?: boolean;
   updatedAt: string;
 }
 

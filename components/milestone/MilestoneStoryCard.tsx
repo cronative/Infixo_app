@@ -165,7 +165,7 @@ export const MilestoneStoryCard = forwardRef<HTMLDivElement, MilestoneStoryCardP
           height: "960px",
           background: s.wrapperBg,
           color: s.textColor,
-          fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif",
+          fontFamily: "'Poppins', system-ui, -apple-system, sans-serif",
           boxSizing: "border-box",
           padding: "48px 40px 40px 40px",
         }}

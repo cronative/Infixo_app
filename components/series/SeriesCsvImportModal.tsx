@@ -521,19 +521,24 @@ export function SeriesCsvImportModal({
                 <label htmlFor="import-new-series-title" className="block text-xs font-medium text-[#0f172a]">
                   New series title <span className="text-red-500">*</span>
                 </label>
-                <input
-                  id="import-new-series-title"
-                  className={fieldClass}
-                  value={newSeriesTitle}
-                  maxLength={255}
-                  disabled={busy}
-                  placeholder="e.g. Masterclass on Film Making"
-                  onChange={(e) => {
-                    setNewSeriesTitle(e.target.value);
-                    setServerErrors([]);
-                    importKey.current = '';
-                  }}
-                />
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                    <Film className="h-4 w-4" />
+                  </span>
+                  <input
+                    id="import-new-series-title"
+                    value={newSeriesTitle}
+                    maxLength={255}
+                    disabled={busy}
+                    placeholder="e.g. Masterclass on Film Making"
+                    onChange={(e) => {
+                      setNewSeriesTitle(e.target.value);
+                      setServerErrors([]);
+                      importKey.current = '';
+                    }}
+                    className="flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  />
+                </div>
               </div>
 
               {/* Platform selector for new series */}

@@ -1,24 +1,24 @@
 "use client";
 
-import { Fragment, useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import {
   Briefcase,
   Check,
-  Clapperboard,
   Copy,
   ExternalLink,
   Eye,
   Film,
   Laptop,
   Link2,
-  RefreshCw,
+  MousePointerClick,
   Share2,
   ShoppingBag,
+  Sparkles,
   Star,
   Users,
-  X,
   MessageCircle,
+  QrCode,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -28,23 +28,73 @@ import {
   LinkedinIcon,
 } from "@/components/shared/BrandIcons";
 import { QRCode } from "@/components/creator-card/QRCode";
-import { Modal, ModalBody } from "@/components/ui/Modal";
+import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { buildProfileUrl, formatCount } from "@/utils/format";
 import { SocialService } from "@/services/SocialService";
 import { getSeriesEpisodes } from "@/lib/seriesMetrics";
-import { customLinksRepository, reviewsRepository, creatorSetupRepository } from "@/repositories/localRepository";
+import {
+  customLinksRepository,
+  reviewsRepository,
+  creatorSetupRepository,
+} from "@/repositories/localRepository";
 import { MediaKitService } from "@/services/MediaKitService";
 import { ProductService } from "@/services/ProductService";
 import { PageContainer } from "@/components/dashboard/PageContainer";
-import type { SocialAccounts, CustomLink, CreatorReview, CreatorSetupItem, MediaKitPackage, CreatorProduct } from "@/types";
+import { PageHeader } from "@/components/dashboard/PageHeader";
+import { PAGE_COPY } from "@/components/dashboard/pageCopy";
+import { SectionCard } from "@/components/dashboard/SectionCard";
+import { StatGrid, StatTile } from "@/components/dashboard/StatTile";
+import type {
+  SocialAccounts,
+  CustomLink,
+  CreatorReview,
+  CreatorSetupItem,
+  MediaKitPackage,
+  CreatorProduct,
+} from "@/types";
+import { getCreatorEra, formatFans } from "@/lib/creatorEra";
+import { CreatorEraProgressCard } from "@/components/shared/CreatorEraProgressCard";
+import { CreatorEraCelebrationModal } from "@/components/shared/CreatorEraCelebrationModal";
+import { SetupChecklist } from "@/components/dashboard/SetupChecklist";
 
-interface SuggestionItem {
-  id: string;
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
-  text: string;
-  actionLabel: string;
-  actionHref: string;
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning 👋";
+  if (hour < 18) return "Good afternoon 👋";
+  return "Good evening 👋";
+}
+
+interface SectionHeaderProps {
+  title: string;
+  subtitle?: string;
+  icon?: React.ReactNode;
+  action?: React.ReactNode;
+}
+
+function SectionHeader({ title, subtitle, icon, action }: SectionHeaderProps) {
+  return (
+    <div className="flex items-center justify-between gap-3 mb-2.5">
+      <div className="flex items-center gap-3 min-w-0">
+        {icon && (
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
+            {icon}
+          </div>
+        )}
+        <div className="min-w-0">
+          <h3 className="text-[16px] font-semibold text-[#18181B] leading-tight">
+            {title}
+          </h3>
+          {subtitle && (
+            <p className="text-[12px] text-[#6B6B76] font-normal mt-0.5 leading-tight">
+              {subtitle}
+            </p>
+          )}
+        </div>
+      </div>
+      {action && <div>{action}</div>}
+    </div>
+  );
 }
 
 export default function DashboardOverviewPage() {
@@ -54,6 +104,7 @@ export default function DashboardOverviewPage() {
     totalAudience,
     loading: profileLoading,
     series,
+    theme,
     isTrialExpired,
     openTrialExpiredModal,
   } = useCreator();
@@ -63,8 +114,26 @@ export default function DashboardOverviewPage() {
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
-  const [dismissedSuggestions, setDismissedSuggestions] = useState<string[]>([]);
-  const [weekStats, setWeekStats] = useState<{ profileViews: number; seriesOpens: number; clicks: number } | null>(null);
+  const [celebrationOpen, setCelebrationOpen] = useState(false);
+
+  useEffect(() => {
+    if (profile.eraUnlockedPending) {
+      setCelebrationOpen(true);
+    }
+  }, [profile.eraUnlockedPending]);
+
+  // Analytics 7d data
+  const [weekStats, setWeekStats] = useState<{
+    profileViews: number;
+    seriesOpens: number;
+    clicks: number;
+  } | null>(null);
+
+  const [analyticsItems, setAnalyticsItems] = useState<{
+    series: { id: string; title: string; opens: number; episodeClicks: number }[];
+    links: { id: string; title: string; clicks: number }[];
+    products: { id: string; name: string; clicks: number }[];
+  } | null>(null);
 
   // Real data state from pages' sources
   const [customLinks, setCustomLinks] = useState<CustomLink[]>([]);
@@ -76,16 +145,6 @@ export default function DashboardOverviewPage() {
   const displayName = profile.displayName || "Creator";
   const handle = (profile.username || "").replace(/^@/, "");
   const profileUrl = buildProfileUrl(handle);
-
-  // Restore dismissed suggestions from localStorage
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem("inflixo_dismissed_suggestions");
-      if (stored) {
-        setDismissedSuggestions(JSON.parse(stored));
-      }
-    } catch {}
-  }, []);
 
   // Fetch real count data on mount from exact pages' storage / repositories
   useEffect(() => {
@@ -115,7 +174,7 @@ export default function DashboardOverviewPage() {
     }
   }, []);
 
-  // 7-day counts for the Quick Stats row (same API as /dashboard/analytics)
+  // 7-day counts & top items from GET /api/analytics?period=7d
   useEffect(() => {
     let ignore = false;
     if (!profile.id && !profile.email) {
@@ -126,16 +185,32 @@ export default function DashboardOverviewPage() {
     setLoading(true);
     fetch("/api/analytics?period=7d")
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error("Unavailable"))))
-      .then(({ totals: t }) => {
+      .then((data) => {
         if (ignore) return;
+        const t = data?.totals || {};
         setWeekStats({
           profileViews: Number(t.profileViews) || 0,
           seriesOpens: Number(t.seriesOpens) || 0,
-          clicks: (Number(t.episodeClicks) || 0) + (Number(t.linkClicks) || 0) + (Number(t.productClicks) || 0) + (Number(t.setupClicks) || 0),
+          clicks:
+            (Number(t.episodeClicks) || 0) +
+            (Number(t.linkClicks) || 0) +
+            (Number(t.productClicks) || 0) +
+            (Number(t.setupClicks) || 0),
         });
+
+        if (data?.items) {
+          setAnalyticsItems({
+            series: Array.isArray(data.items.series) ? data.items.series : [],
+            links: Array.isArray(data.items.links) ? data.items.links : [],
+            products: Array.isArray(data.items.products) ? data.items.products : [],
+          });
+        }
       })
       .catch(() => {
-        if (!ignore) setWeekStats(null);
+        if (!ignore) {
+          setWeekStats(null);
+          setAnalyticsItems(null);
+        }
       })
       .finally(() => {
         if (!ignore) setLoading(false);
@@ -155,41 +230,17 @@ export default function DashboardOverviewPage() {
     }
     const success = await copyToClipboard(profileUrl);
     setCopied(success);
-    showToast(success ? "Bio link copied to clipboard! ✨" : "Could not copy link", success ? "success" : "error");
+    showToast(
+      success ? "Bio link copied to clipboard! ✨" : "Could not copy link",
+      success ? "success" : "error"
+    );
     setTimeout(() => setCopied(false), 2000);
   }
 
-  // Dismiss a suggestion and persist
-  const handleDismissSuggestion = (id: string) => {
-    const updated = [...dismissedSuggestions, id];
-    setDismissedSuggestions(updated);
-    try {
-      localStorage.setItem("inflixo_dismissed_suggestions", JSON.stringify(updated));
-    } catch {}
-  };
-
   // Effective audience and socials
   const effectiveSocials: SocialAccounts = socials;
-  const effectiveTotalAudience = totalAudience > 0 ? totalAudience : SocialService.calculateTotalAudience(effectiveSocials);
-
-  // Social sync date calculation
-  const latestSyncDate = useMemo(() => {
-    const dates = [
-      effectiveSocials.instagram?.lastSyncedAt,
-      effectiveSocials.youtube?.lastSyncedAt,
-      effectiveSocials.facebook?.lastSyncedAt,
-    ].filter(Boolean) as string[];
-    if (dates.length === 0) return null;
-    dates.sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
-    return dates[0];
-  }, [effectiveSocials]);
-
-  const [nowMs] = useState(() => Date.now());
-  const syncDaysAgo = useMemo(() => {
-    if (!latestSyncDate) return 999;
-    const diffMs = nowMs - new Date(latestSyncDate).getTime();
-    return Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  }, [latestSyncDate, nowMs]);
+  const effectiveTotalAudience =
+    totalAudience > 0 ? totalAudience : SocialService.calculateTotalAudience(effectiveSocials);
 
   // Content Counts
   const seriesCount = series.length;
@@ -200,13 +251,12 @@ export default function DashboardOverviewPage() {
   const packagesCount = packages.length;
   const gearCount = setupItems.length;
 
-  // 1. Content Tiles Config
+  // 1. Content Tiles Config (Tiles 3 per row on desktop, 2 on mobile)
   const contentTiles = [
     {
       id: "series",
-      label: "Series",
+      label: episodesCount > 0 ? `Series | ${episodesCount} episode${episodesCount === 1 ? "" : "s"}` : "Series",
       count: seriesCount,
-      subline: `${episodesCount} episode${episodesCount === 1 ? "" : "s"}`,
       href: "/dashboard/series",
       icon: Film,
     },
@@ -214,23 +264,31 @@ export default function DashboardOverviewPage() {
       id: "links",
       label: "Links",
       count: linksCount,
-      subline: `${linksCount} link${linksCount === 1 ? "" : "s"}`,
+      subline: null,
       href: "/dashboard/links",
       icon: Link2,
     },
     {
       id: "shop",
-      label: "Shop items",
+      label: "Shop",
       count: shopCount,
-      subline: `${shopCount} item${shopCount === 1 ? "" : "s"}`,
+      subline: null,
       href: "/dashboard/products",
       icon: ShoppingBag,
+    },
+    {
+      id: "gear",
+      label: "My Setup",
+      count: gearCount,
+      subline: null,
+      href: "/dashboard/setup",
+      icon: Laptop,
     },
     {
       id: "reviews",
       label: "Brand reviews",
       count: reviewsCount,
-      subline: `${reviewsCount} review${reviewsCount === 1 ? "" : "s"}`,
+      subline: null,
       href: "/dashboard/reviews",
       icon: Star,
     },
@@ -238,117 +296,74 @@ export default function DashboardOverviewPage() {
       id: "mediakit",
       label: "Collab packages",
       count: packagesCount,
-      subline: `${packagesCount} collab package${packagesCount === 1 ? "" : "s"}`,
+      subline: null,
       href: "/dashboard/mediakit",
       icon: Briefcase,
     },
-    {
-      id: "gear",
-      label: "My Setup",
-      count: gearCount,
-      subline: `${gearCount} gear item${gearCount === 1 ? "" : "s"}`,
-      href: "/dashboard/setup",
-      icon: Laptop,
-    },
   ];
 
-  // 2. Dynamic Suggestions Evaluation (Max 3, by strict priority order - Views > 0 rule removed)
-  const candidateSuggestions: SuggestionItem[] = useMemo(() => {
-    const list: SuggestionItem[] = [];
+  // 2. Top this week columns (Max 3 rows per column)
+  const topSeries = useMemo(() => {
+    const list = analyticsItems?.series || [];
+    return list.filter((s) => (s.opens || 0) + (s.episodeClicks || 0) > 0).slice(0, 3);
+  }, [analyticsItems]);
 
-    // Priority 1: No links
-    if (linksCount === 0) {
-      list.push({
-        id: "no-links",
-        icon: Link2,
-        text: "Add your tour, tickets or other accounts",
-        actionLabel: "Add link",
-        actionHref: "/dashboard/links",
-      });
-    }
+  const topProducts = useMemo(() => {
+    const list = analyticsItems?.products || [];
+    return list.filter((p) => (p.clicks || 0) > 0).slice(0, 3);
+  }, [analyticsItems]);
 
-    // Priority 2: Series with < 3 episodes
-    const seriesWithFewEpisodes = series.find((s) => getSeriesEpisodes(s).length < 3);
-    if (seriesWithFewEpisodes) {
-      list.push({
-        id: `few-episodes-${seriesWithFewEpisodes.id}`,
-        icon: Clapperboard,
-        text: `Add more episodes to '${seriesWithFewEpisodes.title || "Series"}'`,
-        actionLabel: "Add episode",
-        actionHref: "/dashboard/series",
-      });
-    }
+  const topLinks = useMemo(() => {
+    const list = analyticsItems?.links || [];
+    return list.filter((l) => (l.clicks || 0) > 0).slice(0, 3);
+  }, [analyticsItems]);
 
-    // Priority 3: 0 brand reviews
-    if (reviewsCount === 0) {
-      list.push({
-        id: "no-reviews",
-        icon: Star,
-        text: "Add a brand review to build trust with new brands",
-        actionLabel: "Add review",
-        actionHref: "/dashboard/reviews",
-      });
-    }
+  // 3. Next steps onboarding sequence:
+  // Connect social accounts → Create your first series → Add your links → Add a product → Add a collab package → Pick a theme
+  const hasSocialConnected = Boolean(
+    socials?.instagram?.username ||
+      (socials?.instagram?.url && socials.instagram.url !== "#") ||
+      socials?.youtube?.username ||
+      (socials?.youtube?.url && socials.youtube.url !== "#") ||
+      socials?.facebook?.username ||
+      (socials?.facebook?.url && socials.facebook.url !== "#") ||
+      (socials?.instagram?.followers ?? 0) > 0 ||
+      (socials?.youtube?.subscribers ?? 0) > 0 ||
+      (socials?.facebook?.followers ?? 0) > 0
+  );
 
-    // Priority 4: 0 gear items
-    if (gearCount === 0) {
-      list.push({
-        id: "no-gear",
-        icon: Laptop,
-        text: "List your camera & mic — fans keep asking",
-        actionLabel: "Add gear",
-        actionHref: "/dashboard/setup",
-      });
-    }
-
-    // Priority 5: Channels synced > 3 days ago
-    if (syncDaysAgo > 3) {
-      list.push({
-        id: "sync-channels",
-        icon: RefreshCw,
-        text: "Refresh your fan count",
-        actionLabel: "Sync",
-        actionHref: "/dashboard/socials",
-      });
-    }
-
-    return list;
-  }, [linksCount, series, reviewsCount, gearCount, syncDaysAgo]);
-
-  const visibleSuggestions = useMemo(() => {
-    return candidateSuggestions
-      .filter((s) => !dismissedSuggestions.includes(s.id))
-      .slice(0, 3);
-  }, [candidateSuggestions, dismissedSuggestions]);
-
-  // Tooltip content for Total Fans breakdown
-  const audienceTooltip = `Instagram: ${formatCount(effectiveSocials.instagram?.followers || 0)} • YouTube: ${formatCount(effectiveSocials.youtube?.subscribers || 0)} • Facebook: ${formatCount(effectiveSocials.facebook?.followers || 0)} (synced ${syncDaysAgo > 30 ? "recently" : `${syncDaysAgo}d ago`})`;
+  const hasPickedTheme = Boolean(
+    (theme && theme !== "inflixo-maroon") ||
+      (profile.themeKey && profile.themeKey !== "inflixo-maroon")
+  );
 
   return (
     <PageContainer className="select-none text-left">
-      {/* 1. LINK BAR (one slim row) */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-3.5 bg-white border border-[#E4E4E7] rounded-[5px] shadow-2xs">
-        {/* Left: 40px avatar + Name + green Live dot */}
+      <PageHeader eyebrow={getGreeting()} {...PAGE_COPY.dashboard} />
+
+      {/* 1. LINK BAR */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 bg-white border border-[#ECECF0] rounded-[5px]">
+        {/* Left: 36px avatar + Name + green Live dot */}
         <div className="flex items-center gap-3 min-w-0">
           <div className="relative shrink-0">
             <CreatorAvatar
               src={profile.photoDataUrl}
               name={displayName}
-              className="h-10 w-10 rounded-full border border-[#E4E4E7] object-cover"
+              className="h-9 w-9 rounded-full border border-[#ECECF0] object-cover"
             />
             <span
-              className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white"
+              className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white"
               title="Profile is live"
             />
           </div>
 
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h2 className="text-[15px] font-bold text-[#18181B] truncate" title={displayName}>
+              <h2 className="text-[14px] font-semibold text-[#18181B] truncate" title={displayName}>
                 {displayName}
               </h2>
-              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="inline-flex items-center gap-1 h-6 px-2 rounded-[5px] text-[12px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                 Live
               </span>
             </div>
@@ -360,16 +375,16 @@ export default function DashboardOverviewPage() {
           <button
             type="button"
             onClick={handleCopyLink}
-            className="inline-flex h-8 items-center gap-1.5 px-2.5 rounded-[5px] bg-[#F4F4F5] hover:bg-[#E4E4E7] text-[#52525B] hover:text-[#18181B] text-[12px] font-medium transition-colors cursor-pointer group"
+            className="inline-flex h-8 items-center gap-1.5 px-2.5 rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0] hover:bg-[#F4F4F5] text-[#3F3F46] hover:text-[#18181B] text-[13px] font-medium transition-colors cursor-pointer group"
             title="Click to copy bio link"
           >
-            <span className="truncate max-w-[140px] sm:max-w-[200px]">
+            <span className="truncate max-w-[160px] sm:max-w-[220px] text-left" title={`inflixo.com/${handle || "creator"}`}>
               inflixo.com/{handle || "creator"}
             </span>
             {copied ? (
               <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
             ) : (
-              <Copy className="h-3.5 w-3.5 text-[#71717A] group-hover:text-[#18181B] shrink-0" />
+              <Copy className="h-3.5 w-3.5 text-[#6B6B76] group-hover:text-[#18181B] shrink-0" />
             )}
           </button>
 
@@ -377,16 +392,16 @@ export default function DashboardOverviewPage() {
             href={`/${handle}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-8 items-center justify-center gap-1 px-3 rounded-[5px] border border-[#E4E4E7] bg-white text-[#18181B] hover:bg-[#F4F4F5] text-[12px] font-semibold transition-colors"
+            className="inline-flex h-8 items-center justify-center gap-1 px-3 rounded-[5px] border border-[#ECECF0] bg-white text-[#18181B] hover:bg-[#FAFAFB] text-[13px] font-medium transition-colors"
           >
             <span>View</span>
-            <ExternalLink className="h-3 w-3 text-[#71717A]" />
+            <ExternalLink className="h-3.5 w-3.5 text-[#6B6B76]" />
           </Link>
 
           <button
             type="button"
             onClick={() => setShareOpen(true)}
-            className="inline-flex h-8 items-center justify-center gap-1.5 px-3.5 rounded-[5px] bg-[#7A2253] text-white hover:opacity-95 text-[12px] font-semibold transition-opacity cursor-pointer shadow-2xs"
+            className="inline-flex h-8 items-center justify-center gap-1.5 px-3.5 rounded-[5px] bg-[#7A2253] text-white hover:opacity-95 text-[13px] font-medium transition-opacity cursor-pointer"
           >
             <Share2 className="h-3.5 w-3.5" />
             <span>Share</span>
@@ -394,167 +409,221 @@ export default function DashboardOverviewPage() {
         </div>
       </div>
 
-      {/* 2. QUICK STATS (Directly under Link Bar: one slim row, small text, no cards/charts) */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 px-1 text-[13px] text-[#71717A]">
-        {/* Stat 1: Total fans with tooltip */}
-        <span
-          className="inline-flex items-center gap-1.5 cursor-help transition-colors hover:text-[#18181B]"
-          title={audienceTooltip}
-        >
-          <Users className="h-3.5 w-3.5 text-[#A1A1AA]" />
-          <span className="font-semibold text-[#18181B]">
-            {formatCount(effectiveTotalAudience)}
-          </span>
-          <span>total fans</span>
-        </span>
+      {/* 2. SETUP CHECKLIST (Linktree-style interactive onboarding) */}
+      <SetupChecklist
+        profile={profile}
+        socials={socials}
+        seriesCount={seriesCount}
+        linksCount={linksCount}
+        hasPickedTheme={hasPickedTheme}
+        onShare={() => setShareOpen(true)}
+        onCopyLink={handleCopyLink}
+      />
 
-        {/* Stat 2: Profile opens · Series opens · Clicks (7 days) */}
-        {weekStats && (
-          <>
-            <span className="text-[#D4D4D8] select-none">•</span>
-            <span className="inline-flex flex-wrap items-center gap-1.5">
-              <Eye className="h-3.5 w-3.5 text-[#A1A1AA]" />
-              {[
-                { label: "Profile opens", value: weekStats.profileViews, hash: "totals" },
-                { label: "Series opens", value: weekStats.seriesOpens, hash: "series" },
-                { label: "Clicks", value: weekStats.clicks, hash: "links" },
-              ].map((stat, i) => (
-                <Fragment key={stat.hash}>
-                  {i > 0 && <span className="text-[#D4D4D8] select-none">·</span>}
-                  <Link href={`/dashboard/analytics#${stat.hash}`} className="inline-flex items-center gap-1 hover:text-[#18181B] transition-colors">
-                    <span className="font-semibold text-[#18181B]">{formatCount(stat.value)}</span>
-                    <span>{stat.label}</span>
-                  </Link>
-                </Fragment>
-              ))}
-              <span className="text-[#A1A1AA]">(7 days)</span>
-            </span>
-          </>
-        )}
-
-        <span className="text-[#D4D4D8] select-none">•</span>
-
-        {/* Small text link: See analytics → */}
-        <Link
-          href="/dashboard/analytics"
-          className="font-medium text-[#7A2253] hover:underline inline-flex items-center gap-1 transition-colors"
-        >
-          <span>See analytics</span>
-          <span>→</span>
-        </Link>
-      </div>
-
-      {/* 3. YOUR CONTENT (count tiles — one row, 6 small tiles, 3 per row on tablet, 2 on mobile) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        {loading || profileLoading ? (
-          Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="flex flex-col justify-between p-3.5 bg-white border border-[#E4E4E7] rounded-[5px] animate-pulse space-y-3"
+      {/* 2. SECTION: THIS WEEK */}
+      <section className="space-y-3.5">
+        <SectionHeader
+          title="This week"
+          subtitle="Overview of your reach and engagement across Inflixo"
+          icon={<Sparkles className="h-4 w-4 text-[#7A2253]" />}
+          action={
+            <Link
+              href="/dashboard/analytics"
+              className="text-[13px] font-medium text-[#7A2253] hover:underline inline-flex items-center gap-1 cursor-pointer"
             >
-              <div className="h-4.5 w-4.5 rounded bg-[#F4F4F5]" />
-              <div className="space-y-1.5">
-                <div className="h-6 w-10 rounded bg-[#F4F4F5]" />
-                <div className="h-3 w-16 rounded bg-[#F4F4F5]" />
-                <div className="h-2.5 w-12 rounded bg-[#F4F4F5]" />
-              </div>
-            </div>
-          ))
-        ) : (
-          contentTiles.map((tile) => {
-            const Icon = tile.icon;
-            return (
-              <Link
-                key={tile.id}
-                href={tile.href}
-                className="flex flex-col justify-between p-3.5 bg-white border border-[#E4E4E7] hover:border-[#CBD5E1] rounded-[5px] transition-all hover:shadow-xs group cursor-pointer"
+              <span>See all analytics</span>
+              <span>→</span>
+            </Link>
+          }
+        />
+
+        <CreatorEraProgressCard
+          fanbase={effectiveTotalAudience}
+          peakFanbase={profile.peakFanbase}
+          showShareButton
+          onShareClick={() => setCelebrationOpen(true)}
+        />
+
+        <StatGrid className="lg:grid-cols-4">
+          <StatTile
+            icon={<Users className="h-[30px] w-[30px]" strokeWidth={2.25} />}
+            value={formatFans(effectiveTotalAudience)}
+            label="Total fans"
+          />
+          <StatTile
+            icon={<Eye className="h-[30px] w-[30px]" strokeWidth={2.25} />}
+            value={loading ? "..." : formatCount(weekStats?.profileViews ?? 0)}
+            label="Profile opens"
+          />
+          <StatTile
+            icon={<Film className="h-[30px] w-[30px]" strokeWidth={2.25} />}
+            value={loading ? "..." : formatCount(weekStats?.seriesOpens ?? 0)}
+            label="Series opens"
+          />
+          <StatTile
+            icon={<MousePointerClick className="h-[30px] w-[30px]" strokeWidth={2.25} />}
+            value={loading ? "..." : formatCount(weekStats?.clicks ?? 0)}
+            label="Clicks"
+          />
+        </StatGrid>
+      </section>
+
+      {/* 3. SECTION: YOUR CONTENT */}
+      <section>
+        <SectionHeader
+          title="Your content"
+          subtitle="Manage your portfolio, storefront, and audience assets"
+          icon={<Film className="h-4 w-4 text-[#7A2253]" />}
+        />
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5">
+          {loading || profileLoading ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex items-stretch bg-white border border-[#ECECF0] rounded-[5px] min-h-[64px] sm:min-h-[68px] overflow-hidden animate-pulse"
               >
-                <div className="flex items-center justify-between">
-                  <Icon
-                    className="h-4.5 w-4.5 text-[#71717A] group-hover:text-[#7A2253] transition-colors"
-                    strokeWidth={1.75}
-                  />
+                <div className="w-[64px] sm:w-[68px] shrink-0 bg-[#F4F4F5] border-r border-[#ECECF0]" />
+                <div className="p-2 sm:p-2.5 flex-1 min-w-0 flex flex-col justify-center space-y-1">
+                  <div className="h-4 w-12 rounded bg-[#F4F4F5]" />
+                  <div className="h-2.5 w-16 rounded bg-[#F4F4F5]" />
                 </div>
-                <div className="mt-3">
-                  <div className="text-2xl font-bold text-[#18181B] tracking-tight leading-none">
-                    {tile.count}
-                  </div>
-                  <div className="text-[13px] font-semibold text-[#18181B] mt-1 truncate">
-                    {tile.label}
-                  </div>
-                  {tile.count === 0 ? (
-                    <div className="text-[11px] font-semibold text-[#7A2253] hover:underline flex items-center gap-0.5 mt-0.5">
-                      Add first →
-                    </div>
-                  ) : (
-                    <div className="text-[11px] text-[#71717A] mt-0.5 truncate">
-                      {tile.subline}
-                    </div>
-                  )}
-                </div>
-              </Link>
-            );
-          })
-        )}
-      </div>
-
-      {/* 4. SUGGESTIONS (one card, max 3 items, dynamic) */}
-      {visibleSuggestions.length > 0 && (
-        <div className="bg-white border border-[#E4E4E7] rounded-[5px] p-4 sm:p-5 space-y-3 shadow-2xs">
-          <h3 className="text-[15px] font-bold text-[#18181B]">Next steps</h3>
-          <div className="space-y-2">
-            {visibleSuggestions.map((sug) => {
-              const Icon = sug.icon;
+              </div>
+            ))
+          ) : (
+            contentTiles.map((tile) => {
+              const Icon = tile.icon;
               return (
-                <div
-                  key={sug.id}
-                  className="flex items-center justify-between gap-3 p-3 rounded-[5px] bg-[#FBFBFC] border border-[#F4F4F5] hover:border-[#E4E4E7] transition-colors"
+                <Link
+                  key={tile.id}
+                  href={tile.href}
+                  className="flex items-stretch rounded-[5px] border border-[#ECECF0] hover:border-[#CBD5E1] bg-white overflow-hidden transition-colors group cursor-pointer min-h-[64px] sm:min-h-[68px]"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#7A2253]/[0.08] text-[#7A2253] shrink-0">
-                      <Icon className="h-4 w-4" strokeWidth={1.75} />
+                  <div className="flex w-[64px] sm:w-[68px] shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#7A2253] group-hover:bg-[#F7EEF2] transition-colors [&>svg]:h-[30px] [&>svg]:w-[30px] [&>svg]:stroke-[2.25]">
+                    <Icon className="h-[30px] w-[30px]" strokeWidth={2.25} />
+                  </div>
+                  <div className="min-w-0 flex-1 p-3 sm:p-3.5 flex flex-col justify-center">
+                    <div className="text-[18px] sm:text-[20px] font-semibold leading-tight text-[#18181B] whitespace-nowrap tabular-nums">
+                      {tile.count}
                     </div>
-                    <p className="text-[13px] font-medium text-[#18181B] truncate">{sug.text}</p>
+                    <div className="mt-0.5 text-[12px] font-normal leading-normal text-[#6B6B76] truncate">
+                      {tile.label}
+                    </div>
                   </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    <Link
-                      href={sug.actionHref}
-                      className="inline-flex h-7 items-center justify-center px-3 rounded-[5px] bg-[#7A2253] hover:bg-[#681c45] text-white text-[12px] font-semibold transition-colors shadow-2xs"
-                    >
-                      {sug.actionLabel}
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={() => handleDismissSuggestion(sug.id)}
-                      className="flex h-7 w-7 items-center justify-center rounded-[5px] text-[#A1A1AA] hover:text-[#18181B] hover:bg-[#F4F4F5] transition-colors cursor-pointer"
-                      aria-label="Dismiss suggestion"
-                      title="Dismiss"
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </div>
+                </Link>
               );
-            })}
-          </div>
+            })
+          )}
         </div>
-      )}
+      </section>
+
+      {/* 4. SECTION: TOP THIS WEEK */}
+      <SectionCard
+        title="Top this week"
+        subtitle="Most opened and clicked in the last 7 days"
+        icon={<Star className="h-4 w-4 text-[#7A2253]" />}
+      >
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+            <div className="space-y-2">
+              <h3 className="text-[14px] font-semibold text-[#18181B]">Top series</h3>
+              {topSeries.length === 0 ? (
+                <p className="py-2 text-[12px] text-[#6B6B76]">No activity yet</p>
+              ) : (
+                <div className="space-y-1.5">
+                  {topSeries.map((item) => (
+                    <Link
+                      key={item.id}
+                      href="/dashboard/analytics#series"
+                      className="group flex items-center justify-between gap-2 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] p-2.5 transition-colors hover:bg-white cursor-pointer"
+                    >
+                      <span className="truncate text-[13px] font-medium text-[#18181B] transition-colors group-hover:text-[#7A2253]" title={item.title}>
+                        {item.title}
+                      </span>
+                      <span className="inline-flex shrink-0 items-center h-6 rounded-[5px] bg-white border border-[#ECECF0] px-2 text-[12px] font-medium text-[#6B6B76]">
+                        {item.opens > 0
+                          ? `${item.opens} opens`
+                          : `${item.episodeClicks} clicks`}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-[14px] font-semibold text-[#18181B]">Top products</h3>
+              {topProducts.length === 0 ? (
+                <p className="py-2 text-[12px] text-[#6B6B76]">No activity yet</p>
+              ) : (
+                <div className="space-y-1.5">
+                  {topProducts.map((item) => (
+                    <Link
+                      key={item.id}
+                      href="/dashboard/analytics#products"
+                      className="group flex items-center justify-between gap-2 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] p-2.5 transition-colors hover:bg-white cursor-pointer"
+                    >
+                      <span className="truncate text-[13px] font-medium text-[#18181B] transition-colors group-hover:text-[#7A2253]" title={item.name}>
+                        {item.name}
+                      </span>
+                      <span className="inline-flex shrink-0 items-center h-6 rounded-[5px] bg-white border border-[#ECECF0] px-2 text-[12px] font-medium text-[#6B6B76]">
+                        {item.clicks} clicks
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-[14px] font-semibold text-[#18181B]">Top links</h3>
+              {topLinks.length === 0 ? (
+                <p className="py-2 text-[12px] text-[#6B6B76]">No activity yet</p>
+              ) : (
+                <div className="space-y-1.5">
+                  {topLinks.map((item) => (
+                    <Link
+                      key={item.id}
+                      href="/dashboard/analytics#links"
+                      className="group flex items-center justify-between gap-2 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] p-2.5 transition-colors hover:bg-white cursor-pointer"
+                    >
+                      <span className="truncate text-[13px] font-medium text-[#18181B] transition-colors group-hover:text-[#7A2253]" title={item.title}>
+                        {item.title}
+                      </span>
+                      <span className="inline-flex shrink-0 items-center h-6 rounded-[5px] bg-white border border-[#ECECF0] px-2 text-[12px] font-medium text-[#6B6B76]">
+                        {item.clicks} clicks
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+        </div>
+      </SectionCard>
 
       {/* Share Modal */}
-      <Modal isOpen={shareOpen} onClose={() => setShareOpen(false)} title="Share your Inflixo link">
-        <ModalBody className="space-y-4">
-          <div className="flex items-center gap-2 p-2 rounded-[5px] bg-[#F4F4F5] border border-[#E4E4E7]">
-            <input
-              type="text"
-              readOnly
-              value={profileUrl}
-              className="flex-1 bg-transparent text-[13px] text-[#18181B] font-mono outline-none px-1"
-            />
+      <Modal
+        isOpen={shareOpen}
+        onClose={() => setShareOpen(false)}
+        title="Share your Inflixo link"
+        description="Share your public creator profile across your social channels."
+        icon={<Share2 className="h-5 w-5" />}
+        size="md"
+      >
+        <ModalBody className="space-y-4 p-5 sm:p-6 text-left">
+          <div className="flex items-center gap-2">
+            <div className="flex-1 flex items-center rounded-[5px] border border-[#e2e8f0] bg-white overflow-hidden">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <Link2 className="h-4 w-4" />
+              </span>
+              <input
+                type="text"
+                readOnly
+                value={profileUrl}
+                className="h-10 flex-1 px-3 text-xs font-mono text-[#7A2253] select-all outline-none bg-transparent"
+              />
+            </div>
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-[5px] bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 transition-opacity"
+              className="h-10 inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-brand-hover px-4 text-xs font-semibold text-white transition-all shrink-0 cursor-pointer"
             >
               {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               <span>{copied ? "Copied" : "Copy"}</span>
@@ -602,19 +671,53 @@ export default function DashboardOverviewPage() {
             </button>
           </div>
         </ModalBody>
+        <ModalFooter className="px-5 sm:px-6 py-3.5">
+          <button
+            type="button"
+            onClick={() => setShareOpen(false)}
+            className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+        </ModalFooter>
       </Modal>
 
       {/* QR Code Modal */}
-      <Modal isOpen={qrOpen} onClose={() => setQrOpen(false)} title="Creator QR Code">
-        <ModalBody className="flex flex-col items-center justify-center py-4 space-y-4">
-          <div className="p-4 bg-white rounded-[5px] border border-[#E4E4E7] shadow-sm">
+      <Modal
+        isOpen={qrOpen}
+        onClose={() => setQrOpen(false)}
+        title="Creator QR Code"
+        description="Scan with any camera to instantly open your public profile."
+        icon={<QrCode className="h-5 w-5" />}
+        size="sm"
+      >
+        <ModalBody className="flex flex-col items-center justify-center py-5 px-5 space-y-4 text-center">
+          <div className="p-4 bg-white rounded-[5px] border border-[#e2e8f0] shadow-sm">
             <QRCode value={profileUrl} size={180} />
           </div>
           <p className="text-xs text-[#71717A] text-center max-w-[260px]">
             Scan this QR code with any mobile camera to open @{handle}&apos;s Inflixo profile.
           </p>
         </ModalBody>
+        <ModalFooter className="px-5 sm:px-6 py-3.5">
+          <button
+            type="button"
+            onClick={() => setQrOpen(false)}
+            className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+        </ModalFooter>
       </Modal>
+
+      {/* Creator Era Unlock Celebration Modal */}
+      <CreatorEraCelebrationModal
+        isOpen={celebrationOpen}
+        onClose={() => setCelebrationOpen(false)}
+        era={getCreatorEra(Math.max(profile.peakFanbase ?? 0, effectiveTotalAudience))}
+        username={profile.username || "creator"}
+        fanbase={Math.max(profile.peakFanbase ?? 0, effectiveTotalAudience)}
+      />
     </PageContainer>
   );
 }

@@ -22,6 +22,7 @@ import type { CreatorProduct } from "@/types";
 import { buildProfileUrl } from "@/utils/format";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
 import { getThemeDefinition, themeTokenStyle } from "@/themes/config";
 import { ThemeBackgroundAnim } from "@/components/theme/ThemeBackgroundAnim";
@@ -101,35 +102,28 @@ export default function DashboardPreviewPage() {
   return (
     <PageContainer>
       <PageHeader
-        title="Live Preview"
-        subtitle="See exactly how your public creator profile appears to visitors."
+        {...PAGE_COPY.preview}
+        meta={
+          isTrialExpired ? (
+            <span className="inline-flex items-center gap-1.5 font-medium text-(--danger)">
+              <span className="h-1.5 w-1.5 rounded-full bg-(--danger)" />
+              Profile is private (trial ended)
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 font-medium text-(--success)">
+              <span className="h-1.5 w-1.5 rounded-full bg-(--success)" />
+              Public profile is live
+            </span>
+          )
+        }
         actions={
           <>
-            {isTrialExpired ? (
-              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-50 px-2.5 h-9 rounded-[5px] border border-rose-200">
-                <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
-                Profile is private (Trial ended)
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#17845B] bg-[#EAF7F0] px-2.5 h-9 rounded-[5px] border border-[#17845B]/20">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#17845B]" />
-                Public profile is live
-              </span>
-            )}
-            <button
-              type="button"
-              onClick={() => setIsVisibilityModalOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] h-9 px-3.5 text-xs font-semibold text-[#7A2253] transition-all cursor-pointer shadow-2xs"
-            >
-              <Settings className="h-3.5 w-3.5 text-[#7A2253]" />
-              <span>Display Settings</span>
+            <button type="button" onClick={() => setIsVisibilityModalOpen(true)} className="dash-btn-secondary">
+              <Settings className="h-3.5 w-3.5" />
+              <span>Display settings</span>
             </button>
-            <button
-              type="button"
-              onClick={handleViewProfile}
-              className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] h-9 px-4 text-xs font-bold text-white transition-all cursor-pointer shadow-2xs"
-            >
-              <span>Open Public Profile</span>
+            <button type="button" onClick={handleViewProfile} className="dash-btn-primary">
+              <span>Open public profile</span>
               <ExternalLink className="h-3.5 w-3.5" />
             </button>
           </>
@@ -137,10 +131,10 @@ export default function DashboardPreviewPage() {
       />
 
       {/* 2. COMPACT PREVIEW TOOLBAR */}
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-[#e2e8f0] bg-white px-3.5 py-2 shadow-xs">
+      <div className="flex items-center justify-between gap-3 rounded-[5px] border border-[#ECECF0] bg-white px-3.5 py-2 shadow-none">
         {/* Left: Active Theme Info */}
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#7A2253] bg-[#7A2253]/[0.09] border border-[#7A2253]/20 px-2.5 py-1 rounded-lg">
+          <span className="h-6 inline-flex items-center gap-1.5 text-[12px] font-medium text-[#7A2253] bg-[#F7EEF2] px-2 rounded-[5px]">
             <Sparkles className="h-3.5 w-3.5 text-[#7A2253]" />
             <span>Active theme: {activeThemeMeta.name}</span>
           </span>
@@ -151,7 +145,7 @@ export default function DashboardPreviewPage() {
           <button
             type="button"
             onClick={handleRefresh}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] hover:text-[#7A2253] px-2.5 py-1 rounded-lg hover:bg-[#f1f5f9] border border-transparent hover:border-brand-border transition-colors cursor-pointer"
+            className="inline-flex h-8 items-center gap-1.5 text-[13px] font-medium text-[#18181B] px-3 rounded-[5px] bg-white hover:bg-[#FAFAFB] border border-[#ECECF0] transition-colors cursor-pointer"
             title="Refresh preview canvas"
           >
             <RotateCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-[#7A2253]" : ""}`} />
@@ -161,10 +155,10 @@ export default function DashboardPreviewPage() {
       </div>
 
       {/* 3. FULL SCREEN / FULL WIDTH PREVIEW CANVAS */}
-      <div className="rounded-xl border border-[#e2e8f0] overflow-hidden shadow-xs">
+      <div className="rounded-[5px] border border-[#ECECF0] overflow-hidden shadow-none">
         <div
-          style={{ ...themeTokenStyle(activeThemeMeta.key), background: "var(--page-bg)" }}
-          className={`relative overflow-hidden w-full px-5 py-3 sm:py-6 md:py-8 transition-colors duration-300 ${pageBgStyle}`}
+          style={{ ...themeTokenStyle(activeThemeMeta.key), background: "var(--page-bg)", transform: "translateZ(0)" }}
+          className={`relative overflow-hidden w-full min-h-[880px] lg:min-h-[940px] xl:min-h-[980px] h-[max(920px,calc(100dvh-120px))] px-5 py-[20px] transition-colors duration-300 ${pageBgStyle}`}
         >
           {/* Theme background animation (--page-anim), behind the card */}
           <ThemeBackgroundAnim name={getThemeDefinition(activeThemeMeta.key).tokens["--page-anim"]} />
@@ -180,7 +174,8 @@ export default function DashboardPreviewPage() {
           {/* Theme-aware Focus Overlay */}
           <FocusOverlay overlay={activeThemeMeta.focusOverlay} contained={true} />
 
-          <div className="relative z-10 w-full max-w-[620px] mx-auto flex flex-col min-h-full">
+          {/* Fixed card height: the panel minus 20px top/bottom; strictly identical height across all tabs */}
+          <div className="relative z-10 w-full max-w-[620px] mx-auto flex flex-col h-full min-h-0">
             {(() => {
               const quota = getPlanQuota(subscription?.planKey || "early_access");
               const visibleProducts =
@@ -196,6 +191,7 @@ export default function DashboardPreviewPage() {
                   products={visibleProducts}
                   totalAudience={totalAudience}
                   variant="full"
+                  containedScroll={true}
                 />
               );
             })()}

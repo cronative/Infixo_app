@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Pin } from "lucide-react";
 import { CustomLink, CustomLinkItem } from "@/types";
 import { getPlatformFromUrl, extractBareDomain } from "@/lib/linkIcons";
 
@@ -103,13 +103,7 @@ export function LinkRow({
       rel="noopener noreferrer"
       aria-label={`${title} – opens ${ariaDestination}`}
       onClick={onClick}
-      className={`group relative flex items-center justify-between gap-3 min-h-[52px] h-auto min-[400px]:h-[52px] px-3.5 ${
- isPinned ? "py-2" : "py-2"
-      } rounded-xl border ${
-        isPinned
-          ? "border-(--surface-border)/80 border-l-[3px] border-l-(--accent) bg-(--accent)/[0.05]   "
-          : "border-(--surface-border)/80  bg-(--card-bg) "
-      } text-left transition-all duration-150 ease-out hover:border-(--accent)/30 hover:bg-(--accent-hover)/[0.03]   active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-1 cursor-pointer select-none ${className}`}
+      className={`group relative flex items-center justify-between gap-3 min-h-[52px] h-auto min-[400px]:h-[52px] px-3.5 py-2 rounded-xl border border-(--surface-border)/80 bg-(--card-bg) text-left transition-all duration-150 ease-out hover:border-(--accent)/30 hover:bg-(--accent-hover)/[0.03]   active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-1 cursor-pointer select-none ${className}`}
     >
       <div className="flex items-center gap-3 min-w-0 flex-1">
         {/* 32×32 Icon Tile */}
@@ -134,11 +128,6 @@ export function LinkRow({
 
         {/* Text Content */}
         <div className="min-w-0 flex-1 flex flex-col justify-center py-0.5">
-          {isPinned && (
-            <span className="text-[11px] font-semibold text-(--accent-text) flex items-center gap-1 leading-none mb-0.5">
-              <span>📌</span> Pinned
-            </span>
-          )}
           <span className="link-row-title text-xs sm:text-[13px] font-semibold text-(--text) group-hover:text-(--accent-text) transition-colors leading-tight">
             {title}
           </span>
@@ -147,6 +136,9 @@ export function LinkRow({
           </span>
         </div>
       </div>
+
+      {/* Pin marker sits just left of the ↗ icon */}
+      {isPinned && <Pin aria-label="Pinned" className="h-3.5 w-3.5 text-(--icon) shrink-0 -mr-1.5" />}
 
       {/* Small ↗ Icon */}
       <ArrowUpRight className="h-4 w-4 text-(--icon) shrink-0 group-hover:text-(--icon-active) group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />

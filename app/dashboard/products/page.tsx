@@ -26,6 +26,9 @@ import { resizeImageToDataUrl } from "@/lib/imageResize";
 import { ProductApiError, ProductService } from "@/services/ProductService";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { PAGE_COPY } from "@/components/dashboard/pageCopy";
+import { useCreator } from "@/contexts/CreatorContext";
+import { PhonePreview } from "@/components/dashboard/PhonePreview";
 import type { ShopProduct } from "@/types";
 import { OverLimitBadge } from "@/components/ui/OverLimitBadge";
 
@@ -37,7 +40,7 @@ const SEARCH_THRESHOLD = 6;
 const fieldClass = "flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors";
 const iconBoxClass = "flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]";
 const inputClass = "flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none";
-const primaryButton = "inline-flex items-center gap-1.5 h-9 px-4 rounded-[5px] bg-[#7A2253] text-white text-xs font-bold hover:bg-[#681c46] shadow-2xs transition-colors cursor-pointer";
+const primaryButton = "dash-btn-primary";
 
 const formatRupees = (price: number) => `₹${price.toLocaleString("en-IN")}`;
 
@@ -58,6 +61,7 @@ function looksLikeUrl(value: string) {
 }
 
 export default function ProductsPage() {
+  const { profile } = useCreator();
   const { showToast } = useToast();
   const [products, setProducts] = useState<ShopProduct[]>([]);
   const [limit, setLimit] = useState<number | null>(null);
@@ -237,13 +241,10 @@ export default function ProductsPage() {
   return (
     <PageContainer className="text-left">
       <PageHeader
-        title="Shop"
-        subtitle="Products you recommend or promote"
+        {...PAGE_COPY.shop}
+        meta={!loading && !loadError ? `${limit === null ? used : `${used} of ${limit}`} · ${planName}` : undefined}
         actions={
           <>
-            {!loading && !loadError && (
-              <Chip variant="soft">{limit === null ? `${used}` : `${used} of ${limit}`} · {planName}</Chip>
-            )}
             {isLimitReached ? (
               <button type="button" onClick={() => setShowLimitModal(true)} className={primaryButton}>
                 <Sparkles className="h-4 w-4" />
@@ -259,8 +260,10 @@ export default function ProductsPage() {
         }
       />
 
-      {showSearch && (
-        <div className="relative flex items-center h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 gap-2 w-full sm:w-64 focus-within:border-[#7A2253] shadow-2xs transition-colors">
+      <div className="flex items-start gap-8">
+        <div className="flex-1 min-w-0 space-y-5">
+          {showSearch && (
+        <div className="relative flex items-center h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 gap-2 w-full sm:w-64 focus-within:border-[#7A2253] transition-colors">
           <Search className="h-4 w-4 text-[#94a3b8] shrink-0" />
           <input
             type="text"
@@ -268,10 +271,10 @@ export default function ProductsPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search products..."
             aria-label="Search products"
-            className="w-full text-xs text-[#0f172a] placeholder:text-[#94a3b8] bg-transparent outline-none"
+            className="w-full text-[13px] text-[#18181B] placeholder:text-[#94a3b8] bg-transparent outline-none"
           />
           {searchQuery && (
-            <button type="button" aria-label="Clear search" onClick={() => setSearchQuery("")} className="text-[#94a3b8] hover:text-[#0f172a]">
+            <button type="button" aria-label="Clear search" onClick={() => setSearchQuery("")} className="text-[#94a3b8] hover:text-[#18181B]">
               <X className="h-3.5 w-3.5" />
             </button>
           )}
@@ -281,7 +284,7 @@ export default function ProductsPage() {
       {loading ? (
         <div role="status" aria-label="Loading products" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((id) => (
-            <div key={id} className="h-64 animate-pulse rounded-[5px] border border-[#e2e8f0] bg-slate-100" />
+            <div key={id} className="h-64 animate-pulse rounded-[5px] border border-[#ECECF0] bg-slate-100" />
           ))}
         </div>
       ) : loadError ? (
@@ -305,12 +308,12 @@ export default function ProductsPage() {
             }
           />
         ) : (
-          <div className="rounded-[5px] border-2 border-dashed border-[#e2e8f0] bg-white/40 p-8 sm:p-10 text-center flex flex-col items-center justify-center">
-            <div className="relative mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-[#FFF5F7] text-[#7A2253] border border-[#FCE7F3]">
+          <div className="rounded-[5px] border-2 border-dashed border-[#ECECF0] bg-white/40 p-8 sm:p-10 text-center flex flex-col items-center justify-center">
+            <div className="relative mb-3 flex h-12 w-12 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
               <ShoppingBag className="h-6 w-6" />
             </div>
-            <h4 className="font-bold text-sm sm:text-base text-[#0f172a]">Add your first product</h4>
-            <p className="mt-1 text-xs text-[#64748b] max-w-sm">
+            <h4 className="font-semibold text-[16px] text-[#18181B]">Add your first product</h4>
+            <p className="mt-1 text-[12px] text-[#6B6B76] max-w-sm">
               Paste a product link and we&apos;ll fill in the details.
             </p>
             <button type="button" onClick={() => edit()} className={`mt-4 ${primaryButton}`}>
@@ -324,15 +327,15 @@ export default function ProductsPage() {
           {displayProducts.map((product) => (
             <article
               key={product.id}
-              className="rounded-[5px] border border-[#e2e8f0] bg-white overflow-hidden shadow-2xs flex flex-col"
+              className="rounded-[5px] border border-[#ECECF0] bg-white overflow-hidden shadow-none flex flex-col"
             >
               <ProductImage
                 src={product.image}
                 name={product.name}
-                className="w-full aspect-[4/3] rounded-none border-b border-[#f1f5f9] bg-[#f8fafc]"
+                className="w-full aspect-[4/3] rounded-none border-b border-[#ECECF0] bg-[#FAFAFB]"
               />
               <div className="p-3.5 flex flex-col flex-1 gap-1 text-left">
-                <h2 className="font-bold text-sm text-[#0f172a] line-clamp-1" title={product.name}>
+                <h2 className="font-semibold text-[14px] text-[#18181B] line-clamp-1" title={product.name}>
                   {product.name}
                 </h2>
                 {limit !== null && products.indexOf(product) >= limit && <OverLimitBadge className="self-start" />}
@@ -340,11 +343,11 @@ export default function ProductsPage() {
                   <p className="font-bold text-base text-[#7A2253] tabular-nums">{formatRupees(product.price)}</p>
                 )}
                 {product.note && (
-                  <p className="text-xs text-[#64748b] line-clamp-1" title={product.note}>{product.note}</p>
+                  <p className="text-[12px] text-[#6B6B76] line-clamp-1" title={product.note}>{product.note}</p>
                 )}
                 <div className="mt-auto flex items-center gap-2 pt-2">
                   {product.isAffiliate && (
-                    <span className="rounded-[5px] bg-[#f1f5f9] px-1.5 py-0.5 text-[10px] font-semibold text-[#64748b]">Affiliate</span>
+                    <span className="h-6 inline-flex items-center rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0] px-2 text-[12px] font-medium text-[#6B6B76]">Affiliate</span>
                   )}
                   <div className="ml-auto flex items-center gap-2">
                     <button
@@ -352,7 +355,7 @@ export default function ProductsPage() {
                       aria-label={`Edit ${product.name}`}
                       title="Edit product"
                       onClick={() => edit(product)}
-                      className="h-8 w-8 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-slate-50 text-[#64748b] hover:text-[#0f172a] flex items-center justify-center transition-colors shadow-2xs cursor-pointer shrink-0"
+                      className="h-8 w-8 rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-[#6B6B76] hover:text-[#18181B] flex items-center justify-center transition-colors cursor-pointer shrink-0"
                     >
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
@@ -361,7 +364,7 @@ export default function ProductsPage() {
                       aria-label={`Delete ${product.name}`}
                       title="Delete product"
                       onClick={() => void remove(product)}
-                      className="h-8 w-8 rounded-[5px] border border-[#FCE7F3] bg-[#FFF5F7] hover:bg-rose-50 text-[#ef4444] hover:text-red-700 flex items-center justify-center transition-colors shadow-2xs cursor-pointer shrink-0"
+                      className="h-8 w-8 rounded-[5px] border border-rose-200 bg-white hover:bg-rose-50 text-rose-600 flex items-center justify-center transition-colors cursor-pointer shrink-0"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -372,6 +375,10 @@ export default function ProductsPage() {
           ))}
         </div>
       )}
+        </div>
+
+        <PhonePreview username={profile.username} subpath="products" refreshTrigger={products} products={products} />
+      </div>
 
       <Modal
         isOpen={open}
