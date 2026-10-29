@@ -105,29 +105,29 @@ export interface ProfileHeaderProps {
 function getPlatformIcon(platform: string) {
   switch (platform.toLowerCase()) {
     case "instagram":
-      return <InstagramIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />;
+      return <InstagramIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />;
     case "youtube":
-      return <YoutubeIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />;
+      return <YoutubeIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />;
     case "facebook":
-      return <FacebookIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />;
+      return <FacebookIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />;
     case "twitter":
-      return <XTwitterIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-white" />;
+      return <XTwitterIcon className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-white" />;
     case "linkedin":
-      return <LinkedinIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-white" />;
+      return <LinkedinIcon className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-white" />;
     case "threads":
-      return <ThreadsIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-white" />;
+      return <ThreadsIcon className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-white" />;
     case "snapchat":
-      return <SnapchatIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-(--text)" />;
+      return <SnapchatIcon className="h-4 w-4 sm:h-5 sm:w-5 text-(--text)" />;
     case "spotify":
-      return <SpotifyIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />;
+      return <SpotifyIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />;
     case "twitch":
-      return <TwitchIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />;
+      return <TwitchIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />;
     case "pinterest":
-      return <PinterestIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />;
+      return <PinterestIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />;
     case "tiktok":
-      return <TikTokIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />;
+      return <TikTokIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />;
     default:
-      return <Globe className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-white" />;
+      return <Globe className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-white" />;
   }
 }
 
@@ -352,15 +352,11 @@ export function ProfileHeader({
   const currentEra = creatorEra || (effectiveFanbase > 0 ? getCreatorEra(effectiveFanbase) : null);
   const eraProgress = getEraProgress(effectiveFanbase);
 
-  const primaryPlatforms = useMemo(() => {
-    const priority = ["instagram", "youtube", "facebook"];
-    const found = priority
-      .map((p) => socialList.find((s) => s.platform.toLowerCase() === p))
-      .filter(Boolean) as ProfileHeaderSocialItem[];
-
-    if (found.some((s) => s.hasAccount || (typeof s.count === "number" && s.count > 0))) {
-      return found.filter((s) => s.hasAccount || (typeof s.count === "number" && s.count > 0));
-    }
+  const allActiveSocials = useMemo(() => {
+    const list = socialList.filter(
+      (s) => s.hasAccount || (typeof s.count === "number" && s.count > 0) || (s.url && s.url !== "#")
+    );
+    if (list.length > 0) return list;
 
     if (platformBreakdown && platformBreakdown.length > 0) {
       return platformBreakdown.map((pb) => ({
@@ -373,16 +369,8 @@ export function ProfileHeader({
       }));
     }
 
-    return socialList.filter((s) => s.hasAccount || (typeof s.count === "number" && s.count > 0));
+    return [];
   }, [socialList, platformBreakdown]);
-
-  const otherSocials = useMemo(() => {
-    return socialList.filter(
-      (s) =>
-        !primaryPlatforms.some((p) => p.platform.toLowerCase() === s.platform.toLowerCase()) &&
-        (s.hasAccount || (typeof s.count === "number" && s.count > 0) || (s.url && s.url !== "#"))
-    );
-  }, [socialList, primaryPlatforms]);
 
   return (
     <header className="w-full shrink-0 select-none pb-0">
@@ -564,20 +552,20 @@ export function ProfileHeader({
       </div>
 
       {/* ============================================================== */}
-      {/* ROW 3: STATS GRID (Dashboard-style Rectangular Boxes)          */}
-      {/* 2 columns on mobile, 4 columns on tablet/desktop               */}
+      {/* ROW 3: TOTAL FANS & SOCIAL ICONS (Single Responsive Row)       */}
+      {/* Total Fans count on the left, social account icons on the right*/}
       {/* ============================================================== */}
-      {(effectiveFanbase > 0 || primaryPlatforms.length > 0) && (
+      {(effectiveFanbase > 0 || allActiveSocials.length > 0) && (
         <div className="w-full mt-2 sm:mt-2.5">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 w-full">
-            {/* Box 1: Total Fans */}
+          <div className="flex items-center gap-1.5 sm:gap-2 w-full">
+            {/* Left: Total Fans Box */}
             <button
               type="button"
               onClick={() => {
                 setEraSheetOpen(true);
                 if (onFanbaseClick) onFanbaseClick();
               }}
-              className="tap-scale flex items-stretch rounded-[5px] border border-[#ECECF0] hover:border-[#CBD5E1] bg-white overflow-hidden transition-all text-left cursor-pointer group h-[38px] sm:h-[42px]"
+              className="tap-scale flex-1 min-w-0 flex items-stretch rounded-[5px] border border-[#ECECF0] hover:border-[#CBD5E1] bg-white overflow-hidden transition-all text-left cursor-pointer group h-[38px] sm:h-[42px]"
               title="View fanbase breakdown"
               aria-label="View fanbase breakdown"
             >
@@ -586,7 +574,7 @@ export function ProfileHeader({
                 <Users className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
               </div>
               {/* Right Content: Baju me Count, Niche Label */}
-              <div className="flex-1 min-w-0 px-2 py-0.5 sm:px-2.5 sm:py-1 flex flex-col justify-center">
+              <div className="flex-1 min-w-0 px-2.5 py-0.5 sm:px-3 sm:py-1 flex flex-col justify-center">
                 <div className="text-[12px] sm:text-[13px] font-bold text-[#18181B] leading-tight tabular-nums truncate">
                   {formatFans(effectiveFanbase)}
                 </div>
@@ -596,83 +584,40 @@ export function ProfileHeader({
               </div>
             </button>
 
-            {/* Platform Boxes */}
-            {primaryPlatforms.map((item) => {
-              const styles = getPlatformRowStyles(item.platform);
-              const unitText = item.unit || styles.unit;
-              const hasUrl = Boolean(item.url && item.url !== "#");
+            {/* Right (Baaju me): Social Icons only (no follower counts) */}
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              {allActiveSocials.map((item) => {
+                const bgClass = getPlatformBgClass(item.platform);
+                const hasUrl = Boolean(item.url && item.url !== "#");
 
-              const boxContent = (
-                <>
-                  {/* Full-height Square Left Icon Box */}
-                  <div
-                    className={`flex w-8 sm:w-9 shrink-0 items-center justify-center border-r ${styles.boxBorder} ${styles.boxBg}`}
+                const iconContent = (
+                  <span className="flex items-center justify-center">
+                    {getPlatformIcon(item.platform)}
+                  </span>
+                );
+
+                const btnClass = `tap-scale flex h-[38px] w-[38px] sm:h-[42px] sm:w-[42px] items-center justify-center rounded-[5px] ${bgClass} shadow-2xs hover:scale-105 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden`;
+
+                return hasUrl ? (
+                  <a
+                    key={item.platform}
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={`Visit ${item.label || item.platform}`}
+                    aria-label={`Visit ${item.label || item.platform}`}
+                    className={btnClass}
                   >
-                    {getPlatformCircleIcon(item.platform)}
+                    {iconContent}
+                  </a>
+                ) : (
+                  <div key={item.platform} className={btnClass}>
+                    {iconContent}
                   </div>
-                  {/* Right Content: Baju me Count, Niche Label */}
-                  <div className="flex-1 min-w-0 px-2 py-0.5 sm:px-2.5 sm:py-1 flex flex-col justify-center">
-                    <div className="flex items-center justify-between gap-1 w-full">
-                      <span className="text-[12px] sm:text-[13px] font-bold text-[#18181B] leading-tight tabular-nums truncate">
-                        {formatFans(item.count || 0)}
-                      </span>
-                      {hasUrl && (
-                        <ExternalLink className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-[#A1A1AA] group-hover:text-[#18181B] transition-colors shrink-0" />
-                      )}
-                    </div>
-                    <div className="text-[9px] sm:text-[10px] text-[#71717A] leading-none font-normal truncate mt-0.5">
-                      {unitText}
-                    </div>
-                  </div>
-                </>
-              );
-
-              const boxClass =
-                "tap-scale flex items-stretch rounded-[5px] border border-[#ECECF0] hover:border-[#CBD5E1] bg-white overflow-hidden transition-all text-left group h-[38px] sm:h-[42px]";
-
-              return hasUrl ? (
-                <a
-                  key={item.platform}
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={`Visit ${item.label || item.platform}`}
-                  aria-label={`Visit ${item.label || item.platform}`}
-                  className={`${boxClass} cursor-pointer`}
-                >
-                  {boxContent}
-                </a>
-              ) : (
-                <div key={item.platform} className={boxClass}>
-                  {boxContent}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
-
-      {/* Extra Social Accounts (if creator has Twitter, LinkedIn, etc. not in primary card) */}
-      {otherSocials.length > 0 && (
-        <div className="flex items-center gap-2 pt-2.5 w-full">
-          {otherSocials.map((item) => {
-            const bgClass = getPlatformBgClass(item.platform);
-            return (
-              <a
-                key={item.platform}
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={`Visit ${item.label}`}
-                aria-label={`${item.label} profile of ${displayName || "creator"}`}
-                className={`tap-scale flex h-7 w-7 items-center justify-center rounded-[5px] ${bgClass} shadow-2xs hover:scale-105 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden`}
-              >
-                <span className="flex items-center justify-center">
-                  {getPlatformIcon(item.platform)}
-                </span>
-              </a>
-            );
-          })}
         </div>
       )}
 
