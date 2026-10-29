@@ -155,6 +155,56 @@ async function migrateDatabase(target) {
       await connection.query("ALTER TABLE creator_settings ALTER COLUMN theme_key SET DEFAULT 'inflixo-maroon'");
     }
 
+    // Ensure otps and creator_onboarding_steps tables exist
+    await connection.query(`CREATE TABLE IF NOT EXISTS otps (
+      id BIGINT AUTO_INCREMENT PRIMARY KEY,
+      email VARCHAR(255) NOT NULL,
+      otp_code VARCHAR(10) NOT NULL,
+      expires_at TIMESTAMP NOT NULL,
+      is_used BOOLEAN NOT NULL DEFAULT FALSE,
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_email_otp (email, otp_code, is_used)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`);
+
+    await connection.query(`CREATE TABLE IF NOT EXISTS creator_onboarding_steps (
+      id BIGINT AUTO_INCREMENT PRIMARY KEY,
+      email VARCHAR(255) NOT NULL UNIQUE,
+      creator_id VARCHAR(64) DEFAULT NULL,
+      step_name ENUM('otp_verified', 'profile', 'socials', 'theme', 'series', 'subscription', 'finish') NOT NULL,
+      is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+      completed_at TIMESTAMP NULL DEFAULT NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      INDEX idx_email_step (email, is_completed)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`);
+
+    await addColumnIfMissing("creators", "city", "VARCHAR(100) DEFAULT NULL");
+    await addColumnIfMissing("creators", "state", "VARCHAR(100) DEFAULT NULL");
+    await addColumnIfMissing("creators", "country", "VARCHAR(100) DEFAULT NULL");
+    await addColumnIfMissing("creators", "profession", "VARCHAR(100) DEFAULT NULL");
+
+    // Ensure analytics_events table and all columns exist before updating
+    await connection.query(`CREATE TABLE IF NOT EXISTS analytics_events (
+      id BIGINT AUTO_INCREMENT PRIMARY KEY,
+      creator_id VARCHAR(64) NOT NULL,
+      event_type VARCHAR(50) NOT NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_creator_created (creator_id, created_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`);
+
+    await addColumnIfMissing("analytics_events", "event_id", "VARCHAR(128) DEFAULT NULL");
+    await addColumnIfMissing("analytics_events", "event_target", "VARCHAR(255) DEFAULT NULL");
+    await addColumnIfMissing("analytics_events", "visitor_id", "VARCHAR(128) DEFAULT NULL");
+    await addColumnIfMissing("analytics_events", "source", "VARCHAR(50) DEFAULT NULL");
+    await addColumnIfMissing("analytics_events", "user_agent", "TEXT DEFAULT NULL");
+    await addColumnIfMissing("analytics_events", "ip_address", "VARCHAR(45) DEFAULT NULL");
+    await addColumnIfMissing("analytics_events", "metadata", "JSON DEFAULT NULL");
+
+    const [analyticsEventIdIndex] = await connection.query("SHOW INDEX FROM analytics_events WHERE Key_name = 'unique_analytics_event_id'");
+    if (!analyticsEventIdIndex.length) {
+      await connection.query("ALTER TABLE analytics_events ADD UNIQUE KEY unique_analytics_event_id (event_id)");
+    }
+
     // 007: analytics event types (db/migrations/007_analytics_event_types.sql).
     await connection.query("UPDATE analytics_events SET event_type = 'series_open' WHERE event_type = 'series_view'");
     await connection.query("UPDATE analytics_events SET event_type = 'collab_request_submit', event_target = NULL WHERE event_type = 'collaboration_submit'");
@@ -163,6 +213,40 @@ async function migrateDatabase(target) {
     if (!analyticsIndexes.length) {
       await connection.query("ALTER TABLE analytics_events ADD INDEX idx_creator_analytics (creator_id, event_type, created_at)");
     }
+
+    // 008: creator era peak fanbase (db/migrations/008_creator_era_peak.sql).
+    await addColumnIfMissing("creators", "peak_fanbase", "INT UNSIGNED NULL DEFAULT NULL");
+    await addColumnIfMissing("creators", "era_unlocked_pending", "TINYINT(1) NOT NULL DEFAULT 0");
+
+    // 009: multi social accounts per platform (db/migrations/009_social_accounts_multi.sql).
+    const [socialTables] = await connection.query("SHOW TABLES LIKE 'social_accounts'");
+    if (socialTables.length) {
+      await addColumnIfMissing("social_accounts", "is_primary", "TINYINT(1) NOT NULL DEFAULT 0");
+
+      await connection.query(`UPDATE social_accounts sa
+        JOIN (
+          SELECT creator_id, platform, MIN(id) AS min_id
+          FROM social_accounts
+          GROUP BY creator_id, platform
+        ) first_acc ON sa.id = first_acc.min_id
+        SET sa.is_primary = 1
+        WHERE sa.is_primary = 0`);
+
+      const [oldUnique] = await connection.query("SHOW INDEX FROM social_accounts WHERE Key_name = 'unique_creator_platform'");
+      if (oldUnique.length) {
+        await connection.query("ALTER TABLE social_accounts DROP INDEX unique_creator_platform");
+      }
+
+      const [newUnique] = await connection.query("SHOW INDEX FROM social_accounts WHERE Key_name = 'unique_creator_platform_username'");
+      if (!newUnique.length) {
+        await connection.query("ALTER TABLE social_accounts ADD UNIQUE KEY unique_creator_platform_username (creator_id, platform, username)");
+      }
+    }
+
+    // 010: remove CDN picture URLs from stored records (db/migrations/010_remove_cdn_picture_urls.sql).
+    await connection.query(`UPDATE creators 
+      SET photo_url = NULL 
+      WHERE photo_url LIKE '%cdn%instagram%' OR photo_url LIKE '%fbcdn.net%'`);
 
     await connection.query(`UPDATE subscriptions
       SET trial_ends_at = NULL
