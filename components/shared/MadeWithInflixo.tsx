@@ -31,8 +31,8 @@ export function MadeWithInflixo({
 
   if (variant === "card-footer") {
     return (
-      <div className={`w-full flex flex-col items-center justify-center gap-1.5 px-3 text-center select-none ${className}`}>
-        {/* Row 1: Powered by Inflixo */}
+      <div className={`w-full flex flex-col sm:flex-row items-center justify-between gap-x-3 gap-y-1.5 px-3 sm:px-4 text-center sm:text-left select-none ${className}`}>
+        {/* Left: Powered by Inflixo */}
         <a
           href="https://inflixo.com"
           target="_blank"
@@ -40,15 +40,15 @@ export function MadeWithInflixo({
           onClick={(event) => {
             if (disabled) event.preventDefault();
           }}
-          className="inline-flex items-center justify-center gap-1.5 text-[12.5px] sm:text-[13px] font-medium text-(--text-muted) hover:text-(--text) transition-colors cursor-pointer"
+          className="inline-flex items-center justify-center gap-1.5 text-[11.5px] sm:text-[12px] font-medium text-(--text-muted) hover:text-(--text) transition-colors cursor-pointer shrink-0"
           aria-label="Powered by Inflixo"
         >
           <span className="tracking-normal">Powered by</span>
-          <InflixoWordmark className="h-4" />
+          <InflixoWordmark className="h-3.5 sm:h-4" />
         </a>
 
-        {/* Row 2: Linktree-style utility footer links (Cookie Preferences • Report • Privacy • Explore • More from Inflixo) */}
-        <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 text-[11px] sm:text-[11.5px] font-medium text-(--text-muted) opacity-80">
+        {/* Right: Linktree-style utility footer links (Cookie Preferences • Report • Privacy • Explore • More from Inflixo) */}
+        <div className="flex flex-wrap items-center justify-center sm:justify-end gap-x-2 gap-y-0.5 text-[10.5px] sm:text-[11px] font-medium text-(--text-muted) opacity-80">
           <button
             type="button"
             onClick={(e) => {

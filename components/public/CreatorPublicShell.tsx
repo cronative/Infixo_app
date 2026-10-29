@@ -117,7 +117,7 @@ export function PublicCard({
 
       {showFooter && (
         <div
-          className="relative z-30 shrink-0 select-none py-2.5 sm:py-3 border-t border-(--divider) bg-transparent flex items-center justify-center"
+          className="relative z-30 shrink-0 select-none py-2 sm:py-2.5 border-t border-(--divider) bg-transparent flex items-center w-full"
           style={{ boxShadow: "0 -2px 6px rgba(0,0,0,.04)" }}
         >
           <MadeWithInflixo
