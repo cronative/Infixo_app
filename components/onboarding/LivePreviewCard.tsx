@@ -1341,7 +1341,7 @@ export function LivePreviewCard({
     headerTouchStartY.current = e.touches[0].clientY;
   };
   const handleHeaderTouchMove = (e: React.TouchEvent) => {
-    if (headerTouchStartY.current !== null && profileScrollRef.current) {
+    if (containedScroll && headerTouchStartY.current !== null && profileScrollRef.current) {
       const deltaY = headerTouchStartY.current - e.touches[0].clientY;
       profileScrollRef.current.scrollTop += deltaY;
       headerTouchStartY.current = e.touches[0].clientY;
@@ -1352,7 +1352,7 @@ export function LivePreviewCard({
   };
 
   const handleHeaderWheel = (e: React.WheelEvent) => {
-    if (profileScrollRef.current) {
+    if (containedScroll && profileScrollRef.current) {
       profileScrollRef.current.scrollTop += e.deltaY;
     }
   };
@@ -1374,6 +1374,7 @@ export function LivePreviewCard({
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
+      setNavScrolled(scrollY > 0);
       if (scrollY > 80) {
         setShowStickyProfileHeader(true);
         setShowMoveToTop(scrollY > 200);
@@ -1660,10 +1661,13 @@ export function LivePreviewCard({
         ["--desktop-surface-shadow" as any]: isPublicSurface ? "none" : surfaceShadow,
         boxShadow: isPublicSurface ? "none" : undefined,
       }}
-      className={`relative w-full max-w-full overflow-hidden flex-1 min-h-0 h-full max-h-full flex flex-col ${isPublicSurface
- ? "px-4 pt-[20px] sm:px-5 sm:pt-[20px] rounded-[5px] border profile-card-glass"
-        : `${cardPadding ? cardPadding : "px-4 sm:px-5 pt-[20px]"} rounded-[5px] border shadow-none`
-        } transition-all`}
+      className={`relative w-full max-w-full flex-1 flex flex-col ${
+        containedScroll ? "overflow-hidden min-h-0 h-full max-h-full" : "min-h-full"
+      } ${
+        isPublicSurface
+          ? "px-4 pt-[20px] sm:px-5 sm:pt-[20px] rounded-[5px] border profile-card-glass"
+          : `${cardPadding ? cardPadding : "px-4 sm:px-5 pt-[20px]"} rounded-[5px] border shadow-none`
+      } transition-all`}
     >
       {/* Ambient Animation in Preview mode when theme supports it */}
       {themeMeta.animation?.type !== "none" && !isPublicSurface && (
@@ -1917,8 +1921,12 @@ export function LivePreviewCard({
       {/* 2. SCROLLABLE TAB CONTENT AREA (Smoothly scrolls under the fixed tab bar) */}
       <div
         ref={profileScrollRef}
-        onScroll={handleContainedScroll}
-        className="relative z-10 flex-1 min-h-0 w-full flex flex-col overflow-y-auto overflow-x-hidden overscroll-contain scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-1.5 sm:pt-2 pb-6"
+        onScroll={containedScroll ? handleContainedScroll : undefined}
+        className={`relative z-10 flex-1 w-full flex flex-col ${
+          containedScroll
+            ? "min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            : ""
+        } pt-1.5 sm:pt-2 pb-6`}
       >
 
         {/* 2. About Tab (Compact, flat, 5px radius, theme-aware layout) */}

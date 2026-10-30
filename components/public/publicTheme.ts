@@ -61,7 +61,7 @@ export const PUBLIC_RADIUS = {
 
 /** Centered card: sleek mobile-first width on web (up to 620px), fills down to bottom of screen when content is short. */
 export const PUBLIC_MAIN_CLASS =
-  "relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[620px] px-2.5 py-[20px] sm:px-3 h-full max-h-full min-h-0 overflow-hidden animate-fade-in-up";
+  "relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[620px] px-2.5 py-[20px] sm:px-3 animate-fade-in-up";
 
 /** Inner padding of the centered card, shared by all pages. 16px mobile, 20px desktop */
 export const PUBLIC_CARD_PADDING = "px-4 sm:px-5";

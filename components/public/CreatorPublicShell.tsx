@@ -74,7 +74,7 @@ export function CreatorPublicShell({
 
       {/* 4. Centered card column with 20px top & bottom padding */}
       <main
-        className={`relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[620px] px-2.5 sm:px-3 py-[20px] min-h-0 animate-fade-in-up ${mainClassName}`}
+        className={`relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[620px] px-2.5 sm:px-3 py-[20px] animate-fade-in-up ${mainClassName}`}
       >
         {children}
       </main>
@@ -109,10 +109,10 @@ export function PublicCard({
     <div
       data-card-glass={getThemeDefinition(t.meta.key).tokens["--card-blur"] !== "0px"}
       style={{ ...t.surfaceStyle, boxShadow: "none", ...style }}
-      className={`relative flex-1 min-h-0 h-full max-h-full flex flex-col border profile-card-glass transition-all overflow-hidden ${PUBLIC_RADIUS.card} ${className}`}
+      className={`relative flex-1 min-h-full flex flex-col border profile-card-glass transition-all ${PUBLIC_RADIUS.card} ${className}`}
     >
-      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden flex flex-col">
-        <div className="flex-1 min-h-0">
+      <div className="flex-1 flex flex-col">
+        <div className="flex-1">
           {children}
         </div>
 
