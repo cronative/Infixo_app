@@ -62,16 +62,16 @@ export function CreatorEraBottomSheet({
   const cleanUsername = (creatorUsername || "").trim().replace(/^@/, "");
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 backdrop-blur-xs p-3 sm:p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/65 backdrop-blur-xs p-3 sm:p-4 pt-[30px] sm:pt-[30px] animate-in fade-in duration-200 overflow-y-auto">
       {/* Backdrop */}
       <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
 
-      {/* Centered Modal Content */}
+      {/* Modal Content — Starts 30px from top */}
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Creator Era Safar"
-        className="relative z-10 w-full max-w-[440px] bg-white rounded-[16px] border border-[#e2e8f0] shadow-2xl p-5 sm:p-6 text-left max-h-[86vh] flex flex-col animate-in zoom-in-95 duration-200 overflow-hidden"
+        aria-label="Creator Era Journey"
+        className="relative z-10 w-full max-w-[440px] bg-white rounded-[16px] border border-[#e2e8f0] shadow-2xl p-5 sm:p-6 text-left max-h-[calc(100vh-60px)] flex flex-col animate-in slide-in-from-top-4 duration-200 overflow-hidden"
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-3 pb-3 border-b border-[#f1f5f9] shrink-0">
@@ -87,13 +87,13 @@ export function CreatorEraBottomSheet({
             <div className="min-w-0">
               <h3 className="text-[16px] sm:text-[17px] font-bold text-[#0f172a] leading-tight truncate">
                 {isCreatorView ? (
-                  <>Aapka Safar · <span className="text-[#7A2253]">{era.badge}</span></>
+                  <>Your Journey · <span className="text-[#7A2253]">{era.badge}</span></>
                 ) : (
                   <>{displayName} · <span className="text-[#7A2253]">{era.badge}</span></>
                 )}
               </h3>
               <p className="text-xs text-[#64748b] mt-1 font-medium leading-snug">
-                {formatFans(fanCount)} log is creative journey par vishwas karte hain ✨
+                {formatFans(fanCount)} people believe in this creative journey ✨
               </p>
             </div>
           </div>
@@ -108,11 +108,11 @@ export function CreatorEraBottomSheet({
           </button>
         </div>
 
-        {/* Emotional Micro Quote */}
+        {/* Inspiring Micro Quote */}
         <div className="mt-3 px-3 py-2 rounded-[8px] bg-[#FFF0F5]/70 border border-[#FCE7F3] flex items-center gap-2 shrink-0">
           <Heart className="h-3.5 w-3.5 text-[#7A2253] shrink-0 fill-[#7A2253]/20" />
           <p className="text-[11.5px] text-[#7A2253] font-medium leading-tight">
-            Har creator ka safar zero se shuru hota hai. Har milestone aapki mehnat ka prateek hai.
+            Every creator starts from zero. Every milestone celebrates your craft and community.
           </p>
         </div>
 
@@ -122,7 +122,7 @@ export function CreatorEraBottomSheet({
             <div className="flex items-center justify-between text-xs font-semibold text-[#0f172a]">
               <span className="inline-flex items-center gap-1.5 truncate">
                 <Sparkles className="h-3 w-3 text-[#7A2253]" />
-                <span>Agla Padaav: {progress.nextBadge}</span>
+                <span>Next Milestone: {progress.nextBadge}</span>
               </span>
               <span className="text-[#7A2253] tabular-nums font-bold shrink-0">
                 {formatFans(progress.fansNeeded)} to go
@@ -135,7 +135,7 @@ export function CreatorEraBottomSheet({
               />
             </div>
             <p className="text-[10.5px] text-[#64748b] leading-tight">
-              {formatFans(progress.nextMilestone)} supporters par ye naya milestone unlock hoga.
+              Unlock this next milestone at {formatFans(progress.nextMilestone)} supporters.
             </p>
           </div>
         )}
@@ -144,7 +144,7 @@ export function CreatorEraBottomSheet({
         <div className="py-3 flex-1 overflow-y-auto space-y-1.5 scrollbar-thin">
           <div className="flex items-center justify-between px-1 mb-1">
             <p className="text-[11px] font-bold uppercase tracking-wider text-[#94a3b8]">
-              Creator Era Safarnama
+              Creator Era Journey
             </p>
             <span className="text-[10px] text-[#94a3b8] font-medium">10 Eras · 30 Tiers</span>
           </div>
@@ -189,7 +189,7 @@ export function CreatorEraBottomSheet({
                     </span>
                     {isCurrent && (
                       <span className="text-[9.5px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-[4px] bg-[#7A2253]/10 text-[#7A2253]">
-                        Current Padaav
+                        Current Milestone
                       </span>
                     )}
                   </div>
@@ -255,7 +255,7 @@ export function CreatorEraBottomSheet({
           })}
         </div>
 
-        {/* Emotional "Creator Era Philosophy" Collapsible Note */}
+        {/* "How Creator Era Works" Collapsible Note */}
         <div className="pt-2 border-t border-[#f1f5f9] shrink-0">
           <button
             type="button"
@@ -264,7 +264,7 @@ export function CreatorEraBottomSheet({
           >
             <span className="inline-flex items-center gap-1.5">
               <Sparkles className="h-3.5 w-3.5 text-[#7A2253]" />
-              <span>Creator Era ki kahani aur niyam</span>
+              <span>How Creator Era works</span>
             </span>
             <ChevronDown
               className={`h-3.5 w-3.5 transition-transform duration-200 ${
@@ -275,13 +275,13 @@ export function CreatorEraBottomSheet({
           {howWeCountOpen && (
             <div className="text-[11px] text-[#64748b] space-y-1.5 px-2 pb-1 pt-2 animate-in fade-in duration-150 leading-relaxed">
               <p>
-                • <strong className="text-[#0f172a]">Mehnat Kabhi Kam Nahi Hoti:</strong> Ek baar jo milestone aapne achieve kar liya, wo hamesha ke liye aapka hai. Inflixo par aapka Creator Era kabhi downgrade nahi hota.
+                • <strong className="text-[#0f172a]">Hard Work Never Resets:</strong> Once you achieve a milestone, it is yours forever. On Inflixo, your Creator Era is never downgraded.
               </p>
               <p>
-                • <strong className="text-[#0f172a]">Sari Communities, Ek Jagah:</strong> YouTube par judey subscribers, Instagram ke followers aur Facebook ki janta — sab milkar banti hai aapki asli creator family.
+                • <strong className="text-[#0f172a]">One Unified Community:</strong> YouTube subscribers, Instagram followers, and Facebook supporters — all united into your real digital footprint.
               </p>
               <p>
-                • <strong className="text-[#0f172a]">Verified &amp; Authentic:</strong> Counts seedhe connected public profiles se verify hoti hain, bina kisi password ya login ke.
+                • <strong className="text-[#0f172a]">Verified &amp; Authentic:</strong> Counted directly from public profiles across connected platforms, with zero passwords or logins required.
               </p>
             </div>
           )}
@@ -294,7 +294,7 @@ export function CreatorEraBottomSheet({
             onClick={onClose}
             className="tap-scale flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-[6px] bg-[#7A2253] hover:bg-[#681c46] text-white text-xs font-bold shadow-2xs transition-colors cursor-pointer"
           >
-            <span>{isCreatorView ? "Apne agle milestone ki jankari dekhein" : "Aap bhi creator hain? Apna Creator Era jaanein"} →</span>
+            <span>{isCreatorView ? "Explore all milestones & guidelines" : "Are you a creator? Discover your Creator Era"} →</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
