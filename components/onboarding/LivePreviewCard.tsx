@@ -2894,11 +2894,11 @@ export function LivePreviewCard({
           if (effectiveVisibilitySettings.showCollabGigs === false) return null;
 
           const activePackages = (mediaKitPackages || []).filter((p) => p.isActive);
-          const visibleReviews = showAllReviews ? approvedReviews : approvedReviews.slice(0, 3);
-          const hasMoreReviews = approvedReviews.length > 3;
+          const visibleReviews = showAllReviews ? approvedReviews : approvedReviews.slice(0, 4);
+          const hasMoreReviews = approvedReviews.length > 4;
 
           return (
-            <div id="collab-section" className={`relative z-10 order-[20] w-full text-left animate-fade-in ${isTabsLayout ? "mt-1.5 sm:mt-2 space-y-3 sm:space-y-3.5" : "mt-6 sm:mt-7 space-y-4"}`}>
+            <div id="collab-section" className={`relative z-10 order-[20] w-full text-left animate-fade-in ${isTabsLayout ? "mt-1 sm:mt-1.5 space-y-2" : "mt-4 sm:mt-5 space-y-2"}`}>
               {!isTabsLayout && (
                 <TabSectionHeader
                   title="Work with me"
@@ -2915,25 +2915,33 @@ export function LivePreviewCard({
                   backgroundColor: "var(--surface)",
                   borderColor: "var(--surface-border)",
                 }}
-                className="rounded-[8px] border p-3.5 sm:p-4 text-left transition-all shadow-2xs space-y-1"
+                className="rounded-[5px] border overflow-hidden text-left shadow-none"
               >
-                <div className="flex items-center gap-2">
-                  <Handshake className="h-4 w-4 text-(--accent-text) shrink-0" />
-                  <h2
-                    style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                    className="text-[13.5px] sm:text-sm font-bold tracking-tight"
-                  >
-                    Work With Me
-                  </h2>
+                <div
+                  style={{
+                    backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
+                    borderColor: "var(--surface-border)",
+                  }}
+                  className="px-3 py-2 sm:px-3.5 sm:py-2.5"
+                >
+                  <div className="flex items-center gap-2">
+                    <Handshake className="h-4 w-4 text-(--accent-text) shrink-0" />
+                    <h2
+                      style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                      className="text-[13px] sm:text-sm font-bold tracking-tight"
+                    >
+                      Work With Me
+                    </h2>
+                  </div>
+                  <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
+                    I&apos;d love to bring your brand into my content. Explore my collab packages below.
+                  </p>
                 </div>
-                <p style={{ color: c.secondaryText }} className="text-xs sm:text-[12.5px] font-normal leading-relaxed">
-                  I&apos;d love to bring your brand into my content. Explore my collab packages below.
-                </p>
               </div>
 
-              {/* 2. PACKAGES (consistent stacked cards) */}
+              {/* 2. PACKAGES (responsive grid: 1 col on mobile, 2 cols on tablet/desktop) */}
               {activePackages.length > 0 && (
-                <div className="space-y-3 sm:space-y-3.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {activePackages.map((pkg) => (
                     <PackageCard
                       key={pkg.id}
@@ -2957,110 +2965,113 @@ export function LivePreviewCard({
                     backgroundColor: "var(--surface)",
                     borderColor: "var(--surface-border)",
                   }}
-                  className="rounded-[8px] border overflow-hidden text-left transition-all shadow-2xs"
+                  className="rounded-[5px] border overflow-hidden text-left shadow-none"
                 >
                   {/* Card Header */}
                   <div
-                    style={{ borderColor: "var(--surface-border)" }}
-                    className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b flex items-center justify-between"
+                    style={{
+                      backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
+                      borderColor: "var(--surface-border)",
+                    }}
+                    className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
                   >
-                    <div className="flex items-center gap-2">
-                      <MessageSquare className="h-4 w-4 text-[#71717A] shrink-0" />
-                      <h3
-                        style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                        className="text-[13.5px] sm:text-sm font-bold tracking-tight"
-                      >
-                        What Brands Say
-                      </h3>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="h-4 w-4 text-(--accent-text) shrink-0" />
+                        <h3
+                          style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                          className="text-[13px] sm:text-sm font-bold tracking-tight"
+                        >
+                          What Brands Say
+                        </h3>
+                      </div>
+                      <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
+                        Here&apos;s what brands I&apos;ve worked with have to say about our collaborations.
+                      </p>
                     </div>
-                    <span style={{ color: c.mutedText }} className="text-[11.5px] sm:text-xs font-normal">
+                    <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0">
                       {approvedReviews.length} {approvedReviews.length === 1 ? "review" : "reviews"}
                     </span>
                   </div>
 
-                  {/* Subtitle */}
-                  <div className="px-3.5 pt-2.5 pb-1 sm:px-4 sm:pt-3">
-                    <p style={{ color: c.secondaryText }} className="text-xs font-normal leading-relaxed">
-                      Here&apos;s what brands I&apos;ve worked with have to say about our collaborations.
-                    </p>
-                  </div>
+                  {/* Reviews List: Responsive grid (1 col mobile, up to 2 cols on tablet/desktop) */}
+                  <div className="p-2 sm:p-2.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {visibleReviews.map((rev) => {
+                        const ratingNum = Number(rev.rating) || 5;
+                        const initial = rev.clientName ? rev.clientName.trim().charAt(0).toUpperCase() : "B";
 
-                  {/* Reviews List */}
-                  <div className="p-3.5 sm:p-4 space-y-3">
-                    {visibleReviews.map((rev) => {
-                      const ratingNum = Number(rev.rating) || 5;
-                      const initial = rev.clientName ? rev.clientName.trim().charAt(0).toUpperCase() : "B";
-
-                      return (
-                        <div
-                          key={rev.id}
-                          style={{
-                            backgroundColor: "var(--surface)",
-                            borderColor: "var(--surface-border)",
-                          }}
-                          className="rounded-[6px] border overflow-hidden text-left transition-all shadow-2xs"
-                        >
-                          {/* Client Header */}
-                          <div className="px-3 py-2 sm:px-3.5 sm:py-2.5 flex items-center gap-2.5">
-                            <div
-                              style={{
-                                borderColor: "var(--surface-border)",
-                                backgroundColor: "color-mix(in srgb, var(--accent) 8%, var(--surface))",
-                                color: "var(--accent-text)",
-                              }}
-                              className="h-7 w-7 rounded-[4px] border font-bold text-xs flex items-center justify-center shrink-0"
-                            >
-                              {initial}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <div className="flex items-center gap-1.5">
-                                <p style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold truncate">
-                                  {rev.clientName}
-                                </p>
-                                {rev.isVerified && (
-                                  <CheckCircle2 className="h-3 w-3 text-(--accent-text) shrink-0" />
+                        return (
+                          <div
+                            key={rev.id}
+                            style={{
+                              backgroundColor: "var(--surface)",
+                              borderColor: "var(--surface-border)",
+                            }}
+                            className="rounded-[5px] border overflow-hidden text-left shadow-none flex flex-col justify-between"
+                          >
+                            {/* Client Header */}
+                            <div className="px-2.5 py-2 sm:px-3 sm:py-2 flex items-center gap-2">
+                              <div
+                                style={{
+                                  borderColor: "var(--surface-border)",
+                                  backgroundColor: "color-mix(in srgb, var(--accent) 8%, var(--surface))",
+                                  color: "var(--accent-text)",
+                                }}
+                                className="h-7 w-7 rounded-[4px] border font-bold text-xs flex items-center justify-center shrink-0"
+                              >
+                                {initial}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-1">
+                                  <p style={{ color: c.primaryText }} className="text-xs sm:text-[12.5px] font-bold truncate">
+                                    {rev.clientName}
+                                  </p>
+                                  {rev.isVerified && (
+                                    <CheckCircle2 className="h-3 w-3 text-(--accent-text) shrink-0" />
+                                  )}
+                                </div>
+                                {rev.projectTitle && (
+                                  <p style={{ color: c.mutedText }} className="text-[10.5px] font-normal truncate">
+                                    {rev.projectTitle}
+                                  </p>
                                 )}
                               </div>
-                              {rev.projectTitle && (
-                                <p style={{ color: c.mutedText }} className="text-[10.5px] sm:text-[11px] font-normal truncate">
-                                  {rev.projectTitle}
-                                </p>
-                              )}
                             </div>
-                          </div>
 
-                          {/* Quote Content */}
-                          {rev.comment && (
+                            {/* Quote Content */}
+                            {rev.comment && (
+                              <div
+                                style={{ borderColor: "var(--surface-border)" }}
+                                className="px-2.5 py-2 sm:px-3 sm:py-2 border-t flex-1"
+                              >
+                                <p style={{ color: c.primaryText }} className="text-xs leading-relaxed font-normal">
+                                  &ldquo;{rev.comment.trim()}&rdquo;
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Star Rating Footer */}
                             <div
                               style={{ borderColor: "var(--surface-border)" }}
-                              className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-t"
+                              className="px-2.5 py-1.5 sm:px-3 sm:py-1.5 border-t flex items-center justify-between text-xs"
                             >
-                              <p style={{ color: c.primaryText }} className="text-xs sm:text-[12.5px] leading-relaxed font-normal">
-                                &ldquo;{rev.comment.trim()}&rdquo;
-                              </p>
+                              <div className="flex items-center gap-0.5 text-amber-500">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    className={`h-3 w-3 ${i < ratingNum ? "fill-amber-400 text-amber-500" : "text-slate-300 dark:text-zinc-600"}`}
+                                  />
+                                ))}
+                              </div>
+                              <span style={{ color: c.mutedText }} className="text-[11px] font-semibold tabular-nums">
+                                {ratingNum.toFixed(1)} / 5
+                              </span>
                             </div>
-                          )}
-
-                          {/* Star Rating Footer */}
-                          <div
-                            style={{ borderColor: "var(--surface-border)" }}
-                            className="px-3 py-1.5 sm:px-3.5 sm:py-2 border-t flex items-center justify-center gap-2 text-xs"
-                          >
-                            <div className="flex items-center gap-0.5 text-amber-500">
-                              {Array.from({ length: 5 }).map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`h-3 w-3 ${i < ratingNum ? "fill-amber-400 text-amber-500" : "text-slate-300 dark:text-zinc-600"}`}
-                                />
-                              ))}
-                            </div>
-                            <span style={{ color: c.mutedText }} className="text-[11.5px] font-semibold tabular-nums">
-                              {ratingNum.toFixed(1)} / 5
-                            </span>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
 
                   {/* Show All / Show Less Toggle */}
@@ -3079,20 +3090,57 @@ export function LivePreviewCard({
                 </div>
               )}
 
-              {/* 4. Custom Request Note */}
-              <div className="pt-1 pb-1 text-center text-xs text-(--text-muted)">
-                <span>Don&apos;t see what you need? </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedEnquiryPackage(null);
-                    setIsEnquirySheetOpen(true);
+              {/* 4. Custom Collaboration Card */}
+              <div
+                style={{
+                  backgroundColor: "var(--surface)",
+                  borderColor: "var(--surface-border)",
+                }}
+                className="rounded-[5px] border overflow-hidden text-left shadow-none"
+              >
+                {/* Header */}
+                <div
+                  style={{
+                    backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
+                    borderColor: "var(--surface-border)",
                   }}
-                  style={{ color: c.accentText || "var(--accent-text)" }}
-                  className="font-semibold underline underline-offset-2 hover:opacity-80 transition-opacity cursor-pointer ml-0.5"
+                  className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b"
                 >
-                  Send a custom request &rarr;
-                </button>
+                  <div className="flex items-center gap-2">
+                    <Send className="h-4 w-4 text-(--accent-text) shrink-0" />
+                    <h3
+                      style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                      className="text-[13px] sm:text-sm font-bold tracking-tight"
+                    >
+                      Custom Collaboration
+                    </h3>
+                  </div>
+                  <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
+                    Have something different in mind? I&apos;d love to hear your idea.
+                  </p>
+                </div>
+
+                {/* Body */}
+                <div className="p-3 sm:p-3.5 space-y-3">
+                  <p style={{ color: c.secondaryText }} className="text-xs sm:text-[12.5px] font-normal leading-relaxed">
+                    Looking for a custom campaign, long-term ambassadorship, or a bespoke creative package? Send a custom brief and I&apos;ll get back to you with a tailor-made proposal.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedEnquiryPackage(null);
+                      setIsEnquirySheetOpen(true);
+                    }}
+                    style={{
+                      backgroundColor: "var(--accent)",
+                      color: "var(--on-accent)",
+                    }}
+                    className="w-full min-h-[42px] sm:min-h-[44px] py-2 px-3 rounded-[5px] font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 transition-all hover:opacity-95 shadow-none cursor-pointer select-none active:scale-[0.99]"
+                  >
+                    <span>Send a Custom Request</span>
+                    <ArrowUpRight className="h-3.5 w-3.5 stroke-[2.5]" />
+                  </button>
+                </div>
               </div>
 
               {/* 5. ENQUIRY SHEET */}
@@ -3125,7 +3173,7 @@ export function LivePreviewCard({
                       backgroundColor: "var(--surface)",
                       borderColor: "var(--surface-border)",
                     }}
-                    className="rounded-xl border p-3 sm:p-3.5 space-y-2 text-left"
+                    className="rounded-[5px] border p-2.5 sm:p-3 space-y-2 text-left shadow-none"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 min-w-0">
