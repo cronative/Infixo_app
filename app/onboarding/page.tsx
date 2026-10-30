@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -12,8 +12,12 @@ import {
   ArrowRight,
   ArrowLeft,
   Check,
+  X,
   LogOut,
   Sparkles,
+  LayoutGrid,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import {
   InstagramIcon,
@@ -33,17 +37,11 @@ import { useToast } from "@/contexts/ToastContext";
 import { useCreator } from "@/contexts/CreatorContext";
 import { authRepository } from "@/repositories/localRepository";
 import { storage, STORAGE_KEYS } from "@/utils/storage";
-
-const CATEGORIES = [
-  "Food",
-  "Travel",
-  "Comedy",
-  "Education",
-  "Tech",
-  "Lifestyle",
-  "Music",
-  "Other",
-];
+import {
+  POPULAR_CATEGORIES,
+  CATEGORY_GROUPS,
+  TOTAL_CATEGORIES_COUNT,
+} from "@/data/creatorCategories";
 
 const ONBOARDING_STORAGE_KEY = "inflixo_onboarding_draft";
 
@@ -60,10 +58,16 @@ export default function OnboardingPage() {
   // Step 1: Link & Profile
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("");
-  const [category, setCategory] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [agreedToLegal, setAgreedToLegal] = useState(false);
   const [checkingUsername, setCheckingUsername] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
   const [usernameMessage, setUsernameMessage] = useState("");
+
+  // Category browse & search state
+  const [browseOpen, setBrowseOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedGroup, setSelectedGroup] = useState("all");
 
   // Step 2: Platforms
   const [instagram, setInstagram] = useState("");
@@ -101,7 +105,19 @@ export default function OnboardingPage() {
         if (parsed.step) setStep(parsed.step);
         if (parsed.username) setUsername(parsed.username);
         if (parsed.displayName) setDisplayName(parsed.displayName);
-        if (parsed.category) setCategory(parsed.category);
+        if (parsed.selectedCategories && Array.isArray(parsed.selectedCategories)) {
+          setSelectedCategories(parsed.selectedCategories.slice(0, 3));
+        } else if (parsed.category) {
+          const list = String(parsed.category)
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+            .slice(0, 3);
+          setSelectedCategories(list);
+        }
+        if (typeof parsed.agreedToLegal === "boolean") {
+          setAgreedToLegal(parsed.agreedToLegal);
+        }
         if (parsed.instagram) setInstagram(parsed.instagram);
         if (parsed.youtube) setYoutube(parsed.youtube);
         if (parsed.facebook) setFacebook(parsed.facebook);
@@ -118,6 +134,20 @@ export default function OnboardingPage() {
     } catch {}
   }, [creatorLoading, profile.username, profile.displayName, router]);
 
+  // Restore category from loaded profile if not yet in state
+  useEffect(() => {
+    if (!creatorLoading && profile.category && selectedCategories.length === 0) {
+      const list = String(profile.category)
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .slice(0, 3);
+      if (list.length > 0) {
+        setSelectedCategories(list);
+      }
+    }
+  }, [creatorLoading, profile.category, selectedCategories.length]);
+
   // Persist draft to localStorage on state changes
   useEffect(() => {
     try {
@@ -127,7 +157,9 @@ export default function OnboardingPage() {
           step,
           username,
           displayName,
-          category,
+          category: selectedCategories.join(", "),
+          selectedCategories,
+          agreedToLegal,
           instagram,
           youtube,
           facebook,
@@ -136,7 +168,59 @@ export default function OnboardingPage() {
         })
       );
     } catch {}
-  }, [step, username, displayName, category, instagram, youtube, facebook, seriesName, videoLinks]);
+  }, [
+    step,
+    username,
+    displayName,
+    selectedCategories,
+    agreedToLegal,
+    instagram,
+    youtube,
+    facebook,
+    seriesName,
+    videoLinks,
+  ]);
+
+  // Category selection handlers
+  function toggleCategory(cat: string) {
+    if (selectedCategories.includes(cat)) {
+      setSelectedCategories((prev) => prev.filter((c) => c !== cat));
+    } else {
+      if (selectedCategories.length >= 3) {
+        showToast("You can choose up to 3 categories that describe you.");
+        return;
+      }
+      setSelectedCategories((prev) => [...prev, cat]);
+    }
+  }
+
+  function removeCategory(cat: string) {
+    setSelectedCategories((prev) => prev.filter((c) => c !== cat));
+  }
+
+  // Filtered category groups for Browse All
+  const filteredGroups = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
+    return CATEGORY_GROUPS.filter((group) => {
+      if (selectedGroup !== "all" && group.id !== selectedGroup) {
+        return false;
+      }
+      if (!query) return true;
+      return (
+        group.name.toLowerCase().includes(query) ||
+        group.items.some((item) => item.toLowerCase().includes(query))
+      );
+    })
+      .map((group) => {
+        if (!query) return group;
+        return {
+          ...group,
+          items: group.items.filter((item) => item.toLowerCase().includes(query)),
+        };
+      })
+      .filter((group) => group.items.length > 0);
+  }, [searchQuery, selectedGroup]);
 
   // Live availability check for username
   const checkAvailability = useCallback(
@@ -197,7 +281,15 @@ export default function OnboardingPage() {
   // Step 1: Submit Link & Profile
   async function handleStep1Submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!username || usernameAvailable === false || !displayName.trim()) {
+    if (!username || usernameAvailable !== true || !displayName.trim()) {
+      return;
+    }
+    if (selectedCategories.length === 0) {
+      showToast("Please choose at least 1 category that describes you.");
+      return;
+    }
+    if (!agreedToLegal) {
+      showToast("Please agree to the Terms of Service, Creator Terms and Privacy Policy.");
       return;
     }
 
@@ -206,13 +298,14 @@ export default function OnboardingPage() {
 
     try {
       const cleanUser = username.trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
+      const categoryStr = selectedCategories.join(", ");
 
       // Save to ProfileService locally
       ProfileService.saveLocal({
         email,
         username: cleanUser,
         displayName: displayName.trim(),
-        category: category || "Other",
+        category: categoryStr,
       });
 
       // Call API to persist creator profile in DB (with acceptedLegalTerms: true)
@@ -223,7 +316,7 @@ export default function OnboardingPage() {
           email,
           username: cleanUser,
           displayName: displayName.trim(),
-          category: category || "Other",
+          category: categoryStr,
           onboardingStep: "socials",
           acceptedLegalTerms: true,
         }),
@@ -308,7 +401,7 @@ export default function OnboardingPage() {
           body: JSON.stringify({
             title: seriesName.trim(),
             description: "",
-            genre: category || "General",
+            genre: selectedCategories[0] || "General",
             language: "Hindi",
             platform: "YouTube",
             episodes: validLinks.map((link, idx) => ({
@@ -351,8 +444,15 @@ export default function OnboardingPage() {
     }
   }
 
-  const isStep1Valid =
-    Boolean(username && username.length >= 3 && usernameAvailable === true && displayName.trim());
+  const isStep1Valid = Boolean(
+    username &&
+      username.length >= 3 &&
+      usernameAvailable === true &&
+      displayName.trim() &&
+      selectedCategories.length >= 1 &&
+      selectedCategories.length <= 3 &&
+      agreedToLegal
+  );
 
   return (
     <div className="min-h-dvh bg-[#FFFCFB] flex flex-col">
@@ -386,40 +486,39 @@ export default function OnboardingPage() {
 
       {/* 2. CENTER CONTENT WITH ELEVATED WHITE CARD */}
       <main className="flex-1 flex items-center justify-center py-6 sm:py-10 px-3.5 sm:px-6">
-        <div className="w-full max-w-[500px] rounded-2xl border border-[#e2e8f0] bg-white p-5 sm:p-7 shadow-[0_20px_60px_-15px_rgba(122,34,83,0.08)] text-left">
+        <div className="w-full max-w-[520px] rounded-[5px] border border-[#E8DCE3] bg-white p-5 sm:p-7 text-left">
           
-          {/* Card Progress Header */}
-          <div className="space-y-1.5 mb-5">
-            <div className="flex items-center justify-between text-xs font-bold text-[#52525B]">
-              <span>Step {step} of 3</span>
-              <span className="text-[#7A2253]">
-                {step === 1
-                  ? "Your link & profile"
-                  : step === 2
-                  ? "Your platforms"
-                  : "Your first series"}
-              </span>
-            </div>
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100">
-              <div
-                className="h-full bg-[#7A2253] transition-all duration-300 rounded-full"
-                style={{ width: `${(step / 3) * 100}%` }}
-              />
-            </div>
+          {/* 1. Onboarding progress indicator */}
+          <div className="grid grid-cols-3 gap-2 mb-5">
+            <div
+              className={`h-[3px] rounded-[5px] transition-colors ${
+                step >= 1 ? "bg-[#7A2253]" : "bg-[#E8DCE3]"
+              }`}
+            />
+            <div
+              className={`h-[3px] rounded-[5px] transition-colors ${
+                step >= 2 ? "bg-[#7A2253]" : "bg-[#E8DCE3]"
+              }`}
+            />
+            <div
+              className={`h-[3px] rounded-[5px] transition-colors ${
+                step >= 3 ? "bg-[#7A2253]" : "bg-[#E8DCE3]"
+              }`}
+            />
           </div>
 
-          {/* Title & Subtitle */}
+          {/* 2. Page heading and description */}
           <div className="space-y-1 mb-5">
-            <h1 className="text-xl sm:text-[24px] font-extrabold text-[#18181B] tracking-tight leading-tight">
+            <h1 className="text-xl sm:text-[22px] font-extrabold text-[#281C25] tracking-tight leading-tight">
               {step === 1
                 ? "Claim your Inflixo link"
                 : step === 2
                 ? "Where do your fans follow you?"
                 : "Add your first series"}
             </h1>
-            <p className="text-xs sm:text-[13px] text-[#52525B] leading-relaxed">
+            <p className="text-xs sm:text-[13px] text-[#806F79] leading-relaxed">
               {step === 1
-                ? "This is the link you'll put in your Instagram, YouTube & X bio."
+                ? "Set up your creator identity. Your link can go in your Instagram, YouTube and other social bios."
                 : step === 2
                 ? "We'll combine your stats to display your total fanbase on your profile."
                 : "Turn scattered videos into an organized, bingeable series."}
@@ -437,108 +536,333 @@ export default function OnboardingPage() {
           {/* ================= STEP 1: LINK & PROFILE ================= */}
           {step === 1 && (
             <form onSubmit={handleStep1Submit} className="space-y-4">
-              {/* Username field with live availability */}
-              <div>
-                <TextField
-                  id="username-input"
-                  label="Claim your username"
-                  prefixText="inflixo.com/"
-                  placeholder="yourname"
-                  value={username}
-                  autoFocus
-                  disabled={submitting}
-                  onChange={(e) => {
-                    const clean = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "");
-                    setUsername(clean);
-                  }}
-                  rightSlot={
-                    checkingUsername ? (
+              {/* 3. Claim Username field */}
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="username-input"
+                  className="block text-xs sm:text-[13px] font-semibold text-[#281C25]"
+                >
+                  Claim your username <span className="text-[#DC2626]">*</span>
+                </label>
+                <div
+                  className={`flex items-center w-full bg-white border rounded-[5px] transition-colors focus-within:border-[#7A2253] ${
+                    usernameAvailable === false
+                      ? "border-[#DC2626]"
+                      : "border-[#E8DCE3]"
+                  }`}
+                >
+                  <span className="pl-3 pr-0.5 text-xs sm:text-sm font-semibold text-[#7A2253] select-none shrink-0">
+                    inflixo.com/
+                  </span>
+                  <input
+                    id="username-input"
+                    type="text"
+                    autoFocus
+                    disabled={submitting}
+                    value={username}
+                    placeholder="yourusername"
+                    onChange={(e) => {
+                      const clean = e.target.value
+                        .toLowerCase()
+                        .replace(/[^a-z0-9_]/g, "");
+                      setUsername(clean);
+                    }}
+                    className="flex-1 bg-transparent py-2 px-1 text-xs sm:text-sm text-[#281C25] placeholder:text-[#806F79]/50 focus:outline-none min-w-0"
+                  />
+                  <div className="pr-3 shrink-0 flex items-center">
+                    {checkingUsername ? (
                       <Loader2 className="h-4 w-4 animate-spin text-[#7A2253]" />
                     ) : usernameAvailable === true ? (
                       <CheckCircle2 className="h-4 w-4 text-[#16A34A]" />
                     ) : usernameAvailable === false ? (
                       <XCircle className="h-4 w-4 text-[#DC2626]" />
-                    ) : null
-                  }
-                />
+                    ) : null}
+                  </div>
+                </div>
+                <p className="text-[11px] text-[#806F79]">
+                  This will be your unique public profile URL.
+                </p>
                 {usernameMessage && (
                   <p
-                    className={`mt-1.5 text-xs font-semibold ${
+                    className={`text-xs font-semibold ${
                       usernameAvailable === true
                         ? "text-[#16A34A]"
                         : usernameAvailable === false
                         ? "text-[#DC2626]"
-                        : "text-[#52525B]"
+                        : "text-[#806F79]"
                     }`}
                   >
-                    {usernameAvailable === true ? `✓ inflixo.com/${username} is available!` : usernameMessage}
+                    {usernameAvailable === true
+                      ? `✓ inflixo.com/${username} is available!`
+                      : usernameMessage}
                   </p>
                 )}
               </div>
 
-              {/* Display Name */}
-              <TextField
-                id="display-name-input"
-                label="Display name"
-                placeholder="e.g. Tony Stark or The Foodie Show"
-                value={displayName}
-                disabled={submitting}
-                onChange={(e) => setDisplayName(e.target.value)}
-              />
-
-              {/* Niche / Category Chips */}
-              <div>
-                <label className="mb-2 block text-xs font-bold text-[#52525B]">
-                  What do you create? (Category)
+              {/* 4. Display Name field */}
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="display-name-input"
+                  className="block text-xs sm:text-[13px] font-semibold text-[#281C25]"
+                >
+                  Display name <span className="text-[#DC2626]">*</span>
                 </label>
-                <div className="flex flex-wrap gap-2">
-                  {CATEGORIES.map((cat) => {
-                    const isSelected = category === cat;
-                    return (
-                      <Chip
+                <input
+                  id="display-name-input"
+                  type="text"
+                  disabled={submitting}
+                  value={displayName}
+                  placeholder="e.g. Nikunj Creates"
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  className="w-full bg-white border border-[#E8DCE3] rounded-[5px] py-2 px-3 text-xs sm:text-sm text-[#281C25] placeholder:text-[#806F79]/50 focus:outline-none focus:border-[#7A2253] transition-colors"
+                />
+              </div>
+
+              {/* Separator */}
+              <div className="border-t border-[#E8DCE3] my-4" />
+
+              {/* 5. Creator Category Selector */}
+              <div className="space-y-2.5">
+                {/* Heading + Subtitle + Counter */}
+                <div className="flex items-start justify-between gap-2">
+                  <div className="space-y-0.5">
+                    <h3 className="text-sm sm:text-[15px] font-bold text-[#281C25]">
+                      What type of creator are you?
+                    </h3>
+                    <p className="text-xs text-[#806F79]">
+                      Choose up to 3 categories that describe you.
+                    </p>
+                  </div>
+                  <span className="text-xs sm:text-sm font-bold text-[#7A2253] shrink-0 pt-0.5">
+                    {selectedCategories.length}/3
+                  </span>
+                </div>
+
+                {/* Selected categories row */}
+                {selectedCategories.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pt-0.5">
+                    {selectedCategories.map((cat) => (
+                      <span
                         key={cat}
-                        variant="filter"
-                        selected={isSelected}
-                        onClick={() => setCategory(isSelected ? "" : cat)}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[5px] bg-[#F8EFF4] border border-[#7A2253]/30 text-[#7A2253] text-xs font-semibold"
                       >
-                        {cat}
-                      </Chip>
-                    );
-                  })}
+                        <span>{cat}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeCategory(cat)}
+                          aria-label={`Remove ${cat}`}
+                          className="hover:opacity-75 focus:outline-none cursor-pointer"
+                        >
+                          <X className="h-3 w-3 stroke-[2.5]" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Popular Categories */}
+                <div className="space-y-1.5 pt-1">
+                  <span className="text-[11px] font-bold text-[#806F79] uppercase tracking-wider block">
+                    POPULAR CREATOR TYPES
+                  </span>
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                    {POPULAR_CATEGORIES.map((cat) => {
+                      const isSelected = selectedCategories.includes(cat);
+                      return (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() => toggleCategory(cat)}
+                          className={`tap-scale inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] text-xs sm:text-[13px] font-medium transition-colors cursor-pointer ${
+                            isSelected
+                              ? "bg-[#F8EFF4] border border-[#7A2253] text-[#7A2253] font-semibold"
+                              : "bg-white border border-[#E8DCE3] text-[#281C25] hover:border-[#7A2253]/40"
+                          }`}
+                        >
+                          {isSelected && (
+                            <Check className="h-3.5 w-3.5 text-[#7A2253] stroke-[2.5]" />
+                          )}
+                          <span>{cat}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Browse All Categories Expandable Control */}
+                <div className="pt-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setBrowseOpen((prev) => !prev)}
+                    className="w-full flex items-center justify-between px-3.5 py-2.5 bg-white border border-[#E8DCE3] rounded-[5px] text-left hover:border-[#7A2253]/40 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2">
+                      <LayoutGrid className="h-4 w-4 text-[#7A2253] shrink-0" />
+                      <span className="text-xs sm:text-sm font-semibold text-[#281C25]">
+                        {browseOpen ? "Hide All Categories" : "Browse All Categories"}
+                      </span>
+                      <span className="text-[11px] text-[#806F79]">
+                        {TOTAL_CATEGORIES_COUNT}+ types
+                      </span>
+                    </div>
+                    {browseOpen ? (
+                      <ChevronUp className="h-4 w-4 text-[#7A2253] shrink-0" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4 text-[#806F79] shrink-0" />
+                    )}
+                  </button>
+
+                  {/* Expanded Category Browser */}
+                  {browseOpen && (
+                    <div className="mt-2 p-3 bg-white border border-[#E8DCE3] rounded-[5px] space-y-3 animate-in fade-in duration-200">
+                      {/* Search */}
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          placeholder="Search e.g. actor, singer, photographer..."
+                          className="w-full bg-white border border-[#E8DCE3] rounded-[5px] py-1.5 pl-3 pr-8 text-xs sm:text-sm text-[#281C25] placeholder:text-[#806F79] focus:outline-none focus:border-[#7A2253]"
+                        />
+                        {searchQuery && (
+                          <button
+                            type="button"
+                            onClick={() => setSearchQuery("")}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#806F79] hover:text-[#281C25] cursor-pointer"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Group dropdown */}
+                      <select
+                        value={selectedGroup}
+                        onChange={(e) => setSelectedGroup(e.target.value)}
+                        className="w-full bg-white border border-[#E8DCE3] rounded-[5px] py-1.5 px-3 text-xs sm:text-sm text-[#281C25] focus:outline-none focus:border-[#7A2253] cursor-pointer"
+                      >
+                        <option value="all">All creator categories</option>
+                        {CATEGORY_GROUPS.map((g) => (
+                          <option key={g.id} value={g.id}>
+                            {g.name}
+                          </option>
+                        ))}
+                      </select>
+
+                      {/* Scrollable category list */}
+                      <div className="max-h-[310px] overflow-y-auto space-y-3 pr-1">
+                        {filteredGroups.length === 0 ? (
+                          <p className="text-xs text-[#806F79] py-4 text-center">
+                            No matching categories found.
+                          </p>
+                        ) : (
+                          filteredGroups.map((group) => (
+                            <div key={group.id} className="space-y-1.5">
+                              <h4 className="text-[11px] font-bold text-[#806F79] uppercase tracking-wider">
+                                {group.name}
+                              </h4>
+                              <div className="flex flex-wrap gap-1.5">
+                                {group.items.map((cat) => {
+                                  const isSelected = selectedCategories.includes(cat);
+                                  return (
+                                    <button
+                                      key={`${group.id}-${cat}`}
+                                      type="button"
+                                      onClick={() => toggleCategory(cat)}
+                                      className={`tap-scale inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-[5px] text-xs font-medium transition-colors cursor-pointer ${
+                                        isSelected
+                                          ? "bg-[#F8EFF4] border border-[#7A2253] text-[#7A2253] font-semibold"
+                                          : "bg-white border border-[#E8DCE3] text-[#281C25] hover:border-[#7A2253]/40"
+                                      }`}
+                                    >
+                                      {isSelected && (
+                                        <Check className="h-3 w-3 text-[#7A2253] stroke-[2.5]" />
+                                      )}
+                                      <span>{cat}</span>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Legal Notice */}
-              <p className="text-[11px] text-center text-slate-500 leading-relaxed pt-1">
-                By continuing, you agree to Inflixo&apos;s{" "}
-                <Link href="/terms" target="_blank" className="font-semibold text-[#7A2253] underline hover:opacity-80">
-                  Terms
-                </Link>
-                ,{" "}
-                <Link href="/creator-terms" target="_blank" className="font-semibold text-[#7A2253] underline hover:opacity-80">
-                  Creator Terms
-                </Link>{" "}
-                and{" "}
-                <Link href="/privacy" target="_blank" className="font-semibold text-[#7A2253] underline hover:opacity-80">
-                  Privacy Policy
-                </Link>
-                .
-              </p>
+              {/* Separator */}
+              <div className="border-t border-[#E8DCE3] my-4" />
 
-              {/* Submit Button */}
+              {/* 6. Legal Consent */}
+              <div className="pt-1">
+                <div className="flex items-start gap-2.5">
+                  <input
+                    type="checkbox"
+                    id="consent-checkbox"
+                    checked={agreedToLegal}
+                    onChange={(e) => setAgreedToLegal(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 shrink-0 rounded-[3px] accent-[#7A2253] border-[#E8DCE3] cursor-pointer focus:ring-1 focus:ring-[#7A2253]"
+                  />
+                  <label
+                    htmlFor="consent-checkbox"
+                    className="text-xs text-[#281C25] leading-relaxed select-none cursor-pointer"
+                  >
+                    I agree to the{" "}
+                    <Link
+                      href="/terms"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="font-semibold text-[#7A2253] underline underline-offset-2 hover:opacity-80 focus:outline-none focus:ring-1 focus:ring-[#7A2253] rounded-[2px]"
+                    >
+                      Terms of Service
+                    </Link>
+                    ,{" "}
+                    <Link
+                      href="/creator-terms"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="font-semibold text-[#7A2253] underline underline-offset-2 hover:opacity-80 focus:outline-none focus:ring-1 focus:ring-[#7A2253] rounded-[2px]"
+                    >
+                      Creator Terms
+                    </Link>{" "}
+                    and{" "}
+                    <Link
+                      href="/privacy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="font-semibold text-[#7A2253] underline underline-offset-2 hover:opacity-80 focus:outline-none focus:ring-1 focus:ring-[#7A2253] rounded-[2px]"
+                    >
+                      Privacy Policy
+                    </Link>
+                    .
+                  </label>
+                </div>
+              </div>
+
+              {/* 7. Continue to Platforms Button */}
               <div className="pt-2">
-                <Button
+                <button
                   type="submit"
-                  variant="primary"
-                  size="md"
-                  fullWidth
-                  loading={submitting}
                   disabled={!isStep1Valid || submitting}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 rounded-[5px] bg-[#7A2253] text-white text-xs sm:text-sm font-semibold hover:bg-[#661b44] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 >
-                  <span className="inline-flex items-center gap-1.5">
-                    Continue to platforms <ArrowRight className="h-4 w-4" />
-                  </span>
-                </Button>
+                  {submitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Continue to platforms</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </>
+                  )}
+                </button>
               </div>
             </form>
           )}
