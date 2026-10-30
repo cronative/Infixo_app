@@ -102,32 +102,34 @@ export interface ProfileHeaderProps {
   showPlatformBreakdown?: boolean;
 }
 
-function getPlatformIcon(platform: string) {
+function getPlatformIcon(platform: string, className?: string) {
+  const cls = className || "h-4 w-4 sm:h-5 sm:w-5 text-white";
+  const clsSmall = className || "h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-white";
   switch (platform.toLowerCase()) {
     case "instagram":
-      return <InstagramIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />;
+      return <InstagramIcon className={cls} />;
     case "youtube":
-      return <YoutubeIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />;
+      return <YoutubeIcon className={cls} />;
     case "facebook":
-      return <FacebookIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />;
+      return <FacebookIcon className={cls} />;
     case "twitter":
-      return <XTwitterIcon className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-white" />;
+      return <XTwitterIcon className={clsSmall} />;
     case "linkedin":
-      return <LinkedinIcon className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-white" />;
+      return <LinkedinIcon className={clsSmall} />;
     case "threads":
-      return <ThreadsIcon className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-white" />;
+      return <ThreadsIcon className={clsSmall} />;
     case "snapchat":
-      return <SnapchatIcon className="h-4 w-4 sm:h-5 sm:w-5 text-(--text)" />;
+      return <SnapchatIcon className={className ? `${className} text-(--text)` : "h-4 w-4 sm:h-5 sm:w-5 text-(--text)"} />;
     case "spotify":
-      return <SpotifyIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />;
+      return <SpotifyIcon className={cls} />;
     case "twitch":
-      return <TwitchIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />;
+      return <TwitchIcon className={cls} />;
     case "pinterest":
-      return <PinterestIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />;
+      return <PinterestIcon className={cls} />;
     case "tiktok":
-      return <TikTokIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />;
+      return <TikTokIcon className={cls} />;
     default:
-      return <Globe className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-white" />;
+      return <Globe className={clsSmall} />;
   }
 }
 
@@ -437,25 +439,25 @@ export function ProfileHeader({
       {/* ROW 2: CENTER-ALIGNED PROFILE ROW (Avatar + Right Column)       */}
       {/* ============================================================== */}
       <div className="flex items-center justify-center gap-3 sm:gap-4 w-full mt-1 sm:mt-1.5 mx-auto">
-        {/* LEFT: Creator Avatar (80px on mobile, 88px on >=640px) */}
+        {/* LEFT: Creator Avatar (reduced slightly as requested: 68px on mobile, 76px on sm) */}
         <div className="relative shrink-0">
           <div className="p-[2px] sm:p-[2.5px] rounded-full shadow-xs" style={{ background: "var(--avatar-ring)" }}>
             <div className="p-[1.5px] bg-(--card-bg) rounded-full">
-              <div className="relative h-20 w-20 sm:h-[88px] sm:w-[88px] rounded-full overflow-hidden bg-(--card-bg) ">
+              <div className="relative h-[68px] w-[68px] sm:h-[76px] sm:w-[76px] rounded-full overflow-hidden bg-(--card-bg) ">
                 {hasAvatar && photoUrl ? (
                   <Image
                     src={photoUrl}
                     alt={displayName || "Creator"}
-                    width={176}
-                    height={176}
-                    sizes="88px"
+                    width={152}
+                    height={152}
+                    sizes="76px"
                     priority
                     unoptimized={isDataUrl}
                     onError={() => setFailedSrc(photoUrl)}
                     className="h-full w-full object-cover object-top rounded-full select-none"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center rounded-full bg-(--avatar-bg) text-(--avatar-text) text-xl sm:text-2xl font-black select-none">
+                  <div className="flex h-full w-full items-center justify-center rounded-full bg-(--avatar-bg) text-(--avatar-text) text-lg sm:text-xl font-black select-none">
                     {initials(displayName || "Creator")}
                   </div>
                 )}
@@ -470,7 +472,7 @@ export function ProfileHeader({
               title="Verified Creator"
               aria-label="Verified creator"
             >
-              <BadgeCheck className={`h-4.5 w-4.5 sm:h-5 sm:w-5 ${BRAND_VERIFIED_FILL} text-white drop-shadow-xs`} />
+              <BadgeCheck className={`h-4 w-4 sm:h-4.5 sm:w-4.5 ${BRAND_VERIFIED_FILL} text-white drop-shadow-xs`} />
             </span>
           )}
         </div>
@@ -567,46 +569,44 @@ export function ProfileHeader({
               </button>
             </div>
           )}
+
+          {/* Social Icons directly under the Creator Pill (15x15 icon size, left-aligned with pill start) */}
+          {allActiveSocials.length > 0 && (
+            <div className="flex items-center gap-1.5 pt-1 sm:pt-1.5">
+              {allActiveSocials.map((item) => {
+                const bgClass = getPlatformBgClass(item.platform);
+                const hasUrl = Boolean(item.url && item.url !== "#");
+
+                const iconContent = (
+                  <span className="flex items-center justify-center">
+                    {getPlatformIcon(item.platform, "h-[14px] w-[14px] sm:h-[15px] sm:w-[15px]")}
+                  </span>
+                );
+
+                const btnClass = `tap-scale flex h-5 w-5 sm:h-5.5 sm:w-5.5 items-center justify-center rounded-[4px] ${bgClass} shadow-2xs hover:scale-110 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden`;
+
+                return hasUrl ? (
+                  <a
+                    key={item.platform}
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={`Visit ${item.label || item.platform}`}
+                    aria-label={`Visit ${item.label || item.platform}`}
+                    className={btnClass}
+                  >
+                    {iconContent}
+                  </a>
+                ) : (
+                  <div key={item.platform} className={btnClass}>
+                    {iconContent}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
-
-      {/* ============================================================== */}
-      {/* ROW 3: SOCIAL ICONS (Clean row directly below)                */}
-      {/* ============================================================== */}
-      {allActiveSocials.length > 0 && (
-        <div className="flex items-center gap-1.5 sm:gap-2 pt-2.5 sm:pt-3 w-full">
-          {allActiveSocials.map((item) => {
-            const bgClass = getPlatformBgClass(item.platform);
-            const hasUrl = Boolean(item.url && item.url !== "#");
-
-            const iconContent = (
-              <span className="flex items-center justify-center">
-                {getPlatformIcon(item.platform)}
-              </span>
-            );
-
-            const btnClass = `tap-scale flex h-[34px] w-[34px] sm:h-[38px] sm:w-[38px] items-center justify-center rounded-[5px] ${bgClass} shadow-2xs hover:scale-105 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden`;
-
-            return hasUrl ? (
-              <a
-                key={item.platform}
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={`Visit ${item.label || item.platform}`}
-                aria-label={`Visit ${item.label || item.platform}`}
-                className={btnClass}
-              >
-                {iconContent}
-              </a>
-            ) : (
-              <div key={item.platform} className={btnClass}>
-                {iconContent}
-              </div>
-            );
-          })}
-        </div>
-      )}
 
       {currentEra && (
         <CreatorEraBottomSheet
