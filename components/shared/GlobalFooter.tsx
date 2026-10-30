@@ -26,10 +26,13 @@ export function GlobalFooter({
 
   return (
     <footer
-      className={`w-full py-3.5 sm:py-4 flex flex-col items-center justify-center gap-2 text-center select-none ${className}`}
+      style={{
+        borderColor: "var(--surface-border)",
+      }}
+      className={`w-full overflow-hidden rounded-[5px] border border-(--surface-border) text-center select-none ${className}`}
     >
       {/* Row 1 — Branding */}
-      <div className="flex items-center justify-center gap-1.5 text-xs text-(--text-muted, #71717a)">
+      <div className="w-full px-3 py-2.5 sm:py-3 flex items-center justify-center gap-1.5 text-xs text-(--text-muted, #71717a)">
         <span className="font-normal select-none">Powered by</span>
         <Link
           href="/"
@@ -44,10 +47,17 @@ export function GlobalFooter({
         </Link>
       </div>
 
+      {/* Full-width Divider 1 */}
+      <div
+        style={{ backgroundColor: "var(--surface-border)" }}
+        className="h-px w-full bg-(--surface-border, #e4e4e7) shrink-0"
+        aria-hidden="true"
+      />
+
       {/* Row 2 — Footer Links */}
       <nav
         aria-label="Footer"
-        className="flex flex-wrap items-center justify-center gap-1 sm:gap-1.5 px-2"
+        className="w-full px-3 py-2.5 sm:py-3 flex flex-wrap items-center justify-center gap-1 sm:gap-1.5"
       >
         <Link
           href="/terms"
@@ -104,10 +114,19 @@ export function GlobalFooter({
         </a>
       </nav>
 
+      {/* Full-width Divider 2 */}
+      <div
+        style={{ backgroundColor: "var(--surface-border)" }}
+        className="h-px w-full bg-(--surface-border, #e4e4e7) shrink-0"
+        aria-hidden="true"
+      />
+
       {/* Row 3 — Copyright */}
-      <p className="text-[10.5px] sm:text-[11px] text-(--text-muted, #71717a) opacity-80 font-normal text-center select-none">
-        &copy; 2026 Inflixo. All rights reserved.
-      </p>
+      <div className="w-full px-3 py-2 sm:py-2.5">
+        <p className="text-[10.5px] sm:text-[11px] text-(--text-muted, #71717a) opacity-80 font-normal text-center select-none">
+          &copy; 2026 Inflixo. All rights reserved.
+        </p>
+      </div>
 
       {/* Report Modal */}
       {isReportOpen && (

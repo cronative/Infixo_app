@@ -117,7 +117,7 @@ export function PublicCard({
         </div>
 
         {showFooter && (
-          <div className="mt-auto shrink-0 select-none border-t border-(--divider) bg-transparent w-full">
+          <div className="mt-auto shrink-0 select-none pt-4 w-full">
             <MadeWithInflixo
               variant="card-footer"
               creatorUsername={creatorUsername}
