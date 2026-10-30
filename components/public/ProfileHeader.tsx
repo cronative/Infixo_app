@@ -533,57 +533,54 @@ export function ProfileHeader({
       </div>
 
       {/* ============================================================== */}
-      {/* ROW 3: FULL WIDTH CREATOR ERA + TOTAL FANS PILL (5px radius)   */}
+      {/* ROW 3: COMPACT CREATOR ERA + TOTAL FANS PILL (5px radius)      */}
       {/* ============================================================== */}
       {(currentEra || effectiveFanbase > 0) && (
-        <div className="w-full mt-2.5 sm:mt-3">
+        <div className="w-full mt-2 sm:mt-2.5 flex items-center justify-center">
           <button
             type="button"
             onClick={() => {
               setEraSheetOpen(true);
-              if (onFanbaseClick) onFanbaseClick();
             }}
-            className="tap-scale w-full rounded-[5px] border border-(--surface-border) bg-transparent hover:bg-(--surface)/50 flex items-stretch overflow-hidden shadow-none transition-all text-left cursor-pointer group"
-            title="View Creator Era details & fanbase breakdown"
-            aria-label="View Creator Era details and fanbase breakdown"
+            className="tap-scale inline-flex items-center w-fit max-w-full rounded-[5px] border border-(--surface-border) bg-transparent hover:bg-(--surface)/50 overflow-hidden shadow-none transition-all text-left cursor-pointer group"
+            title="View Creator Era levels"
+            aria-label="View Creator Era levels"
           >
             {/* Left: Award Ribbon Icon + Badge Name + "Creator Era" + Info Icon */}
-            <div className="flex-1 min-w-0 flex items-center justify-between px-3 sm:px-4 py-2 sm:py-2.5">
-              <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                <Award
-                  className="h-5 w-5 sm:h-5.5 sm:w-5.5 shrink-0 stroke-[1.8]"
-                  style={{
-                    color:
-                      currentEra?.stage === "Gold"
-                        ? "#D97706"
-                        : currentEra?.stage === "Silver"
-                        ? "#64748B"
-                        : "#C2410C",
-                  }}
-                />
-                <div className="min-w-0 flex-1">
-                  <div className="text-[13px] font-medium text-(--text) truncate leading-tight">
-                    {currentEra?.badge || "Creator"}
-                  </div>
-                  <div className="text-[11px] font-normal text-(--text-muted) leading-tight mt-0.5">
-                    Creator Era
-                  </div>
+            <div className="flex items-center gap-2 sm:gap-2.5 px-3 py-1.5 sm:py-2">
+              <Award
+                className="h-4.5 w-4.5 sm:h-5 sm:w-5 shrink-0 stroke-[1.8]"
+                style={{
+                  color:
+                    currentEra?.stage === "Gold"
+                      ? "#D97706"
+                      : currentEra?.stage === "Silver"
+                      ? "#64748B"
+                      : "#C2410C",
+                }}
+              />
+              <div className="min-w-0">
+                <div className="text-xs sm:text-[13px] font-medium text-(--text) truncate leading-tight">
+                  {currentEra?.badge || "Creator"}
+                </div>
+                <div className="text-[10px] sm:text-[11px] font-normal text-(--text-muted) leading-tight mt-0.5">
+                  Creator Era
                 </div>
               </div>
 
               {/* Info Icon (i) */}
-              <Info className="h-4 w-4 text-(--text-muted) group-hover:text-(--text) transition-colors shrink-0 ml-2" />
+              <Info className="h-3.5 w-3.5 text-(--text-muted) group-hover:text-(--text) transition-colors shrink-0 ml-1 sm:ml-1.5" />
             </div>
 
             {/* Vertical Divider */}
-            <div className="w-px bg-(--surface-border) shrink-0 self-stretch" />
+            <div className="w-px bg-(--surface-border) self-stretch shrink-0" aria-hidden="true" />
 
             {/* Right: Total Fans Count + "Total Fans" */}
-            <div className="w-24 sm:w-28 shrink-0 flex flex-col items-center justify-center px-2 py-2 text-center bg-transparent group-hover:bg-(--surface)/40 transition-colors">
-              <div className="text-[15px] sm:text-[16px] font-semibold text-(--text) tabular-nums leading-tight">
+            <div className="shrink-0 flex flex-col items-center justify-center px-3 sm:px-3.5 py-1.5 sm:py-2 text-center bg-transparent group-hover:bg-(--surface)/40 transition-colors">
+              <div className="text-xs sm:text-[13px] font-semibold text-(--text) tabular-nums leading-tight">
                 {formatFans(effectiveFanbase)}
               </div>
-              <div className="text-[11px] font-normal text-(--text-muted) leading-tight mt-0.5">
+              <div className="text-[10px] sm:text-[11px] font-normal text-(--text-muted) leading-tight mt-0.5">
                 Total Fans
               </div>
             </div>
