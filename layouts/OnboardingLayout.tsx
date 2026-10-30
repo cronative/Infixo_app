@@ -74,7 +74,10 @@ export function OnboardingLayout({
   const setIsMobilePreviewOpen = controlledSetMobilePreviewOpen || setInternalMobilePreviewOpen;
 
   useEffect(() => {
-    const pendingEmail = storage.get<string>(STORAGE_KEYS.otpEmail, "");
+    const pendingEmail =
+      storage.get<string>(STORAGE_KEYS.otpEmail, "") ||
+      AuthService.getPendingEmail() ||
+      "";
     if (pendingEmail) setEmail(pendingEmail);
   }, []);
 
@@ -98,9 +101,9 @@ export function OnboardingLayout({
           {/* Right: Email indicator + Save & Logout */}
           <div className="flex items-center gap-2">
             {email && (
-              <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800 shadow-2xs">
-                <Check className="h-3 w-3 text-emerald-600 stroke-[3]" />
-                <span className="truncate max-w-[160px] font-medium">{email}</span>
+              <div className="flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2 sm:px-2.5 py-0.5 sm:py-1 text-xs font-semibold text-emerald-800 shadow-2xs">
+                <Check className="h-3 w-3 text-emerald-600 stroke-[3] shrink-0" />
+                <span className="truncate max-w-[110px] sm:max-w-[180px] font-medium">{email}</span>
               </div>
             )}
             <button

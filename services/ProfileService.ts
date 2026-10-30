@@ -158,6 +158,7 @@ export const ProfileService = {
             photoDataUrl: updated.photoDataUrl,
             themeKey: currentTheme,
             visibilitySettings: updated.visibilitySettings,
+            acceptedLegalTerms: true,
           }),
         });
         const apiResponse = await httpResponse.json();
