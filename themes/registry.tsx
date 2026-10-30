@@ -38,6 +38,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
     onShare,
     layoutMode,
     initialTab,
+    hideFooter,
   } = props;
   return (
     <LivePreviewCard
@@ -59,7 +60,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       totalAudience={totalAudience}
       compact={variant === "compact"}
       variant={variant}
-      hideFooter={true}
+      hideFooter={hideFooter ?? false}
       themeKey={themeKey}
       containedScroll={containedScroll}
       seriesOpenMode={seriesOpenMode}

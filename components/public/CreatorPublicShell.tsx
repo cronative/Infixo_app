@@ -43,7 +43,7 @@ export function CreatorPublicShell({
     <div
       {...wrapperProps}
       style={{ ...themeTokenStyle(meta.key), background: "var(--page-bg)", ...((wrapperProps as any)?.style || {}) }}
-      className="relative h-screen h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between antialiased transition-colors duration-500"
+      className="relative min-h-screen min-h-[100dvh] flex flex-col antialiased transition-colors duration-500"
     >
       {/* 1. Full-screen theme background (photo themes get a soft blurred backdrop) */}
       <div
@@ -74,7 +74,7 @@ export function CreatorPublicShell({
 
       {/* 4. Centered card column with 20px top & bottom padding */}
       <main
-        className={`relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[620px] px-2.5 sm:px-3 py-[20px] h-full max-h-full min-h-0 overflow-hidden animate-fade-in-up ${mainClassName}`}
+        className={`relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[620px] px-2.5 sm:px-3 py-[20px] min-h-0 animate-fade-in-up ${mainClassName}`}
       >
         {children}
       </main>
@@ -111,22 +111,21 @@ export function PublicCard({
       style={{ ...t.surfaceStyle, boxShadow: "none", ...style }}
       className={`relative flex-1 min-h-0 h-full max-h-full flex flex-col border profile-card-glass transition-all overflow-hidden ${PUBLIC_RADIUS.card} ${className}`}
     >
-      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {children}
-      </div>
-
-      {showFooter && (
-        <div
-          className="relative z-30 shrink-0 select-none py-2 sm:py-2.5 border-t border-(--divider) bg-transparent flex items-center w-full"
-          style={{ boxShadow: "0 -2px 6px rgba(0,0,0,.04)" }}
-        >
-          <MadeWithInflixo
-            variant="card-footer"
-            creatorUsername={creatorUsername}
-            creatorDisplayName={creatorDisplayName}
-          />
+      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden flex flex-col">
+        <div className="flex-1 min-h-0">
+          {children}
         </div>
-      )}
+
+        {showFooter && (
+          <div className="mt-auto shrink-0 select-none border-t border-(--divider) bg-transparent w-full">
+            <MadeWithInflixo
+              variant="card-footer"
+              creatorUsername={creatorUsername}
+              creatorDisplayName={creatorDisplayName}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

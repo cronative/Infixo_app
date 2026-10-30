@@ -2,6 +2,7 @@
 
 import { getPublicTheme } from "@/components/public/publicTheme";
 import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
+import { GlobalFooter } from "@/components/shared/GlobalFooter";
 
 interface PublicMadeWithInflixoProps {
   themeKey?: string;
@@ -13,36 +14,9 @@ interface PublicMadeWithInflixoProps {
  * Minimal and classy: ⚡ Powered by Inflixo in muted grey text.
  */
 export function PublicMadeWithInflixoFooter({
-  themeKey = DEFAULT_THEME_KEY,
   className = "",
 }: PublicMadeWithInflixoProps) {
-  const theme = getPublicTheme(themeKey);
-  const { colors: c, isDark } = theme;
-
-  // Sits on the page background, so it uses the on-page token (theme vars are set on the shell root).
-  const textColor = "var(--on-page-text, currentColor)";
-
-  return (
-    <footer className={`w-full py-2.5 mt-auto mb-1 flex items-center justify-center text-center select-none ${className}`}>
-      <a
-        href="https://inflixo.com"
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{ color: textColor }}
-        className="group inline-flex items-center gap-2 text-xs font-medium transition-colors hover:text-(--text) "
-        aria-label="Powered by Inflixo"
-      >
-        <img
-          src="/images/inflixo-logo-3d.png"
-          alt="Inflixo"
-          className="h-4.5 w-4.5 rounded-[5px] object-cover inline-block shrink-0 shadow-2xs group-hover:scale-110 transition-transform select-none"
-        />
-        <span className="tracking-normal">
-          Powered by <strong className="font-semibold text-current">Inflixo</strong>
-        </span>
-      </a>
-    </footer>
-  );
+  return <GlobalFooter className={className} />;
 }
 
 /**

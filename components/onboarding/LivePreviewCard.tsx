@@ -1918,7 +1918,7 @@ export function LivePreviewCard({
       <div
         ref={profileScrollRef}
         onScroll={handleContainedScroll}
-        className="relative z-10 flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden overscroll-contain scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-1.5 sm:pt-2 pb-6"
+        className="relative z-10 flex-1 min-h-0 w-full flex flex-col overflow-y-auto overflow-x-hidden overscroll-contain scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-1.5 sm:pt-2 pb-6"
       >
 
         {/* 2. About Tab (Compact, flat, 5px radius, theme-aware layout) */}
@@ -3297,21 +3297,18 @@ export function LivePreviewCard({
         )}
 
         <div className="order-[70] h-3 shrink-0" aria-hidden="true" />
-      </div>
 
-      {/* Static Footer inside Center Card: separator runs edge to edge (bleeds over the card's 16/20px side padding). */}
-      <div
-        className="relative z-30 shrink-0 select-none py-2 sm:py-2.5 -mx-4 sm:-mx-5 border-t border-(--divider) bg-transparent"
-        style={{ boxShadow: "0 -2px 6px rgba(0,0,0,.04)" }}
-      >
-        <div className="flex items-center w-full">
-          <MadeWithInflixo
-            variant="card-footer"
-            disabled={isInformationalMode}
-            creatorUsername={profile.username}
-            creatorDisplayName={profile.displayName}
-          />
-        </div>
+        {/* Normal document flow footer at bottom of scrollable area */}
+        {!hideFooter && (
+          <div className="order-[80] mt-auto shrink-0 select-none pt-4 -mx-4 sm:-mx-5 border-t border-(--divider) bg-transparent w-[calc(100%+2rem)] sm:w-[calc(100%+2.5rem)]">
+            <MadeWithInflixo
+              variant="card-footer"
+              disabled={isInformationalMode}
+              creatorUsername={profile.username}
+              creatorDisplayName={profile.displayName}
+            />
+          </div>
+        )}
       </div>
 
       {showMoveToTop && (

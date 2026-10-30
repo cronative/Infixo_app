@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Sparkles, Compass } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
+import { GlobalFooter } from "@/components/shared/GlobalFooter";
 
 export default function NotFound() {
   return (
@@ -58,9 +59,9 @@ export default function NotFound() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full border-t border-[#e2e8f0] bg-white py-4 text-center text-xs text-[#94a3b8]">
-        © {new Date().getFullYear()} Inflixo. One Link for Creators & Fanbase.
-      </footer>
+      <div className="w-full border-t border-[#e2e8f0] bg-white">
+        <GlobalFooter />
+      </div>
     </div>
   );
 }

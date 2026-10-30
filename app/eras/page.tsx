@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Sparkles, ArrowRight, ShieldCheck, Check } from "lucide-react";
 import { InflixoWordmark } from "@/components/brand/InflixoLogo";
 import { MAIN_ERAS } from "@/lib/creatorEra";
+import { GlobalFooter } from "@/components/shared/GlobalFooter";
 
 export const metadata: Metadata = {
   title: "What's your Creator Era? — Inflixo",
@@ -144,9 +145,9 @@ export default function CreatorErasPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#FCE7F3] bg-white py-6 text-center text-xs text-slate-500">
-        Inflixo · The Creator Operating System · #MyCreatorEra
-      </footer>
+      <div className="border-t border-[#FCE7F3] bg-white">
+        <GlobalFooter />
+      </div>
     </div>
   );
 }

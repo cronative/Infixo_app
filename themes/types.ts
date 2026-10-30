@@ -51,4 +51,5 @@ export interface ThemeCardProps {
   onShare?: () => void;
   layoutMode?: "tabs" | "stacked";
   initialTab?: "about" | "watch" | "explore" | "work" | "collab" | "series" | "fanbase" | "links" | "shop" | "reviews" | "setup";
+  hideFooter?: boolean;
 }
