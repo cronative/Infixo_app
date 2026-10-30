@@ -1921,9 +1921,9 @@ export function LivePreviewCard({
         className="relative z-10 flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden overscroll-contain scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-1.5 sm:pt-2 pb-6"
       >
 
-        {/* 2. About Tab (4 stacked cards: About Me, Total Fanbase, Social Accounts, My Setup) */}
+        {/* 2. About Tab (Compact, flat, 5px radius, theme-aware layout) */}
         {!isListingPage && (!isTabsLayout || activeNavTab === "about" || activeNavTab === "fanbase") && (
-          <div id="about-section" className={`relative z-10 w-full text-left animate-fade-in ${isTabsLayout ? "order-[4] mt-1.5 sm:mt-2" : "order-[1] mt-5 sm:mt-6 space-y-3"}`}>
+          <div id="about-section" className={`relative z-10 w-full text-left animate-fade-in ${isTabsLayout ? "order-[4] mt-1 sm:mt-1.5" : "order-[1] mt-4 sm:mt-5 space-y-2"}`}>
             {!isTabsLayout && (
               <TabSectionHeader
                 title="About"
@@ -1934,7 +1934,7 @@ export function LivePreviewCard({
               />
             )}
 
-            <div className="space-y-3 sm:space-y-3.5">
+            <div className="space-y-2">
               {/* 1. About Me Card */}
               {profile.bio && profile.bio.trim() && (
                 <div
@@ -1942,32 +1942,38 @@ export function LivePreviewCard({
                     backgroundColor: "var(--surface)",
                     borderColor: "var(--surface-border)",
                   }}
-                  className="rounded-[8px] border overflow-hidden text-left transition-all shadow-2xs"
+                  className="rounded-[5px] border overflow-hidden text-left shadow-none"
                 >
-                  {/* Card Header */}
+                  {/* Compact theme-tinted header */}
                   <div
-                    style={{ borderColor: "var(--surface-border)" }}
-                    className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b flex items-center justify-between"
+                    style={{
+                      backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
+                      borderColor: "var(--surface-border)",
+                    }}
+                    className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b"
                   >
                     <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-[#71717A]" />
+                      <User className="h-4 w-4 text-(--accent-text) shrink-0" />
                       <h2
                         style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                        className="text-[13.5px] sm:text-sm font-bold tracking-tight"
+                        className="text-[13px] sm:text-sm font-bold tracking-tight"
                       >
                         About Me
                       </h2>
                     </div>
+                    <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
+                      A little about me and what I love creating.
+                    </p>
                   </div>
 
                   {/* Bio Editorial Text */}
-                  <div className="p-3.5 sm:p-4">
+                  <div className="p-3 sm:p-3.5">
                     <ExpandableText
                       text={profile.bio}
                       style={{ color: c.primaryText }}
-                      className="text-xs sm:text-[13px] leading-relaxed font-normal break-words"
+                      className="text-xs sm:text-[12.5px] leading-relaxed font-normal break-words"
                       buttonStyle={{ color: c.accentText || c.primaryText }}
-                      buttonClassName="mt-1.5 inline-flex items-center gap-0.5 text-[11px] sm:text-xs font-bold hover:underline cursor-pointer select-none"
+                      buttonClassName="mt-1 inline-flex items-center gap-0.5 text-[11px] font-bold hover:underline cursor-pointer select-none"
                     />
                   </div>
                 </div>
@@ -1980,29 +1986,37 @@ export function LivePreviewCard({
                     backgroundColor: "var(--surface)",
                     borderColor: "var(--surface-border)",
                   }}
-                  className="rounded-[8px] border overflow-hidden text-left transition-all shadow-2xs"
+                  className="rounded-[5px] border overflow-hidden text-left shadow-none"
                 >
-                  {/* Card Header */}
+                  {/* Compact theme-tinted header */}
                   <div
-                    style={{ borderColor: "var(--surface-border)" }}
-                    className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b flex items-center justify-between"
+                    style={{
+                      backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
+                      borderColor: "var(--surface-border)",
+                    }}
+                    className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
                   >
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-[#71717A]" />
-                      <h2
-                        style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                        className="text-[13.5px] sm:text-sm font-bold tracking-tight"
-                      >
-                        Total Fanbase
-                      </h2>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-(--accent-text) shrink-0" />
+                        <h2
+                          style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                          className="text-[13px] sm:text-sm font-bold tracking-tight"
+                        >
+                          Total Fanbase
+                        </h2>
+                      </div>
+                      <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
+                        My creator journey across platforms.
+                      </p>
                     </div>
-                    <span style={{ color: c.mutedText }} className="text-[11.5px] sm:text-xs font-normal">
+                    <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0">
                       {aboutSocialCards.length || fanbaseSocialCards.length || 3} platforms
                     </span>
                   </div>
 
                   {/* Body: Two Columns (Creator Era | Total Fans) */}
-                  <div className="px-4 py-3 sm:px-4.5 sm:py-3.5 flex items-center justify-between gap-3">
+                  <div className="flex items-center justify-between">
                     {/* Left Column: Creator Era */}
                     {(() => {
                       const stage = creatorEra?.badge?.includes("Silver")
@@ -2022,20 +2036,23 @@ export function LivePreviewCard({
                               setBentoEraSheetOpen(true);
                             }
                           }}
-                          className="flex items-center gap-2.5 min-w-0 flex-1 text-left cursor-pointer group/era"
+                          className="flex items-center gap-2.5 min-w-0 flex-1 text-left cursor-pointer group/era px-3.5 py-2.5 sm:px-4 sm:py-3"
                         >
                           <Award
-                            className="h-5 w-5 shrink-0 transition-transform group-hover/era:scale-110"
+                            className="h-4.5 w-4.5 shrink-0 transition-transform group-hover/era:scale-110"
                             style={{ color: medalColor }}
                           />
                           <div className="min-w-0 flex-1">
-                            <div
-                              style={{ color: c.primaryText }}
-                              className="text-[13px] sm:text-[13.5px] font-bold truncate group-hover/era:underline"
-                            >
-                              {creatorEra?.badge || "Creator Era"}
+                            <div className="flex items-center gap-1">
+                              <span
+                                style={{ color: c.primaryText }}
+                                className="text-[13px] sm:text-[13.5px] font-bold truncate group-hover/era:underline"
+                              >
+                                {creatorEra?.badge || "Creator Era"}
+                              </span>
+                              <Info className="h-3 w-3 text-(--text-muted) shrink-0" />
                             </div>
-                            <p style={{ color: c.mutedText }} className="text-[11px] font-normal leading-tight">
+                            <p style={{ color: c.mutedText }} className="text-[11px] font-normal leading-tight mt-0.5">
                               Creator Era
                             </p>
                           </div>
@@ -2043,18 +2060,18 @@ export function LivePreviewCard({
                       );
                     })()}
 
-                    {/* Vertical divider */}
-                    <div style={{ backgroundColor: "var(--surface-border)" }} className="h-8 w-px shrink-0" aria-hidden="true" />
+                    {/* Full-height vertical divider */}
+                    <div style={{ backgroundColor: "var(--surface-border)" }} className="self-stretch w-px shrink-0" aria-hidden="true" />
 
                     {/* Right Column: Total Fans */}
-                    <div className="text-right shrink-0 min-w-[70px]">
+                    <div className="text-right shrink-0 min-w-[85px] sm:min-w-[95px] px-3.5 py-2.5 sm:px-4 sm:py-3 flex flex-col justify-center">
                       <div
                         style={{ color: c.primaryText }}
-                        className="text-lg sm:text-xl font-black tabular-nums tracking-tight leading-tight"
+                        className="text-[17px] sm:text-lg font-bold tabular-nums tracking-tight leading-tight"
                       >
-                        {formatFans(totalAudience > 0 ? totalAudience : effectiveFanbase)}
+                        {formatFans(totalAudience > 0 ? totalAudience : (effectiveFanbase ?? 0))}
                       </div>
-                      <p style={{ color: c.mutedText }} className="text-[11px] font-normal leading-tight">
+                      <p style={{ color: c.mutedText }} className="text-[11px] font-normal leading-tight mt-0.5">
                         Total Fans
                       </p>
                     </div>
@@ -2069,29 +2086,37 @@ export function LivePreviewCard({
                     backgroundColor: "var(--surface)",
                     borderColor: "var(--surface-border)",
                   }}
-                  className="rounded-[8px] border overflow-hidden text-left transition-all shadow-2xs"
+                  className="rounded-[5px] border overflow-hidden text-left shadow-none"
                 >
-                  {/* Card Header */}
+                  {/* Compact theme-tinted header */}
                   <div
-                    style={{ borderColor: "var(--surface-border)" }}
-                    className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b flex items-center justify-between"
+                    style={{
+                      backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
+                      borderColor: "var(--surface-border)",
+                    }}
+                    className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
                   >
-                    <div className="flex items-center gap-2">
-                      <AtSign className="h-4 w-4 text-[#71717A]" />
-                      <h2
-                        style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                        className="text-[13.5px] sm:text-sm font-bold tracking-tight"
-                      >
-                        Social Accounts
-                      </h2>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Share2 className="h-4 w-4 text-(--accent-text) shrink-0" />
+                        <h2
+                          style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                          className="text-[13px] sm:text-sm font-bold tracking-tight"
+                        >
+                          Social Accounts
+                        </h2>
+                      </div>
+                      <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
+                        Follow along and stay connected with me.
+                      </p>
                     </div>
-                    <span style={{ color: c.mutedText }} className="text-[11.5px] sm:text-xs font-normal">
+                    <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0">
                       {aboutSocialCards.length} connected
                     </span>
                   </div>
 
-                  {/* Body: List with divide-y */}
-                  <div style={{ borderColor: "var(--surface-border)" }} className="divide-y divide-(--surface-border)">
+                  {/* Body: Individual horizontal cards with 5px radius and ~8px gap */}
+                  <div className="p-2 sm:p-2.5 space-y-2">
                     {aboutSocialCards.map((item: any, idx: number) => {
                       const rawHandle = (item.handle || item.name || item.label).replace(/^@/, "");
                       const isServiceOnly = item.platform === "spotify" && rawHandle.toLowerCase() === "spotify";
@@ -2114,12 +2139,22 @@ export function LivePreviewCard({
                               showToast(`Redirects to ${item.label} on live profile ✨`);
                             }
                           }}
-                          className="group/item px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-3 hover:bg-black/[0.02] dark:hover:bg-white/[0.03] transition-colors cursor-pointer text-left"
+                          style={{
+                            backgroundColor: "var(--surface)",
+                            borderColor: "var(--surface-border)",
+                          }}
+                          className="rounded-[5px] border p-2.5 sm:p-3 flex items-center justify-between gap-2.5 transition-colors hover:border-(--surface-border)/40 cursor-pointer text-left group"
                           title={`Open ${item.label} (${displayHandle})`}
                         >
-                          {/* Left: Outline Icon + Handle & Platform */}
-                          <div className="flex items-center gap-3 min-w-0 flex-1">
-                            <span className="shrink-0 flex items-center justify-center text-slate-700 dark:text-slate-300">
+                          {/* Left: Square Icon with theme wash */}
+                          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                            <div
+                              style={{
+                                backgroundColor: "color-mix(in srgb, var(--accent) 8%, var(--surface))",
+                                borderColor: "var(--surface-border)",
+                              }}
+                              className="h-9 w-9 rounded-[5px] border flex items-center justify-center shrink-0 text-(--accent-text)"
+                            >
                               {isInstagram && <InstagramOutlineIcon className="h-4.5 w-4.5" />}
                               {isYoutube && <YoutubeOutlineIcon className="h-4.5 w-4.5" />}
                               {isFacebook && <FacebookOutlineIcon className="h-4.5 w-4.5" />}
@@ -2133,29 +2168,27 @@ export function LivePreviewCard({
                               {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest"].includes(item.platform) && (
                                 <Globe className="h-4 w-4 text-[#71717A]" />
                               )}
-                            </span>
+                            </div>
 
+                            {/* Center: Platform Name + Username */}
                             <div className="min-w-0 flex-1">
-                              <div style={{ color: c.primaryText }} className="text-[13px] sm:text-[13.5px] font-bold truncate group-hover/item:text-(--accent-text) transition-colors">
-                                {displayHandle}
-                              </div>
-                              <p style={{ color: c.mutedText }} className="text-[11px] font-normal capitalize truncate">
+                              <div style={{ color: c.primaryText }} className="text-[13px] font-bold leading-tight truncate group-hover:text-(--accent-text) transition-colors">
                                 {item.label}
+                              </div>
+                              <p style={{ color: c.mutedText }} className="text-[11px] font-normal leading-tight mt-0.5 truncate">
+                                {displayHandle}
                               </p>
                             </div>
                           </div>
 
-                          {/* Right: Follower Count + External Link */}
-                          <div className="shrink-0 flex items-center gap-2 sm:gap-2.5">
-                            <div className="text-right">
-                              <div style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold tabular-nums tracking-tight leading-tight">
-                                {countFormatted || "0"}
-                              </div>
-                              <div style={{ color: c.mutedText }} className="text-[10px] font-normal">
-                                {item.unit || (isYoutube ? "Subscribers" : "Followers")}
-                              </div>
-                            </div>
-                            <ExternalLink className="h-3.5 w-3.5 text-[#71717A]/70 group-hover/item:text-[#18181B] group-hover/item:opacity-100 shrink-0 transition-opacity" />
+                          {/* Right: Small external-link icon at top, follower count as subtle secondary text below */}
+                          <div className="shrink-0 flex flex-col items-end justify-between self-stretch text-right min-h-[34px]">
+                            <ExternalLink className="h-3 w-3 text-(--text-muted) group-hover:text-(--text) transition-colors" />
+                            {countFormatted && (
+                              <span style={{ color: c.mutedText }} className="text-[10px] font-normal lowercase">
+                                {countFormatted} {item.unit ? item.unit.toLowerCase() : isYoutube ? "subscribers" : "followers"}
+                              </span>
+                            )}
                           </div>
                         </a>
                       );
@@ -2168,7 +2201,7 @@ export function LivePreviewCard({
               {(() => {
                 const activeSetupItems = (setupList || []).filter((it) => it.isActive !== false);
                 if (activeSetupItems.length === 0) return null;
-                const visibleSetupItems = isSetupExpanded ? activeSetupItems : activeSetupItems.slice(0, 3);
+                const visibleSetupItems = isSetupExpanded ? activeSetupItems : activeSetupItems.slice(0, 4);
 
                 return (
                   <div
@@ -2177,29 +2210,37 @@ export function LivePreviewCard({
                       backgroundColor: "var(--surface)",
                       borderColor: "var(--surface-border)",
                     }}
-                    className="rounded-[8px] border overflow-hidden text-left transition-all shadow-2xs"
+                    className="rounded-[5px] border overflow-hidden text-left shadow-none"
                   >
-                    {/* Card Header */}
+                    {/* Compact theme-tinted header */}
                     <div
-                      style={{ borderColor: "var(--surface-border)" }}
-                      className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b flex items-center justify-between"
+                      style={{
+                        backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
+                        borderColor: "var(--surface-border)",
+                      }}
+                      className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
                     >
-                      <div className="flex items-center gap-2">
-                        <Camera className="h-4 w-4 text-[#71717A]" />
-                        <h2
-                          style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                          className="text-[13.5px] sm:text-sm font-bold tracking-tight"
-                        >
-                          My Setup
-                        </h2>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <Camera className="h-4 w-4 text-(--accent-text) shrink-0" />
+                          <h2
+                            style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                            className="text-[13px] sm:text-sm font-bold tracking-tight"
+                          >
+                            My Setup
+                          </h2>
+                        </div>
+                        <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
+                          A few tools I use to create my content.
+                        </p>
                       </div>
-                      <span style={{ color: c.mutedText }} className="text-[11.5px] sm:text-xs font-normal">
+                      <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0">
                         {activeSetupItems.length} items
                       </span>
                     </div>
 
-                    {/* Body: List of Items */}
-                    <div style={{ borderColor: "var(--surface-border)" }} className="divide-y divide-(--surface-border)">
+                    {/* Body: Individual horizontal cards with 5px radius and ~8px gap */}
+                    <div className="p-2 sm:p-2.5 space-y-2">
                       {visibleSetupItems.map((item) => (
                         <a
                           key={item.id}
@@ -2214,39 +2255,53 @@ export function LivePreviewCard({
                               trackPublicEvent("setup_click", String(item.id));
                             }
                           }}
-                          className="group/setup px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-3 hover:bg-black/[0.02] dark:hover:bg-white/[0.03] transition-colors cursor-pointer text-left"
+                          style={{
+                            backgroundColor: "var(--surface)",
+                            borderColor: "var(--surface-border)",
+                          }}
+                          className="rounded-[5px] border p-2.5 sm:p-3 flex items-center justify-between gap-2.5 transition-colors hover:border-(--surface-border)/40 cursor-pointer text-left group"
                         >
-                          {/* Left: Box Icon + Name & Description */}
-                          <div className="flex items-center gap-3 min-w-0 flex-1">
-                            <Box className="h-4.5 w-4.5 text-[#52525B] shrink-0 stroke-[1.75]" />
+                          {/* Left: Square Icon with theme wash */}
+                          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                            <div
+                              style={{
+                                backgroundColor: "color-mix(in srgb, var(--accent) 8%, var(--surface))",
+                                borderColor: "var(--surface-border)",
+                              }}
+                              className="h-9 w-9 rounded-[5px] border flex items-center justify-center shrink-0 text-(--accent-text)"
+                            >
+                              <Camera className="h-4 w-4 stroke-[1.75]" />
+                            </div>
+
+                            {/* Center: Item Name + Note / description */}
                             <div className="min-w-0 flex-1">
                               <div
                                 style={{ color: c.primaryText }}
-                                className="text-[13px] sm:text-[13.5px] font-bold truncate group-hover/setup:text-(--accent-text) transition-colors"
+                                className="text-[13px] font-bold leading-tight truncate group-hover:text-(--accent-text) transition-colors"
                               >
                                 {item.name}
                               </div>
-                              <p style={{ color: c.mutedText }} className="text-[11px] font-normal truncate">
+                              <p style={{ color: c.mutedText }} className="text-[11px] font-normal leading-tight mt-0.5 truncate">
                                 {item.usedFor || item.note || item.modelOrPlan || item.brand}
                               </p>
                             </div>
                           </div>
 
-                          {/* Right: External Link */}
-                          <ExternalLink className="h-3.5 w-3.5 text-[#71717A]/70 group-hover/setup:text-[#18181B] group-hover/setup:opacity-100 shrink-0 transition-opacity" />
+                          {/* Right: Small external-link icon */}
+                          <ExternalLink className="h-3 w-3 text-(--text-muted) group-hover:text-(--text) shrink-0 transition-colors" />
                         </a>
                       ))}
                     </div>
 
                     {/* Footer: View All Items Toggle */}
-                    {activeSetupItems.length > 3 && (
+                    {activeSetupItems.length > 4 && (
                       <div style={{ borderColor: "var(--surface-border)" }} className="border-t">
                         <button
                           type="button"
                           onClick={() => setIsSetupExpanded(!isSetupExpanded)}
-                          className="w-full py-2.5 sm:py-3 px-4 text-xs sm:text-[13px] font-semibold text-[#18181B] dark:text-white hover:opacity-80 flex items-center justify-center gap-1.5 transition-opacity cursor-pointer text-center"
+                          className="w-full py-2 px-3 text-xs font-semibold text-(--text) hover:opacity-80 flex items-center justify-center gap-1.5 transition-opacity cursor-pointer text-center"
                         >
-                          <span>{isSetupExpanded ? "Show Less Items" : `View All Items (${activeSetupItems.length})`}</span>
+                          <span>{isSetupExpanded ? "Show Less" : `View All Items (${activeSetupItems.length})`}</span>
                           {isSetupExpanded ? (
                             <ChevronUp className="h-3.5 w-3.5 shrink-0" />
                           ) : (
