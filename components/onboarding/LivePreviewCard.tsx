@@ -2939,9 +2939,9 @@ export function LivePreviewCard({
                 </div>
               </div>
 
-              {/* 2. PACKAGES (responsive grid: 1 col on mobile, 2 cols on tablet/desktop) */}
+              {/* 2. PACKAGES (single vertical column across all breakpoints) */}
               {activePackages.length > 0 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="flex flex-col space-y-2 w-full">
                   {activePackages.map((pkg) => (
                     <PackageCard
                       key={pkg.id}
@@ -2994,9 +2994,9 @@ export function LivePreviewCard({
                     </span>
                   </div>
 
-                  {/* Reviews List: Responsive grid (1 col mobile, up to 2 cols on tablet/desktop) */}
+                  {/* Reviews List: Single vertical column across all breakpoints */}
                   <div className="p-2 sm:p-2.5">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="flex flex-col space-y-2 w-full">
                       {visibleReviews.map((rev) => {
                         const ratingNum = Number(rev.rating) || 5;
                         const initial = rev.clientName ? rev.clientName.trim().charAt(0).toUpperCase() : "B";
