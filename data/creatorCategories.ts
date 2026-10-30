@@ -34,7 +34,7 @@ export const POPULAR_CATEGORIES: string[] = [
 export const CATEGORY_GROUPS: CategoryGroup[] = [
   {
     id: "vlogging",
-    name: "Group 1 — Vlogging",
+    name: "Vlogging",
     items: [
       "Vlogger",
       "Travel Vlogger",
@@ -48,7 +48,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "entertainment",
-    name: "Group 2 — Entertainment",
+    name: "Entertainment",
     items: [
       "Comedian",
       "Entertainer",
@@ -63,7 +63,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "films-series",
-    name: "Group 3 — Films & Series",
+    name: "Films & Series",
     items: [
       "Filmmaker",
       "Director",
@@ -76,7 +76,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "podcasts-talks",
-    name: "Group 4 — Podcasts & Talks",
+    name: "Podcasts & Talks",
     items: [
       "Podcaster",
       "Interviewer",
@@ -89,7 +89,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "food",
-    name: "Group 5 — Food",
+    name: "Food",
     items: [
       "Chef",
       "Cook",
@@ -102,7 +102,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "travel",
-    name: "Group 6 — Travel",
+    name: "Travel",
     items: [
       "Traveler",
       "Travel Blogger",
@@ -114,7 +114,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "education",
-    name: "Group 7 — Education",
+    name: "Education",
     items: [
       "Educator",
       "Teacher",
@@ -127,7 +127,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "technology",
-    name: "Group 8 — Technology",
+    name: "Technology",
     items: [
       "Tech Reviewer",
       "Gadget Reviewer",
@@ -139,7 +139,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "gaming",
-    name: "Group 9 — Gaming",
+    name: "Gaming",
     items: [
       "Gamer",
       "Streamer",
@@ -150,7 +150,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "fashion-beauty",
-    name: "Group 10 — Fashion & Beauty",
+    name: "Fashion & Beauty",
     items: [
       "Fashion Blogger",
       "Fashion Influencer",
@@ -163,7 +163,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "fitness-wellness",
-    name: "Group 11 — Fitness & Wellness",
+    name: "Fitness & Wellness",
     items: [
       "Fitness Trainer",
       "Gym Trainer",
@@ -175,7 +175,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "business-finance",
-    name: "Group 12 — Business & Finance",
+    name: "Business & Finance",
     items: [
       "Entrepreneur",
       "Business Coach",
@@ -187,7 +187,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "music-dance",
-    name: "Group 13 — Music & Dance",
+    name: "Music & Dance",
     items: [
       "Singer",
       "Musician",
@@ -201,7 +201,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "art-design",
-    name: "Group 14 — Art & Design",
+    name: "Art & Design",
     items: [
       "Artist",
       "Painter",
@@ -216,7 +216,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "sports-automotive",
-    name: "Group 15 — Sports & Automotive",
+    name: "Sports & Automotive",
     items: [
       "Athlete",
       "Cricketer",
@@ -230,7 +230,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "news-information",
-    name: "Group 16 — News & Information",
+    name: "News & Information",
     items: [
       "Journalist",
       "Reporter",
@@ -243,7 +243,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "culture-spirituality",
-    name: "Group 17 — Culture & Spirituality",
+    name: "Culture & Spirituality",
     items: [
       "Spiritual Speaker",
       "Devotional Singer",
@@ -254,7 +254,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     id: "other",
-    name: "Group 18 — Other",
+    name: "Other",
     items: [
       "Influencer",
       "Digital Influencer",
