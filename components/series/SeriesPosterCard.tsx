@@ -119,10 +119,10 @@ export function SeriesPosterCard({
 
       {/* Content on Poster: Bottom Left */}
       <div className="absolute inset-x-0 bottom-0 p-2 sm:p-3 flex flex-col justify-end text-left z-10 pointer-events-none">
-        {/* Series Title: white, bold, max 1 line with text shadow */}
+        {/* Series Title: white, semibold, max 1 line with text shadow */}
         <h3
           style={{ textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}
-          className="text-sm sm:text-lg font-bold tracking-tight text-white truncate leading-snug drop-shadow-sm group-hover:text-(--accent-soft) transition-colors"
+          className="text-sm sm:text-base font-semibold tracking-tight text-white truncate leading-snug drop-shadow-sm group-hover:text-(--accent-soft) transition-colors"
         >
           {series.title}
         </h3>

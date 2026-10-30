@@ -26,9 +26,9 @@ export function TabSectionHeader({
           style={{
             color: primaryTextColor,
             fontFamily: headingFontFamily,
-            fontWeight: 800,
+            fontWeight: 600,
           }}
-          className="text-lg sm:text-xl font-extrabold tracking-tight"
+          className="text-sm font-semibold tracking-tight text-(--text) leading-5"
         >
           {title}
         </h2>
@@ -38,7 +38,7 @@ export function TabSectionHeader({
 
       <p
         style={{ color: secondaryTextColor }}
-        className="mt-0.5 mb-2 text-xs sm:text-sm text-(--text-muted) font-normal leading-normal whitespace-normal break-words"
+        className="mt-0.5 mb-2 text-xs text-(--text-muted) font-normal leading-[18px] whitespace-normal break-words"
       >
         {subtitle}
       </p>

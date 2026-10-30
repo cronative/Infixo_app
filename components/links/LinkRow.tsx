@@ -42,7 +42,7 @@ export function LinkRow({
   const iconBg = thumbnail
     ? "bg-(--surface) "
     : favicon
-      ? "bg-(--card-bg) border border-(--surface-border)/80 "
+      ? "bg-transparent border border-(--surface-border) "
       : letter
         ? "bg-(--accent-soft) border border-(--surface-border)"
         : platform.bgClass;
@@ -55,12 +55,12 @@ export function LinkRow({
         rel="noopener noreferrer"
         aria-label={`${title} – opens ${ariaDestination}`}
         onClick={onClick}
-        className={`group relative flex items-center justify-between gap-2.5 min-h-[42px] px-3.5 py-2 bg-transparent hover:bg-(--surface)/80 text-left transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-1 cursor-pointer select-none ${className}`}
+        className={`group relative flex items-center justify-between gap-2.5 min-h-[42px] px-3.5 py-2 bg-transparent hover:bg-(--surface)/50 text-left transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-1 cursor-pointer select-none ${className}`}
       >
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
           {/* 24×24 Icon Tile */}
           <div
-            className={`w-6 h-6 rounded-md shrink-0 flex items-center justify-center overflow-hidden ${iconBg}`}
+            className={`w-6 h-6 rounded-[4px] shrink-0 flex items-center justify-center overflow-hidden ${iconBg}`}
           >
             {thumbnail ? (
               <img
@@ -72,7 +72,7 @@ export function LinkRow({
             ) : favicon ? (
               <img src={favicon} alt="" className="w-4 h-4 object-contain" loading="lazy" />
             ) : letter ? (
-              <span className="text-[11px] font-bold uppercase text-(--accent-text)">{letter}</span>
+              <span className="text-[11px] font-medium uppercase text-(--accent-text)">{letter}</span>
             ) : (
               platform.renderIcon(true)
             )}
@@ -80,10 +80,10 @@ export function LinkRow({
 
           {/* Text Content */}
           <div className="min-w-0 flex-1 flex flex-col justify-center">
-            <span className="link-row-title text-xs font-semibold text-(--text) group-hover:text-(--accent-text) transition-colors leading-tight">
+            <span className="link-row-title text-[13px] font-medium text-(--text) group-hover:text-(--accent-text) transition-colors leading-[18px]">
               {title}
             </span>
-            <span className="text-[10.5px] text-(--text-muted) font-normal truncate leading-tight mt-0.5">
+            <span className="text-[11px] text-(--text-muted) font-normal truncate leading-[16px] mt-0.5">
               {destinationText}
             </span>
           </div>
@@ -95,7 +95,7 @@ export function LinkRow({
     );
   }
 
-  // Regular Row (~52px height on desktop, flexible on <400px mobile for 2-line title)
+  // Regular Row
   return (
     <a
       href={url}
@@ -103,12 +103,12 @@ export function LinkRow({
       rel="noopener noreferrer"
       aria-label={`${title} – opens ${ariaDestination}`}
       onClick={onClick}
-      className={`group relative flex items-center justify-between gap-3 min-h-[52px] h-auto min-[400px]:h-[52px] px-3.5 py-2 rounded-xl border border-(--surface-border)/80 bg-(--card-bg) text-left transition-all duration-150 ease-out hover:border-(--accent)/30 hover:bg-(--accent-hover)/[0.03]   active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-1 cursor-pointer select-none ${className}`}
+      className={`group relative flex items-center justify-between gap-3 min-h-[48px] h-auto min-[400px]:h-[48px] px-3.5 py-2 rounded-[5px] border border-(--surface-border) bg-transparent text-left transition-all duration-150 ease-out hover:border-(--surface-border) hover:bg-(--surface)/40 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-1 cursor-pointer select-none shadow-none ${className}`}
     >
       <div className="flex items-center gap-3 min-w-0 flex-1">
         {/* 32×32 Icon Tile */}
         <div
-          className={`w-8 h-8 rounded-lg shrink-0 flex items-center justify-center overflow-hidden shadow-xs ${iconBg}`}
+          className={`w-8 h-8 rounded-[4px] shrink-0 flex items-center justify-center overflow-hidden shadow-none ${iconBg}`}
         >
           {thumbnail ? (
             <img
@@ -120,7 +120,7 @@ export function LinkRow({
           ) : favicon ? (
             <img src={favicon} alt="" className="w-5 h-5 object-contain" loading="lazy" />
           ) : letter ? (
-            <span className="text-xs font-bold uppercase text-(--accent-text)">{letter}</span>
+            <span className="text-xs font-medium uppercase text-(--accent-text)">{letter}</span>
           ) : (
             platform.renderIcon(false)
           )}
@@ -128,10 +128,10 @@ export function LinkRow({
 
         {/* Text Content */}
         <div className="min-w-0 flex-1 flex flex-col justify-center py-0.5">
-          <span className="link-row-title text-xs sm:text-[13px] font-semibold text-(--text) group-hover:text-(--accent-text) transition-colors leading-tight">
+          <span className="link-row-title text-[13px] font-medium text-(--text) group-hover:text-(--accent-text) transition-colors leading-[18px]">
             {title}
           </span>
-          <span className="text-xs text-(--text-muted) font-normal truncate leading-tight mt-0.5">
+          <span className="text-xs text-(--text-muted) font-normal truncate leading-[17px] mt-0.5">
             {destinationText}
           </span>
         </div>

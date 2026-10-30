@@ -162,10 +162,10 @@ export function FeaturedSeriesCard({
             </div>
           )}
 
-          {/* Series Title: white, bold, max 1 line with subtle text-shadow */}
+          {/* Series Title: white, semibold, max 1 line with subtle text-shadow */}
           <h3
             style={{ textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}
-            className="text-base sm:text-xl font-bold tracking-tight text-white truncate leading-snug drop-shadow-sm group-hover:text-(--accent-soft) transition-colors"
+            className="text-base sm:text-lg font-semibold tracking-tight text-white truncate leading-snug drop-shadow-sm group-hover:text-(--accent-soft) transition-colors"
           >
             {series.title}
           </h3>

@@ -27,30 +27,32 @@ interface ProductGridCardProps {
 export function ProductGridCard({ name, imageUrl, href, price, note, isAffiliate = false, onClick }: ProductGridCardProps) {
   const body = (
     <>
-      <ProductImage src={imageUrl || ""} name={name} cover className="aspect-[4/3] w-full border-b border-(--surface-border)/60" />
+      <ProductImage src={imageUrl || ""} name={name} cover className="aspect-[4/3] w-full border-b border-(--surface-border)" />
 
       <div className="flex flex-1 flex-col p-2 sm:p-2.5 gap-0.5">
-        <h3 className="text-[12px] sm:text-[12.5px] font-semibold text-(--text) line-clamp-1 truncate leading-snug break-words" title={name}>
+        <h3 className="text-[13px] font-medium text-(--text) line-clamp-1 truncate leading-[18px] break-words" title={name}>
           {name}
         </h3>
-        {price && <p className="text-[11.5px] sm:text-[12px] font-bold text-(--accent-text) tabular-nums leading-tight">{price}</p>}
+        {price && <p className="text-[13px] sm:text-[14px] font-semibold text-(--text) tabular-nums leading-tight">{price}</p>}
         {note && (
-          <p className="text-[10px] sm:text-[10.5px] text-(--text-muted) line-clamp-1 truncate leading-tight" title={note}>
+          <p className="text-xs text-(--text-muted) font-normal line-clamp-1 truncate leading-[17px]" title={note}>
             {note}
           </p>
         )}
 
         <div className="mt-auto flex items-center justify-between gap-1 pt-1.5">
           {isAffiliate ? (
-            <span className="rounded-[3px] bg-(--surface) px-1.5 py-0.5 text-[9px] sm:text-[9.5px] font-semibold text-(--text-muted)">Affiliate</span>
+            <span className="rounded-[3px] bg-transparent border border-(--surface-border) px-1.5 py-0.5 text-[10px] font-medium text-(--text-muted)">
+              Affiliate
+            </span>
           ) : <span />}
-          {href && <ArrowUpRight className="h-3 w-3 shrink-0 text-(--icon) group-hover:text-(--icon-active) transition-colors" aria-hidden="true" />}
+          {href && <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-(--icon) group-hover:text-(--icon-active) transition-colors" aria-hidden="true" />}
         </div>
       </div>
     </>
   );
 
-  const className = "tap-scale group flex h-full flex-col overflow-hidden rounded-[5px] border border-(--surface-border)/80 bg-(--card-bg) shadow-none transition-all duration-200";
+  const className = "tap-scale group flex h-full flex-col overflow-hidden rounded-[5px] border border-(--surface-border) bg-transparent hover:bg-(--surface)/40 shadow-none transition-all duration-200";
 
   if (!href) return <div className={className}>{body}</div>;
   return (
@@ -59,7 +61,7 @@ export function ProductGridCard({ name, imageUrl, href, price, note, isAffiliate
       target="_blank"
       rel={isAffiliate ? "sponsored noopener" : "noopener"}
       onClick={onClick}
-      className={`${className} cursor-pointer hover:border-(--surface-border)/20`}
+      className={`${className} cursor-pointer hover:border-(--surface-border)`}
     >
       {body}
     </a>

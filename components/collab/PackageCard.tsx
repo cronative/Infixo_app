@@ -84,7 +84,7 @@ export function PackageCard({
         >
           {/* Row 1: Package title & Popular badge on right */}
           <div className="flex items-center justify-between gap-2">
-            <h3 className="font-bold text-[13px] sm:text-sm text-(--text) tracking-tight leading-snug truncate">
+            <h3 className="font-medium text-[13px] text-(--text) tracking-tight leading-[18px] truncate">
               {pkg.title}
             </h3>
             {isPopular && (
@@ -94,7 +94,7 @@ export function PackageCard({
                   backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
                   borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)",
                 }}
-                className="shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] border uppercase tracking-wider"
+                className="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded-[4px] border uppercase tracking-wider"
               >
                 Popular
               </span>
@@ -103,23 +103,23 @@ export function PackageCard({
 
           {/* Row 2: Short package subtitle / description */}
           {pkg.description && (
-            <p className="text-[11px] sm:text-xs text-(--text-muted) font-normal leading-snug truncate">
+            <p className="text-xs text-(--text-muted) font-normal leading-[17px] truncate">
               {pkg.description}
             </p>
           )}
 
           {/* Row 3: Price and billing unit, LEFT-ALIGNED */}
           <div className="flex items-baseline gap-1 pt-0.5">
-            <span className="font-bold text-[15px] sm:text-base text-(--text) tracking-tight tabular-nums leading-none">
+            <span className="font-semibold text-[15px] sm:text-base text-(--text) tracking-tight tabular-nums leading-[21px]">
               {formattedPrice}
             </span>
-            <span className="text-[11px] text-(--text-muted) font-normal">
+            <span className="text-xs text-(--text-muted) font-normal leading-[17px]">
               {unitLabel}
             </span>
           </div>
 
           {/* Row 4: Platform icon + platform name | thin vertical divider | clock icon + delivery time */}
-          <div className="flex items-center gap-1.5 text-[11px] text-(--text-muted) pt-0.5">
+          <div className="flex items-center gap-1.5 text-xs text-(--text-muted) leading-[17px] pt-0.5">
             <div className="flex items-center gap-1">
               {getPlatformIcon()}
               <span className="leading-none">{platformName}</span>
@@ -135,17 +135,17 @@ export function PackageCard({
         {/* Package Body: What's Included */}
         {bullets.length > 0 && (
           <div className="p-2.5 sm:p-3 space-y-2">
-            <span className="font-semibold text-xs sm:text-[12.5px] text-(--text) block">
+            <span className="font-medium text-xs text-(--text) block leading-[18px]">
               What&apos;s Included
             </span>
 
-            <ul className="space-y-1.5 sm:space-y-2">
+            <ul className="space-y-1.5">
               {visibleBullets.map((bullet, idx) => (
                 <li
                   key={idx}
-                  className="flex items-start gap-2 text-xs sm:text-[12.5px] text-(--text) leading-relaxed"
+                  className="flex items-start gap-2 text-xs text-(--text) leading-[18px]"
                 >
-                  <Check className="h-3.5 w-3.5 text-(--accent-text) stroke-[2.5] shrink-0 mt-0.5" />
+                  <Check className="h-3.5 w-3.5 text-(--accent-text) stroke-[2] shrink-0 mt-0.5" />
                   <span className="flex-1 text-(--text)/90">{bullet}</span>
                 </li>
               ))}
@@ -156,7 +156,7 @@ export function PackageCard({
               <button
                 type="button"
                 onClick={() => setShowAllBullets(!showAllBullets)}
-                className="mt-1 text-xs font-semibold text-(--text-muted) hover:text-(--text) inline-flex items-center gap-1 cursor-pointer transition-colors pt-0.5"
+                className="mt-1 text-xs font-medium text-(--text-muted) hover:text-(--text) inline-flex items-center gap-1 cursor-pointer transition-colors pt-0.5"
               >
                 <span>{showAllBullets ? "Show less" : `+${hiddenCount} more`}</span>
                 {showAllBullets ? <ChevronUp className="h-3 w-3 text-(--icon)" /> : <ChevronDown className="h-3 w-3 text-(--icon)" />}
@@ -166,21 +166,19 @@ export function PackageCard({
         )}
       </div>
 
-      {/* Action Button: Enquire Now */}
-      <div className="p-2.5 sm:p-3 pt-1">
-        <button
-          type="button"
-          onClick={() => onEnquire(pkg)}
-          style={{
-            backgroundColor: "var(--accent)",
-            color: "var(--on-accent)",
-          }}
-          className="w-full min-h-[42px] sm:min-h-[44px] py-2 px-3 rounded-[5px] font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 transition-all hover:opacity-95 shadow-none cursor-pointer select-none active:scale-[0.99]"
-        >
-          <span>Enquire Now</span>
-          <ArrowUpRight className="h-3.5 w-3.5 stroke-[2.5]" />
-        </button>
-      </div>
+      {/* Action Button: Enquire Now (Full-width edge-to-edge, 0px radius clipped by parent card) */}
+      <button
+        type="button"
+        onClick={() => onEnquire(pkg)}
+        style={{
+          backgroundColor: "var(--accent)",
+          color: "var(--on-accent)",
+        }}
+        className="w-full min-h-[44px] py-2.5 px-3 rounded-none border-t border-(--surface-border) font-medium text-[13px] leading-[18px] flex items-center justify-center gap-1.5 transition-all hover:opacity-95 shadow-none cursor-pointer select-none active:scale-[0.99] mt-auto"
+      >
+        <span>Enquire Now</span>
+        <ArrowUpRight className="h-3.5 w-3.5 stroke-[2]" />
+      </button>
     </div>
   );
 }

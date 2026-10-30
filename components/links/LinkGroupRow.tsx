@@ -126,29 +126,29 @@ export function LinkGroupRow({
 
   return (
     <div
-      className={`rounded-xl border overflow-hidden transition-all duration-200 shadow-none ${themeConfig.container} ${className}`}
+      className={`rounded-[5px] border border-(--surface-border) overflow-hidden transition-all duration-200 shadow-none bg-transparent ${className}`}
     >
-      {/* Group Trigger Button (~52px height) */}
+      {/* Group Trigger Button (~48px height) */}
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
-        className={`w-full min-h-[52px] h-[52px] px-3.5 py-2 flex items-center justify-between gap-3 text-left cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 ${themeConfig.focusRing} focus-visible:ring-offset-1 select-none ${themeConfig.headerBg}`}
+        className={`w-full min-h-[48px] h-[48px] px-3.5 py-2 flex items-center justify-between gap-3 text-left cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 ${themeConfig.focusRing} focus-visible:ring-offset-1 select-none ${themeConfig.headerBg}`}
       >
         <div className="flex items-center gap-3 min-w-0 flex-1">
-          {/* 32×32 Folder Icon Tile - Alternating Theme Tint */}
+          {/* Folder Icon Tile */}
           <div
-            className={`w-8 h-8 rounded-lg shrink-0 flex items-center justify-center shadow-xs transition-colors ${themeConfig.folderIcon}`}
+            className={`w-7 h-7 rounded-[4px] shrink-0 flex items-center justify-center shadow-none transition-colors ${themeConfig.folderIcon}`}
           >
             <Folder className="h-4 w-4" />
           </div>
 
           {/* Group Title + Subtitle */}
           <div className="min-w-0 flex-1 flex flex-col justify-center">
-            <span className="text-xs sm:text-[13px] font-semibold text-(--text) truncate leading-tight">
+            <span className="text-[13px] font-medium text-(--text) truncate leading-[18px]">
               {group.title}
             </span>
-            <span className="text-xs text-(--text-muted) font-normal truncate leading-tight mt-0.5">
+            <span className="text-xs text-(--text-muted) font-normal truncate leading-[17px] mt-0.5">
               {group.subtitle || countText}
             </span>
           </div>

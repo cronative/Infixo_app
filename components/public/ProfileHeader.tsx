@@ -481,30 +481,30 @@ export function ProfileHeader({
         {/* RIGHT COLUMN: Name / @username / Category (Clean layout or compact listing layout) */}
         <div className="min-w-0 text-left space-y-0.5">
           {/* 1. Title / Name */}
-          <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-(--text) truncate leading-tight">
+          <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-(--text) truncate leading-tight">
             {displayName || "Creator"}
           </h1>
 
           {/* 2. @username */}
-          <p className="text-xs sm:text-sm font-medium text-(--text-muted) truncate leading-tight">
+          <p className="text-xs sm:text-[13px] font-normal text-(--text-muted) truncate leading-tight">
             @{cleanHandle}
           </p>
 
           {/* 3. Category / Tagline with . separator */}
           {formattedTagline && (
-            <p className="text-xs sm:text-sm font-normal text-(--text-muted) truncate leading-tight">
+            <p className="text-xs sm:text-[13px] font-normal text-(--text-secondary) truncate leading-tight">
               {formattedTagline}
             </p>
           )}
 
-          {/* 4. Social Icons directly under Category (Monochrome / outline icons, First Screenshot) */}
+          {/* 4. Social Icons directly under Category */}
           {allActiveSocials.length > 0 && (
             <div className="flex items-center gap-2.5 sm:gap-3 pt-1.5">
               {allActiveSocials.map((item) => {
                 const hasUrl = Boolean(item.url && item.url !== "#");
 
                 const iconContent = (
-                  <span className="flex items-center justify-center text-[#18181B] hover:text-(--accent) transition-colors">
+                  <span className="flex items-center justify-center text-(--text) hover:text-(--accent) transition-colors">
                     {getPlatformIcon(item.platform, "h-4 w-4 sm:h-4.5 sm:w-4.5 text-current")}
                   </span>
                 );
@@ -533,7 +533,7 @@ export function ProfileHeader({
       </div>
 
       {/* ============================================================== */}
-      {/* ROW 3: FULL WIDTH CREATOR ERA + TOTAL FANS PILL (Second Image) */}
+      {/* ROW 3: FULL WIDTH CREATOR ERA + TOTAL FANS PILL (5px radius)   */}
       {/* ============================================================== */}
       {(currentEra || effectiveFanbase > 0) && (
         <div className="w-full mt-2.5 sm:mt-3">
@@ -543,7 +543,7 @@ export function ProfileHeader({
               setEraSheetOpen(true);
               if (onFanbaseClick) onFanbaseClick();
             }}
-            className="tap-scale w-full rounded-[8px] sm:rounded-[10px] border border-[#E4E4E7] bg-white hover:bg-slate-50/50 flex items-stretch overflow-hidden shadow-2xs transition-all text-left cursor-pointer group"
+            className="tap-scale w-full rounded-[5px] border border-(--surface-border) bg-transparent hover:bg-(--surface)/50 flex items-stretch overflow-hidden shadow-none transition-all text-left cursor-pointer group"
             title="View Creator Era details & fanbase breakdown"
             aria-label="View Creator Era details and fanbase breakdown"
           >
@@ -562,28 +562,28 @@ export function ProfileHeader({
                   }}
                 />
                 <div className="min-w-0 flex-1">
-                  <div className="text-[13px] sm:text-[14px] font-bold text-[#18181B] truncate leading-tight">
+                  <div className="text-[13px] font-medium text-(--text) truncate leading-tight">
                     {currentEra?.badge || "Creator"}
                   </div>
-                  <div className="text-[10.5px] sm:text-[11px] font-normal text-[#71717A] leading-tight mt-0.5">
+                  <div className="text-[11px] font-normal text-(--text-muted) leading-tight mt-0.5">
                     Creator Era
                   </div>
                 </div>
               </div>
 
               {/* Info Icon (i) */}
-              <Info className="h-4 w-4 text-[#A1A1AA] group-hover:text-[#18181B] transition-colors shrink-0 ml-2" />
+              <Info className="h-4 w-4 text-(--text-muted) group-hover:text-(--text) transition-colors shrink-0 ml-2" />
             </div>
 
             {/* Vertical Divider */}
-            <div className="w-px bg-[#E4E4E7] shrink-0 self-stretch" />
+            <div className="w-px bg-(--surface-border) shrink-0 self-stretch" />
 
             {/* Right: Total Fans Count + "Total Fans" */}
-            <div className="w-24 sm:w-28 shrink-0 flex flex-col items-center justify-center px-2 py-2 text-center bg-[#FAFAFB]/60 group-hover:bg-[#FAFAFB] transition-colors">
-              <div className="text-[15px] sm:text-[16px] font-bold text-[#18181B] tabular-nums leading-tight">
+            <div className="w-24 sm:w-28 shrink-0 flex flex-col items-center justify-center px-2 py-2 text-center bg-transparent group-hover:bg-(--surface)/40 transition-colors">
+              <div className="text-[15px] sm:text-[16px] font-semibold text-(--text) tabular-nums leading-tight">
                 {formatFans(effectiveFanbase)}
               </div>
-              <div className="text-[10px] sm:text-[10.5px] font-normal text-[#71717A] leading-tight mt-0.5">
+              <div className="text-[11px] font-normal text-(--text-muted) leading-tight mt-0.5">
                 Total Fans
               </div>
             </div>

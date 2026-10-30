@@ -1956,12 +1956,12 @@ export function LivePreviewCard({
                       <User className="h-4 w-4 text-(--accent-text) shrink-0" />
                       <h2
                         style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                        className="text-[13px] sm:text-sm font-bold tracking-tight"
+                        className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
                       >
                         About Me
                       </h2>
                     </div>
-                    <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
+                    <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
                       A little about me and what I love creating.
                     </p>
                   </div>
@@ -2001,16 +2001,16 @@ export function LivePreviewCard({
                         <Users className="h-4 w-4 text-(--accent-text) shrink-0" />
                         <h2
                           style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                          className="text-[13px] sm:text-sm font-bold tracking-tight"
+                          className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
                         >
                           Total Fanbase
                         </h2>
                       </div>
-                      <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
+                      <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
                         My creator journey across platforms.
                       </p>
                     </div>
-                    <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0">
+                    <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
                       {aboutSocialCards.length || fanbaseSocialCards.length || 3} platforms
                     </span>
                   </div>
@@ -2046,13 +2046,13 @@ export function LivePreviewCard({
                             <div className="flex items-center gap-1">
                               <span
                                 style={{ color: c.primaryText }}
-                                className="text-[13px] sm:text-[13.5px] font-bold truncate group-hover/era:underline"
+                                className="text-[13px] font-medium leading-[18px] truncate group-hover/era:underline text-(--text)"
                               >
                                 {creatorEra?.badge || "Creator Era"}
                               </span>
                               <Info className="h-3 w-3 text-(--text-muted) shrink-0" />
                             </div>
-                            <p style={{ color: c.mutedText }} className="text-[11px] font-normal leading-tight mt-0.5">
+                            <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[17px] text-(--text-muted) mt-0.5">
                               Creator Era
                             </p>
                           </div>
@@ -2067,11 +2067,11 @@ export function LivePreviewCard({
                     <div className="text-right shrink-0 min-w-[85px] sm:min-w-[95px] px-3.5 py-2.5 sm:px-4 sm:py-3 flex flex-col justify-center">
                       <div
                         style={{ color: c.primaryText }}
-                        className="text-[17px] sm:text-lg font-bold tabular-nums tracking-tight leading-tight"
+                        className="text-[15px] sm:text-base font-semibold tabular-nums tracking-tight leading-[21px] text-(--text)"
                       >
                         {formatFans(totalAudience > 0 ? totalAudience : (effectiveFanbase ?? 0))}
                       </div>
-                      <p style={{ color: c.mutedText }} className="text-[11px] font-normal leading-tight mt-0.5">
+                      <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[17px] text-(--text-muted) mt-0.5">
                         Total Fans
                       </p>
                     </div>
@@ -2101,16 +2101,16 @@ export function LivePreviewCard({
                         <Share2 className="h-4 w-4 text-(--accent-text) shrink-0" />
                         <h2
                           style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                          className="text-[13px] sm:text-sm font-bold tracking-tight"
+                          className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
                         >
                           Social Accounts
                         </h2>
                       </div>
-                      <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
+                      <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
                         Follow along and stay connected with me.
                       </p>
                     </div>
-                    <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0">
+                    <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
                       {aboutSocialCards.length} connected
                     </span>
                   </div>
@@ -2172,10 +2172,10 @@ export function LivePreviewCard({
 
                             {/* Center: Platform Name + Username */}
                             <div className="min-w-0 flex-1">
-                              <div style={{ color: c.primaryText }} className="text-[13px] font-bold leading-tight truncate group-hover:text-(--accent-text) transition-colors">
+                              <div style={{ color: c.primaryText }} className="text-[13px] font-medium leading-[18px] truncate group-hover:text-(--accent-text) transition-colors text-(--text)">
                                 {item.label}
                               </div>
-                              <p style={{ color: c.mutedText }} className="text-[11px] font-normal leading-tight mt-0.5 truncate">
+                              <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[17px] text-(--text-muted) mt-0.5 truncate">
                                 {displayHandle}
                               </p>
                             </div>
@@ -2225,16 +2225,16 @@ export function LivePreviewCard({
                           <Camera className="h-4 w-4 text-(--accent-text) shrink-0" />
                           <h2
                             style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                            className="text-[13px] sm:text-sm font-bold tracking-tight"
+                            className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
                           >
                             My Setup
                           </h2>
                         </div>
-                        <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
+                        <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
                           A few tools I use to create my content.
                         </p>
                       </div>
-                      <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0">
+                      <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
                         {activeSetupItems.length} items
                       </span>
                     </div>
@@ -2277,11 +2277,11 @@ export function LivePreviewCard({
                             <div className="min-w-0 flex-1">
                               <div
                                 style={{ color: c.primaryText }}
-                                className="text-[13px] font-bold leading-tight truncate group-hover:text-(--accent-text) transition-colors"
+                                className="text-[13px] font-medium leading-[18px] truncate group-hover:text-(--accent-text) transition-colors text-(--text)"
                               >
                                 {item.name}
                               </div>
-                              <p style={{ color: c.mutedText }} className="text-[11px] font-normal leading-tight mt-0.5 truncate">
+                              <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[17px] text-(--text-muted) mt-0.5 truncate">
                                 {item.usedFor || item.note || item.modelOrPlan || item.brand}
                               </p>
                             </div>
@@ -2928,12 +2928,12 @@ export function LivePreviewCard({
                     <Handshake className="h-4 w-4 text-(--accent-text) shrink-0" />
                     <h2
                       style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                      className="text-[13px] sm:text-sm font-bold tracking-tight"
+                      className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
                     >
                       Work With Me
                     </h2>
                   </div>
-                  <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
+                  <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
                     I&apos;d love to bring your brand into my content. Explore my collab packages below.
                   </p>
                 </div>
@@ -2980,16 +2980,16 @@ export function LivePreviewCard({
                         <MessageSquare className="h-4 w-4 text-(--accent-text) shrink-0" />
                         <h3
                           style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                          className="text-[13px] sm:text-sm font-bold tracking-tight"
+                          className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
                         >
                           What Brands Say
                         </h3>
                       </div>
-                      <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
+                      <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
                         Here&apos;s what brands I&apos;ve worked with have to say about our collaborations.
                       </p>
                     </div>
-                    <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0">
+                    <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
                       {approvedReviews.length} {approvedReviews.length === 1 ? "review" : "reviews"}
                     </span>
                   </div>
@@ -3024,7 +3024,7 @@ export function LivePreviewCard({
                               </div>
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-1">
-                                  <p style={{ color: c.primaryText }} className="text-xs sm:text-[12.5px] font-bold truncate">
+                                  <p style={{ color: c.primaryText }} className="text-[13px] font-medium text-(--text) truncate leading-[18px]">
                                     {rev.clientName}
                                   </p>
                                   {rev.isVerified && (
@@ -3110,37 +3110,39 @@ export function LivePreviewCard({
                     <Send className="h-4 w-4 text-(--accent-text) shrink-0" />
                     <h3
                       style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                      className="text-[13px] sm:text-sm font-bold tracking-tight"
+                      className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
                     >
                       Custom Collaboration
                     </h3>
                   </div>
-                  <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
+                  <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
                     Have something different in mind? I&apos;d love to hear your idea.
                   </p>
                 </div>
 
                 {/* Body */}
-                <div className="p-3 sm:p-3.5 space-y-3">
-                  <p style={{ color: c.secondaryText }} className="text-xs sm:text-[12.5px] font-normal leading-relaxed">
+                <div className="p-3 sm:p-3.5">
+                  <p style={{ color: c.secondaryText }} className="text-xs sm:text-[12.5px] font-normal leading-relaxed text-(--text-muted)">
                     Looking for a custom campaign, long-term ambassadorship, or a bespoke creative package? Send a custom brief and I&apos;ll get back to you with a tailor-made proposal.
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedEnquiryPackage(null);
-                      setIsEnquirySheetOpen(true);
-                    }}
-                    style={{
-                      backgroundColor: "var(--accent)",
-                      color: "var(--on-accent)",
-                    }}
-                    className="w-full min-h-[42px] sm:min-h-[44px] py-2 px-3 rounded-[5px] font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 transition-all hover:opacity-95 shadow-none cursor-pointer select-none active:scale-[0.99]"
-                  >
-                    <span>Send a Custom Request</span>
-                    <ArrowUpRight className="h-3.5 w-3.5 stroke-[2.5]" />
-                  </button>
                 </div>
+
+                {/* Edge-to-edge CTA */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedEnquiryPackage(null);
+                    setIsEnquirySheetOpen(true);
+                  }}
+                  style={{
+                    backgroundColor: "var(--accent)",
+                    color: "var(--on-accent)",
+                  }}
+                  className="w-full min-h-[44px] py-2.5 px-3 rounded-none border-t border-(--surface-border) font-medium text-[13px] leading-[18px] flex items-center justify-center gap-1.5 transition-all hover:opacity-95 shadow-none cursor-pointer select-none active:scale-[0.99]"
+                >
+                  <span>Send a Custom Request</span>
+                  <ArrowUpRight className="h-3.5 w-3.5 stroke-[2.5]" />
+                </button>
               </div>
 
               {/* 5. ENQUIRY SHEET */}
@@ -3181,7 +3183,7 @@ export function LivePreviewCard({
                           {rev.clientName ? rev.clientName.charAt(0).toUpperCase() : "B"}
                         </div>
                         <div className="min-w-0">
-                          <p style={{ color: c.primaryText }} className="text-xs font-bold truncate flex items-center gap-1">
+                          <p style={{ color: c.primaryText }} className="text-[13px] font-medium text-(--text) leading-[18px] truncate flex items-center gap-1">
                             <span>{rev.clientName}</span>
                             {rev.isVerified && <CheckCircle2 className="h-3 w-3 text-(--accent-text) shrink-0" />}
                           </p>
