@@ -68,7 +68,7 @@ export function PackageCard({
   return (
     <div
       style={{
-        backgroundColor: "var(--surface)",
+        backgroundColor: "transparent",
         borderColor: "var(--surface-border)",
       }}
       className="rounded-[5px] border overflow-hidden text-left transition-all shadow-none flex flex-col justify-between h-full"

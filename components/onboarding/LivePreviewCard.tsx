@@ -1939,7 +1939,7 @@ export function LivePreviewCard({
               {profile.bio && profile.bio.trim() && (
                 <div
                   style={{
-                    backgroundColor: "var(--surface)",
+                    backgroundColor: "transparent",
                     borderColor: "var(--surface-border)",
                   }}
                   className="rounded-[5px] border overflow-hidden text-left shadow-none"
@@ -1983,7 +1983,7 @@ export function LivePreviewCard({
               {effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || (effectiveFanbase ?? 0) > 0 || fanbaseSocialCards.length > 0) && (
                 <div
                   style={{
-                    backgroundColor: "var(--surface)",
+                    backgroundColor: "transparent",
                     borderColor: "var(--surface-border)",
                   }}
                   className="rounded-[5px] border overflow-hidden text-left shadow-none"
@@ -2083,7 +2083,7 @@ export function LivePreviewCard({
               {effectiveVisibilitySettings.showFanbase !== false && aboutSocialCards.length > 0 && (
                 <div
                   style={{
-                    backgroundColor: "var(--surface)",
+                    backgroundColor: "transparent",
                     borderColor: "var(--surface-border)",
                   }}
                   className="rounded-[5px] border overflow-hidden text-left shadow-none"
@@ -2140,7 +2140,7 @@ export function LivePreviewCard({
                             }
                           }}
                           style={{
-                            backgroundColor: "var(--surface)",
+                            backgroundColor: "transparent",
                             borderColor: "var(--surface-border)",
                           }}
                           className="rounded-[5px] border p-2.5 sm:p-3 flex items-center justify-between gap-2.5 transition-colors hover:border-(--surface-border)/40 cursor-pointer text-left group"
@@ -2207,7 +2207,7 @@ export function LivePreviewCard({
                   <div
                     id="setup-section"
                     style={{
-                      backgroundColor: "var(--surface)",
+                      backgroundColor: "transparent",
                       borderColor: "var(--surface-border)",
                     }}
                     className="rounded-[5px] border overflow-hidden text-left shadow-none"
@@ -2256,7 +2256,7 @@ export function LivePreviewCard({
                             }
                           }}
                           style={{
-                            backgroundColor: "var(--surface)",
+                            backgroundColor: "transparent",
                             borderColor: "var(--surface-border)",
                           }}
                           className="rounded-[5px] border p-2.5 sm:p-3 flex items-center justify-between gap-2.5 transition-colors hover:border-(--surface-border)/40 cursor-pointer text-left group"
@@ -2912,7 +2912,7 @@ export function LivePreviewCard({
               {/* 1. Intro Card ("Work With Me") */}
               <div
                 style={{
-                  backgroundColor: "var(--surface)",
+                  backgroundColor: "transparent",
                   borderColor: "var(--surface-border)",
                 }}
                 className="rounded-[5px] border overflow-hidden text-left shadow-none"
@@ -2962,7 +2962,7 @@ export function LivePreviewCard({
                 <div
                   id="collab-reviews-section"
                   style={{
-                    backgroundColor: "var(--surface)",
+                    backgroundColor: "transparent",
                     borderColor: "var(--surface-border)",
                   }}
                   className="rounded-[5px] border overflow-hidden text-left shadow-none"
@@ -3005,7 +3005,7 @@ export function LivePreviewCard({
                           <div
                             key={rev.id}
                             style={{
-                              backgroundColor: "var(--surface)",
+                              backgroundColor: "transparent",
                               borderColor: "var(--surface-border)",
                             }}
                             className="rounded-[5px] border overflow-hidden text-left shadow-none flex flex-col justify-between"
@@ -3093,7 +3093,7 @@ export function LivePreviewCard({
               {/* 4. Custom Collaboration Card */}
               <div
                 style={{
-                  backgroundColor: "var(--surface)",
+                  backgroundColor: "transparent",
                   borderColor: "var(--surface-border)",
                 }}
                 className="rounded-[5px] border overflow-hidden text-left shadow-none"
@@ -3170,7 +3170,7 @@ export function LivePreviewCard({
                   <div
                     key={rev.id}
                     style={{
-                      backgroundColor: "var(--surface)",
+                      backgroundColor: "transparent",
                       borderColor: "var(--surface-border)",
                     }}
                     className="rounded-[5px] border p-2.5 sm:p-3 space-y-2 text-left shadow-none"
