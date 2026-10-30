@@ -30,12 +30,12 @@ export function ProductGridCard({ name, imageUrl, href, price, note, isAffiliate
       <ProductImage src={imageUrl || ""} name={name} cover className="aspect-[4/3] w-full border-b border-(--surface-border)/60" />
 
       <div className="flex flex-1 flex-col p-2 sm:p-2.5 gap-0.5">
-        <h3 className="text-[12px] sm:text-[12.5px] font-semibold text-(--text) line-clamp-1 leading-snug break-words" title={name}>
+        <h3 className="text-[12px] sm:text-[12.5px] font-semibold text-(--text) line-clamp-1 truncate leading-snug break-words" title={name}>
           {name}
         </h3>
         {price && <p className="text-[11.5px] sm:text-[12px] font-bold text-(--accent-text) tabular-nums leading-tight">{price}</p>}
         {note && (
-          <p className="text-[10px] sm:text-[10.5px] text-(--text-muted) line-clamp-1 leading-tight" title={note}>
+          <p className="text-[10px] sm:text-[10.5px] text-(--text-muted) line-clamp-1 truncate leading-tight" title={note}>
             {note}
           </p>
         )}

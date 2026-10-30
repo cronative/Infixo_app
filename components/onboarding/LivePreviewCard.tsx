@@ -1920,7 +1920,7 @@ export function LivePreviewCard({
           <div id="about-section" className={`relative z-10 w-full text-left animate-fade-in ${isTabsLayout ? "order-[4] mt-1.5 sm:mt-2" : "order-[1] mt-5 sm:mt-6 space-y-3"}`}>
             <TabSectionHeader
               title="About"
-              subtitle="Get to know me and follow me everywhere."
+              subtitle="Get to know me & find my socials."
               primaryTextColor={c.primaryText}
               secondaryTextColor={c.secondaryText}
               headingFontFamily={typ.headingFontFamily}
@@ -1948,85 +1948,7 @@ export function LivePreviewCard({
               </div>
             )}
 
-            {/* B. Total Fanbase Bento Banner (matching screenshot) */}
-            {effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || fanbaseSocialCards.length > 0) && (
-              <div
-                style={{
-                  background: "linear-gradient(135deg, var(--accent-soft) 0%, var(--card-bg) 100%)",
-                  borderColor: "var(--accent-soft)",
-                  boxShadow: "none",
-                }}
-                className="rounded-[5px] border p-4 sm:p-5 text-left transition-all"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  {/* Left Column: Metric & Subtitle */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span
-                        style={{ fontFamily: typ.headingFontFamily }}
-                        className="text-xs sm:text-[13px] font-bold text-(--accent-text) tracking-tight"
-                      >
-                        Total fans
-                      </span>
-                      {creatorEra && (
-                        <button
-                          type="button"
-                          onClick={() => setBentoEraSheetOpen(true)}
-                          className="tap-scale inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[10px] border border-(--surface-border) bg-(--surface) hover:bg-(--accent-soft) transition-colors cursor-pointer group select-none"
-                        >
-                          <span
-                            className="w-[10px] h-[10px] rounded-full shrink-0 border border-black/20"
-                            style={{ background: getMedalGradient(creatorEra.stage) }}
-                            aria-hidden="true"
-                          />
-                          <span className="text-[12px] font-semibold text-(--accent-text)">
-                            {creatorEra.badge}
-                          </span>
-                          <Info className="h-3 w-3 text-(--icon) group-hover:text-(--icon-active) transition-colors" />
-                        </button>
-                      )}
-                    </div>
-                    <div className="mt-1 flex items-center gap-2">
-                      <span
-                        style={{ fontFamily: typ.headingFontFamily, color: c.primaryText }}
-                        className="text-3xl sm:text-4xl font-black tabular-nums tracking-tight leading-none"
-                      >
-                        {formatFans(totalAudience)}
-                      </span>
-                    </div>
-                    <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-medium mt-1.5">
-                      Verified community across {fanbaseSocialCards.length > 0 ? `${fanbaseSocialCards.length} connected platforms` : "3 connected platforms"}
-                    </p>
-                  </div>
-
-                  {/* Vertical Divider for sm+ screens */}
-                  <div className="hidden sm:block h-14 w-px bg-(--surface-border) " />
-
-                  {/* Right Column: Community Graphic & 3 Bullet Points */}
-                  <div className="flex items-center gap-3.5 shrink-0">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-(--surface) text-(--text) shrink-0">
-                      <Users className="h-6 w-6 stroke-[1.75]" />
-                    </div>
-                    <div className="space-y-1 text-xs sm:text-[12px] font-medium text-(--text) ">
-                      <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-(--accent-text) shrink-0 fill-(--text-muted) " />
-                        <span>{fanbaseSocialCards.length > 0 ? `${fanbaseSocialCards.length} Platforms Connected` : "3 Platforms Connected"}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-(--accent-text) shrink-0 fill-(--text-muted) " />
-                        <span>Real Audience</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-(--accent-text) shrink-0 fill-(--text-muted) " />
-                        <span>Growing Community</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* C. Social Accounts Bento Card (matching screenshot) */}
+            {/* Social Accounts Section (Compact, consistent layout across all platforms & accounts) */}
             {effectiveVisibilitySettings.showFanbase !== false && aboutSocialCards.length > 0 && (
               <div
                 style={{
@@ -2034,7 +1956,7 @@ export function LivePreviewCard({
                   borderColor: "var(--surface-border)",
                   boxShadow: "none",
                 }}
-                className="rounded-[5px] border p-3.5 sm:p-4 text-left transition-all space-y-3"
+                className="rounded-[5px] border p-3.5 sm:p-4 text-left transition-all space-y-2.5"
               >
                 {/* Header */}
                 <div>
@@ -2048,12 +1970,12 @@ export function LivePreviewCard({
                     </h2>
                   </div>
                   <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
-                    Follow me on these platforms for the latest updates, videos and behind the scenes.
+                    Find me on other platforms
                   </p>
                 </div>
 
-                {/* Social Accounts List */}
-                <div className="space-y-2">
+                {/* Social Accounts List - Compact & Consistent */}
+                <div className="space-y-1.5 sm:space-y-2">
                   {aboutSocialCards.map((item: any, idx: number) => {
                     const rawHandle = (item.handle || item.name || item.label).replace(/^@/, "");
                     const isServiceOnly = item.platform === "spotify" && rawHandle.toLowerCase() === "spotify";
@@ -2088,24 +2010,24 @@ export function LivePreviewCard({
                           backgroundColor: "var(--surface)",
                           borderColor: "var(--surface-border)",
                         }}
-                        className="group/ch flex items-center justify-between gap-2.5 p-2.5 sm:p-3 rounded-[5px] border transition-all hover:border-(--surface-border)/20 hover:shadow-xs cursor-pointer text-left"
+                        className="group/ch flex items-center justify-between gap-2.5 p-2 sm:p-2.5 rounded-[5px] border transition-all hover:border-(--surface-border)/20 hover:shadow-xs cursor-pointer text-left"
                         title={`Open ${item.label} (${displayHandle})`}
                       >
                         {/* Left: Platform Icon + Handle + Platform Label */}
                         <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                          <span className={`shrink-0 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-[5px] ${badgeBg} text-white shadow-2xs transition-transform group-hover/ch:scale-105`}>
-                            {isInstagram && <InstagramIcon className="h-5 w-5 text-white" />}
-                            {isYoutube && <YoutubeIcon className="h-5 w-5 text-white" />}
-                            {isFacebook && <FacebookIcon className="h-5 w-5 text-white" />}
-                            {item.platform === "twitter" && <XTwitterIcon className="h-4 w-4 text-white" />}
-                            {item.platform === "linkedin" && <LinkedinIcon className="h-4 w-4 text-white" />}
-                            {item.platform === "threads" && <ThreadsIcon className="h-4 w-4 text-white" />}
-                            {item.platform === "snapchat" && <SnapchatIcon className="h-4 w-4 text-white" />}
-                            {item.platform === "spotify" && <SpotifyIcon className="h-4 w-4 text-white" />}
-                            {item.platform === "twitch" && <TwitchIcon className="h-4 w-4 text-white" />}
-                            {item.platform === "pinterest" && <PinterestIcon className="h-4 w-4 text-white" />}
+                          <span className={`shrink-0 flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-[5px] ${badgeBg} text-white shadow-2xs transition-transform group-hover/ch:scale-105`}>
+                            {isInstagram && <InstagramIcon className="h-4 w-4 text-white" />}
+                            {isYoutube && <YoutubeIcon className="h-4 w-4 text-white" />}
+                            {isFacebook && <FacebookIcon className="h-4 w-4 text-white" />}
+                            {item.platform === "twitter" && <XTwitterIcon className="h-3.5 w-3.5 text-white" />}
+                            {item.platform === "linkedin" && <LinkedinIcon className="h-3.5 w-3.5 text-white" />}
+                            {item.platform === "threads" && <ThreadsIcon className="h-3.5 w-3.5 text-white" />}
+                            {item.platform === "snapchat" && <SnapchatIcon className="h-3.5 w-3.5 text-white" />}
+                            {item.platform === "spotify" && <SpotifyIcon className="h-3.5 w-3.5 text-white" />}
+                            {item.platform === "twitch" && <TwitchIcon className="h-3.5 w-3.5 text-white" />}
+                            {item.platform === "pinterest" && <PinterestIcon className="h-3.5 w-3.5 text-white" />}
                             {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest"].includes(item.platform) && (
-                              <Globe className="h-4 w-4 text-(--text) " />
+                              <Globe className="h-3.5 w-3.5 text-(--text) " />
                             )}
                           </span>
 
@@ -2114,10 +2036,10 @@ export function LivePreviewCard({
                               <span className="text-xs sm:text-[13px] font-bold truncate group-hover/ch:text-(--accent-text) transition-colors" style={{ color: c.primaryText }}>
                                 {displayHandle}
                               </span>
-                              <CheckCircle2 className="h-3.5 w-3.5 fill-(--accent) text-(--on-accent) shrink-0" />
+                              <CheckCircle2 className="h-3 w-3 fill-(--accent) text-(--on-accent) shrink-0" />
                             </div>
-                            <p style={{ color: c.mutedText }} className="text-[10.5px] sm:text-[11px] font-medium capitalize truncate">
-                              {item.label}
+                            <p style={{ color: c.mutedText }} className="text-[10px] sm:text-[10.5px] font-medium capitalize truncate">
+                              {item.label}{item.isPrimary ? " · Primary" : ""}
                             </p>
                           </div>
                         </div>
@@ -2125,10 +2047,10 @@ export function LivePreviewCard({
                         {/* Right: Follower Count + External Link */}
                         <div className="shrink-0 flex items-center gap-2 sm:gap-2.5">
                           <div className="text-right">
-                            <div className="text-xs sm:text-[13px] font-black tabular-nums tracking-tight leading-tight" style={{ color: c.primaryText }}>
+                            <div className="text-xs sm:text-[13px] font-bold tabular-nums tracking-tight leading-tight" style={{ color: c.primaryText }}>
                               {countFormatted || "0"}
                             </div>
-                            <div className="text-[9px] font-semibold uppercase tracking-wider" style={{ color: c.mutedText }}>
+                            <div className="text-[8.5px] sm:text-[9px] font-semibold uppercase tracking-wider" style={{ color: c.mutedText }}>
                               {item.unit || (isYoutube ? "Subscribers" : "Followers")}
                             </div>
                           </div>
@@ -2160,7 +2082,7 @@ export function LivePreviewCard({
                     {!linksOnlyMode && (
                       <TabSectionHeader
                         title="Links"
-                        subtitle="Everything your fans should find — tickets, accounts, websites."
+                        subtitle="Recommended links, tickets & websites."
                         primaryTextColor={c.primaryText}
                         secondaryTextColor={c.secondaryText}
                         headingFontFamily={typ.headingFontFamily}
@@ -2235,7 +2157,7 @@ export function LivePreviewCard({
                 {!linksOnlyMode && (
                   <TabSectionHeader
                     title="Links"
-                    subtitle="Everything your fans should find — tickets, accounts, websites."
+                    subtitle="Recommended links, tickets & websites."
                     primaryTextColor={c.primaryText}
                     secondaryTextColor={c.secondaryText}
                     headingFontFamily={typ.headingFontFamily}
@@ -2313,7 +2235,7 @@ export function LivePreviewCard({
             {!seriesOnlyMode && (
               <TabSectionHeader
                 title="Series"
-                subtitle={landingDemo ? "Start from Episode 1. Watch it like a show." : "Watch my videos episode by episode, in the right order."}
+                subtitle={landingDemo ? "Start from Episode 1." : "Watch episodes in the right order."}
                 primaryTextColor={c.primaryText}
                 secondaryTextColor={c.secondaryText}
                 headingFontFamily={typ.headingFontFamily}
@@ -2729,7 +2651,7 @@ export function LivePreviewCard({
             <div id="collab-section" className={`relative z-10 order-[20] w-full text-left animate-fade-in ${isTabsLayout ? "mt-1.5 sm:mt-2" : "mt-6 sm:mt-7 space-y-4"}`}>
               <TabSectionHeader
                 title="Work with me"
-                subtitle="Collab packages for brands. Pick one or send a custom request."
+                subtitle="Collab packages & custom brand inquiries."
                 primaryTextColor={c.primaryText}
                 secondaryTextColor={c.secondaryText}
                 headingFontFamily={typ.headingFontFamily}
@@ -2966,7 +2888,7 @@ export function LivePreviewCard({
                     style={{ color: c.secondaryText }}
                     className="text-xs sm:text-[13px] text-(--text-muted) font-normal px-0.5 mt-1"
                   >
-                    {landingDemo ? "The gear I use, and things I've made for you." : "Tools and equipment I use to create content."}
+                    {landingDemo ? "Gear I use & products I've made." : "Tools & gear I use to create."}
                   </p>
                 </div>
 
