@@ -166,15 +166,16 @@ export function PackageCard({
         )}
       </div>
 
-      {/* Action Button: Enquire Now (Full-width edge-to-edge, 0px radius clipped by parent card) */}
+      {/* Action Button: Enquire Now (Full-width edge-to-edge, 0px top radius, 5px bottom radius) */}
       <button
         type="button"
         onClick={() => onEnquire(pkg)}
         style={{
           backgroundColor: "var(--accent)",
           color: "var(--on-accent)",
+          borderRadius: "0 0 5px 5px",
         }}
-        className="w-full min-h-[44px] py-2.5 px-3 rounded-none border-t border-(--surface-border) font-medium text-[13px] leading-[18px] flex items-center justify-center gap-1.5 transition-all hover:opacity-95 shadow-none cursor-pointer select-none active:scale-[0.99] mt-auto"
+        className="w-full min-h-[44px] py-2.5 px-3 rounded-t-none rounded-b-[5px] border-t border-(--surface-border) font-medium text-[13px] leading-[18px] flex items-center justify-center gap-1.5 transition-all hover:opacity-95 shadow-none cursor-pointer select-none active:scale-[0.99] mt-auto"
       >
         <span>Enquire Now</span>
         <ArrowUpRight className="h-3.5 w-3.5 stroke-[2]" />

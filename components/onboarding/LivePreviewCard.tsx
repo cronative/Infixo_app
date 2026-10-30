@@ -2792,40 +2792,54 @@ export function LivePreviewCard({
         )}
 
         {/* 5. Creator Team */}
+        {/* 5. Creator Team */}
         {!isListingPage && (!isTabsLayout ? true : (activeNavTab === "collab" || activeNavTab === "work" || activeNavTab === "reviews")) && activeTeamMembers.length > 0 && (
-          <div id="team-section" className={`relative z-10 order-[25] w-full text-left animate-fade-in ${isTabsLayout ? "mt-1.5 sm:mt-2 space-y-2" : "mt-6 sm:mt-7 space-y-2.5"}`}>
-            <div>
-              <div className="flex items-center justify-between gap-3 px-0.5">
+          <div
+            id="team-section"
+            style={{
+              backgroundColor: "transparent",
+              borderColor: "var(--surface-border)",
+            }}
+            className={`relative z-10 order-[25] w-full text-left animate-fade-in rounded-[5px] border overflow-hidden shadow-none ${isTabsLayout ? "mt-1.5 sm:mt-2" : "mt-6 sm:mt-7"}`}
+          >
+            {/* Compact theme-tinted header */}
+            <div
+              style={{
+                backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
+                borderColor: "var(--surface-border)",
+              }}
+              className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
+            >
+              <div>
                 <div className="flex items-center gap-2">
-                  <Users className="h-4.5 w-4.5 text-(--accent-text) shrink-0" />
+                  <Users className="h-4 w-4 text-(--accent-text) shrink-0" />
                   <h2
                     style={{
                       color: c.primaryText,
                       fontFamily: typ.headingFontFamily,
-                      fontWeight: 700,
                     }}
-                    className="text-base sm:text-lg font-bold tracking-tight"
+                    className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
                   >
                     {teamData.team?.teamName || "My Team"}
                   </h2>
                 </div>
-                <span
+                <p
                   style={{ color: c.mutedText }}
-                  className="text-[11px] sm:text-xs font-medium"
+                  className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5"
                 >
-                  {activeTeamMembers.length} {activeTeamMembers.length === 1 ? "member" : "members"}
-                </span>
+                  Creative production crew, editors &amp; management team.
+                </p>
               </div>
-              <p
-                style={{ color: c.secondaryText }}
-                className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5 pb-2"
+              <span
+                style={{ color: c.mutedText }}
+                className="text-[11px] font-normal shrink-0 text-(--text-muted)"
               >
-                Creative production crew, editors &amp; management team.
-              </p>
-              <div style={{ backgroundColor: c.divider }} className="-mx-3.5 sm:-mx-5 h-px opacity-60" aria-hidden="true" />
+                {activeTeamMembers.length} {activeTeamMembers.length === 1 ? "member" : "members"}
+              </span>
             </div>
 
-            <div className="space-y-2">
+            {/* Single-column vertical listing with subtle dividers between rows */}
+            <div className="divide-y divide-(--surface-border) w-full">
               {activeTeamMembers.map((member) => {
                 const memberLinks = [
                   { url: member.instagramUrl, icon: <InstagramIcon className={`h-3.5 w-3.5 ${BRAND_TEXT.instagram}`} />, label: "Instagram" },
@@ -2836,60 +2850,53 @@ export function LivePreviewCard({
                 return (
                   <div
                     key={member.id}
-                    style={{
-                      backgroundColor: c.cardBackground,
-                      borderColor: c.border,
-                      boxShadow: "none",
-                    }}
-                    className="rounded-[5px] border p-2.5"
+                    className="flex items-center gap-2.5 px-3 py-2.5 sm:px-3.5 sm:py-3 w-full"
                   >
-                    <div className="flex items-center gap-2.5">
-                      <CreatorAvatar
-                        src={member.avatarUrl || null}
-                        name={member.name || "Team"}
-                        className="h-10 w-10 shrink-0 rounded-[5px] object-cover"
-                        fallbackBgClass="bg-(--accent)"
-                        textClassName="text-xs font-black tracking-tight text-(--on-accent)"
-                        style={{ backgroundColor: c.accent }}
-                      />
+                    <CreatorAvatar
+                      src={member.avatarUrl || null}
+                      name={member.name || "Team"}
+                      className="h-10 w-10 shrink-0 rounded-[5px] object-cover"
+                      fallbackBgClass="bg-(--accent)"
+                      textClassName="text-xs font-black tracking-tight text-(--on-accent)"
+                      style={{ backgroundColor: c.accent }}
+                    />
 
-                      <div className="min-w-0 flex-1">
-                        <p
-                          style={{ color: c.primaryText }}
-                          className="truncate text-xs sm:text-[13px] font-bold leading-tight"
-                        >
-                          {member.name}
-                        </p>
-                        <p
-                          style={{ color: c.secondaryText }}
-                          className="mt-0.5 truncate text-[11px] font-medium"
-                        >
-                          {member.role || "Team member"}
-                        </p>
-                      </div>
-
-                      {memberLinks.length > 0 && (
-                        <div className="flex shrink-0 items-center gap-1.5">
-                          {memberLinks.map((link) => (
-                            <a
-                              key={link.label}
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              aria-label={`${member.name} ${link.label}`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (isInformationalMode) e.preventDefault();
-                              }}
-                              style={{ borderColor: c.border, backgroundColor: c.profileBackground }}
-                              className="tap-scale flex h-8 w-8 items-center justify-center rounded-[5px] border transition-all hover:scale-105"
-                            >
-                              {link.icon}
-                            </a>
-                          ))}
-                        </div>
-                      )}
+                    <div className="min-w-0 flex-1">
+                      <p
+                        style={{ color: c.primaryText }}
+                        className="truncate text-xs sm:text-[13px] font-bold leading-tight"
+                      >
+                        {member.name}
+                      </p>
+                      <p
+                        style={{ color: c.secondaryText }}
+                        className="mt-0.5 truncate text-[11px] font-medium"
+                      >
+                        {member.role || "Team member"}
+                      </p>
                     </div>
+
+                    {memberLinks.length > 0 && (
+                      <div className="flex shrink-0 items-center gap-1.5">
+                        {memberLinks.map((link) => (
+                          <a
+                            key={link.label}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`${member.name} ${link.label}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (isInformationalMode) e.preventDefault();
+                            }}
+                            style={{ borderColor: c.border, backgroundColor: c.profileBackground }}
+                            className="tap-scale flex h-8 w-8 items-center justify-center rounded-[5px] border transition-all hover:scale-105"
+                          >
+                            {link.icon}
+                          </a>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 );
               })}
