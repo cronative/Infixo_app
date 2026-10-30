@@ -184,5 +184,5 @@ export const LANDING_DEMO_REVIEWS: CreatorReview[] = [
   },
 ];
 
-/** Two sample collab packages (reuses the shared demo packages). */
-export const LANDING_DEMO_GIGS: MediaKitPackage[] = EXPERT_DEMO_GIGS.slice(0, 2);
+/** Sample collab packages (reuses the shared demo packages). */
+export const LANDING_DEMO_GIGS: MediaKitPackage[] = EXPERT_DEMO_GIGS;

@@ -290,7 +290,8 @@ export const EXPERT_DEMO_SERIES: Series[] = [
 export const EXPERT_DEMO_GIGS: MediaKitPackage[] = [
   {
     id: "gig_dedicated_reel",
-    title: "1x Dedicated Instagram Reel",
+    title: "Instagram Reel",
+    description: "Let's bring your brand to life with a natural Reel.",
     price: "12,000",
     priceUnit: "per_reel",
     isStartingPrice: false,
@@ -306,7 +307,8 @@ export const EXPERT_DEMO_GIGS: MediaKitPackage[] = [
   },
   {
     id: "gig_reel_story_bundle",
-    title: "1x Reel + 3x Stories with Link",
+    title: "Reel + 3 Stories",
+    description: "More visibility through Reels and Stories.",
     price: "18,000",
     priceUnit: "per_package",
     isPopular: true,
@@ -323,13 +325,14 @@ export const EXPERT_DEMO_GIGS: MediaKitPackage[] = [
   },
   {
     id: "gig_vlog_integration",
-    title: "Food Brand / Cafe In-Depth Vlog Integration",
+    title: "Vlog Integration",
+    description: "Let your brand become part of my story.",
     price: "25,000",
     priceUnit: "per_video",
     isStartingPrice: true,
     platform: "YouTube",
     deliverables: [
-      "Dedicated 60-90 second organic integration in my next Daily Vlog",
+      "Dedicated 60–90 second organic integration in my next Daily Vlog",
       "1 dedicated Instagram Reel covering the visit or product tasting",
       "Pinned comment with discount code & description link",
       "Detailed engagement & performance report after 7 days",
@@ -339,7 +342,8 @@ export const EXPERT_DEMO_GIGS: MediaKitPackage[] = [
   },
   {
     id: "gig_monthly_ambassador",
-    title: "Monthly Brand Partnership (4 Reels + 8 Stories)",
+    title: "Monthly Partnership",
+    description: "Let's build something consistent together.",
     price: "45,000",
     priceUnit: "per_month",
     isStartingPrice: false,

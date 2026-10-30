@@ -1,17 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
-import { MediaKitPackage, PackagePriceUnit } from "@/types";
+import { Check, Clock, Tv, Briefcase, ArrowUpRight, ChevronDown, ChevronUp } from "lucide-react";
+import { MediaKitPackage } from "@/types";
 import {
-  InstagramIcon,
-  YoutubeIcon,
-  FacebookIcon,
-  LinkedinIcon,
-  XTwitterIcon,
-  SpotifyIcon,
+  InstagramOutlineIcon,
+  YoutubeOutlineIcon,
+  FacebookOutlineIcon,
 } from "@/components/shared/BrandIcons";
-import { BRAND_TEXT } from "@/lib/brandColors";
 
 interface PackageCardProps {
   pkg: MediaKitPackage;
@@ -31,8 +27,6 @@ const UNIT_LABELS: Record<string, string> = {
 export function PackageCard({
   pkg,
   onEnquire,
-  brandPrimary = "var(--accent)",
-  isDark = false,
 }: PackageCardProps) {
   const [showAllBullets, setShowAllBullets] = useState(false);
 
@@ -53,31 +47,19 @@ export function PackageCard({
 
   const getPlatformIcon = () => {
     if (pLower.includes("instagram") || pLower.includes("reel") || pLower.includes("story")) {
-      return <InstagramIcon className={`h-3.5 w-3.5 ${BRAND_TEXT.instagram} shrink-0`} />;
+      return <InstagramOutlineIcon className="h-3.5 w-3.5 text-(--text-muted) shrink-0" />;
     }
-    if (pLower.includes("youtube")) {
-      return <YoutubeIcon className={`h-3.5 w-3.5 ${BRAND_TEXT.youtube} shrink-0`} />;
+    if (pLower.includes("youtube") || pLower.includes("vlog")) {
+      return <YoutubeOutlineIcon className="h-3.5 w-3.5 text-(--text-muted) shrink-0" />;
     }
     if (pLower.includes("facebook")) {
-      return <FacebookIcon className={`h-3.5 w-3.5 ${BRAND_TEXT.facebook} shrink-0`} />;
+      return <FacebookOutlineIcon className="h-3.5 w-3.5 text-(--text-muted) shrink-0" />;
     }
-    if (pLower.includes("linkedin")) {
-      return <LinkedinIcon className="h-3.5 w-3.5 text-(--accent-text) shrink-0" />;
-    }
-    if (pLower.includes("twitter") || pLower.includes("x ")) {
-      return <XTwitterIcon className="h-3.5 w-3.5 text-(--text) shrink-0" />;
-    }
-    if (pLower.includes("spotify") || pLower.includes("podcast")) {
-      return <SpotifyIcon className="h-3.5 w-3.5 text-(--accent-text) shrink-0" />;
-    }
-    return null;
+    return <Tv className="h-3.5 w-3.5 text-(--text-muted) shrink-0" />;
   };
 
-  // Meta line label: "Monthly · {n} deliverables" or "{Platform} · Delivery in {n} days"
   const isMonthly = rawUnit === "per_month" || isMonthlyTitle;
-  const metaLine = isMonthly
-    ? `${platformName} · Monthly`
-    : `${platformName} · Delivery in ${pkg.turnaroundDays || 2} days`;
+  const deliveryLabel = isMonthly ? "Monthly" : `${pkg.turnaroundDays || 2} days`;
 
   const bullets = pkg.deliverables || [];
   const visibleBullets = showAllBullets ? bullets : bullets.slice(0, 4);
@@ -86,91 +68,123 @@ export function PackageCard({
   return (
     <div
       style={{
-        borderColor: isPopular ? brandPrimary : "var(--surface-border)",
-        borderWidth: isPopular ? "1.5px" : "1px",
+        backgroundColor: "var(--surface)",
+        borderColor: "var(--surface-border)",
       }}
-      className={`relative rounded-xl bg-(--card-bg) p-4 sm:p-4.5 transition-all shadow-xs flex flex-col justify-between text-left`}
+      className="rounded-[8px] border overflow-hidden text-left transition-all shadow-2xs flex flex-col justify-between"
     >
       <div>
-        {/* Most popular label above title */}
-        {isPopular && (
-          <div className="mb-1.5 flex items-center">
+        {/* Header */}
+        <div
+          style={{ borderColor: "var(--surface-border)" }}
+          className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b flex items-start justify-between gap-2.5"
+        >
+          <div className="flex items-start gap-2.5 min-w-0 flex-1">
+            <Briefcase className="h-4 w-4 text-(--accent-text) shrink-0 mt-0.5" />
+            <div className="min-w-0 flex-1">
+              <h3 className="font-bold text-[13.5px] sm:text-sm text-(--text) tracking-tight leading-snug truncate">
+                {pkg.title}
+              </h3>
+              {pkg.description && (
+                <p className="text-[11px] sm:text-xs text-(--text-muted) font-normal mt-0.5 leading-snug">
+                  {pkg.description}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {isPopular && (
             <span
-              style={{ color: "var(--accent-text)" }}
-              className="text-[11px] font-bold tracking-wider uppercase"
+              style={{
+                color: "var(--accent-text)",
+                backgroundColor: "var(--accent-soft)",
+                borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)",
+              }}
+              className="shrink-0 text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider"
             >
-              Most popular
+              Popular
             </span>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* Row 1: [Title ... Price on right] */}
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="font-bold text-[15px] sm:text-base text-(--text) leading-snug tracking-tight">
-            {pkg.title}
-          </h3>
-          <div className="text-right shrink-0">
-            <span className="font-bold text-[15px] sm:text-base text-(--text) whitespace-nowrap">
-              {formattedPrice}
-            </span>
-            <span className="text-xs text-(--text-muted) font-normal ml-1">
-              {unitLabel}
-            </span>
+        {/* Price & Meta Row */}
+        <div className="px-3.5 pt-3 pb-2.5 sm:px-4 sm:pt-3.5 sm:pb-3 space-y-1.5">
+          <div className="flex items-baseline justify-between gap-2">
+            <div className="flex items-baseline gap-1">
+              <span className="font-black text-lg sm:text-xl text-(--text) tracking-tight tabular-nums">
+                {formattedPrice}
+              </span>
+              <span className="text-xs text-(--text-muted) font-normal">
+                {unitLabel}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1 text-xs text-(--text-muted) shrink-0">
+              <Clock className="h-3.5 w-3.5 text-(--text-muted) shrink-0" />
+              <span>{deliveryLabel}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-xs text-(--text-muted)">
+            {getPlatformIcon()}
+            <span>{platformName}</span>
           </div>
         </div>
 
-        {/* Row 2: Meta line */}
-        <div className="mt-1 flex items-center gap-1.5 text-xs text-(--text-muted) ">
-          {getPlatformIcon()}
-          <span>{metaLine}</span>
-        </div>
+        {/* Divider */}
+        <div
+          style={{ borderColor: "var(--surface-border)" }}
+          className="mx-3.5 sm:mx-4 border-t opacity-70 my-1"
+          aria-hidden="true"
+        />
 
-        {/* Row 3: Bullet list */}
+        {/* What's Included */}
         {bullets.length > 0 && (
-          <ul className="mt-3 space-y-1.5">
-            {visibleBullets.map((bullet, idx) => (
-              <li
-                key={idx}
-                className="flex items-start gap-2 text-[13px] text-(--text) leading-relaxed"
-              >
-                <span
-                  style={{ color: "var(--accent-text)" }}
-                  className="mt-0.5 shrink-0 flex items-center justify-center font-bold"
-                >
-                  <Check className="h-3.5 w-3.5 stroke-[2.8]" />
-                </span>
-                <span className="flex-1">{bullet}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+          <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 space-y-2">
+            <span className="font-semibold text-xs sm:text-[12.5px] text-(--text) block">
+              What&apos;s Included
+            </span>
 
-        {/* Toggle +n more */}
-        {hiddenCount > 0 && (
-          <button
-            type="button"
-            onClick={() => setShowAllBullets(!showAllBullets)}
-            className="mt-2 text-xs font-semibold text-(--text-muted) hover:text-(--text) inline-flex items-center gap-1 cursor-pointer transition-colors"
-          >
-            <span>{showAllBullets ? "Show less" : `+${hiddenCount} more`}</span>
-            {showAllBullets ? <ChevronUp className="h-3 w-3 text-(--icon)" /> : <ChevronDown className="h-3 w-3 text-(--icon)" />}
-          </button>
+            <ul className="space-y-1.5 sm:space-y-2">
+              {visibleBullets.map((bullet, idx) => (
+                <li
+                  key={idx}
+                  className="flex items-start gap-2 text-xs sm:text-[12.5px] text-(--text) leading-relaxed"
+                >
+                  <Check className="h-3.5 w-3.5 text-(--accent-text) stroke-[2.5] shrink-0 mt-0.5" />
+                  <span className="flex-1 text-(--text)/90">{bullet}</span>
+                </li>
+              ))}
+            </ul>
+
+            {/* Toggle +n more */}
+            {hiddenCount > 0 && (
+              <button
+                type="button"
+                onClick={() => setShowAllBullets(!showAllBullets)}
+                className="mt-1 text-xs font-semibold text-(--text-muted) hover:text-(--text) inline-flex items-center gap-1 cursor-pointer transition-colors pt-1"
+              >
+                <span>{showAllBullets ? "Show less" : `+${hiddenCount} more`}</span>
+                {showAllBullets ? <ChevronUp className="h-3 w-3 text-(--icon)" /> : <ChevronDown className="h-3 w-3 text-(--icon)" />}
+              </button>
+            )}
+          </div>
         )}
       </div>
 
-      {/* Row 4: Action Button */}
-      <div className="mt-3.5 pt-1">
+      {/* Action Button */}
+      <div className="px-3.5 pb-3.5 sm:px-4 sm:pb-4 pt-1">
         <button
           type="button"
           onClick={() => onEnquire(pkg)}
           style={{
-            borderColor: isPopular ? brandPrimary : "var(--accent-text)",
-            backgroundColor: isPopular ? brandPrimary : "transparent",
-            color: isPopular ? "var(--on-accent)" : "var(--accent-text)",
+            backgroundColor: "var(--accent)",
+            color: "var(--on-accent)",
           }}
-          className={`w-full h-9 rounded-lg font-semibold text-xs sm:text-[13px] border transition-all cursor-pointer flex items-center justify-center hover:opacity-95 active:scale-[0.99]`}
+          className="w-full py-2.5 px-4 rounded-[6px] font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 transition-all hover:opacity-95 shadow-xs cursor-pointer select-none active:scale-[0.99]"
         >
-          Enquire
+          <span>Enquire Now</span>
+          <ArrowUpRight className="h-3.5 w-3.5 stroke-[2.5]" />
         </button>
       </div>
     </div>

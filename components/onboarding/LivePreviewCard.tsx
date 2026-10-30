@@ -27,6 +27,7 @@ import {
   Check,
   MapPin,
   MessageCircle,
+  MessageSquare,
   Mail,
   Link as LinkIcon,
   ArrowRight,
@@ -2842,18 +2843,42 @@ export function LivePreviewCard({
           const hasMoreReviews = approvedReviews.length > 3;
 
           return (
-            <div id="collab-section" className={`relative z-10 order-[20] w-full text-left animate-fade-in ${isTabsLayout ? "mt-1.5 sm:mt-2" : "mt-6 sm:mt-7 space-y-4"}`}>
-              <TabSectionHeader
-                title="Work with me"
-                subtitle="Collab packages & custom brand inquiries."
-                primaryTextColor={c.primaryText}
-                secondaryTextColor={c.secondaryText}
-                headingFontFamily={typ.headingFontFamily}
-              />
+            <div id="collab-section" className={`relative z-10 order-[20] w-full text-left animate-fade-in ${isTabsLayout ? "mt-1.5 sm:mt-2 space-y-3 sm:space-y-3.5" : "mt-6 sm:mt-7 space-y-4"}`}>
+              {!isTabsLayout && (
+                <TabSectionHeader
+                  title="Work with me"
+                  subtitle="Collab packages & custom brand inquiries."
+                  primaryTextColor={c.primaryText}
+                  secondaryTextColor={c.secondaryText}
+                  headingFontFamily={typ.headingFontFamily}
+                />
+              )}
 
-              {/* 2. PACKAGES (compact cards, vertical gap 12px) */}
+              {/* 1. Intro Card ("Work With Me") */}
+              <div
+                style={{
+                  backgroundColor: "var(--surface)",
+                  borderColor: "var(--surface-border)",
+                }}
+                className="rounded-[8px] border p-3.5 sm:p-4 text-left transition-all shadow-2xs space-y-1"
+              >
+                <div className="flex items-center gap-2">
+                  <Handshake className="h-4 w-4 text-(--accent-text) shrink-0" />
+                  <h2
+                    style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                    className="text-[13.5px] sm:text-sm font-bold tracking-tight"
+                  >
+                    Work With Me
+                  </h2>
+                </div>
+                <p style={{ color: c.secondaryText }} className="text-xs sm:text-[12.5px] font-normal leading-relaxed">
+                  I&apos;d love to bring your brand into my content. Explore my collab packages below.
+                </p>
+              </div>
+
+              {/* 2. PACKAGES (consistent stacked cards) */}
               {activePackages.length > 0 && (
-                <div className="space-y-3">
+                <div className="space-y-3 sm:space-y-3.5">
                   {activePackages.map((pkg) => (
                     <PackageCard
                       key={pkg.id}
@@ -2869,104 +2894,138 @@ export function LivePreviewCard({
                 </div>
               )}
 
-              {/* 6. REVIEWS -> "What brands say" */}
+              {/* 3. REVIEWS -> "What Brands Say" Card */}
               {effectiveVisibilitySettings.showReviews !== false && approvedReviews.length > 0 && (
-                <div id="collab-reviews-section" className="space-y-2.5 pt-2">
-                  <div className="px-0.5">
-                    <h3
-                      style={{
-                        color: c.primaryText,
-                        fontFamily: typ.headingFontFamily,
-                        fontWeight: 700,
-                      }}
-                      className="text-base sm:text-lg font-bold tracking-tight text-(--text) "
-                    >
-                      What brands say
-                    </h3>
+                <div
+                  id="collab-reviews-section"
+                  style={{
+                    backgroundColor: "var(--surface)",
+                    borderColor: "var(--surface-border)",
+                  }}
+                  className="rounded-[8px] border overflow-hidden text-left transition-all shadow-2xs"
+                >
+                  {/* Card Header */}
+                  <div
+                    style={{ borderColor: "var(--surface-border)" }}
+                    className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <MessageSquare className="h-4 w-4 text-[#71717A] shrink-0" />
+                      <h3
+                        style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                        className="text-[13.5px] sm:text-sm font-bold tracking-tight"
+                      >
+                        What Brands Say
+                      </h3>
+                    </div>
+                    <span style={{ color: c.mutedText }} className="text-[11.5px] sm:text-xs font-normal">
+                      {approvedReviews.length} {approvedReviews.length === 1 ? "review" : "reviews"}
+                    </span>
                   </div>
 
-                  <div className="space-y-2">
+                  {/* Subtitle */}
+                  <div className="px-3.5 pt-2.5 pb-1 sm:px-4 sm:pt-3">
+                    <p style={{ color: c.secondaryText }} className="text-xs font-normal leading-relaxed">
+                      Here&apos;s what brands I&apos;ve worked with have to say about our collaborations.
+                    </p>
+                  </div>
+
+                  {/* Reviews List */}
+                  <div className="p-3.5 sm:p-4 space-y-3">
                     {visibleReviews.map((rev) => {
                       const ratingNum = Number(rev.rating) || 5;
+                      const initial = rev.clientName ? rev.clientName.trim().charAt(0).toUpperCase() : "B";
+
                       return (
                         <div
                           key={rev.id}
                           style={{
                             backgroundColor: "var(--surface)",
                             borderColor: "var(--surface-border)",
-                            boxShadow: "none",
                           }}
-                          className="rounded-xl border p-3.5 sm:p-4 space-y-2 text-left transition-all hover:border-(--surface-border)/20 "
+                          className="rounded-[6px] border overflow-hidden text-left transition-all shadow-2xs"
                         >
-                          {/* Top Row: Brand Initial/Logo, Name, Campaign, optional verified & stars */}
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <div className="h-8 w-8 rounded-lg bg-(--accent)/10 text-(--accent-text) font-bold text-xs flex items-center justify-center shrink-0">
-                                {rev.clientName ? rev.clientName.charAt(0).toUpperCase() : "B"}
-                              </div>
-                              <div className="min-w-0">
-                                <p style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold truncate flex items-center gap-1.5">
-                                  <span>{rev.clientName}</span>
-                                  {landingDemo && rev.isVerified && (
-                                    <span className="inline-flex items-center gap-0.5 rounded-full bg-(--accent-soft) px-1.5 py-0.5 text-[9.5px] font-bold text-(--accent-text) whitespace-nowrap">
-                                      ✓ Verified collab
-                                    </span>
-                                  )}
-                                  {!landingDemo && rev.isVerified && (
-                                    <CheckCircle2 className="h-3.5 w-3.5 text-(--accent-text) shrink-0" />
-                                  )}
+                          {/* Client Header */}
+                          <div className="px-3 py-2 sm:px-3.5 sm:py-2.5 flex items-center gap-2.5">
+                            <div
+                              style={{
+                                borderColor: "var(--surface-border)",
+                                backgroundColor: "color-mix(in srgb, var(--accent) 8%, var(--surface))",
+                                color: "var(--accent-text)",
+                              }}
+                              className="h-7 w-7 rounded-[4px] border font-bold text-xs flex items-center justify-center shrink-0"
+                            >
+                              {initial}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-1.5">
+                                <p style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold truncate">
+                                  {rev.clientName}
                                 </p>
-                                {rev.projectTitle && (
-                                  <p style={{ color: c.mutedText }} className="text-[11px] font-medium truncate">
-                                    {rev.projectTitle}
-                                  </p>
+                                {rev.isVerified && (
+                                  <CheckCircle2 className="h-3 w-3 text-(--accent-text) shrink-0" />
                                 )}
                               </div>
+                              {rev.projectTitle && (
+                                <p style={{ color: c.mutedText }} className="text-[10.5px] sm:text-[11px] font-normal truncate">
+                                  {rev.projectTitle}
+                                </p>
+                              )}
                             </div>
-                            {rev.isVerified && (
-                              <div className="flex items-center gap-0.5 text-(--accent-text) shrink-0">
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    className={`h-3 w-3 ${i < ratingNum ? "fill-(--accent) text-(--accent-text)" : "fill-(--text-muted) text-(--text-muted)"}`}
-                                  />
-                                ))}
-                              </div>
-                            )}
                           </div>
 
-                          {/* Quote */}
+                          {/* Quote Content */}
                           {rev.comment && (
-                            <p
-                              style={{ color: c.secondaryText }}
-                              className="text-xs sm:text-[13px] leading-relaxed font-normal italic pt-0.5 text-(--text-muted) "
+                            <div
+                              style={{ borderColor: "var(--surface-border)" }}
+                              className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-t"
                             >
-                              &ldquo;{rev.comment.trim()}&rdquo;
-                            </p>
+                              <p style={{ color: c.primaryText }} className="text-xs sm:text-[12.5px] leading-relaxed font-normal">
+                                &ldquo;{rev.comment.trim()}&rdquo;
+                              </p>
+                            </div>
                           )}
+
+                          {/* Star Rating Footer */}
+                          <div
+                            style={{ borderColor: "var(--surface-border)" }}
+                            className="px-3 py-1.5 sm:px-3.5 sm:py-2 border-t flex items-center justify-center gap-2 text-xs"
+                          >
+                            <div className="flex items-center gap-0.5 text-amber-500">
+                              {Array.from({ length: 5 }).map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`h-3 w-3 ${i < ratingNum ? "fill-amber-400 text-amber-500" : "text-slate-300 dark:text-zinc-600"}`}
+                                />
+                              ))}
+                            </div>
+                            <span style={{ color: c.mutedText }} className="text-[11.5px] font-semibold tabular-nums">
+                              {ratingNum.toFixed(1)} / 5
+                            </span>
+                          </div>
                         </div>
                       );
                     })}
                   </div>
 
-                  {/* Show all {n} toggle */}
+                  {/* Show All / Show Less Toggle */}
                   {hasMoreReviews && (
-                    <div className="pt-1 text-center">
+                    <div style={{ borderColor: "var(--surface-border)" }} className="border-t py-2 sm:py-2.5 text-center">
                       <button
                         type="button"
                         onClick={() => setShowAllReviews(!showAllReviews)}
-                        style={{ color: c.accentText || "var(--accent)" }}
+                        style={{ color: c.accentText || "var(--accent-text)" }}
                         className="text-xs font-semibold hover:underline cursor-pointer"
                       >
-                        {showAllReviews ? "Show less" : `Show all ${approvedReviews.length}`}
+                        {showAllReviews ? "Show less" : `Show all ${approvedReviews.length} reviews`}
                       </button>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* 7. CUSTOM REQUEST */}
-              <div className="pt-2 pb-1 text-center text-xs text-(--text-muted) ">
+              {/* 4. Custom Request Note */}
+              <div className="pt-1 pb-1 text-center text-xs text-(--text-muted)">
                 <span>Don&apos;t see what you need? </span>
                 <button
                   type="button"
@@ -2974,7 +3033,7 @@ export function LivePreviewCard({
                     setSelectedEnquiryPackage(null);
                     setIsEnquirySheetOpen(true);
                   }}
-                  style={{ color: c.accentText || "var(--accent)" }}
+                  style={{ color: c.accentText || "var(--accent-text)" }}
                   className="font-semibold underline underline-offset-2 hover:opacity-80 transition-opacity cursor-pointer ml-0.5"
                 >
                   Send a custom request &rarr;
