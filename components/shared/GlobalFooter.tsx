@@ -22,7 +22,13 @@ export function GlobalFooter({
   const [isReportOpen, setIsReportOpen] = useState(false);
 
   const linkBtnClasses =
-    "px-2 sm:px-2.5 py-1 rounded-[5px] text-[11px] sm:text-xs font-normal text-(--text-muted, #71717a) hover:text-(--text, #18181b) hover:bg-(--surface-border, #e4e4e7)/20 active:bg-(--surface-border, #e4e4e7)/30 transition-all cursor-pointer select-none inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-(--accent, #7A2253)";
+    "px-2.5 py-1 rounded-[5px] text-[11px] sm:text-xs font-normal text-(--accent, #7A2253) underline underline-offset-[3px] decoration-(--accent, #7A2253) hover:bg-(--accent, #7A2253)/[0.12] active:bg-(--accent, #7A2253)/[0.18] transition-colors cursor-pointer select-none inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-(--accent, #7A2253)";
+
+  const linkBtnStyle = {
+    backgroundColor: "color-mix(in srgb, var(--accent, #7A2253) 6%, transparent)",
+    color: "var(--accent, #7A2253)",
+    textDecorationColor: "var(--accent, #7A2253)",
+  };
 
   return (
     <footer
@@ -40,10 +46,15 @@ export function GlobalFooter({
           onClick={(e) => {
             if (disabled) e.preventDefault();
           }}
-          className="inline-flex items-center gap-1 font-semibold text-(--text, #18181b) hover:text-(--accent, #7A2253) transition-colors cursor-pointer"
+          style={{
+            color: "var(--accent, #7A2253)",
+            textDecorationColor: "var(--accent, #7A2253)",
+          }}
+          className="inline-flex items-center gap-1 font-semibold text-(--accent, #7A2253) hover:opacity-85 transition-opacity cursor-pointer underline underline-offset-[3px] decoration-(--accent, #7A2253)"
           aria-label="Inflixo Homepage"
         >
-          <InflixoWordmark className="h-3.5 sm:h-4" />
+          <span>inflixo</span>
+          <span className="text-[10px] sm:text-[11px] no-underline inline-block translate-y-[-0.5px]">↗</span>
         </Link>
       </div>
 
@@ -57,7 +68,7 @@ export function GlobalFooter({
       {/* Row 2 — Footer Links */}
       <nav
         aria-label="Footer"
-        className="w-full px-3 py-2.5 sm:py-3 flex flex-wrap items-center justify-center gap-1 sm:gap-1.5"
+        className="w-full px-3 py-2.5 sm:py-3 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2"
       >
         <Link
           href="/terms"
@@ -65,6 +76,7 @@ export function GlobalFooter({
           onClick={(e) => {
             if (disabled) e.preventDefault();
           }}
+          style={linkBtnStyle}
           className={linkBtnClasses}
         >
           Terms
@@ -76,6 +88,7 @@ export function GlobalFooter({
           onClick={(e) => {
             if (disabled) e.preventDefault();
           }}
+          style={linkBtnStyle}
           className={linkBtnClasses}
         >
           Privacy
@@ -87,6 +100,7 @@ export function GlobalFooter({
             e.preventDefault();
             if (!disabled) openCookiePreferences();
           }}
+          style={linkBtnStyle}
           className={linkBtnClasses}
         >
           Cookies
@@ -98,6 +112,7 @@ export function GlobalFooter({
             e.preventDefault();
             if (!disabled) setIsReportOpen(true);
           }}
+          style={linkBtnStyle}
           className={linkBtnClasses}
         >
           Report Profile
@@ -108,6 +123,7 @@ export function GlobalFooter({
           onClick={(e) => {
             if (disabled) e.preventDefault();
           }}
+          style={linkBtnStyle}
           className={linkBtnClasses}
         >
           Support
