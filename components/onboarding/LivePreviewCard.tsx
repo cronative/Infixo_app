@@ -43,6 +43,8 @@ import {
   Send,
   AtSign,
   Laptop,
+  Camera,
+  Box,
   ShoppingBag,
   ZoomIn,
   Play,
@@ -99,6 +101,9 @@ import {
   InstagramIcon,
   YoutubeIcon,
   FacebookIcon,
+  InstagramOutlineIcon,
+  YoutubeOutlineIcon,
+  FacebookOutlineIcon,
   XTwitterIcon,
   LinkedinIcon,
   ThreadsIcon,
@@ -1915,154 +1920,343 @@ export function LivePreviewCard({
         className="relative z-10 flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden overscroll-contain scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-1.5 sm:pt-2 pb-6"
       >
 
-        {/* 2. About Tab (Creator Bio Story Bento + Rich Verified Channels Showcase) */}
+        {/* 2. About Tab (4 stacked cards: About Me, Total Fanbase, Social Accounts, My Setup) */}
         {!isListingPage && (!isTabsLayout || activeNavTab === "about" || activeNavTab === "fanbase") && (
           <div id="about-section" className={`relative z-10 w-full text-left animate-fade-in ${isTabsLayout ? "order-[4] mt-1.5 sm:mt-2" : "order-[1] mt-5 sm:mt-6 space-y-3"}`}>
-            <TabSectionHeader
-              title="About"
-              subtitle="Get to know me & find my socials."
-              primaryTextColor={c.primaryText}
-              secondaryTextColor={c.secondaryText}
-              headingFontFamily={typ.headingFontFamily}
-            />
-
-            <div className="space-y-2.5 sm:space-y-3">
-              {/* A. Creator Story Card */}
-            {isTabsLayout && profile.bio && profile.bio.trim() && (
-              <div
-                style={{
-                  backgroundColor: "var(--surface)",
-                  borderColor: "var(--surface-border)",
-                  boxShadow: "none",
-                }}
-                className="rounded-[5px] border p-3.5 sm:p-4 text-left transition-all space-y-2"
-              >
-                {/* Bio Editorial Text */}
-                <ExpandableText
-                  text={profile.bio}
-                  style={{ color: c.secondaryText }}
-                  className="text-xs sm:text-[13px] leading-relaxed font-normal break-words"
-                  buttonStyle={{ color: c.accentText || c.primaryText }}
-                  buttonClassName="mt-1 inline-flex items-center gap-0.5 text-[11px] sm:text-xs font-bold hover:underline cursor-pointer select-none"
-                />
-              </div>
+            {!isTabsLayout && (
+              <TabSectionHeader
+                title="About"
+                subtitle="Get to know me & find my socials."
+                primaryTextColor={c.primaryText}
+                secondaryTextColor={c.secondaryText}
+                headingFontFamily={typ.headingFontFamily}
+              />
             )}
 
-            {/* Social Accounts Section (Compact, consistent layout across all platforms & accounts) */}
-            {effectiveVisibilitySettings.showFanbase !== false && aboutSocialCards.length > 0 && (
-              <div
-                style={{
-                  backgroundColor: "var(--surface)",
-                  borderColor: "var(--surface-border)",
-                  boxShadow: "none",
-                }}
-                className="rounded-[5px] border p-3.5 sm:p-4 text-left transition-all space-y-2.5"
-              >
-                {/* Header */}
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <LinkIcon className="h-4 w-4 text-(--accent-text) " />
-                    <h2
-                      style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                      className="text-[13.5px] sm:text-sm font-bold"
-                    >
-                      Social Accounts
-                    </h2>
-                  </div>
-                  <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs font-normal mt-0.5">
-                    Find me on other platforms
-                  </p>
-                </div>
-
-                {/* Social Accounts List - Compact & Consistent */}
-                <div className="space-y-1.5 sm:space-y-2">
-                  {aboutSocialCards.map((item: any, idx: number) => {
-                    const rawHandle = (item.handle || item.name || item.label).replace(/^@/, "");
-                    const isServiceOnly = item.platform === "spotify" && rawHandle.toLowerCase() === "spotify";
-                    const displayHandle = isServiceOnly ? "Spotify Artist" : `@${rawHandle}`;
-                    const countFormatted = item.count > 0 ? formatCount(item.count) : null;
-
-                    const isYoutube = item.platform === "youtube";
-                    const isInstagram = item.platform === "instagram";
-                    const isFacebook = item.platform === "facebook";
-
-                    const badgeBg = isYoutube
-                      ? BRAND_BG.youtube
-                      : isInstagram
-                        ? BRAND_BG.instagram
-                        : isFacebook
-                          ? BRAND_BG.facebook
-                          : "bg-black/[0.05] ";
-
-                    return (
-                      <a
-                        key={item.id ? `soc-${item.id}` : `${item.platform}-${item.handle || item.name}-${idx}`}
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => {
-                          if (isInformationalMode) {
-                            e.preventDefault();
-                            showToast(`Redirects to ${item.label} on live profile ✨`);
-                          }
-                        }}
-                        style={{
-                          backgroundColor: "var(--surface)",
-                          borderColor: "var(--surface-border)",
-                        }}
-                        className="group/ch flex items-center justify-between gap-2.5 p-2 sm:p-2.5 rounded-[5px] border transition-all hover:border-(--surface-border)/20 hover:shadow-xs cursor-pointer text-left"
-                        title={`Open ${item.label} (${displayHandle})`}
+            <div className="space-y-3 sm:space-y-3.5">
+              {/* 1. About Me Card */}
+              {profile.bio && profile.bio.trim() && (
+                <div
+                  style={{
+                    backgroundColor: "var(--surface)",
+                    borderColor: "var(--surface-border)",
+                  }}
+                  className="rounded-[8px] border overflow-hidden text-left transition-all shadow-2xs"
+                >
+                  {/* Card Header */}
+                  <div
+                    style={{ borderColor: "var(--surface-border)" }}
+                    className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-[#71717A]" />
+                      <h2
+                        style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                        className="text-[13.5px] sm:text-sm font-bold tracking-tight"
                       >
-                        {/* Left: Platform Icon + Handle + Platform Label */}
-                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                          <span className={`shrink-0 flex h-8 w-8 sm:h-8.5 sm:w-8.5 items-center justify-center rounded-[5px] ${badgeBg} text-white shadow-2xs transition-transform group-hover/ch:scale-105`}>
-                            {isInstagram && <InstagramIcon className="h-4 w-4 text-white" />}
-                            {isYoutube && <YoutubeIcon className="h-4 w-4 text-white" />}
-                            {isFacebook && <FacebookIcon className="h-4 w-4 text-white" />}
-                            {item.platform === "twitter" && <XTwitterIcon className="h-3.5 w-3.5 text-white" />}
-                            {item.platform === "linkedin" && <LinkedinIcon className="h-3.5 w-3.5 text-white" />}
-                            {item.platform === "threads" && <ThreadsIcon className="h-3.5 w-3.5 text-white" />}
-                            {item.platform === "snapchat" && <SnapchatIcon className="h-3.5 w-3.5 text-white" />}
-                            {item.platform === "spotify" && <SpotifyIcon className="h-3.5 w-3.5 text-white" />}
-                            {item.platform === "twitch" && <TwitchIcon className="h-3.5 w-3.5 text-white" />}
-                            {item.platform === "pinterest" && <PinterestIcon className="h-3.5 w-3.5 text-white" />}
-                            {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest"].includes(item.platform) && (
-                              <Globe className="h-3.5 w-3.5 text-(--text) " />
-                            )}
-                          </span>
+                        About Me
+                      </h2>
+                    </div>
+                  </div>
 
+                  {/* Bio Editorial Text */}
+                  <div className="p-3.5 sm:p-4">
+                    <ExpandableText
+                      text={profile.bio}
+                      style={{ color: c.primaryText }}
+                      className="text-xs sm:text-[13px] leading-relaxed font-normal break-words"
+                      buttonStyle={{ color: c.accentText || c.primaryText }}
+                      buttonClassName="mt-1.5 inline-flex items-center gap-0.5 text-[11px] sm:text-xs font-bold hover:underline cursor-pointer select-none"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* 2. Total Fanbase Card */}
+              {effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || (effectiveFanbase ?? 0) > 0 || fanbaseSocialCards.length > 0) && (
+                <div
+                  style={{
+                    backgroundColor: "var(--surface)",
+                    borderColor: "var(--surface-border)",
+                  }}
+                  className="rounded-[8px] border overflow-hidden text-left transition-all shadow-2xs"
+                >
+                  {/* Card Header */}
+                  <div
+                    style={{ borderColor: "var(--surface-border)" }}
+                    className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-[#71717A]" />
+                      <h2
+                        style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                        className="text-[13.5px] sm:text-sm font-bold tracking-tight"
+                      >
+                        Total Fanbase
+                      </h2>
+                    </div>
+                    <span style={{ color: c.mutedText }} className="text-[11.5px] sm:text-xs font-normal">
+                      {aboutSocialCards.length || fanbaseSocialCards.length || 3} platforms
+                    </span>
+                  </div>
+
+                  {/* Body: Two Columns (Creator Era | Total Fans) */}
+                  <div className="px-4 py-3 sm:px-4.5 sm:py-3.5 flex items-center justify-between gap-3">
+                    {/* Left Column: Creator Era */}
+                    {(() => {
+                      const stage = creatorEra?.badge?.includes("Silver")
+                        ? "Silver"
+                        : creatorEra?.badge?.includes("Gold")
+                        ? "Gold"
+                        : "Bronze";
+                      const medalColor = stage === "Gold" ? "#D4A017" : stage === "Silver" ? "#8E9AA7" : "#C27838";
+
+                      return (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (isInformationalMode) {
+                              showToast("Creator Era reflects total cross-platform audience ✨");
+                            } else {
+                              setBentoEraSheetOpen(true);
+                            }
+                          }}
+                          className="flex items-center gap-2.5 min-w-0 flex-1 text-left cursor-pointer group/era"
+                        >
+                          <Award
+                            className="h-5 w-5 shrink-0 transition-transform group-hover/era:scale-110"
+                            style={{ color: medalColor }}
+                          />
                           <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-1">
-                              <span className="text-xs sm:text-[13px] font-bold truncate group-hover/ch:text-(--accent-text) transition-colors" style={{ color: c.primaryText }}>
-                                {displayHandle}
-                              </span>
-                              <CheckCircle2 className="h-3 w-3 fill-(--accent) text-(--on-accent) shrink-0" />
+                            <div
+                              style={{ color: c.primaryText }}
+                              className="text-[13px] sm:text-[13.5px] font-bold truncate group-hover/era:underline"
+                            >
+                              {creatorEra?.badge || "Creator Era"}
                             </div>
-                            <p style={{ color: c.mutedText }} className="text-[10px] sm:text-[10.5px] font-medium capitalize truncate">
-                              {item.label}{item.isPrimary ? " · Primary" : ""}
+                            <p style={{ color: c.mutedText }} className="text-[11px] font-normal leading-tight">
+                              Creator Era
                             </p>
                           </div>
-                        </div>
+                        </button>
+                      );
+                    })()}
 
-                        {/* Right: Follower Count + External Link */}
-                        <div className="shrink-0 flex items-center gap-2 sm:gap-2.5">
-                          <div className="text-right">
-                            <div className="text-xs sm:text-[13px] font-bold tabular-nums tracking-tight leading-tight" style={{ color: c.primaryText }}>
-                              {countFormatted || "0"}
-                            </div>
-                            <div className="text-[8.5px] sm:text-[9px] font-semibold uppercase tracking-wider" style={{ color: c.mutedText }}>
-                              {item.unit || (isYoutube ? "Subscribers" : "Followers")}
+                    {/* Vertical divider */}
+                    <div style={{ backgroundColor: "var(--surface-border)" }} className="h-8 w-px shrink-0" aria-hidden="true" />
+
+                    {/* Right Column: Total Fans */}
+                    <div className="text-right shrink-0 min-w-[70px]">
+                      <div
+                        style={{ color: c.primaryText }}
+                        className="text-lg sm:text-xl font-black tabular-nums tracking-tight leading-tight"
+                      >
+                        {formatFans(totalAudience > 0 ? totalAudience : effectiveFanbase)}
+                      </div>
+                      <p style={{ color: c.mutedText }} className="text-[11px] font-normal leading-tight">
+                        Total Fans
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 3. Social Accounts Card */}
+              {effectiveVisibilitySettings.showFanbase !== false && aboutSocialCards.length > 0 && (
+                <div
+                  style={{
+                    backgroundColor: "var(--surface)",
+                    borderColor: "var(--surface-border)",
+                  }}
+                  className="rounded-[8px] border overflow-hidden text-left transition-all shadow-2xs"
+                >
+                  {/* Card Header */}
+                  <div
+                    style={{ borderColor: "var(--surface-border)" }}
+                    className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <AtSign className="h-4 w-4 text-[#71717A]" />
+                      <h2
+                        style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                        className="text-[13.5px] sm:text-sm font-bold tracking-tight"
+                      >
+                        Social Accounts
+                      </h2>
+                    </div>
+                    <span style={{ color: c.mutedText }} className="text-[11.5px] sm:text-xs font-normal">
+                      {aboutSocialCards.length} connected
+                    </span>
+                  </div>
+
+                  {/* Body: List with divide-y */}
+                  <div style={{ borderColor: "var(--surface-border)" }} className="divide-y divide-(--surface-border)">
+                    {aboutSocialCards.map((item: any, idx: number) => {
+                      const rawHandle = (item.handle || item.name || item.label).replace(/^@/, "");
+                      const isServiceOnly = item.platform === "spotify" && rawHandle.toLowerCase() === "spotify";
+                      const displayHandle = isServiceOnly ? "Spotify Artist" : `@${rawHandle}`;
+                      const countFormatted = item.count > 0 ? formatCount(item.count) : null;
+
+                      const isYoutube = item.platform === "youtube";
+                      const isInstagram = item.platform === "instagram";
+                      const isFacebook = item.platform === "facebook";
+
+                      return (
+                        <a
+                          key={item.id ? `soc-${item.id}` : `${item.platform}-${item.handle || item.name}-${idx}`}
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => {
+                            if (isInformationalMode) {
+                              e.preventDefault();
+                              showToast(`Redirects to ${item.label} on live profile ✨`);
+                            }
+                          }}
+                          className="group/item px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-3 hover:bg-black/[0.02] dark:hover:bg-white/[0.03] transition-colors cursor-pointer text-left"
+                          title={`Open ${item.label} (${displayHandle})`}
+                        >
+                          {/* Left: Outline Icon + Handle & Platform */}
+                          <div className="flex items-center gap-3 min-w-0 flex-1">
+                            <span className="shrink-0 flex items-center justify-center text-slate-700 dark:text-slate-300">
+                              {isInstagram && <InstagramOutlineIcon className="h-4.5 w-4.5" />}
+                              {isYoutube && <YoutubeOutlineIcon className="h-4.5 w-4.5" />}
+                              {isFacebook && <FacebookOutlineIcon className="h-4.5 w-4.5" />}
+                              {item.platform === "twitter" && <XTwitterIcon className="h-4 w-4" />}
+                              {item.platform === "linkedin" && <LinkedinIcon className="h-4 w-4" />}
+                              {item.platform === "threads" && <ThreadsIcon className="h-4 w-4" />}
+                              {item.platform === "snapchat" && <SnapchatIcon className="h-4 w-4" />}
+                              {item.platform === "spotify" && <SpotifyIcon className="h-4 w-4" />}
+                              {item.platform === "twitch" && <TwitchIcon className="h-4 w-4" />}
+                              {item.platform === "pinterest" && <PinterestIcon className="h-4 w-4" />}
+                              {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest"].includes(item.platform) && (
+                                <Globe className="h-4 w-4 text-[#71717A]" />
+                              )}
+                            </span>
+
+                            <div className="min-w-0 flex-1">
+                              <div style={{ color: c.primaryText }} className="text-[13px] sm:text-[13.5px] font-bold truncate group-hover/item:text-(--accent-text) transition-colors">
+                                {displayHandle}
+                              </div>
+                              <p style={{ color: c.mutedText }} className="text-[11px] font-normal capitalize truncate">
+                                {item.label}
+                              </p>
                             </div>
                           </div>
 
-                          <ExternalLink className="h-3.5 w-3.5 text-(--text-muted) shrink-0 opacity-70 group-hover/ch:opacity-100 transition-opacity" />
-                        </div>
-                      </a>
-                    );
-                  })}
+                          {/* Right: Follower Count + External Link */}
+                          <div className="shrink-0 flex items-center gap-2 sm:gap-2.5">
+                            <div className="text-right">
+                              <div style={{ color: c.primaryText }} className="text-xs sm:text-[13px] font-bold tabular-nums tracking-tight leading-tight">
+                                {countFormatted || "0"}
+                              </div>
+                              <div style={{ color: c.mutedText }} className="text-[10px] font-normal">
+                                {item.unit || (isYoutube ? "Subscribers" : "Followers")}
+                              </div>
+                            </div>
+                            <ExternalLink className="h-3.5 w-3.5 text-[#71717A]/70 group-hover/item:text-[#18181B] group-hover/item:opacity-100 shrink-0 transition-opacity" />
+                          </div>
+                        </a>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+
+              {/* 4. My Setup Card */}
+              {(() => {
+                const activeSetupItems = (setupList || []).filter((it) => it.isActive !== false);
+                if (activeSetupItems.length === 0) return null;
+                const visibleSetupItems = isSetupExpanded ? activeSetupItems : activeSetupItems.slice(0, 3);
+
+                return (
+                  <div
+                    id="setup-section"
+                    style={{
+                      backgroundColor: "var(--surface)",
+                      borderColor: "var(--surface-border)",
+                    }}
+                    className="rounded-[8px] border overflow-hidden text-left transition-all shadow-2xs"
+                  >
+                    {/* Card Header */}
+                    <div
+                      style={{ borderColor: "var(--surface-border)" }}
+                      className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Camera className="h-4 w-4 text-[#71717A]" />
+                        <h2
+                          style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                          className="text-[13.5px] sm:text-sm font-bold tracking-tight"
+                        >
+                          My Setup
+                        </h2>
+                      </div>
+                      <span style={{ color: c.mutedText }} className="text-[11.5px] sm:text-xs font-normal">
+                        {activeSetupItems.length} items
+                      </span>
+                    </div>
+
+                    {/* Body: List of Items */}
+                    <div style={{ borderColor: "var(--surface-border)" }} className="divide-y divide-(--surface-border)">
+                      {visibleSetupItems.map((item) => (
+                        <a
+                          key={item.id}
+                          href={item.linkUrl || "#"}
+                          target={item.linkUrl ? "_blank" : undefined}
+                          rel="noopener noreferrer"
+                          onClick={(e) => {
+                            if (isInformationalMode) {
+                              e.preventDefault();
+                              showToast(`Viewing setup item: ${item.name}`);
+                            } else if (item.linkUrl) {
+                              trackPublicEvent("setup_click", String(item.id));
+                            }
+                          }}
+                          className="group/setup px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-3 hover:bg-black/[0.02] dark:hover:bg-white/[0.03] transition-colors cursor-pointer text-left"
+                        >
+                          {/* Left: Box Icon + Name & Description */}
+                          <div className="flex items-center gap-3 min-w-0 flex-1">
+                            <Box className="h-4.5 w-4.5 text-[#52525B] shrink-0 stroke-[1.75]" />
+                            <div className="min-w-0 flex-1">
+                              <div
+                                style={{ color: c.primaryText }}
+                                className="text-[13px] sm:text-[13.5px] font-bold truncate group-hover/setup:text-(--accent-text) transition-colors"
+                              >
+                                {item.name}
+                              </div>
+                              <p style={{ color: c.mutedText }} className="text-[11px] font-normal truncate">
+                                {item.usedFor || item.note || item.modelOrPlan || item.brand}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Right: External Link */}
+                          <ExternalLink className="h-3.5 w-3.5 text-[#71717A]/70 group-hover/setup:text-[#18181B] group-hover/setup:opacity-100 shrink-0 transition-opacity" />
+                        </a>
+                      ))}
+                    </div>
+
+                    {/* Footer: View All Items Toggle */}
+                    {activeSetupItems.length > 3 && (
+                      <div style={{ borderColor: "var(--surface-border)" }} className="border-t">
+                        <button
+                          type="button"
+                          onClick={() => setIsSetupExpanded(!isSetupExpanded)}
+                          className="w-full py-2.5 sm:py-3 px-4 text-xs sm:text-[13px] font-semibold text-[#18181B] dark:text-white hover:opacity-80 flex items-center justify-center gap-1.5 transition-opacity cursor-pointer text-center"
+                        >
+                          <span>{isSetupExpanded ? "Show Less Items" : `View All Items (${activeSetupItems.length})`}</span>
+                          {isSetupExpanded ? (
+                            <ChevronUp className="h-3.5 w-3.5 shrink-0" />
+                          ) : (
+                            <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+                          )}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           </div>
         )}
@@ -2859,8 +3053,8 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {/* 7. Setup & Gear Section (About tab; on the landing demo it lives in the Shop tab as "My Setup & Shop") */}
-        {!isListingPage && (landingDemo ? (!isTabsLayout || activeNavTab === "shop") : (!isTabsLayout || activeNavTab === "about" || activeNavTab === "setup")) && (
+        {/* 7. Setup & Gear Section (landing demo shop tab or dedicated setup tab only) */}
+        {!isListingPage && (landingDemo ? (!isTabsLayout || activeNavTab === "shop") : (activeNavTab === "setup")) && (
           (() => {
             const activeSetupItems = (setupList || []).filter((it) => it.isActive !== false);
             if (activeSetupItems.length === 0) return null;
