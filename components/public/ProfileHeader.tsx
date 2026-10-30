@@ -14,6 +14,7 @@ import {
   Crown,
   Users,
   ExternalLink,
+  Award,
 } from "lucide-react";
 import {
   InstagramIcon,
@@ -496,94 +497,17 @@ export function ProfileHeader({
             </p>
           )}
 
-          {/* Era + Total Fans Unified Pill (matches creator badge design with vertical divider and fanbase count) */}
-          {currentEra && (
-            <div className="pt-1">
-              <button
-                type="button"
-                onClick={() => {
-                  setEraSheetOpen(true);
-                  if (onFanbaseClick) onFanbaseClick();
-                }}
-                className={`tap-scale inline-flex items-center gap-2 sm:gap-2.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-[8px] sm:rounded-[10px] transition-all text-left cursor-pointer group shadow-2xs max-w-full ${
-                  currentEra.stage === "Gold"
-                    ? "bg-[#FEF3C7]/80 border border-[#FDE68A]"
-                    : currentEra.stage === "Silver"
-                    ? "bg-[#F1F5F9] border border-[#CBD5E1]"
-                    : "bg-[#FFF7ED] border border-[#FFEDD5]"
-                }`}
-                title="View Creator Era details & fanbase breakdown"
-                aria-label="View Creator Era details and fanbase breakdown"
-              >
-                {/* Left: Square icon with Crown */}
-                <div
-                  className="w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-[5px] sm:rounded-[6px] flex items-center justify-center shrink-0 shadow-2xs text-white"
-                  style={{
-                    background:
-                      currentEra.stage === "Gold"
-                        ? "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)"
-                        : currentEra.stage === "Silver"
-                        ? "linear-gradient(135deg, #94A3B8 0%, #64748B 100%)"
-                        : "linear-gradient(135deg, #EA580C 0%, #C2410C 100%)",
-                  }}
-                >
-                  <Crown className="h-3.5 w-3.5 fill-white text-white drop-shadow-xs" />
-                </div>
-
-                {/* Badge title (e.g. Shining Bronze Creator) */}
-                <span
-                  className={`text-[12px] sm:text-[13px] font-bold tracking-tight truncate leading-tight ${
-                    currentEra.stage === "Gold"
-                      ? "text-[#92400E]"
-                      : currentEra.stage === "Silver"
-                      ? "text-[#334155]"
-                      : "text-[#C2410C]"
-                  }`}
-                >
-                  {currentEra.badge}
-                </span>
-
-                {/* Vertical Divider */}
-                <div
-                  className={`h-4.5 sm:h-5 w-px shrink-0 ${
-                    currentEra.stage === "Gold"
-                      ? "bg-[#FDE68A]"
-                      : currentEra.stage === "Silver"
-                      ? "bg-[#CBD5E1]"
-                      : "bg-[#FED7AA]"
-                  }`}
-                />
-
-                {/* Right: Users icon + Total Fans count */}
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <Users className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-[#64748B]" />
-                  <div className="flex flex-col justify-center leading-none">
-                    <span className="text-[12px] sm:text-[13px] font-bold text-[#18181B] tabular-nums leading-tight">
-                      {formatFans(effectiveFanbase)}
-                    </span>
-                    <span className="text-[9px] sm:text-[9.5px] font-normal text-[#71717A] leading-tight">
-                      Total Fans
-                    </span>
-                  </div>
-                </div>
-              </button>
-            </div>
-          )}
-
-          {/* Social Icons directly under the Creator Pill (15x15 icon size, left-aligned with pill start) */}
+          {/* 4. Social Icons directly under Category (Monochrome / outline icons, First Screenshot) */}
           {allActiveSocials.length > 0 && (
-            <div className="flex items-center gap-1.5 pt-1 sm:pt-1.5">
+            <div className="flex items-center gap-2.5 sm:gap-3 pt-1.5">
               {allActiveSocials.map((item) => {
-                const bgClass = getPlatformBgClass(item.platform);
                 const hasUrl = Boolean(item.url && item.url !== "#");
 
                 const iconContent = (
-                  <span className="flex items-center justify-center">
-                    {getPlatformIcon(item.platform, "h-[14px] w-[14px] sm:h-[15px] sm:w-[15px]")}
+                  <span className="flex items-center justify-center text-[#18181B] hover:text-(--accent) transition-colors">
+                    {getPlatformIcon(item.platform, "h-4 w-4 sm:h-4.5 sm:w-4.5 text-current")}
                   </span>
                 );
-
-                const btnClass = `tap-scale flex h-5 w-5 sm:h-5.5 sm:w-5.5 items-center justify-center rounded-[4px] ${bgClass} shadow-2xs hover:scale-110 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden`;
 
                 return hasUrl ? (
                   <a
@@ -593,12 +517,12 @@ export function ProfileHeader({
                     rel="noopener noreferrer"
                     title={`Visit ${item.label || item.platform}`}
                     aria-label={`Visit ${item.label || item.platform}`}
-                    className={btnClass}
+                    className="tap-scale inline-flex items-center justify-center hover:scale-110 transition-transform cursor-pointer"
                   >
                     {iconContent}
                   </a>
                 ) : (
-                  <div key={item.platform} className={btnClass}>
+                  <div key={item.platform} className="inline-flex items-center justify-center">
                     {iconContent}
                   </div>
                 );
@@ -607,6 +531,65 @@ export function ProfileHeader({
           )}
         </div>
       </div>
+
+      {/* ============================================================== */}
+      {/* ROW 3: FULL WIDTH CREATOR ERA + TOTAL FANS PILL (Second Image) */}
+      {/* ============================================================== */}
+      {(currentEra || effectiveFanbase > 0) && (
+        <div className="w-full mt-2.5 sm:mt-3">
+          <button
+            type="button"
+            onClick={() => {
+              setEraSheetOpen(true);
+              if (onFanbaseClick) onFanbaseClick();
+            }}
+            className="tap-scale w-full rounded-[8px] sm:rounded-[10px] border border-[#E4E4E7] bg-white hover:bg-slate-50/50 flex items-stretch overflow-hidden shadow-2xs transition-all text-left cursor-pointer group"
+            title="View Creator Era details & fanbase breakdown"
+            aria-label="View Creator Era details and fanbase breakdown"
+          >
+            {/* Left: Award Ribbon Icon + Badge Name + "Creator Era" + Info Icon */}
+            <div className="flex-1 min-w-0 flex items-center justify-between px-3 sm:px-4 py-2 sm:py-2.5">
+              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                <Award
+                  className="h-5 w-5 sm:h-5.5 sm:w-5.5 shrink-0 stroke-[1.8]"
+                  style={{
+                    color:
+                      currentEra?.stage === "Gold"
+                        ? "#D97706"
+                        : currentEra?.stage === "Silver"
+                        ? "#64748B"
+                        : "#C2410C",
+                  }}
+                />
+                <div className="min-w-0 flex-1">
+                  <div className="text-[13px] sm:text-[14px] font-bold text-[#18181B] truncate leading-tight">
+                    {currentEra?.badge || "Creator"}
+                  </div>
+                  <div className="text-[10.5px] sm:text-[11px] font-normal text-[#71717A] leading-tight mt-0.5">
+                    Creator Era
+                  </div>
+                </div>
+              </div>
+
+              {/* Info Icon (i) */}
+              <Info className="h-4 w-4 text-[#A1A1AA] group-hover:text-[#18181B] transition-colors shrink-0 ml-2" />
+            </div>
+
+            {/* Vertical Divider */}
+            <div className="w-px bg-[#E4E4E7] shrink-0 self-stretch" />
+
+            {/* Right: Total Fans Count + "Total Fans" */}
+            <div className="w-24 sm:w-28 shrink-0 flex flex-col items-center justify-center px-2 py-2 text-center bg-[#FAFAFB]/60 group-hover:bg-[#FAFAFB] transition-colors">
+              <div className="text-[15px] sm:text-[16px] font-bold text-[#18181B] tabular-nums leading-tight">
+                {formatFans(effectiveFanbase)}
+              </div>
+              <div className="text-[10px] sm:text-[10.5px] font-normal text-[#71717A] leading-tight mt-0.5">
+                Total Fans
+              </div>
+            </div>
+          </button>
+        </div>
+      )}
 
       {currentEra && (
         <CreatorEraBottomSheet
