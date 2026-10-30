@@ -16,6 +16,7 @@ import { SocialService } from "@/services/SocialService";
 import { ThemeService } from "@/services/ThemeService";
 import { SeriesService } from "@/services/SeriesService";
 import { SubscriptionService } from "@/services/SubscriptionService";
+import { OnboardingService } from "@/services/OnboardingService";
 
 import { getFreeTrialStatus } from "@/lib/trialStatus";
 import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
@@ -28,6 +29,7 @@ interface CreatorContextValue {
   subscription: Subscription;
   totalAudience: number;
   loading: boolean;
+  onboardingStep: string;
   isTrialExpired: boolean;
   trialStatus: ReturnType<typeof getFreeTrialStatus>;
   isTrialModalOpen: boolean;
@@ -61,6 +63,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeKey>(DEFAULT_THEME_KEY);
   const [series, setSeries] = useState<Series[]>([]);
   const [subscription, setSubscription] = useState<Subscription>(SubscriptionService.get());
+  const [onboardingStep, setOnboardingStep] = useState<string>(() => OnboardingService.getStep() || "profile");
   const [hydrated, setHydrated] = useState(false);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname() || "";
@@ -101,7 +104,12 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
       if (meRes && meRes.ok) {
         const meJson = meRes.body;
         if (meJson?.status === 1 && meJson?.data?.authenticated) {
-          const { profile: dbProfile, subscription: dbSub, email: sessionEmail } = meJson.data;
+          const { profile: dbProfile, subscription: dbSub, email: sessionEmail, onboardingStep: dbStep } = meJson.data;
+
+          if (dbStep) {
+            setOnboardingStep(dbStep);
+            OnboardingService.setStep(dbStep);
+          }
 
           if (dbProfile) {
             setProfile(dbProfile);
@@ -238,6 +246,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
         updateProfile,
         updateSocials,
         setTheme,
+        onboardingStep,
       }}
     >
       {children}

@@ -113,44 +113,26 @@ export async function POST(req: Request) {
 
       try {
         const [stepRows]: any = await db.query(
-          "SELECT step_name FROM creator_onboarding_steps WHERE email = ? ORDER BY id DESC LIMIT 1",
+          "SELECT step_name, is_completed FROM creator_onboarding_steps WHERE email = ? ORDER BY id DESC LIMIT 1",
           [email]
         );
         const dbStep = (stepRows?.[0]?.step_name || "").trim().toLowerCase();
         debugLog("VERIFY_OTP", `Onboarding step in DB for ${email}:`, dbStep);
 
-        const hasCompletedProfile = Boolean(
-          creator.display_name && creator.display_name.trim() !== "" &&
-          creator.username && creator.username.trim() !== ""
-        );
-
-        // If creator has already completed profile or finished onboarding, route to dashboard
-        if (dbStep === "finish" || hasCompletedProfile) {
+        // Only route to dashboard if onboarding has explicitly reached "finish"
+        if (dbStep === "finish") {
           currentStep = "finish";
           isExistingProfile = true;
-          await recordOnboardingStep(email, "finish", creator.id);
-          debugLog("VERIFY_OTP", `Creator has profile -> Routing to /dashboard`);
-        } else if (dbStep && dbStep !== "profile") {
-          currentStep = dbStep;
-          isExistingProfile = false;
-          debugLog("VERIFY_OTP", `Creator in-progress step '${dbStep}' -> Routing to step`);
-        } else if (creator.username && creator.username.trim() !== "") {
-          currentStep = "profile";
-          isExistingProfile = false;
-          debugLog("VERIFY_OTP", `Creator has username, continuing to personal profile`);
+          debugLog("VERIFY_OTP", `Creator has finished onboarding -> Routing to /dashboard`);
         } else {
-          currentStep = "username";
+          currentStep = dbStep || "profile";
           isExistingProfile = false;
+          debugLog("VERIFY_OTP", `Creator onboarding in-progress ('${currentStep}') -> Routing to /onboarding`);
         }
       } catch (e: any) {
         debugError("VERIFY_OTP", "Could not query creator_onboarding_steps:", e.message);
-        if (creator.display_name && creator.username) {
-          currentStep = "finish";
-          isExistingProfile = true;
-        } else {
-          currentStep = "username";
-          isExistingProfile = false;
-        }
+        currentStep = "profile";
+        isExistingProfile = false;
       }
     } else {
       // CASE B: Creator table DOES NOT have data for this email -> Brand new user -> Start at username claim

@@ -131,10 +131,20 @@ export default function OnboardingPage() {
         if (parsed.seriesName) setSeriesName(parsed.seriesName);
         if (Array.isArray(parsed.videoLinks)) setVideoLinks(parsed.videoLinks);
       } else {
+        const currentServiceStep = OnboardingService.getStep();
+        if (currentServiceStep === "socials") setStep(2);
+        else if (currentServiceStep === "series") setStep(3);
+        else if (currentServiceStep === "subscription") setStep(4);
+        else if (currentServiceStep === "finish") setStep(5);
+        else setStep(1);
+
+        if (profile.username) setUsername(profile.username);
+        if (profile.displayName) setDisplayName(profile.displayName);
+
         const claim =
           sessionStorage.getItem("pending_claim_username") ||
           localStorage.getItem("pending_claim_username");
-        if (claim) {
+        if (claim && !profile.username) {
           setUsername(claim.toLowerCase().replace(/[^a-z0-9_]/g, ""));
         }
       }
@@ -385,6 +395,11 @@ export default function OnboardingPage() {
 
       await Promise.all(socialPromises);
       OnboardingService.setStep("series");
+      await fetch("/api/creator/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, onboardingStep: "series" }),
+      }).catch(() => {});
       setStep(3);
     } catch (err: any) {
       setApiError(err?.message || "Failed to save platforms. Please try again.");
@@ -421,6 +436,11 @@ export default function OnboardingPage() {
       }
 
       OnboardingService.setStep("subscription");
+      await fetch("/api/creator/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, onboardingStep: "subscription" }),
+      }).catch(() => {});
       setStep(4);
     } catch (err: any) {
       setApiError(err?.message || "Failed to save series. Please try again.");
@@ -457,13 +477,23 @@ export default function OnboardingPage() {
     }
   }
 
-  // Step 5: Finalize & Navigate to Dashboard
-  function handleGoToDashboard() {
+  async function handleGoToDashboard() {
     try {
       localStorage.removeItem(ONBOARDING_STORAGE_KEY);
       localStorage.removeItem("pending_claim_username");
       sessionStorage.removeItem("pending_claim_username");
     } catch {}
+
+    OnboardingService.setStep("finish");
+    await fetch("/api/creator/profile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        onboardingStep: "finish",
+        acceptedLegalTerms: true,
+      }),
+    }).catch(() => {});
 
     refreshCreator();
     showToast("Welcome to your creator space! 🎉");

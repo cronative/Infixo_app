@@ -57,19 +57,21 @@ export async function recordOnboardingStep(
 
     await ensureSingleOnboardingStepSchema();
 
+    const isFinished = stepName === "finish";
+
     // Atomic upsert with ON DUPLICATE KEY UPDATE to guarantee 1 row per email without race conditions
     await db.query(
       `INSERT INTO creator_onboarding_steps (email, creator_id, step_name, is_completed, completed_at)
-       VALUES (?, ?, ?, TRUE, NOW())
+       VALUES (?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
          creator_id = COALESCE(VALUES(creator_id), creator_id),
          step_name = VALUES(step_name),
-         is_completed = TRUE,
-         completed_at = NOW()`,
-      [cleanEmail, actualCreatorId, stepName]
+         is_completed = VALUES(is_completed),
+         completed_at = VALUES(completed_at)`,
+      [cleanEmail, actualCreatorId, stepName, isFinished, isFinished ? new Date() : null]
     );
 
-    console.log(`✅ Onboarding step updated in DB for ${cleanEmail}: ${stepName}`);
+    console.log(`✅ Onboarding step updated in DB for ${cleanEmail}: ${stepName} (is_completed: ${isFinished})`);
   } catch (err: any) {
     console.error("❌ Failed to record onboarding step:", err.message);
   }

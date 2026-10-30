@@ -12,6 +12,7 @@ import {
   BadgeCheck,
 } from "lucide-react";
 import { AuthService } from "@/services/AuthService";
+import { OnboardingService } from "@/services/OnboardingService";
 import { useToast } from "@/contexts/ToastContext";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthCard } from "@/components/auth/AuthCard";
@@ -29,14 +30,18 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [claimedUsername, setClaimedUsername] = useState<string | null>(null);
 
-  // Route guard: if already logged in, redirect to dashboard
+  // Route guard: if already logged in, redirect to dashboard or onboarding
   useEffect(() => {
     if (typeof document !== "undefined") {
       document.title = "Sign in — Inflixo";
     }
 
     if (AuthService.isLoggedIn()) {
-      router.replace("/dashboard");
+      if (OnboardingService.isComplete()) {
+        router.replace("/dashboard");
+      } else {
+        router.replace("/onboarding");
+      }
       return;
     }
 

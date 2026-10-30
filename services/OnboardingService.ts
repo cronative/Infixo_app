@@ -29,9 +29,7 @@ export const OnboardingService = {
   },
 
   isComplete(): boolean {
-    const status = SubscriptionService.get().status;
-    // Trial users should enter the dashboard immediately after onboarding.
-    return (status === "active" || status === "trial") && ProfileService.hasProfile();
+    return this.getStep() === "finish";
   },
 
   reset(): void {

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, ArrowRight, Edit3, ShieldCheck, Clock } from "lucide-react";
 import { AuthService } from "@/services/AuthService";
+import { OnboardingService } from "@/services/OnboardingService";
 import { useToast } from "@/contexts/ToastContext";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthCard } from "@/components/auth/AuthCard";
@@ -30,14 +31,18 @@ export default function VerifyOtpPage() {
   const [resendNotification, setResendNotification] = useState(false);
   const otpInputRef = useRef<OtpInputHandle>(null);
 
-  // Guard: if already logged in -> /dashboard. If no pending email -> /login
+  // Guard: if already logged in -> /dashboard or /onboarding. If no pending email -> /login
   useEffect(() => {
     if (typeof document !== "undefined") {
       document.title = "Verify your email — Inflixo";
     }
 
     if (AuthService.isLoggedIn()) {
-      router.replace("/dashboard");
+      if (OnboardingService.isComplete()) {
+        router.replace("/dashboard");
+      } else {
+        router.replace("/onboarding");
+      }
       return;
     }
 

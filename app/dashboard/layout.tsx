@@ -114,19 +114,26 @@ function Shell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isHome = pathname === "/dashboard";
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { profile, loading, isTrialExpired, isTrialModalOpen, openTrialExpiredModal, closeTrialExpiredModal } = useCreator();
+  const {
+    profile,
+    loading,
+    isTrialExpired,
+    isTrialModalOpen,
+    openTrialExpiredModal,
+    closeTrialExpiredModal,
+    onboardingStep,
+  } = useCreator();
 
   useEffect(() => {
     if (!loading) {
-      if (!profile.username || !profile.displayName) {
-        debugLog("DASHBOARD", "Profile incomplete on dashboard -> Redirecting to /onboarding");
+      const isFinished = onboardingStep === "finish" || OnboardingService.getStep() === "finish";
+      if (!profile.username || !profile.displayName || !isFinished) {
+        debugLog("DASHBOARD", `Profile or onboarding incomplete (${onboardingStep}) -> Redirecting to /onboarding`);
         router.replace("/onboarding");
         return;
       }
-      // Already finished: don't re-POST the step to /api/creator/profile on every dashboard load.
-      if (OnboardingService.getStep() !== "finish") OnboardingService.setStep("finish");
     }
-  }, [loading, profile.username, profile.displayName, router]);
+  }, [loading, profile.username, profile.displayName, onboardingStep, router]);
 
   // Whenever user arrives on or navigates to Home (/dashboard) and trial is expired, show the popup modal
   useEffect(() => {
@@ -135,9 +142,9 @@ function Shell({ children }: { children: ReactNode }) {
     }
   }, [loading, isHome, isTrialExpired, openTrialExpiredModal]);
 
-  // Only block on a true first load. When cached creator data exists (returning
-  // creator, or a background refresh after a save) keep the dashboard mounted.
-  if (loading && !profile.username) {
+  // Block rendering until loaded and verified finished
+  const isFinished = onboardingStep === "finish" || OnboardingService.getStep() === "finish";
+  if (loading || !isFinished || !profile.username || !profile.displayName) {
     return <SyncingLoader message="Syncing your creator profile, series & stats..." fullScreen hideProgressBar={true} />;
   }
 

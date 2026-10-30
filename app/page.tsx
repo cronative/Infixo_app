@@ -354,18 +354,10 @@ export default function LandingHomePage() {
   useEffect(() => {
     if (AuthService.isLoggedIn()) {
       const step = OnboardingService.getStep();
-      const hasProf = ProfileService.hasProfile();
-      if (step === "finish" || hasProf) {
+      if (step === "finish") {
         router.replace("/dashboard");
       } else {
-        const stepRoutes: Record<string, string> = {
-          profile: "/onboarding/profile",
-          socials: "/onboarding/socials",
-          theme: "/onboarding/themes",
-          series: "/onboarding/subscription",
-          subscription: "/onboarding/subscription",
-        };
-        router.replace(stepRoutes[step] || "/onboarding/profile");
+        router.replace("/onboarding");
       }
     } else {
       setCheckingAuth(false);
