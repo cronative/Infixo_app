@@ -82,7 +82,7 @@ export function PackageCard({
           }}
           className="px-3 py-2.5 sm:px-3.5 sm:py-3 border-b space-y-1"
         >
-          {/* Row 1: Package title & Popular badge on right */}
+          {/* Row 1: Package Title & Popular badge on right */}
           <div className="flex items-center justify-between gap-2">
             <h3 className="font-medium text-[13px] text-(--text) tracking-tight leading-[18px] truncate">
               {pkg.title}
@@ -101,24 +101,7 @@ export function PackageCard({
             )}
           </div>
 
-          {/* Row 2: Short package subtitle / description */}
-          {pkg.description && (
-            <p className="text-xs text-(--text-muted) font-normal leading-[17px] truncate">
-              {pkg.description}
-            </p>
-          )}
-
-          {/* Row 3: Price and billing unit, LEFT-ALIGNED */}
-          <div className="flex items-baseline gap-1 pt-0.5">
-            <span className="font-semibold text-[15px] sm:text-base text-(--text) tracking-tight tabular-nums leading-[21px]">
-              {formattedPrice}
-            </span>
-            <span className="text-xs text-(--text-muted) font-normal leading-[17px]">
-              {unitLabel}
-            </span>
-          </div>
-
-          {/* Row 4: Platform icon + platform name | thin vertical divider | clock icon + delivery time */}
+          {/* Row 2: Platform icon + platform name | thin vertical divider | clock icon + delivery time */}
           <div className="flex items-center gap-1.5 text-xs text-(--text-muted) leading-[17px] pt-0.5">
             <div className="flex items-center gap-1">
               {getPlatformIcon()}
@@ -130,6 +113,23 @@ export function PackageCard({
               <span className="leading-none">{deliveryLabel}</span>
             </div>
           </div>
+
+          {/* Row 3: Price and billing unit, LEFT-ALIGNED */}
+          <div className="flex items-baseline gap-1 pt-0.5">
+            <span className="font-semibold text-[15px] sm:text-base text-(--text) tracking-tight tabular-nums leading-[21px]">
+              {formattedPrice}
+            </span>
+            <span className="text-xs text-(--text-muted) font-normal leading-[17px]">
+              {unitLabel}
+            </span>
+          </div>
+
+          {/* Row 4: Package Description */}
+          {pkg.description && (
+            <p className="text-xs text-(--text-muted) font-normal leading-[17px] pt-0.5">
+              {pkg.description}
+            </p>
+          )}
         </div>
 
         {/* Package Body: What's Included */}

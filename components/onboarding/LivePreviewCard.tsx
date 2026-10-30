@@ -2909,53 +2909,64 @@ export function LivePreviewCard({
                 />
               )}
 
-              {/* 1. Intro Card ("Work With Me") */}
+              {/* 1. WORK WITH ME SECTION (Matching Reviews Section outer card structure) */}
               <div
+                id="collab-packages-section"
                 style={{
                   backgroundColor: "transparent",
                   borderColor: "var(--surface-border)",
                 }}
                 className="rounded-[5px] border overflow-hidden text-left shadow-none"
               >
+                {/* Section Header */}
                 <div
                   style={{
                     backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
                     borderColor: "var(--surface-border)",
                   }}
-                  className="px-3 py-2 sm:px-3.5 sm:py-2.5"
+                  className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
                 >
-                  <div className="flex items-center gap-2">
-                    <Handshake className="h-4 w-4 text-(--accent-text) shrink-0" />
-                    <h2
-                      style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                      className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
-                    >
-                      Work With Me
-                    </h2>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Handshake className="h-4 w-4 text-(--accent-text) shrink-0" />
+                      <h2
+                        style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                        className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
+                      >
+                        Work With Me
+                      </h2>
+                    </div>
+                    <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
+                      I&apos;d love to bring your brand into my content. Explore my collab packages below.
+                    </p>
                   </div>
-                  <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
-                    I&apos;d love to bring your brand into my content. Explore my collab packages below.
-                  </p>
+                  {activePackages.length > 0 && (
+                    <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
+                      {activePackages.length} {activePackages.length === 1 ? "package" : "packages"}
+                    </span>
+                  )}
                 </div>
-              </div>
 
-              {/* 2. PACKAGES (single vertical column across all breakpoints) */}
-              {activePackages.length > 0 && (
-                <div className="flex flex-col space-y-2 w-full">
-                  {activePackages.map((pkg) => (
-                    <PackageCard
-                      key={pkg.id}
-                      pkg={pkg}
-                      onEnquire={(selected) => {
-                        setSelectedEnquiryPackage(selected);
-                        setIsEnquirySheetOpen(true);
-                      }}
-                      brandPrimary="var(--accent)"
-                      isDark={usesDarkControls}
-                    />
-                  ))}
-                </div>
-              )}
+                {/* Packages List: Single vertical column inside the main section container */}
+                {activePackages.length > 0 && (
+                  <div className="p-2 sm:p-2.5">
+                    <div className="flex flex-col space-y-2 w-full">
+                      {activePackages.map((pkg) => (
+                        <PackageCard
+                          key={pkg.id}
+                          pkg={pkg}
+                          onEnquire={(selected) => {
+                            setSelectedEnquiryPackage(selected);
+                            setIsEnquirySheetOpen(true);
+                          }}
+                          brandPrimary="var(--accent)"
+                          isDark={usesDarkControls}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* 3. REVIEWS -> "What Brands Say" Card */}
               {effectiveVisibilitySettings.showReviews !== false && approvedReviews.length > 0 && (
