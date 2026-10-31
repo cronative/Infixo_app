@@ -21,8 +21,12 @@ import {
   EXPERT_DEMO_MEDIA_KIT_SETTINGS,
 } from "@/data/expertDemoCreator";
 
-function DemoCreatorContent() {
+export function DemoCreatorContent({ forcedLayout }: { forcedLayout?: "tabs" | "premium" } = {}) {
   const searchParams = useSearchParams();
+  const queryLayout = searchParams?.get("layout");
+  const effectiveLayout: "tabs" | "premium" =
+    forcedLayout ||
+    (queryLayout === "premium" ? "premium" : "tabs");
   const testMode = searchParams?.get("testMode");
   const rawTab = searchParams?.get("tab");
   const initialTab =
@@ -95,7 +99,7 @@ function DemoCreatorContent() {
           totalAudience={totalAudience}
           variant="full"
           containedScroll={false}
-          layoutMode="tabs"
+          layoutMode={effectiveLayout}
           initialTab={initialTab}
           seriesOpenMode="page"
           seriesPreviewLimit={5}

@@ -63,7 +63,7 @@ function isFreeTrialExpired(subscription?: {
   return false;
 }
 
-export default function PublicProfileClient() {
+export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "tabs" | "premium" } = {}) {
   const params = useParams<{ username: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -509,13 +509,14 @@ export default function PublicProfileClient() {
     (profile as any)?.visibilitySettings?.publicProfileLayout === "premium";
 
   const effectiveLayoutMode: "tabs" | "premium" =
-    queryLayout === "premium"
+    forcedLayout ||
+    (queryLayout === "premium"
       ? "premium"
-      : queryLayout === "tabs"
+      : queryLayout === "tabs" || queryLayout === "simple"
         ? "tabs"
         : requestedPremium && isProOrVip
           ? "premium"
-          : "tabs";
+          : "tabs");
 
   async function handleShare() {
     if (typeof navigator !== "undefined" && navigator.share) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -10,22 +10,21 @@ import {
   Link2,
   ExternalLink,
   ShoppingBag,
-  Building2,
   Briefcase,
   Star,
   Camera,
   Users,
-  Share2,
   Check,
-  BadgeCheck,
   ChevronRight,
-  Sparkles,
+  ChevronDown,
+  ChevronUp,
   ArrowRight,
-  Handshake,
-  Tag,
-  Clock,
   MapPin,
-  Flame,
+  MessageCircle,
+  User,
+  Mic,
+  Sun,
+  Handshake,
 } from "lucide-react";
 import {
   InstagramIcon,
@@ -33,16 +32,10 @@ import {
   FacebookIcon,
   XTwitterIcon,
   LinkedinIcon,
-  ThreadsIcon,
-  SnapchatIcon,
-  PinterestIcon,
-  TwitchIcon,
-  SpotifyIcon,
-  TikTokIcon,
 } from "@/components/shared/BrandIcons";
-import { formatCount, initials } from "@/utils/format";
+import { formatCount } from "@/utils/format";
 import { formatFans, getCreatorEra } from "@/lib/creatorEra";
-import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
+import { ProfileHeader } from "@/components/public/ProfileHeader";
 import { CollaborationInquiryModal } from "@/components/mediakit/CollaborationInquiryModal";
 import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
@@ -78,6 +71,66 @@ export interface PremiumProfileLayoutProps {
   onShare?: () => void;
   containedScroll?: boolean;
   hideFooter?: boolean;
+  allSeriesHref?: string;
+  allProductsHref?: string;
+  allReviewsHref?: string;
+}
+
+function getSeriesEpisodesCount(s: Series): number {
+  if (Array.isArray(s.seasons)) {
+    return s.seasons.reduce((acc, season) => acc + (season.episodes?.length || 0), 0);
+  }
+  return 0;
+}
+
+function formatProductPrice(paise?: number | null, fallbackPrice?: string): string {
+  if (typeof paise === "number" && paise > 0) {
+    return `₹${Math.round(paise / 100).toLocaleString("en-IN")}`;
+  }
+  if (fallbackPrice) {
+    return fallbackPrice.startsWith("₹") ? fallbackPrice : `₹${fallbackPrice}`;
+  }
+  return "₹0";
+}
+
+function getLinkIcon(url: string, iconType?: string) {
+  const u = (url || "").toLowerCase();
+  if (u.includes("maps.google") || u.includes("goo.gl") || iconType === "map") {
+    return <MapPin className="h-4 w-4 text-emerald-600" />;
+  }
+  if (u.includes("amazon.") || u.includes("amzn.") || iconType === "shopping") {
+    return <ShoppingBag className="h-4 w-4 text-amber-600" />;
+  }
+  if (u.includes("wa.me") || u.includes("whatsapp.com") || iconType === "chat") {
+    return <MessageCircle className="h-4 w-4 text-emerald-500" />;
+  }
+  return <Link2 className="h-4 w-4 text-(--accent-text)" />;
+}
+
+function getLinkSubtext(url: string, subtitle?: string): string {
+  if (subtitle) return subtitle;
+  const u = (url || "").toLowerCase();
+  if (u.includes("maps.google") || u.includes("goo.gl")) return "Opens in Google Maps";
+  if (u.includes("amazon.") || u.includes("amzn.")) return "Opens on Amazon";
+  if (u.includes("wa.me") || u.includes("whatsapp.com")) return "Opens in WhatsApp";
+  if (u.includes("youtube.com") || u.includes("youtu.be")) return "Opens in YouTube";
+  if (u.includes("instagram.com")) return "Opens in Instagram";
+  return "Opens external link";
+}
+
+function getProductIcon(name: string, category?: string) {
+  const n = (name || "").toLowerCase();
+  const c = (category || "").toLowerCase();
+  if (n.includes("mic") || c.includes("audio")) {
+    return <Mic className="h-5 w-5 text-slate-500" />;
+  }
+  if (n.includes("tripod") || n.includes("camera") || n.includes("lens") || c.includes("camera")) {
+    return <Camera className="h-5 w-5 text-slate-500" />;
+  }
+  if (n.includes("light") || n.includes("led") || c.includes("light")) {
+    return <Sun className="h-5 w-5 text-slate-500" />;
+  }
+  return <ShoppingBag className="h-5 w-5 text-slate-500" />;
 }
 
 export function PremiumProfileLayout({
@@ -98,827 +151,748 @@ export function PremiumProfileLayout({
   allSocialAccounts = [],
   totalAudience = 0,
   onShare,
-  containedScroll = false,
   hideFooter = false,
+  allSeriesHref,
+  allProductsHref,
+  allReviewsHref,
 }: PremiumProfileLayoutProps) {
   const router = useRouter();
   const { showToast } = useToast();
 
-  const [collabModalOpen, setCollabModalOpen] = useState(false);
-  const [selectedPackageTitle, setSelectedPackageTitle] = useState<string | undefined>(undefined);
-  const [copiedLink, setCopiedLink] = useState(false);
+  const [isCollabModalOpen, setIsCollabModalOpen] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState<MediaKitPackage | undefined>(undefined);
+  const [isSetupOpen, setIsSetupOpen] = useState(false);
 
-  const cleanHandle = (profile.username || "creator").replace(/^@/, "");
-  const creatorEra = getCreatorEra(totalAudience);
+  const cleanHandle = (profile.username || "creator").replace(/^@/, "").toLowerCase();
+  const creatorEra = totalAudience > 0 ? getCreatorEra(totalAudience) : null;
 
-  // Sliced data based on user priority specification
+  // Social list formatted for ProfileHeader
+  const socialList = useMemo(() => {
+    const list: any[] = [];
+    if (socials?.instagram?.username) {
+      list.push({
+        platform: "instagram",
+        label: "Instagram",
+        url: socials.instagram.url || `https://instagram.com/${socials.instagram.username.replace(/^@/, "")}`,
+        count: socials.instagram.followers,
+        handle: socials.instagram.username,
+        hasAccount: true,
+      });
+    }
+    if (socials?.youtube?.username) {
+      list.push({
+        platform: "youtube",
+        label: "YouTube",
+        url: socials.youtube.url || `https://youtube.com/@${socials.youtube.username.replace(/^@/, "")}`,
+        count: socials.youtube.subscribers,
+        handle: socials.youtube.username,
+        hasAccount: true,
+      });
+    }
+    if (socials?.facebook?.username) {
+      list.push({
+        platform: "facebook",
+        label: "Facebook",
+        url: socials.facebook.url || `https://facebook.com/${socials.facebook.username.replace(/^@/, "")}`,
+        count: socials.facebook.followers,
+        handle: socials.facebook.username,
+        hasAccount: true,
+      });
+    }
+    return list;
+  }, [socials]);
+
+  // Top 3 items for sections
   const topSeries = series.slice(0, 3);
-  const remainingSeriesCount = Math.max(0, series.length - 3);
-
-  const topLinks = customLinks.slice(0, 10);
-  const remainingLinksCount = Math.max(0, customLinks.length - 10);
-
+  const topLinks = customLinks.slice(0, 3);
   const topProducts = products.slice(0, 3);
-  const remainingProductsCount = Math.max(0, products.length - 3);
-
-  const topReviews = reviews.slice(0, 3);
-  const remainingReviewsCount = Math.max(0, reviews.length - 3);
-
   const topPackages = mediaKitPackages.slice(0, 3);
-  const topBrands = brands.slice(0, 6);
-  const topSetupItems = setupItems.slice(0, 4);
-  const teamMembers = team?.members || [];
+  const topReviews = reviews.slice(0, 3);
 
-  const handleShare = async () => {
+  const seriesUrl = allSeriesHref || `/${cleanHandle}/series`;
+  const linksUrl = `/${cleanHandle}/links`;
+  const productsUrl = allProductsHref || `/${cleanHandle}/products`;
+  const reviewsUrl = allReviewsHref || `/${cleanHandle}/reviews`;
+  const mediaKitUrl = `/${cleanHandle}/media-kit`;
+
+  async function handleShareClick() {
     if (onShare) {
       onShare();
       return;
     }
-    const profileUrl = typeof window !== "undefined"
-      ? `${window.location.origin}/${cleanHandle}`
-      : `https://inflixo.com/${cleanHandle}`;
-    const success = await copyToClipboard(profileUrl);
-    if (success) {
-      setCopiedLink(true);
-      showToast("Profile link copied to clipboard! ✨");
-      setTimeout(() => setCopiedLink(false), 2000);
-    }
-  };
-
-  const openCollabWithPackage = (pkgTitle?: string) => {
-    setSelectedPackageTitle(pkgTitle);
-    setCollabModalOpen(true);
-  };
-
-  // Build social accounts list with icons
-  const socialList = [
-    socials?.youtube?.username ? {
-      platform: "youtube",
-      label: "YouTube",
-      handle: socials.youtube.username,
-      url: socials.youtube.url || `https://youtube.com/@${socials.youtube.username.replace(/^@/, "")}`,
-      count: socials.youtube.subscribers,
-      unit: "Subscribers",
-      icon: <YoutubeIcon className="h-4 w-4 text-[#FF0000]" />,
-    } : null,
-    socials?.instagram?.username ? {
-      platform: "instagram",
-      label: "Instagram",
-      handle: socials.instagram.username,
-      url: socials.instagram.url || `https://instagram.com/${socials.instagram.username.replace(/^@/, "")}`,
-      count: socials.instagram.followers,
-      unit: "Followers",
-      icon: <InstagramIcon className="h-4 w-4 text-[#E4405F]" />,
-    } : null,
-    socials?.facebook?.username ? {
-      platform: "facebook",
-      label: "Facebook",
-      handle: socials.facebook.username,
-      url: socials.facebook.url || `https://facebook.com/${socials.facebook.username.replace(/^@/, "")}`,
-      count: socials.facebook.followers,
-      unit: "Followers",
-      icon: <FacebookIcon className="h-4 w-4 text-[#1877F2]" />,
-    } : null,
-    ((socials as any)?.x?.username || socials?.twitter?.username) ? {
-      platform: "x",
-      label: "X",
-      handle: (socials as any)?.x?.username || socials?.twitter?.username,
-      url: (socials as any)?.x?.url || socials?.twitter?.url || `https://x.com/${((socials as any)?.x?.username || socials?.twitter?.username || "").replace(/^@/, "")}`,
-      count: (socials as any)?.x?.followers || socials?.twitter?.followers || 0,
-      unit: "Followers",
-      icon: <XTwitterIcon className="h-4 w-4 text-current" />,
-    } : null,
-    socials?.linkedin?.username ? {
-      platform: "linkedin",
-      label: "LinkedIn",
-      handle: socials.linkedin.username,
-      url: socials.linkedin.url || `https://linkedin.com/in/${socials.linkedin.username.replace(/^@/, "")}`,
-      count: socials.linkedin.followers,
-      unit: "Connections",
-      icon: <LinkedinIcon className="h-4 w-4 text-[#0A66C2]" />,
-    } : null,
-  ].filter(Boolean);
-
-  // Add any extra active social accounts
-  if (Array.isArray(allSocialAccounts)) {
-    allSocialAccounts.forEach((acc: any) => {
-      if (!socialList.some((s) => s?.platform === acc.platform)) {
-        let icon = <ExternalLink className="h-4 w-4" />;
-        if (acc.platform === "tiktok") icon = <TikTokIcon className="h-4 w-4" />;
-        else if (acc.platform === "spotify") icon = <SpotifyIcon className="h-4 w-4 text-[#1DB954]" />;
-        else if (acc.platform === "threads") icon = <ThreadsIcon className="h-4 w-4" />;
-        else if (acc.platform === "twitch") icon = <TwitchIcon className="h-4 w-4 text-[#9146FF]" />;
-        else if (acc.platform === "snapchat") icon = <SnapchatIcon className="h-4 w-4 text-[#FFFC00]" />;
-        else if (acc.platform === "pinterest") icon = <PinterestIcon className="h-4 w-4 text-[#E60023]" />;
-
-        socialList.push({
-          platform: acc.platform,
-          label: acc.platform,
-          handle: acc.username || acc.accountName || "",
-          url: acc.url || "",
-          count: acc.followerCount || 0,
-          unit: "Followers",
-          icon,
+    const url = typeof window !== "undefined" ? window.location.href : `https://inflixo.com/${cleanHandle}`;
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({
+          title: `${profile.displayName || "Creator"} on Inflixo`,
+          url,
         });
-      }
-    });
+        return;
+      } catch {}
+    }
+    const success = await copyToClipboard(url);
+    if (success) showToast("Profile link copied to clipboard! ✨");
+  }
+
+  function handlePackageInquire(pkg?: MediaKitPackage) {
+    setSelectedPackage(pkg);
+    setIsCollabModalOpen(true);
   }
 
   return (
-    <div
-      className={`relative w-full max-w-[620px] mx-auto text-(--text-primary) transition-all ${
-        containedScroll ? "overflow-y-auto max-h-full pr-1" : ""
-      }`}
-    >
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {/* 1. VERTICAL CENTERED HEADER                                           */}
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      <header className="relative flex flex-col items-center text-center pt-2 sm:pt-4 pb-6 px-4">
-        {/* Subtle Ambient Radial Highlight behind Header */}
-        <div
-          className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-72 h-44 rounded-full blur-3xl opacity-30"
-          style={{ background: "var(--accent)" }}
-          aria-hidden="true"
-        />
-
-        {/* Profile Picture (Large Centered, Elegant Shadow & Ring) */}
-        <div className="relative mb-3.5 group">
-          <div className="relative h-24 w-24 sm:h-28 sm:w-28 rounded-full overflow-hidden border-2 border-(--card-border) ring-4 ring-(--accent)/15 shadow-xl bg-(--card-bg) flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-            {profile.photoDataUrl ? (
-              <Image
-                src={profile.photoDataUrl}
-                alt={profile.displayName || cleanHandle}
-                fill
-                sizes="(max-width: 640px) 96px, 112px"
-                className="object-cover"
-                priority
-              />
-            ) : (
-              <span className="font-display text-3xl font-black text-(--text-primary)">
-                {initials(profile.displayName || cleanHandle)}
-              </span>
-            )}
-          </div>
-
-          {/* Online / Active Badge Indicator */}
-          <span className="absolute bottom-1 right-1 h-5 w-5 rounded-full bg-emerald-500 ring-2 ring-(--card-bg) shadow-sm flex items-center justify-center" title="Active Creator">
-            <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
-          </span>
+    <div className="w-full flex justify-center py-0 sm:py-6 md:py-8 px-0 sm:px-4">
+      {/* Main Single Vertical Container Matching Inflixo Card Style */}
+      <div className="w-full max-w-[540px] bg-(--card-bg) border-0 sm:border border-(--card-border) sm:rounded-2xl shadow-none sm:shadow-lg overflow-hidden text-(--text) transition-colors">
+        
+        {/* ============================================================== */}
+        {/* 1. TOP HEADER (Exact ProfileHeader layout from Screenshot 1)    */}
+        {/* ============================================================== */}
+        <div className="p-4 sm:p-5 border-b border-(--divider)">
+          <ProfileHeader
+            displayName={profile.displayName || `@${cleanHandle}`}
+            username={cleanHandle}
+            photoUrl={profile.photoDataUrl}
+            isVerified={true}
+            tagline={profile.profession || profile.category || "Content Creator"}
+            socialList={socialList}
+            totalAudience={totalAudience}
+            creatorEra={creatorEra}
+            onShareClick={handleShareClick}
+          />
         </div>
 
-        {/* Display Name + Verified Badge */}
-        <div className="flex items-center justify-center gap-1.5 flex-wrap">
-          <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-(--text-primary) tracking-tight">
-            {profile.displayName || `@${cleanHandle}`}
-          </h1>
-          <BadgeCheck className="h-5 w-5 text-[#38BDF8] shrink-0" fill="#38BDF8" color="#ffffff" aria-label="Verified Creator" />
-          {creatorEra && (
-            <CreatorEraBadge badge={creatorEra.badge} />
-          )}
-        </div>
-
-        {/* Username Handle */}
-        <p className="text-xs sm:text-sm font-semibold text-(--text-secondary) mt-0.5">
-          @{cleanHandle}
-        </p>
-
-        {/* Bio */}
-        {profile.bio && (
-          <p className="text-xs sm:text-sm text-(--text-secondary) leading-relaxed max-w-md mx-auto mt-2.5 px-2">
-            {profile.bio}
-          </p>
-        )}
-
-        {/* Category & Location Badges */}
-        <div className="flex items-center justify-center gap-2 flex-wrap mt-3 text-[11px] font-medium text-(--text-secondary)">
-          {profile.category && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-(--card-bg) border border-(--card-border) backdrop-blur-md">
-              <Sparkles className="h-3 w-3 text-(--accent)" />
-              <span>{profile.category}</span>
-            </span>
-          )}
-          {profile.city && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-(--card-bg) border border-(--card-border) backdrop-blur-md">
-              <MapPin className="h-3 w-3 text-(--text-secondary)" />
-              <span>{profile.city}{profile.country ? `, ${profile.country}` : ""}</span>
-            </span>
-          )}
-        </div>
-
-        {/* Total Fanbase Community Pill */}
-        {totalAudience > 0 && (
-          <div className="mt-3.5 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-(--accent)/10 border border-(--accent)/20 text-(--accent) text-xs font-bold tracking-tight">
-            <Flame className="h-3.5 w-3.5 text-(--accent) animate-pulse" />
-            <span>{formatFans(totalAudience)} Total Community Reach</span>
-          </div>
-        )}
-
-        {/* Connected Socials Bar */}
-        {socialList.length > 0 && (
-          <div className="flex items-center justify-center gap-2 flex-wrap mt-4">
-            {socialList.map((soc) => (
-              <a
-                key={soc?.platform}
-                href={soc?.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="tap-scale inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-(--card-bg) hover:bg-(--card-border) border border-(--card-border) text-xs font-semibold text-(--text-primary) transition-all shadow-xs hover:scale-105"
-                title={`${soc?.label}: ${soc?.handle} (${formatCount(soc?.count || 0)} ${soc?.unit})`}
-              >
-                {soc?.icon}
-                <span className="text-[11px] font-bold">{soc?.handle?.replace(/^@/, "")}</span>
-                {Boolean(soc?.count) && (
-                  <span className="text-[10px] text-(--text-secondary) font-normal border-l border-(--card-border) pl-1.5">
-                    {formatFans(soc?.count || 0)}
-                  </span>
-                )}
-              </a>
-            ))}
-          </div>
-        )}
-
-        {/* Primary Action Buttons Row */}
-        <div className="flex items-center justify-center gap-2.5 w-full max-w-sm mt-5">
-          <button
-            type="button"
-            onClick={() => openCollabWithPackage()}
-            className="tap-scale flex-1 h-10 px-4 rounded-xl bg-(--accent) hover:opacity-95 text-(--accent-text) font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-md shadow-(--accent)/25 transition-all cursor-pointer"
-          >
-            <Handshake className="h-4 w-4" />
-            <span>Work With Me</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handleShare}
-            className="tap-scale h-10 px-3.5 rounded-xl bg-(--card-bg) hover:bg-(--card-border) border border-(--card-border) text-(--text-primary) font-semibold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
-            title="Share Profile"
-          >
-            {copiedLink ? <Check className="h-4 w-4 text-emerald-500" /> : <Share2 className="h-4 w-4" />}
-            <span className="hidden sm:inline">{copiedLink ? "Copied" : "Share"}</span>
-          </button>
-        </div>
-      </header>
-
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {/* 2. SECTION: FEATURED SERIES (TOP 3 + VIEW ALL)                        */}
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {series.length > 0 && (
-        <section className="mb-6 pt-2">
-          {/* Section Header */}
-          <div className="flex items-center justify-between px-2 mb-3">
-            <div className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-lg bg-(--accent)/15 text-(--accent) flex items-center justify-center">
-                <Film className="h-3.5 w-3.5" />
+        {/* ============================================================== */}
+        {/* 2. SECTION: SERIES & PLAYLISTS (Screenshot 1)                 */}
+        {/* ============================================================== */}
+        {series.length > 0 && (
+          <section className="border-b border-(--divider) text-left">
+            {/* Section Header */}
+            <div className="px-4 sm:px-5 pt-4 pb-2">
+              <div className="flex items-center gap-2">
+                <Film className="h-4 w-4 text-[#7A2253] shrink-0" />
+                <h3 className="text-sm sm:text-base font-bold text-(--text) tracking-tight">
+                  Series &amp; Playlists
+                </h3>
               </div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-(--text-primary)">
-                Featured Series
-              </h2>
+              <p className="text-xs text-(--text-muted) mt-0.5">
+                All my stories, in the right order.
+              </p>
             </div>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-(--card-bg) border border-(--card-border) text-(--text-secondary)">
-              {series.length} {series.length === 1 ? "series" : "series"}
-            </span>
-          </div>
 
-          {/* Top 3 Series Cards */}
-          <div className="space-y-3">
-            {topSeries.map((item) => {
-              const epCount = (item.seasons?.[0]?.episodes || []).length;
-              return (
-                <div
-                  key={item.id}
-                  onClick={() => router.push(`/${cleanHandle}/series/${item.id}`)}
-                  className="group relative flex gap-3.5 rounded-2xl bg-(--card-bg) hover:bg-(--card-border)/40 border border-(--card-border) p-3 transition-all duration-200 cursor-pointer shadow-xs hover:shadow-md hover:scale-[1.01]"
-                >
-                  {/* Poster Thumbnail */}
-                  <div className="relative h-20 w-28 sm:h-24 sm:w-36 rounded-xl overflow-hidden bg-slate-900 shrink-0">
-                    {(item.posterDataUrl || (item as any).coverUrl) ? (
-                      <Image
-                        src={item.posterDataUrl || (item as any).coverUrl}
-                        alt={item.title}
-                        fill
-                        sizes="(max-width: 640px) 112px, 144px"
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="h-full w-full bg-gradient-to-tr from-[#7A2253] to-amber-600 flex items-center justify-center">
-                        <Film className="h-6 w-6 text-white/70" />
+            {/* Series Rows */}
+            <div className="divide-y divide-(--divider)">
+              {topSeries.map((s, idx) => {
+                const epCount = getSeriesEpisodesCount(s);
+                return (
+                  <div
+                    key={s.id || idx}
+                    onClick={() => router.push(`/${cleanHandle}/series/${s.id}`)}
+                    className="tap-scale px-4 sm:px-5 py-3 flex items-center justify-between gap-3 hover:bg-black/[0.02] cursor-pointer transition-colors"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      {/* Play Box / Thumbnail */}
+                      <div className="h-14 w-20 sm:h-16 sm:w-24 rounded-lg bg-[#EAE2DC] shrink-0 overflow-hidden relative flex items-center justify-center">
+                        {s.posterDataUrl ? (
+                          <>
+                            <Image
+                              src={s.posterDataUrl}
+                              alt={s.title}
+                              fill
+                              sizes="96px"
+                              className="object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black/25 flex items-center justify-center">
+                              <div className="h-7 w-7 rounded-full bg-white/90 text-[#7A2253] flex items-center justify-center shadow-md">
+                                <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="h-7 w-7 rounded-full bg-[#7A2253] text-white flex items-center justify-center shadow-md">
+                            <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
+                          </div>
+                        )}
                       </div>
-                    )}
-                    <div className="absolute inset-0 bg-black/25 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="h-8 w-8 rounded-full bg-white/90 text-slate-900 flex items-center justify-center shadow-lg">
-                        <Play className="h-4 w-4 ml-0.5 fill-current" />
+
+                      {/* Series Info */}
+                      <div className="min-w-0">
+                        <h4 className="text-xs sm:text-sm font-semibold text-(--text) line-clamp-1">
+                          {s.title}
+                        </h4>
+                        <p className="text-[11px] sm:text-xs text-(--text-muted) mt-0.5">
+                          {s.genre || "General"} · {epCount} Episodes
+                        </p>
                       </div>
                     </div>
+
+                    <ChevronRight className="h-4 w-4 text-slate-400 shrink-0" />
                   </div>
+                );
+              })}
+            </div>
 
-                  {/* Series Info */}
-                  <div className="flex-1 min-w-0 flex flex-col justify-center">
-                    <div className="flex items-center gap-1.5 flex-wrap mb-1">
-                      {item.platform && (
-                        <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-md bg-(--accent)/10 text-(--accent)">
-                          {item.platform}
-                        </span>
-                      )}
-                      {item.genre && (
-                        <span className="text-[10px] text-(--text-secondary) font-medium">
-                          {item.genre}
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 className="text-xs sm:text-sm font-bold text-(--text-primary) line-clamp-1 group-hover:text-(--accent) transition-colors">
-                      {item.title}
-                    </h3>
-
-                    {item.description && (
-                      <p className="text-[11px] text-(--text-secondary) line-clamp-2 mt-0.5 leading-snug">
-                        {item.description}
-                      </p>
-                    )}
-
-                    <div className="flex items-center gap-2 mt-1.5 text-[11px] font-semibold text-(--text-secondary)">
-                      <span>{epCount} {epCount === 1 ? "episode" : "episodes"}</span>
-                      <span>·</span>
-                      <span className="text-(--accent) inline-flex items-center gap-0.5 group-hover:underline">
-                        <span>Watch now</span>
-                        <ChevronRight className="h-3 w-3" />
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* View All Remaining Series Button */}
-          {remainingSeriesCount > 0 && (
-            <div className="mt-3 text-center">
+            {/* View All Series Footer */}
+            <div className="border-t border-(--divider)">
               <Link
-                href={`/${cleanHandle}/series`}
-                className="tap-scale w-full py-2.5 px-4 rounded-xl bg-(--card-bg) hover:bg-(--card-border) border border-(--card-border) text-xs font-bold text-(--text-primary) inline-flex items-center justify-center gap-1.5 transition-all shadow-xs hover:scale-[1.01]"
+                href={seriesUrl}
+                className="tap-scale w-full py-3 px-4 flex items-center justify-center gap-1.5 text-xs sm:text-sm font-bold text-[#7A2253] hover:bg-black/[0.02] transition-colors"
               >
-                <span>View all my rest of series ({remainingSeriesCount})</span>
-                <ArrowRight className="h-3.5 w-3.5 text-(--accent)" />
+                <span>View All Series</span>
+                <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
-          )}
-        </section>
-      )}
+          </section>
+        )}
 
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {/* 3. SECTION: CUSTOM LINKS (TOP 10 + VIEW ALL)                          */}
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {customLinks.length > 0 && (
-        <section className="mb-6 pt-2">
-          {/* Section Header */}
-          <div className="flex items-center justify-between px-2 mb-3">
-            <div className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-lg bg-(--accent)/15 text-(--accent) flex items-center justify-center">
-                <Link2 className="h-3.5 w-3.5" />
+        {/* ============================================================== */}
+        {/* 3. SECTION: LINKS & COMMUNITIES (Screenshot 2)                */}
+        {/* ============================================================== */}
+        {customLinks.length > 0 && (
+          <section className="border-b border-(--divider) text-left">
+            {/* Section Header */}
+            <div className="px-4 sm:px-5 pt-4 pb-2">
+              <div className="flex items-center gap-2">
+                <Link2 className="h-4 w-4 text-[#7A2253] shrink-0" />
+                <h3 className="text-sm sm:text-base font-bold text-(--text) tracking-tight">
+                  Links &amp; Communities
+                </h3>
               </div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-(--text-primary)">
-                Quick Links
-              </h2>
+              <p className="text-xs text-(--text-muted) mt-0.5">
+                Explore my favorite places and communities.
+              </p>
             </div>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-(--card-bg) border border-(--card-border) text-(--text-secondary)">
-              {customLinks.length} {customLinks.length === 1 ? "link" : "links"}
-            </span>
-          </div>
 
-          {/* Top 10 Links */}
-          <div className="space-y-2.5">
-            {topLinks.map((link: any, idx: number) => {
-              const url = link.url || link.destinationUrl || "#";
-              const title = link.title || link.name || "Custom Link";
-              const desc = link.description || link.subtitle;
-              return (
+            {/* Links Rows */}
+            <div className="divide-y divide-(--divider)">
+              {topLinks.map((link, idx) => (
                 <a
                   key={link.id || idx}
-                  href={url}
+                  href={link.url || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="tap-scale group flex items-center justify-between gap-3 p-3 sm:p-3.5 rounded-2xl bg-(--card-bg) hover:bg-(--card-border)/40 border border-(--card-border) transition-all duration-200 shadow-xs hover:shadow-md hover:scale-[1.01]"
+                  className="tap-scale px-4 sm:px-5 py-3 flex items-center justify-between gap-3 hover:bg-black/[0.02] transition-colors group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="h-9 w-9 rounded-xl bg-(--accent)/10 text-(--accent) flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      {link.iconUrl ? (
-                        <img src={link.iconUrl} alt="" className="h-5 w-5 object-contain" />
+                    {/* Circle Icon */}
+                    <div className="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
+                      {getLinkIcon(link.url, link.icon)}
+                    </div>
+                    {/* Link Info */}
+                    <div className="min-w-0">
+                      <h4 className="text-xs sm:text-sm font-semibold text-(--text) group-hover:text-[#7A2253] line-clamp-1 transition-colors">
+                        {link.title}
+                      </h4>
+                      <p className="text-[11px] text-(--text-muted) mt-0.5">
+                        {getLinkSubtext(link.url, link.subtitle)}
+                      </p>
+                    </div>
+                  </div>
+
+                  <ExternalLink className="h-3.5 w-3.5 text-slate-400 group-hover:text-[#7A2253] shrink-0 transition-colors" />
+                </a>
+              ))}
+            </div>
+
+            {/* View All Links Footer */}
+            <div className="border-t border-(--divider)">
+              <Link
+                href={linksUrl}
+                className="tap-scale w-full py-3 px-4 flex items-center justify-center gap-1.5 text-xs sm:text-sm font-bold text-[#7A2253] hover:bg-black/[0.02] transition-colors"
+              >
+                <span>
+                  View All Links {customLinks.length > 3 ? `(${customLinks.length - 3} more)` : ""}
+                </span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </section>
+        )}
+
+        {/* ============================================================== */}
+        {/* 4. SECTION: CREATOR SHOP (Screenshot 2)                        */}
+        {/* ============================================================== */}
+        {products.length > 0 && (
+          <section className="border-b border-(--divider) text-left">
+            {/* Section Header */}
+            <div className="px-4 sm:px-5 pt-4 pb-2">
+              <div className="flex items-center gap-2">
+                <ShoppingBag className="h-4 w-4 text-[#7A2253] shrink-0" />
+                <h3 className="text-sm sm:text-base font-bold text-(--text) tracking-tight">
+                  Creator Shop
+                </h3>
+              </div>
+              <p className="text-xs text-(--text-muted) mt-0.5">
+                Gear and products I recommend.
+              </p>
+            </div>
+
+            {/* Product Rows */}
+            <div className="divide-y divide-(--divider)">
+              {topProducts.map((p, idx) => (
+                <a
+                  key={p.id || idx}
+                  href={p.productUrl || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tap-scale px-4 sm:px-5 py-3 flex items-center justify-between gap-3 hover:bg-black/[0.02] transition-colors group"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    {/* Square Thumbnail / Icon */}
+                    <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden relative">
+                      {p.imageUrl ? (
+                        <Image
+                          src={p.imageUrl}
+                          alt={p.name}
+                          fill
+                          sizes="56px"
+                          className="object-cover"
+                        />
                       ) : (
-                        <Link2 className="h-4 w-4" />
+                        getProductIcon(p.name, (p as any).category)
                       )}
                     </div>
+                    {/* Product Info */}
                     <div className="min-w-0">
-                      <h3 className="text-xs sm:text-sm font-bold text-(--text-primary) line-clamp-1 group-hover:text-(--accent) transition-colors">
-                        {title}
-                      </h3>
-                      {desc && (
-                        <p className="text-[11px] text-(--text-secondary) line-clamp-1 mt-0.5">
-                          {desc}
+                      <h4 className="text-xs sm:text-sm font-semibold text-(--text) group-hover:text-[#7A2253] line-clamp-1 transition-colors">
+                        {p.name}
+                      </h4>
+                      <p className="text-xs sm:text-sm font-bold text-(--text) mt-0.5">
+                        {formatProductPrice(p.pricePaise, (p as any).price)}
+                      </p>
+                    </div>
+                  </div>
+
+                  <ExternalLink className="h-3.5 w-3.5 text-slate-400 group-hover:text-[#7A2253] shrink-0 transition-colors" />
+                </a>
+              ))}
+            </div>
+
+            {/* View All Products Footer & Disclaimer */}
+            <div className="border-t border-(--divider) py-3 text-center">
+              <Link
+                href={productsUrl}
+                className="tap-scale inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm font-bold text-[#7A2253] hover:underline"
+              >
+                <span>
+                  View All Products {products.length > 3 ? `(${products.length - 3} more)` : ""}
+                </span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+              <p className="text-[10px] text-slate-400 mt-2">
+                Some product links may be affiliate links.
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* ============================================================== */}
+        {/* 5. SECTION: ABOUT ME (Screenshot 3)                            */}
+        {/* ============================================================== */}
+        <section className="border-b border-(--divider) text-left">
+          {/* Section Header */}
+          <div className="px-4 sm:px-5 pt-4 pb-2">
+            <div className="flex items-center gap-2">
+              <User className="h-4 w-4 text-[#7A2253] shrink-0" />
+              <h3 className="text-sm sm:text-base font-bold text-(--text) tracking-tight">
+                About Me
+              </h3>
+            </div>
+            <p className="text-xs text-(--text-muted) mt-0.5">
+              The person behind the videos.
+            </p>
+          </div>
+
+          <div className="px-4 sm:px-5 pb-5 space-y-4">
+            {/* Bio text */}
+            {profile.bio && (
+              <p className="text-xs sm:text-sm text-(--text) leading-relaxed">
+                {profile.bio}
+              </p>
+            )}
+
+            {/* Primary Social Accounts Box */}
+            {socialList.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="text-xs font-bold text-(--text)">
+                  Primary Social Accounts
+                </h4>
+                <div className="rounded-xl border border-(--divider) bg-(--card-bg) divide-y divide-(--divider) overflow-hidden">
+                  {socialList.map((s: any) => (
+                    <a
+                      key={s.platform}
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="tap-scale px-3.5 py-2.5 flex items-center justify-between hover:bg-black/[0.02] transition-colors group"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        {s.platform === "instagram" && <InstagramIcon className="h-4 w-4 text-[#E1306C]" />}
+                        {s.platform === "youtube" && <YoutubeIcon className="h-4 w-4 text-[#FF0000]" />}
+                        {s.platform === "facebook" && <FacebookIcon className="h-4 w-4 text-[#1877F2]" />}
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-(--text) group-hover:text-[#7A2253] transition-colors">
+                            {s.label}
+                          </p>
+                          <p className="text-[11px] text-(--text-muted)">
+                            {s.handle}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 text-right shrink-0">
+                        {typeof s.count === "number" && s.count > 0 && (
+                          <div className="text-right">
+                            <p className="text-xs font-bold text-(--text)">
+                              {formatFans(s.count)}
+                            </p>
+                            <p className="text-[10px] text-(--text-muted)">
+                              {s.platform === "youtube" ? "Subscribers" : "Followers"}
+                            </p>
+                          </div>
+                        )}
+                        <ExternalLink className="h-3 w-3 text-slate-400 group-hover:text-[#7A2253] ml-1" />
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Other Social Accounts */}
+            {otherSocials && otherSocials.length > 0 && (
+              <div className="space-y-2">
+                <div>
+                  <h4 className="text-xs font-bold text-(--text)">
+                    Other Social Accounts
+                  </h4>
+                  <p className="text-[11px] text-(--text-muted)">
+                    My additional profiles and channels.
+                  </p>
+                </div>
+
+                <div className="space-y-2.5">
+                  {/* Grouped by platform */}
+                  {["instagram", "youtube", "facebook"].map((plat) => {
+                    const group = otherSocials.filter(
+                      (o: any) => (o.platform || "").toLowerCase() === plat
+                    );
+                    if (group.length === 0) return null;
+                    return (
+                      <div key={plat} className="space-y-1.5">
+                        <p className="text-[11px] font-semibold text-(--text) flex items-center gap-1.5">
+                          {plat === "instagram" && <InstagramIcon className="h-3.5 w-3.5 text-[#E1306C]" />}
+                          {plat === "youtube" && <YoutubeIcon className="h-3.5 w-3.5 text-[#FF0000]" />}
+                          {plat === "facebook" && <FacebookIcon className="h-3.5 w-3.5 text-[#1877F2]" />}
+                          <span className="capitalize">{plat} Accounts</span>
+                        </p>
+                        <div className="rounded-xl border border-(--divider) bg-(--card-bg) divide-y divide-(--divider) overflow-hidden">
+                          {group.map((item: any, idx: number) => {
+                            const handle = item.username || item.accountName || "";
+                            const url = item.url || (
+                              plat === "instagram" ? `https://instagram.com/${handle.replace(/^@/, "")}` :
+                              plat === "youtube" ? `https://youtube.com/@${handle.replace(/^@/, "")}` :
+                              `https://facebook.com/${handle.replace(/^@/, "")}`
+                            );
+                            return (
+                              <a
+                                key={item.id || idx}
+                                href={url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="tap-scale px-3 py-2 flex items-center justify-between hover:bg-black/[0.02] text-xs font-medium text-(--text) hover:text-[#7A2253] transition-colors"
+                              >
+                                <span>@{handle.replace(/^@/, "")}</span>
+                                <ExternalLink className="h-3 w-3 text-slate-400" />
+                              </a>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* My Setup & Creative Team Accordion */}
+            {(setupItems.length > 0 || (team.members && team.members.length > 0)) && (
+              <div className="rounded-xl border border-(--divider) overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setIsSetupOpen(!isSetupOpen)}
+                  className="w-full px-3.5 py-2.5 flex items-center justify-between hover:bg-black/[0.02] transition-colors text-left"
+                >
+                  <div className="flex items-center gap-2">
+                    <Camera className="h-4 w-4 text-[#7A2253] shrink-0" />
+                    <div>
+                      <h5 className="text-xs font-bold text-(--text)">
+                        My Setup &amp; Creative Team
+                      </h5>
+                      <p className="text-[10px] text-(--text-muted)">
+                        Tools and people behind my content.
+                      </p>
+                    </div>
+                  </div>
+                  {isSetupOpen ? (
+                    <ChevronUp className="h-4 w-4 text-slate-400" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 text-slate-400" />
+                  )}
+                </button>
+
+                {isSetupOpen && (
+                  <div className="p-3 border-t border-(--divider) bg-slate-50/50 space-y-3">
+                    {/* Setup Gear items */}
+                    {setupItems.length > 0 && (
+                      <div className="space-y-1.5">
+                        <p className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                          Studio Gear
+                        </p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {setupItems.map((gear, idx) => (
+                            <a
+                              key={gear.id || idx}
+                              href={gear.linkUrl || "#"}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 rounded-lg bg-white border border-(--divider) text-xs flex items-center gap-2 hover:border-[#7A2253] transition-colors"
+                            >
+                              <div className="h-7 w-7 rounded bg-slate-100 flex items-center justify-center shrink-0">
+                                <Camera className="h-3.5 w-3.5 text-slate-500" />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="font-semibold text-(--text) truncate text-[11px]">
+                                  {gear.name}
+                                </p>
+                                <p className="text-[9px] text-(--text-muted) truncate">
+                                  {gear.category || "Gear"}
+                                </p>
+                              </div>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Team Members */}
+                    {team.members && team.members.length > 0 && (
+                      <div className="space-y-1.5 pt-1">
+                        <p className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                          Creative Team
+                        </p>
+                        <div className="divide-y divide-(--divider) bg-white rounded-lg border border-(--divider)">
+                          {team.members.map((member, idx) => (
+                            <div key={member.id || idx} className="p-2 flex items-center justify-between text-xs">
+                              <div>
+                                <p className="font-semibold text-(--text) text-[11px]">
+                                  {member.name}
+                                </p>
+                                <p className="text-[9px] text-(--text-muted)">
+                                  {member.role || "Team"}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* ============================================================== */}
+        {/* 6. SECTION: WORK WITH ME (Screenshot 4 & 5)                    */}
+        {/* ============================================================== */}
+        {(mediaKitPackages.length > 0 || reviews.length > 0) && (
+          <section className="border-b border-(--divider) text-left">
+            {/* Section Header */}
+            <div className="px-4 sm:px-5 pt-4 pb-2">
+              <div className="flex items-center gap-2">
+                <Briefcase className="h-4 w-4 text-[#7A2253] shrink-0" />
+                <h3 className="text-sm sm:text-base font-bold text-(--text) tracking-tight">
+                  Work With Me
+                </h3>
+              </div>
+              <p className="text-xs text-(--text-muted) mt-0.5">
+                Creative partnerships that feel authentic.
+              </p>
+            </div>
+
+            {/* Packages List */}
+            {topPackages.length > 0 && (
+              <div className="px-4 sm:px-5 pb-4 space-y-3">
+                {topPackages.map((pkg, idx) => (
+                  <div
+                    key={pkg.id || idx}
+                    className="rounded-xl border border-(--divider) bg-(--card-bg) p-4 space-y-3"
+                  >
+                    {/* Header */}
+                    <div>
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <h4 className="text-sm sm:text-base font-bold text-(--text)">
+                            {pkg.title}
+                          </h4>
+                          <p className="text-xs text-(--text-muted) mt-0.5">
+                            {pkg.platform}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm sm:text-base font-extrabold text-[#7A2253]">
+                            {pkg.price ? (pkg.price.startsWith("₹") ? pkg.price : `₹${pkg.price}`) : "Custom"}
+                            {pkg.priceUnit && (
+                              <span className="text-[10px] text-slate-500 font-normal"> / {pkg.priceUnit.replace(/^per_/, "")}</span>
+                            )}
+                          </p>
+                        </div>
+                      </div>
+
+                      {pkg.description && (
+                        <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                          {pkg.description}
                         </p>
                       )}
                     </div>
-                  </div>
 
-                  <div className="h-7 w-7 rounded-full bg-(--card-border)/40 flex items-center justify-center text-(--text-secondary) group-hover:text-(--accent) group-hover:translate-x-0.5 transition-all shrink-0">
-                    <ExternalLink className="h-3.5 w-3.5" />
-                  </div>
-                </a>
-              );
-            })}
-          </div>
-
-          {/* View All Remaining Links Button */}
-          {remainingLinksCount > 0 && (
-            <div className="mt-3 text-center">
-              <Link
-                href={`/${cleanHandle}/links`}
-                className="tap-scale w-full py-2.5 px-4 rounded-xl bg-(--card-bg) hover:bg-(--card-border) border border-(--card-border) text-xs font-bold text-(--text-primary) inline-flex items-center justify-center gap-1.5 transition-all shadow-xs hover:scale-[1.01]"
-              >
-                <span>View all my links ({remainingLinksCount})</span>
-                <ArrowRight className="h-3.5 w-3.5 text-(--accent)" />
-              </Link>
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {/* 4. SECTION: SHOP & PRODUCTS (TOP 3 + VIEW ALL)                        */}
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {products.length > 0 && (
-        <section className="mb-6 pt-2">
-          {/* Section Header */}
-          <div className="flex items-center justify-between px-2 mb-3">
-            <div className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-lg bg-(--accent)/15 text-(--accent) flex items-center justify-center">
-                <ShoppingBag className="h-3.5 w-3.5" />
-              </div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-(--text-primary)">
-                Shop &amp; Recommendations
-              </h2>
-            </div>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-(--card-bg) border border-(--card-border) text-(--text-secondary)">
-              {products.length} {products.length === 1 ? "item" : "items"}
-            </span>
-          </div>
-
-          {/* Top 3 Product Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {topProducts.map((prod: any, idx: number) => {
-              const priceStr = prod.price !== null && prod.price !== undefined
-                ? `₹${Number(prod.price).toLocaleString("en-IN")}`
-                : "";
-              const url = prod.url || prod.productUrl || "#";
-              return (
-                <a
-                  key={prod.id || idx}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="tap-scale group flex flex-col rounded-2xl bg-(--card-bg) hover:bg-(--card-border)/40 border border-(--card-border) p-3 transition-all duration-200 shadow-xs hover:shadow-md hover:scale-[1.01]"
-                >
-                  {/* Product Image */}
-                  <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 mb-2.5">
-                    {prod.image || prod.imageUrl ? (
-                      <img
-                        src={prod.image || prod.imageUrl}
-                        alt={prod.name}
-                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center text-slate-400 bg-slate-50">
-                        <ShoppingBag className="h-8 w-8" />
+                    {/* Deliverables Checklist */}
+                    {Array.isArray(pkg.deliverables) && pkg.deliverables.length > 0 && (
+                      <div className="space-y-1.5 pt-1">
+                        <p className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                          What&apos;s Included
+                        </p>
+                        <ul className="space-y-1 text-xs text-slate-600">
+                          {pkg.deliverables.map((del, dIdx) => (
+                            <li key={dIdx} className="flex items-start gap-1.5">
+                              <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0 mt-0.5" />
+                              <span>{del}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     )}
-                    {prod.isAffiliate && (
-                      <span className="absolute top-1.5 left-1.5 text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-md bg-black/70 text-white backdrop-blur-xs">
-                        Affiliate
-                      </span>
-                    )}
+
+                    {/* Enquire Now Button */}
+                    <button
+                      type="button"
+                      onClick={() => handlePackageInquire(pkg)}
+                      className="tap-scale w-full py-2.5 px-4 rounded-lg bg-[#7A2253] hover:bg-[#661b44] text-white text-xs sm:text-sm font-bold shadow-md shadow-[#7A2253]/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <span>Enquire Now</span>
+                    </button>
                   </div>
+                ))}
 
-                  {/* Product Info */}
-                  <h3 className="text-xs font-bold text-(--text-primary) line-clamp-2 leading-snug group-hover:text-(--accent) transition-colors flex-1">
-                    {prod.name}
-                  </h3>
-
-                  <div className="flex items-center justify-between gap-1 mt-2 pt-2 border-t border-(--card-border)/60">
-                    <span className="text-xs font-black text-(--accent)">
-                      {priceStr || "View"}
-                    </span>
-                    <span className="text-[10px] font-bold text-(--text-secondary) group-hover:text-(--accent) inline-flex items-center gap-0.5">
-                      <span>Buy</span>
-                      <ExternalLink className="h-2.5 w-2.5" />
-                    </span>
+                {/* View All Packages Footer */}
+                {mediaKitPackages.length > 3 && (
+                  <div className="text-center pt-1">
+                    <Link
+                      href={mediaKitUrl}
+                      className="tap-scale inline-flex items-center gap-1.5 text-xs font-bold text-[#7A2253] hover:underline"
+                    >
+                      <span>View All Packages ({mediaKitPackages.length - 3} more)</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
                   </div>
-                </a>
-              );
-            })}
-          </div>
-
-          {/* View All Remaining Products Button */}
-          {remainingProductsCount > 0 && (
-            <div className="mt-3 text-center">
-              <Link
-                href={`/${cleanHandle}/products`}
-                className="tap-scale w-full py-2.5 px-4 rounded-xl bg-(--card-bg) hover:bg-(--card-border) border border-(--card-border) text-xs font-bold text-(--text-primary) inline-flex items-center justify-center gap-1.5 transition-all shadow-xs hover:scale-[1.01]"
-              >
-                <span>View all my rest of products ({remainingProductsCount})</span>
-                <ArrowRight className="h-3.5 w-3.5 text-(--accent)" />
-              </Link>
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {/* 5. SECTION: BRANDS WORKED WITH (PROOF OF TRUST)                       */}
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {topBrands.length > 0 && (
-        <section className="mb-6 pt-2">
-          <div className="flex items-center justify-between px-2 mb-3">
-            <div className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-lg bg-(--accent)/15 text-(--accent) flex items-center justify-center">
-                <Building2 className="h-3.5 w-3.5" />
-              </div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-(--text-primary)">
-                Worked with Brands
-              </h2>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-            {topBrands.map((b: any, idx: number) => (
-              <div
-                key={b.id || idx}
-                className="flex items-center gap-2.5 p-2.5 rounded-xl bg-(--card-bg) border border-(--card-border) shadow-xs"
-              >
-                <div className="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
-                  {b.logoUrl || b.brandLogoUrl ? (
-                    <img src={b.logoUrl || b.brandLogoUrl} alt={b.name || b.brandName} className="h-full w-full object-contain p-1" />
-                  ) : (
-                    <Building2 className="h-4 w-4 text-slate-400" />
-                  )}
-                </div>
-                <div className="min-w-0">
-                  <span className="block text-xs font-bold text-(--text-primary) truncate">
-                    {b.name || b.brandName}
-                  </span>
-                  <span className="block text-[10px] text-(--text-secondary) truncate">
-                    {b.campaignType || "Brand Collab"}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {/* 6. SECTION: COLLAB PACKAGES & RATE CARD                               */}
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {topPackages.length > 0 && (
-        <section className="mb-6 pt-2">
-          <div className="flex items-center justify-between px-2 mb-3">
-            <div className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-lg bg-(--accent)/15 text-(--accent) flex items-center justify-center">
-                <Briefcase className="h-3.5 w-3.5" />
-              </div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-(--text-primary)">
-                Collab Packages &amp; Rates
-              </h2>
-            </div>
-            <button
-              type="button"
-              onClick={() => openCollabWithPackage()}
-              className="text-xs font-bold text-(--accent) hover:underline cursor-pointer"
-            >
-              Inquire
-            </button>
-          </div>
-
-          <div className="space-y-3">
-            {topPackages.map((pkg, idx) => (
-              <div
-                key={pkg.id || idx}
-                className="p-3.5 rounded-2xl bg-(--card-bg) border border-(--card-border) shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-              >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs sm:text-sm font-bold text-(--text-primary)">
-                      {pkg.title}
-                    </span>
-                    {pkg.badge && (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/20">
-                        {pkg.badge}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 text-[11px] text-(--text-secondary)">
-                    <span className="inline-flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      <span>{pkg.turnaroundDays || 2} days delivery</span>
-                    </span>
-                    {pkg.deliverables && pkg.deliverables.length > 0 && (
-                      <span>· {pkg.deliverables.slice(0, 2).join(", ")}</span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-0 border-(--card-border)/60">
-                  <span className="text-xs sm:text-sm font-black text-(--text-primary)">
-                    {pkg.price || "Contact for rate"}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => openCollabWithPackage(pkg.title)}
-                    className="tap-scale px-3 py-1.5 rounded-lg bg-(--accent) hover:opacity-95 text-(--accent-text) text-xs font-bold transition-all shadow-xs cursor-pointer"
-                  >
-                    Book
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {/* 7. SECTION: VERIFIED CLIENT REVIEWS (TOP 3 + VIEW ALL)                */}
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {reviews.length > 0 && (
-        <section className="mb-6 pt-2">
-          <div className="flex items-center justify-between px-2 mb-3">
-            <div className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-lg bg-(--accent)/15 text-(--accent) flex items-center justify-center">
-                <Star className="h-3.5 w-3.5 fill-(--accent)" />
-              </div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-(--text-primary)">
-                Client Reviews
-              </h2>
-            </div>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-(--card-bg) border border-(--card-border) text-(--text-secondary)">
-              {reviews.length} {reviews.length === 1 ? "review" : "reviews"}
-            </span>
-          </div>
-
-          <div className="space-y-3">
-            {topReviews.map((rev, idx) => (
-              <div
-                key={rev.id || idx}
-                className="p-3.5 rounded-2xl bg-(--card-bg) border border-(--card-border) shadow-xs space-y-2"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <div>
-                    <span className="block text-xs font-bold text-(--text-primary)">
-                      {rev.clientName}
-                    </span>
-                    <span className="block text-[11px] text-(--text-secondary)">
-                      {rev.clientDesignation || rev.projectTitle || "Verified Brand Collab"}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-0.5 text-amber-500">
-                    {Array.from({ length: rev.rating || 5 }).map((_, i) => (
-                      <Star key={i} className="h-3.5 w-3.5 fill-current" />
-                    ))}
-                  </div>
-                </div>
-
-                {rev.comment && (
-                  <p className="text-xs text-(--text-secondary) italic leading-relaxed">
-                    &ldquo;{rev.comment}&rdquo;
-                  </p>
                 )}
               </div>
-            ))}
-          </div>
+            )}
 
-          {remainingReviewsCount > 0 && (
-            <div className="mt-3 text-center">
-              <Link
-                href={`/${cleanHandle}/reviews`}
-                className="tap-scale w-full py-2.5 px-4 rounded-xl bg-(--card-bg) hover:bg-(--card-border) border border-(--card-border) text-xs font-bold text-(--text-primary) inline-flex items-center justify-center gap-1.5 transition-all shadow-xs hover:scale-[1.01]"
-              >
-                <span>View all reviews ({remainingReviewsCount})</span>
-                <ArrowRight className="h-3.5 w-3.5 text-(--accent)" />
-              </Link>
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {/* 8. SECTION: SETUP & GEAR                                              */}
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {topSetupItems.length > 0 && (
-        <section className="mb-6 pt-2">
-          <div className="flex items-center justify-between px-2 mb-3">
-            <div className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-lg bg-(--accent)/15 text-(--accent) flex items-center justify-center">
-                <Camera className="h-3.5 w-3.5" />
-              </div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-(--text-primary)">
-                Creator Setup &amp; Gear
-              </h2>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-            {topSetupItems.map((gear, idx) => (
-              <a
-                key={gear.id || idx}
-                href={gear.linkUrl || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="tap-scale p-2.5 rounded-xl bg-(--card-bg) hover:bg-(--card-border)/40 border border-(--card-border) shadow-xs flex flex-col items-center text-center transition-all group"
-              >
-                <div className="h-12 w-12 rounded-lg bg-slate-100 flex items-center justify-center overflow-hidden mb-2">
-                  {gear.imageUrl ? (
-                    <img src={gear.imageUrl} alt={gear.name} className="h-full w-full object-contain p-1" />
-                  ) : (
-                    <Camera className="h-5 w-5 text-slate-400" />
-                  )}
-                </div>
-                <span className="text-[11px] font-bold text-(--text-primary) line-clamp-1 group-hover:text-(--accent)">
-                  {gear.name}
-                </span>
-                <span className="text-[9px] text-(--text-secondary) line-clamp-1 mt-0.5">
-                  {gear.category || "Gear"}
-                </span>
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {/* 9. SECTION: TEAM MEMBERS                                              */}
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {teamMembers.length > 0 && (
-        <section className="mb-6 pt-2">
-          <div className="flex items-center justify-between px-2 mb-3">
-            <div className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-lg bg-(--accent)/15 text-(--accent) flex items-center justify-center">
-                <Users className="h-3.5 w-3.5" />
-              </div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-(--text-primary)">
-                Team
-              </h2>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 flex-wrap">
-            {teamMembers.map((m: any, idx: number) => (
-              <div
-                key={m.id || idx}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-(--card-bg) border border-(--card-border) shadow-xs"
-              >
-                <div className="h-7 w-7 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-700 overflow-hidden">
-                  {m.avatarUrl ? <img src={m.avatarUrl} alt="" className="h-full w-full object-cover" /> : initials(m.name || "T")}
-                </div>
+            {/* What Brands Say (Reviews) */}
+            {reviews.length > 0 && (
+              <div className="px-4 sm:px-5 pb-5 space-y-2.5">
                 <div>
-                  <span className="block text-xs font-bold text-(--text-primary)">{m.name}</span>
-                  <span className="block text-[10px] text-(--text-secondary)">{m.role || "Member"}</span>
+                  <div className="flex items-center gap-1.5">
+                    <Star className="h-3.5 w-3.5 text-[#7A2253]" />
+                    <h4 className="text-xs font-bold text-(--text)">
+                      What Brands Say
+                    </h4>
+                  </div>
+                  <p className="text-[11px] text-(--text-muted)">
+                    Words from previous collaborations.
+                  </p>
+                </div>
+
+                <div className="divide-y divide-(--divider) rounded-xl border border-(--divider) bg-(--card-bg) overflow-hidden">
+                  {topReviews.map((rev, idx) => (
+                    <div key={rev.id || idx} className="p-3.5 space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-(--text)">
+                          {rev.clientName || "Brand Client"}
+                        </span>
+                        <div className="flex items-center gap-1 text-xs font-bold text-amber-500">
+                          <Star className="h-3 w-3 fill-current" />
+                          <span>{rev.rating ? rev.rating.toFixed(1) : "5.0"}</span>
+                        </div>
+                      </div>
+                      {(rev.projectTitle || (rev as any).serviceType) && (
+                        <p className="text-[11px] font-medium text-slate-500">
+                          {rev.projectTitle || (rev as any).serviceType}
+                        </p>
+                      )}
+                      {rev.comment && (
+                        <p className="text-xs text-slate-600 leading-relaxed italic">
+                          &ldquo;{rev.comment}&rdquo;
+                        </p>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
-      )}
+            )}
 
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {/* 10. COLLAB INQUIRY MODAL                                              */}
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      <CollaborationInquiryModal
-        isOpen={collabModalOpen}
-        onClose={() => setCollabModalOpen(false)}
-        creatorId={profile.id || ""}
-        creatorEmail={profile.email}
-        creatorName={profile.displayName || cleanHandle}
-        creatorUsername={cleanHandle}
-        packages={mediaKitPackages}
-        selectedPackageTitle={selectedPackageTitle}
-      />
+            {/* Custom Collaboration Callout */}
+            <div className="px-4 sm:px-5 pb-5 space-y-2">
+              <div className="flex items-center gap-1.5">
+                <Handshake className="h-3.5 w-3.5 text-[#7A2253]" />
+                <h4 className="text-xs font-bold text-(--text)">
+                  Custom Collaboration
+                </h4>
+              </div>
+              <p className="text-xs text-(--text-muted) leading-relaxed">
+                Have a unique idea? Let&apos;s make it happen. For custom campaigns and long-term partnerships, send your proposal.
+              </p>
+              <button
+                type="button"
+                onClick={() => handlePackageInquire(undefined)}
+                className="tap-scale w-full py-2.5 px-4 rounded-lg bg-[#7A2253] hover:bg-[#661b44] text-white text-xs sm:text-sm font-bold shadow-md shadow-[#7A2253]/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer mt-1"
+              >
+                <span>Send a Custom Request</span>
+              </button>
+            </div>
+          </section>
+        )}
 
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {/* 11. FOOTER BRANDING                                                   */}
-      {/* ───────────────────────────────────────────────────────────────────── */}
-      {!hideFooter && (
-        <footer className="pt-6 pb-8 text-center border-t border-(--card-border)/60 mt-8 space-y-2">
-          <a
-            href="https://inflixo.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="tap-scale inline-flex items-center gap-1.5 text-[11px] font-bold text-(--text-secondary) hover:text-(--accent) transition-colors"
-          >
-            <span>Powered by</span>
-            <span className="font-extrabold text-(--text-primary)">INFLIXO</span>
-          </a>
-          <p className="text-[10px] text-(--text-secondary)">
-            The Operating System for Modern Creators
-          </p>
-        </footer>
+        {/* ============================================================== */}
+        {/* 7. FOOTER: POWERED BY INFLIXO (Screenshot 5)                    */}
+        {/* ============================================================== */}
+        {!hideFooter && (
+          <footer className="py-4 px-4 text-center border-t border-(--divider) bg-slate-50/50">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 hover:text-[#7A2253] transition-colors"
+            >
+              <span>Powered by Inflixo</span>
+              <ChevronDown className="h-3 w-3" />
+            </Link>
+          </footer>
+        )}
+      </div>
+
+      {/* Collaboration Inquiry Modal */}
+      {isCollabModalOpen && (
+        <CollaborationInquiryModal
+          isOpen={isCollabModalOpen}
+          onClose={() => setIsCollabModalOpen(false)}
+          creatorId={profile.id || cleanHandle}
+          creatorUsername={cleanHandle}
+          creatorName={profile.displayName || cleanHandle}
+          creatorEmail={profile.email}
+          selectedPackageTitle={selectedPackage?.title}
+          packages={mediaKitPackages}
+        />
       )}
     </div>
   );
