@@ -63,7 +63,7 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeKey>(DEFAULT_THEME_KEY);
   const [series, setSeries] = useState<Series[]>([]);
   const [subscription, setSubscription] = useState<Subscription>(SubscriptionService.get());
-  const [onboardingStep, setOnboardingStep] = useState<string>(() => OnboardingService.getStep() || "profile");
+  const [onboardingStep, setOnboardingStep] = useState<string>("");
   const [hydrated, setHydrated] = useState(false);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname() || "";

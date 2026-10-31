@@ -54,7 +54,7 @@ const ONBOARDING_STORAGE_KEY = "inflixo_onboarding_draft";
 export default function OnboardingPage() {
   const router = useRouter();
   const { showToast } = useToast();
-  const { profile, loading: creatorLoading, refresh: refreshCreator } = useCreator();
+  const { profile, loading: creatorLoading, refresh: refreshCreator, onboardingStep } = useCreator();
 
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
   const [selectedPlan, setSelectedPlan] = useState<"starter" | "pro" | "vip">("starter");
@@ -99,7 +99,7 @@ export default function OnboardingPage() {
       "";
     if (pending) setEmail(pending);
 
-    if (!creatorLoading && profile.username && profile.displayName && OnboardingService.isComplete()) {
+    if (!creatorLoading && profile.username && profile.displayName && onboardingStep === "finish") {
       router.replace("/dashboard");
       return;
     }

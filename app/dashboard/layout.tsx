@@ -126,7 +126,7 @@ function Shell({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!loading) {
-      const isFinished = onboardingStep === "finish" || OnboardingService.getStep() === "finish";
+      const isFinished = onboardingStep === "finish";
       if (!profile.username || !profile.displayName || !isFinished) {
         debugLog("DASHBOARD", `Profile or onboarding incomplete (${onboardingStep}) -> Redirecting to /onboarding`);
         router.replace("/onboarding");
@@ -143,7 +143,7 @@ function Shell({ children }: { children: ReactNode }) {
   }, [loading, isHome, isTrialExpired, openTrialExpiredModal]);
 
   // Block rendering until loaded and verified finished
-  const isFinished = onboardingStep === "finish" || OnboardingService.getStep() === "finish";
+  const isFinished = onboardingStep === "finish";
   if (loading || !isFinished || !profile.username || !profile.displayName) {
     return <SyncingLoader message="Syncing your creator profile, series & stats..." fullScreen hideProgressBar={true} />;
   }
