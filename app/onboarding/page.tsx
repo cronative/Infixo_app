@@ -24,7 +24,12 @@ import {
   User,
   Copy,
   ArrowDown,
+  BadgeCheck,
+  ExternalLink,
+  Globe,
+  Users,
 } from "lucide-react";
+import { formatFans } from "@/lib/creatorEra";
 import {
   InstagramIcon,
   YoutubeIcon,
@@ -85,6 +90,81 @@ export default function OnboardingPage() {
   const [seriesName, setSeriesName] = useState("");
   const [videoLinks, setVideoLinks] = useState<string[]>(["", "", ""]);
 
+  // Step 5: Socials & Preview State
+  const [savedSocials, setSavedSocials] = useState<any[]>([]);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  useEffect(() => {
+    if (step === 5) {
+      fetch("/api/creator/socials")
+        .then((r) => (r.ok ? r.json() : null))
+        .then((res) => {
+          if (res?.data?.socials && Array.isArray(res.data.socials)) {
+            setSavedSocials(res.data.socials);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [step]);
+
+  const activeSocialAccounts = useMemo(() => {
+    const list: Array<{ platform: "instagram" | "youtube" | "facebook"; handle: string; count?: number; url: string }> = [];
+
+    if (savedSocials.length > 0) {
+      for (const s of savedSocials) {
+        const plat = String(s.platform || "").toLowerCase();
+        const handle = (s.username || s.accountName || "").replace(/^@/, "").trim();
+        if (!handle) continue;
+        if (plat === "instagram" || plat === "youtube" || plat === "facebook") {
+          list.push({
+            platform: plat,
+            handle,
+            count: Number(s.followerCount) || 0,
+            url: s.url || (
+              plat === "instagram" ? `https://instagram.com/${handle}` :
+              plat === "youtube" ? `https://youtube.com/@${handle}` :
+              `https://facebook.com/${handle}`
+            ),
+          });
+        }
+      }
+    }
+
+    if (list.length === 0) {
+      const cleanIg = instagram.replace(/^(https?:\/\/)?(www\.)?instagram\.com\//, "").replace(/^@/, "").trim();
+      const cleanYt = youtube.replace(/^(https?:\/\/)?(www\.)?youtube\.com\/(@)?/, "").trim();
+      const cleanFb = facebook.replace(/^(https?:\/\/)?(www\.)?facebook\.com\//, "").trim();
+
+      if (cleanIg) {
+        list.push({
+          platform: "instagram",
+          handle: cleanIg,
+          url: `https://instagram.com/${cleanIg}`,
+        });
+      }
+      if (cleanYt) {
+        list.push({
+          platform: "youtube",
+          handle: cleanYt,
+          url: `https://youtube.com/@${cleanYt}`,
+        });
+      }
+      if (cleanFb) {
+        list.push({
+          platform: "facebook",
+          handle: cleanFb,
+          url: `https://facebook.com/${cleanFb}`,
+        });
+      }
+    }
+
+    return list;
+  }, [savedSocials, instagram, youtube, facebook]);
+
+  const totalFans = useMemo(() => {
+    return activeSocialAccounts.reduce((acc, curr) => acc + (curr.count || 0), 0);
+  }, [activeSocialAccounts]);
+
   // Route Guard: if not logged in -> /login. If profile already complete -> /dashboard
   useEffect(() => {
     if (!AuthService.isLoggedIn()) {
@@ -99,7 +179,9 @@ export default function OnboardingPage() {
       "";
     if (pending) setEmail(pending);
 
-    if (!creatorLoading && profile.username && profile.displayName && onboardingStep === "finish") {
+    // Only redirect to dashboard if onboarding was fully completed and user is not currently viewing the success card
+    const isCompleted = typeof window !== "undefined" && localStorage.getItem("inflixo_onboarding_completed") === "true";
+    if (!creatorLoading && profile.username && profile.displayName && onboardingStep === "finish" && isCompleted) {
       router.replace("/dashboard");
       return;
     }
@@ -480,6 +562,7 @@ export default function OnboardingPage() {
   async function handleGoToDashboard() {
     try {
       localStorage.removeItem(ONBOARDING_STORAGE_KEY);
+      localStorage.setItem("inflixo_onboarding_completed", "true");
       localStorage.removeItem("pending_claim_username");
       sessionStorage.removeItem("pending_claim_username");
     } catch {}
@@ -501,10 +584,13 @@ export default function OnboardingPage() {
   }
 
   function copyLink() {
-    const url = `inflixo.com/${username}`;
+    const cleanUser = (username || profile.username || "creator").toLowerCase().replace(/[^a-z0-9_]/g, "");
+    const url = `inflixo.com/${cleanUser}`;
     if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(url);
-      showToast("Link copied to clipboard!");
+      navigator.clipboard.writeText(`https://${url}`);
+      setCopiedLink(true);
+      showToast("Profile link copied to clipboard! ✨");
+      setTimeout(() => setCopiedLink(false), 2500);
     }
   }
 
@@ -552,7 +638,7 @@ export default function OnboardingPage() {
       <main className="flex-1 flex items-center justify-center py-6 sm:py-10 px-3.5 sm:px-6">
         <div
           className={`w-full ${
-            step === 4 ? "max-w-[840px]" : "max-w-[520px]"
+            step === 4 ? "max-w-[840px]" : step === 5 ? "max-w-[620px]" : "max-w-[520px]"
           } rounded-[5px] border border-[#E8DCE3] bg-white p-5 sm:p-7 text-left transition-all`}
         >
           {/* Card subheader for Step 2 & 3 */}
@@ -1419,114 +1505,248 @@ export default function OnboardingPage() {
 
           {/* ================= STEP 5: CREATOR SUMMARY / GO TO STUDIO ================= */}
           {step === 5 && (
-            <div className="space-y-4 text-center">
-              {/* Checkmark in soft maroon box */}
-              <div className="flex justify-center mb-1">
-                <div className="h-12 w-12 rounded-[5px] bg-[#F8EFF4] flex items-center justify-center text-[#7A2253]">
-                  <Check className="h-6 w-6 stroke-[2.5]" />
+            <div className="space-y-6 text-center">
+              {/* Celebration Glow / Header Badge */}
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F8EFF4] border border-[#E8DCE3] text-[#7A2253] text-[11px] font-bold tracking-wider uppercase shadow-2xs">
+                  <Sparkles className="h-3.5 w-3.5 text-[#7A2253] animate-pulse" />
+                  <span>Welcome to Inflixo · Creator Space Live</span>
                 </div>
-              </div>
-
-              {/* Header */}
-              <div className="space-y-1 mb-4">
-                <p className="text-[11px] font-bold text-[#7A2253] tracking-widest uppercase">
-                  WELCOME TO INFLIXO
-                </p>
-                <h1 className="text-xl sm:text-[24px] font-extrabold text-[#281C25] tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-black text-[#281C25] tracking-tight">
                   Your space. Your stories. Your way.
                 </h1>
-                <p className="text-xs sm:text-[13px] text-[#806F79] max-w-[420px] mx-auto mt-1 leading-relaxed">
-                  Every story you&apos;ve shared has brought you here. Now you&apos;ve got a place to bring it all together — and make it truly yours.
+                <p className="text-xs sm:text-sm text-[#806F79] max-w-md mx-auto leading-relaxed">
+                  Every story you&apos;ve shared has brought you here. Your creator hub is officially live and ready to welcome your fans and brand partners.
                 </p>
               </div>
 
-              {/* Creator Profile Box */}
-              <div className="border border-[#E8DCE3] rounded-[5px] p-4 text-left bg-white space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-[#7A2253] tracking-wider uppercase">
-                    YOUR CREATOR PROFILE
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-xs text-[#806F79]">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Created
-                  </span>
+              {/* Live Public Profile Preview Card */}
+              <div className="relative rounded-2xl border border-[#E8DCE3] bg-gradient-to-b from-[#FDFBFD] via-white to-white shadow-xl shadow-[#7A2253]/5 overflow-hidden text-left">
+                {/* Header Banner Backdrop */}
+                <div className="relative h-28 sm:h-32 bg-gradient-to-r from-[#7A2253] via-[#943168] to-[#5C163D] overflow-hidden p-4 flex items-start justify-between">
+                  {/* Subtle ambient lighting orb */}
+                  <div className="absolute -right-8 -top-8 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+                  <div className="absolute -left-8 -bottom-8 w-40 h-40 bg-amber-400/20 rounded-full blur-2xl pointer-events-none" />
+
+                  {/* Public Link Badge */}
+                  <div className="relative z-10 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/25 backdrop-blur-md text-white/90 text-[10px] sm:text-[11px] font-medium border border-white/15">
+                    <Globe className="h-3 w-3 text-emerald-300" />
+                    <span>inflixo.com/{(username || profile.username || "creator").toLowerCase()}</span>
+                  </div>
+
+                  {/* Live Status Pill */}
+                  <div className="relative z-10 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/25 backdrop-blur-md text-emerald-100 text-[10px] sm:text-[11px] font-bold border border-emerald-400/40">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>Live Public View</span>
+                  </div>
                 </div>
 
-                {/* Profile row */}
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-full bg-[#F8EFF4] border border-[#E8DCE3] flex items-center justify-center text-[#7A2253] shrink-0 font-bold text-base">
-                    {displayName ? displayName.charAt(0).toUpperCase() : <User className="h-6 w-6" />}
+                {/* Profile Identity Bar (Overlapping Header) */}
+                <div className="px-5 sm:px-6 pb-6 pt-0">
+                  <div className="relative -mt-12 sm:-mt-14 mb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+                    {/* Large Avatar */}
+                    <div className="relative">
+                      <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full border-4 border-white shadow-xl bg-[#F8EFF4] flex items-center justify-center text-[#7A2253] overflow-hidden shrink-0 font-black text-2xl sm:text-3xl">
+                        {profile.photoDataUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={profile.photoDataUrl}
+                            alt={displayName || "Creator"}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : displayName ? (
+                          displayName.charAt(0).toUpperCase()
+                        ) : (
+                          <User className="h-10 w-10 text-[#7A2253]" />
+                        )}
+                      </div>
+                      <span className="absolute bottom-0 right-0 h-6 w-6 rounded-full bg-white p-0.5 shadow-md flex items-center justify-center">
+                        <BadgeCheck className="h-5 w-5 text-[#38BDF8]" fill="#38BDF8" color="#ffffff" />
+                      </span>
+                    </div>
+
+                    {/* Reach & Fanbase Indicator */}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {totalFans > 0 ? (
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#7A2253]/10 border border-[#7A2253]/20 text-[#7A2253] text-xs font-extrabold shadow-2xs">
+                          <Users className="h-3.5 w-3.5 text-[#7A2253]" />
+                          <span>{formatFans(totalFans)} Combined Fanbase Reach</span>
+                        </div>
+                      ) : (
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-[#475569] text-xs font-bold">
+                          <Users className="h-3.5 w-3.5 text-[#64748b]" />
+                          <span>Audience Space Ready</span>
+                        </div>
+                      )}
+
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                        <span>7-Day Free Trial Active</span>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-[#281C25]">
-                      {displayName || "Your Name"}
-                    </h4>
-                    <p className="text-xs text-[#806F79]">
-                      @{username || "yourname"}
+
+                  {/* Creator Info */}
+                  <div className="space-y-1.5 mb-4">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h2 className="text-xl sm:text-2xl font-black text-[#281C25] tracking-tight">
+                        {displayName || "Your Name"}
+                      </h2>
+                    </div>
+                    <p className="text-xs sm:text-sm font-semibold text-[#806F79]">
+                      @{(username || profile.username || "yourname").toLowerCase()}
                     </p>
-                  </div>
-                </div>
 
-                <div className="border-t border-[#E8DCE3]" />
-
-                {/* Social platforms */}
-                <div className="space-y-2">
-                  <p className="text-[11px] font-bold text-[#806F79] uppercase tracking-wider">
-                    YOUR SOCIAL PLATFORMS
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] border border-[#E8DCE3] text-xs font-medium text-[#281C25] bg-white">
-                      <InstagramIcon className="h-3.5 w-3.5 text-[#E1306C]" /> Instagram
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] border border-[#E8DCE3] text-xs font-medium text-[#281C25] bg-white">
-                      <YoutubeIcon className="h-3.5 w-3.5 text-[#FF0000]" /> YouTube
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] border border-[#E8DCE3] text-xs font-medium text-[#281C25] bg-white">
-                      <FacebookIcon className="h-3.5 w-3.5 text-[#1877F2]" /> Facebook
-                    </span>
+                    {/* Category tags */}
+                    {selectedCategories.length > 0 && (
+                      <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                        {selectedCategories.map((cat) => (
+                          <span
+                            key={cat}
+                            className="inline-flex items-center px-2 py-0.5 rounded-md bg-[#F8EFF4] text-[#7A2253] text-[11px] font-semibold"
+                          >
+                            #{cat}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </div>
 
-                {/* Link card */}
-                <div className="p-3 rounded-[5px] bg-[#F8EFF4]/60 border border-[#E8DCE3] flex items-center justify-between">
-                  <div>
-                    <p className="text-[11px] text-[#806F79]">Your Inflixo link</p>
-                    <p className="text-xs sm:text-sm font-semibold text-[#7A2253]">
-                      inflixo.com/{username}
-                    </p>
+                  {/* Divider */}
+                  <div className="border-t border-[#E8DCE3] my-4" />
+
+                  {/* Connected Social Accounts */}
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-[#806F79] uppercase tracking-wider">
+                        CONNECTED SOCIAL CHANNELS
+                      </span>
+                      {activeSocialAccounts.length > 0 && (
+                        <span className="text-[11px] font-semibold text-emerald-700 flex items-center gap-1">
+                          <Check className="h-3 w-3 stroke-[3]" /> {activeSocialAccounts.length} Connected
+                        </span>
+                      )}
+                    </div>
+
+                    {activeSocialAccounts.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {activeSocialAccounts.map((acc) => (
+                          <a
+                            key={acc.platform + acc.handle}
+                            href={acc.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="tap-scale inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[#E8DCE3] bg-white hover:bg-[#F8EFF4]/40 hover:border-[#7A2253]/30 transition-all shadow-2xs group"
+                          >
+                            {acc.platform === "instagram" && <InstagramIcon className="h-4 w-4 text-[#E1306C]" />}
+                            {acc.platform === "youtube" && <YoutubeIcon className="h-4 w-4 text-[#FF0000]" />}
+                            {acc.platform === "facebook" && <FacebookIcon className="h-4 w-4 text-[#1877F2]" />}
+                            <div className="flex flex-col text-left">
+                              <span className="text-xs font-bold text-[#281C25] group-hover:text-[#7A2253]">
+                                @{acc.handle}
+                              </span>
+                              {acc.count !== undefined && acc.count > 0 && (
+                                <span className="text-[10px] text-[#806F79]">
+                                  {formatFans(acc.count)} fans
+                                </span>
+                              )}
+                            </div>
+                            <ExternalLink className="h-3 w-3 text-slate-400 group-hover:text-[#7A2253] ml-1" />
+                          </a>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex items-start gap-2.5 p-3 rounded-xl bg-amber-50/90 border border-amber-200/80 text-left">
+                        <Info className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                        <div className="text-xs text-amber-900 leading-relaxed">
+                          <span className="font-bold">No social accounts connected yet.</span>{" "}
+                          <span className="text-amber-800/80">
+                            You can easily link your Instagram, YouTube &amp; Facebook anytime from your Studio Settings to sync live follower numbers on your public page.
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <button
-                    type="button"
-                    onClick={copyLink}
-                    aria-label="Copy link"
-                    className="p-1.5 text-[#806F79] hover:text-[#7A2253] cursor-pointer"
-                  >
-                    <Copy className="h-4 w-4" />
-                  </button>
+
+                  {/* Staged Series Highlight (if any) */}
+                  {seriesName.trim() && (
+                    <div className="mt-4 p-3 rounded-xl bg-[#F8EFF4]/50 border border-[#E8DCE3] flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="h-8 w-8 rounded-lg bg-[#7A2253] text-white flex items-center justify-center shrink-0">
+                          <Clapperboard className="h-4 w-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] uppercase font-bold text-[#7A2253] tracking-wider">
+                            First Series Staged
+                          </p>
+                          <p className="text-xs font-bold text-[#281C25] truncate">
+                            {seriesName.trim()}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-[11px] font-semibold text-[#806F79] shrink-0">
+                        {videoLinks.filter((l) => l.trim()).length || 1} video(s)
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Shareable Link Box */}
+                  <div className="mt-4 p-3 sm:p-3.5 rounded-xl bg-[#F8EFF4]/80 border border-[#E8DCE3] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-bold text-[#806F79] uppercase tracking-wider">
+                        Your Official Inflixo Link
+                      </p>
+                      <p className="text-xs sm:text-sm font-bold text-[#7A2253] truncate mt-0.5">
+                        inflixo.com/{(username || profile.username || "yourname").toLowerCase()}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={copyLink}
+                        className="tap-scale px-3 py-1.5 rounded-lg bg-white border border-[#E8DCE3] hover:border-[#7A2253] text-xs font-bold text-[#281C25] hover:text-[#7A2253] transition-colors flex items-center gap-1.5 shadow-2xs cursor-pointer"
+                      >
+                        {copiedLink ? (
+                          <>
+                            <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" />
+                            <span className="text-emerald-700">Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="h-3.5 w-3.5 text-[#7A2253]" />
+                            <span>Copy Link</span>
+                          </>
+                        )}
+                      </button>
+                      <a
+                        href={`/${(username || profile.username || "creator").toLowerCase()}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="tap-scale px-3 py-1.5 rounded-lg bg-[#7A2253]/10 hover:bg-[#7A2253]/20 border border-[#7A2253]/20 text-xs font-bold text-[#7A2253] transition-colors flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <span>Preview Live</span>
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Status */}
-              <div className="flex items-center justify-center gap-1.5 text-xs text-[#806F79] pt-1">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                <span>Your profile and selected plan are ready.</span>
-              </div>
-
-              {/* Go to My Studio */}
-              <div className="pt-2">
+              {/* Action Buttons */}
+              <div className="pt-2 space-y-2.5">
                 <button
                   type="button"
                   onClick={handleGoToDashboard}
-                  className="w-full py-3 px-4 rounded-[5px] bg-[#7A2253] text-white text-xs sm:text-sm font-semibold hover:bg-[#661b44] transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                  className="tap-scale w-full py-3.5 px-6 rounded-xl bg-[#7A2253] hover:bg-[#661b44] text-white text-sm font-black shadow-lg shadow-[#7A2253]/25 transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01]"
                 >
                   <span>Go to My Studio</span>
                   <ArrowRight className="h-4 w-4" />
                 </button>
-              </div>
 
-              {/* Subtext */}
-              <p className="text-center text-xs text-[#806F79] pt-2">
-                This is your beginning. Make every story count.
-              </p>
+                <p className="text-center text-xs text-[#806F79] font-medium pt-1">
+                  This is your beginning. Make every story count.
+                </p>
+              </div>
             </div>
           )}
 
