@@ -15,6 +15,7 @@ import {
   Lock,
 } from "lucide-react";
 import { useToast } from "@/contexts/ToastContext";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 interface DomainConfig {
   customDomain: string | null;
@@ -40,6 +41,7 @@ export function CustomDomainCard() {
   const [verifying, setVerifying] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
   const [copiedTarget, setCopiedTarget] = useState(false);
+  const [showDisconnectModal, setShowDisconnectModal] = useState(false);
 
   async function fetchConfig() {
     try {
@@ -114,12 +116,8 @@ export function CustomDomainCard() {
     }
   }
 
-  async function handleDisconnectDomain() {
+  async function executeDisconnectDomain() {
     if (disconnecting) return;
-    if (!confirm("Are you sure you want to disconnect this custom domain? Your Inflixo profile will still remain available at inflixo.com/@username.")) {
-      return;
-    }
-
     setDisconnecting(true);
     try {
       const res = await fetch("/api/creator/domain", { method: "DELETE" });
@@ -279,7 +277,7 @@ export function CustomDomainCard() {
 
               <button
                 type="button"
-                onClick={handleDisconnectDomain}
+                onClick={() => setShowDisconnectModal(true)}
                 disabled={disconnecting}
                 title="Disconnect custom domain"
                 className="inline-flex items-center justify-center gap-1 rounded-[5px] border border-rose-200 bg-white hover:bg-rose-50 text-rose-700 text-xs font-semibold px-3 py-2 h-10 transition-all cursor-pointer"
@@ -342,6 +340,18 @@ export function CustomDomainCard() {
           </p>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={showDisconnectModal}
+        onClose={() => { if (!disconnecting) setShowDisconnectModal(false); }}
+        onConfirm={() => void executeDisconnectDomain()}
+        title="Disconnect custom domain?"
+        description={`Are you sure you want to disconnect "${config?.customDomain}"? Your profile will still remain available on Inflixo.`}
+        confirmText="Disconnect"
+        cancelText="Cancel"
+        loading={disconnecting}
+        isDestructive={true}
+      />
     </section>
   );
 }

@@ -20,6 +20,7 @@ import { Chip } from "@/components/ui/Chip";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ProductImage } from "@/components/products/ProductImage";
 import { ProductLimitModal } from "@/components/products/ProductLimitModal";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { useToast } from "@/contexts/ToastContext";
 import { getPlanQuota } from "@/services/subscriptionLimits";
 import { resizeImageToDataUrl } from "@/lib/imageResize";
@@ -79,6 +80,8 @@ export default function ProductsPage() {
   const [previewState, setPreviewState] = useState<"idle" | "loading" | "failed">("idle");
   const [searchQuery, setSearchQuery] = useState("");
   const [priceFocused, setPriceFocused] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<ShopProduct | null>(null);
+  const [deletingProduct, setDeletingProduct] = useState(false);
   const operation = useRef(false);
   const imageVersion = useRef(0);
   const previewController = useRef<AbortController | null>(null);
@@ -215,12 +218,16 @@ export default function ProductsPage() {
     }
   }
 
-  async function remove(product: ShopProduct) {
+  async function confirmDeleteProduct() {
+    if (!productToDelete || deletingProduct) return;
+    setDeletingProduct(true);
+    const product = productToDelete;
     const index = products.findIndex((item) => item.id === product.id);
     setProducts((items) => items.filter((item) => item.id !== product.id));
     try {
       await ProductService.remove(product.id);
       showToast("Product deleted", "success", { label: "Undo", onClick: () => void restore(product, index) }, 5000);
+      setProductToDelete(null);
     } catch (err) {
       setProducts((items) => {
         if (items.some((item) => item.id === product.id)) return items;
@@ -229,6 +236,8 @@ export default function ProductsPage() {
         return next;
       });
       showToast(err instanceof Error ? err.message : "Could not delete product.", "error");
+    } finally {
+      setDeletingProduct(false);
     }
   }
 
@@ -363,7 +372,7 @@ export default function ProductsPage() {
                       type="button"
                       aria-label={`Delete ${product.name}`}
                       title="Delete product"
-                      onClick={() => void remove(product)}
+                      onClick={() => setProductToDelete(product)}
                       className="h-8 w-8 rounded-[5px] border border-rose-200 bg-white hover:bg-rose-50 text-rose-600 flex items-center justify-center transition-colors cursor-pointer shrink-0"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -594,6 +603,18 @@ export default function ProductsPage() {
         used={used}
         limit={limit ?? used}
         plan={plan}
+      />
+
+      <ConfirmModal
+        isOpen={Boolean(productToDelete)}
+        onClose={() => { if (!deletingProduct) setProductToDelete(null); }}
+        onConfirm={() => void confirmDeleteProduct()}
+        title={`Delete "${productToDelete?.name}"?`}
+        description="Are you sure you want to delete this product? It will be removed from your store and public profile."
+        confirmText="Yes, Delete"
+        cancelText="Cancel"
+        loading={deletingProduct}
+        isDestructive={true}
       />
     </PageContainer>
   );

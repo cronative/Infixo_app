@@ -80,6 +80,8 @@ export default function MySeriesPage() {
 
   const [seriesToDelete, setSeriesToDelete] = useState<Series | null>(null);
   const [deletingSeries, setDeletingSeries] = useState(false);
+  const [episodeToDelete, setEpisodeToDelete] = useState<{ seriesId: string; episode: Episode } | null>(null);
+  const [deletingEpisode, setDeletingEpisode] = useState(false);
 
   const [limitModalOpen, setLimitModalOpen] = useState(false);
 
@@ -245,11 +247,15 @@ export default function MySeriesPage() {
     }
   };
 
-  // Instant Episode Delete + 5s Undo Toast
-  const handleDeleteEpisode = (seriesId: string, episode: Episode) => {
+  // Delete Episode with Confirmation
+  const handleConfirmDeleteEpisode = async () => {
+    if (!episodeToDelete || deletingEpisode) return;
+    setDeletingEpisode(true);
+    const { seriesId, episode } = episodeToDelete;
     const episodeId = episode.id;
 
     // Optimistically remove from state
+    const previous = [...seriesList];
     setSeriesList((prev) =>
       prev.map((s) => {
         if (s.id !== seriesId) return s;
@@ -262,53 +268,16 @@ export default function MySeriesPage() {
       })
     );
 
-    // Set 5s timer before executing API deletion
-    const timer = setTimeout(async () => {
-      pendingDeletesRef.current.delete(episodeId);
-      try {
-        await SeriesService.removeEpisode(episodeId);
-      } catch (err) {
-        console.error("Failed to delete episode from server:", err);
-      }
-    }, 5000);
-
-    pendingDeletesRef.current.set(episodeId, {
-      timer,
-      backup: episode,
-      seriesId,
-    });
-
-    // Show 5s Undo Toast
-    showToast(
-      `Deleted "${episode.title}"`,
-      "info",
-      {
-        label: "Undo",
-        onClick: () => {
-          // Cancel timer
-          const pending = pendingDeletesRef.current.get(episodeId);
-          if (pending) {
-            clearTimeout(pending.timer);
-            pendingDeletesRef.current.delete(episodeId);
-
-            // Restore episode back to list
-            setSeriesList((prev) =>
-              prev.map((s) => {
-                if (s.id !== seriesId) return s;
-                const eps = [...(s.seasons?.[0]?.episodes || [])];
-                eps.splice(episode.episodeNumber - 1, 0, episode);
-                return {
-                  ...s,
-                  seasons: [{ ...s.seasons[0], episodes: eps }],
-                };
-              })
-            );
-            showToast("Episode restored! ✨", "success");
-          }
-        },
-      },
-      5000
-    );
+    try {
+      await SeriesService.removeEpisode(episodeId);
+      showToast(`Episode "${episode.title}" deleted.`, "success");
+      setEpisodeToDelete(null);
+    } catch (err: any) {
+      setSeriesList(previous);
+      showToast(err.message || "Couldn't delete episode. Please try again.", "error");
+    } finally {
+      setDeletingEpisode(false);
+    }
   };
 
   // Inline Quick Add Episode (Paste link & press Enter)
@@ -818,10 +787,10 @@ export default function MySeriesPage() {
                                     </a>
                                   )}
 
-                                  {/* Instant delete with 5s undo */}
+                                  {/* Delete with confirmation */}
                                   <button
                                     type="button"
-                                    onClick={() => handleDeleteEpisode(series.id, ep)}
+                                    onClick={() => setEpisodeToDelete({ seriesId: series.id, episode: ep })}
                                     className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#6B6B76] hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100 cursor-pointer transition-colors"
                                     title="Delete episode"
                                   >
@@ -972,6 +941,19 @@ export default function MySeriesPage() {
         confirmText="Yes, Delete"
         cancelText="Cancel"
         loading={deletingSeries}
+        isDestructive={true}
+      />
+
+      {/* Delete Episode Confirmation Modal */}
+      <ConfirmModal
+        isOpen={Boolean(episodeToDelete)}
+        onClose={() => { if (!deletingEpisode) setEpisodeToDelete(null); }}
+        onConfirm={handleConfirmDeleteEpisode}
+        title={`Delete "${episodeToDelete?.episode?.title || "Episode"}"?`}
+        description="Are you sure you want to delete this episode? This video link will be removed from this series."
+        confirmText="Yes, Delete"
+        cancelText="Cancel"
+        loading={deletingEpisode}
         isDestructive={true}
       />
 
