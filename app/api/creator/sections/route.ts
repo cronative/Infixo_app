@@ -115,3 +115,6 @@ export async function POST(req: Request) {
     return apiError(err.message || "Failed to save sections", 500);
   }
 }
+
+export const PUT = POST;
+

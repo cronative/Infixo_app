@@ -71,30 +71,32 @@ export async function POST(req: Request) {
     if (auth.error) return auth.error;
     const body = await req.json();
 
-    if (body.action === "start_trial") {
+    if (body.action === "start_trial" || body.action === "activate" || (!body.action && body.planKey)) {
+      const planKey = body.planKey === "starter" ? "early_access" : (body.planKey || "early_access");
       const [rows]: any = await db.query("SELECT * FROM subscriptions WHERE creator_id = ? LIMIT 1", [auth.creator.id]);
       const existing = rows?.[0];
-      if (existing?.trial_started_at || (existing && existing.plan_key !== "early_access")) {
+      if (existing?.trial_started_at && body.action === "start_trial" && existing.plan_key !== "early_access") {
         return apiError("Free trial has already been used", 409);
       }
 
       const now = new Date();
       const trialEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+      const planName = getPlan(planKey).name;
       await db.query(
         `INSERT INTO subscriptions (
            creator_id, plan_key, plan_name, billing_cycle, status, activated_at,
            trial_started_at, trial_ends_at, current_period_started_at,
            current_period_ends_at, ends_at, payment_mode, auto_renew
-         ) VALUES (?, 'early_access', 'Free Trial', 'monthly', 'trial', ?, ?, ?, ?, ?, ?, 'free_trial', 0)
+         ) VALUES (?, ?, ?, 'monthly', 'trial', ?, ?, ?, ?, ?, ?, 'free_trial', 0)
          ON DUPLICATE KEY UPDATE
-           plan_key = 'early_access', plan_name = 'Free Trial', status = 'trial',
+           plan_key = VALUES(plan_key), plan_name = VALUES(plan_name), status = 'trial',
            activated_at = VALUES(activated_at), trial_started_at = VALUES(trial_started_at),
            trial_ends_at = VALUES(trial_ends_at), current_period_started_at = VALUES(current_period_started_at),
            current_period_ends_at = VALUES(current_period_ends_at), ends_at = VALUES(ends_at),
            payment_mode = 'free_trial', auto_renew = 0`,
-        [auth.creator.id, toMysqlDate(now), toMysqlDate(now), toMysqlDate(trialEnd), toMysqlDate(now), toMysqlDate(trialEnd), toMysqlDate(trialEnd)]
+        [auth.creator.id, planKey, planName, toMysqlDate(now), toMysqlDate(now), toMysqlDate(trialEnd), toMysqlDate(now), toMysqlDate(trialEnd), toMysqlDate(trialEnd)]
       );
-      return apiSuccess({}, "Free trial started");
+      return apiSuccess({ planKey, status: "trial" }, "Subscription plan activated");
     }
 
     if (body.action === "cancel") {

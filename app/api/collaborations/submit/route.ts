@@ -20,13 +20,13 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const username = body.username || body.creator_username;
+    const username = body.username || body.creator_username || body.creatorUsername;
     const passedCreatorId = body.creatorId || body.creator_id;
-    const senderName = body.senderName || body.contact_name;
-    const companyName = body.companyName || body.brand_name;
-    const email = body.email || body.contact_email;
+    const senderName = body.senderName || body.contact_name || body.name || body.contactPerson;
+    const companyName = body.companyName || body.brand_name || body.brandName;
+    const email = body.email || body.contact_email || body.contactEmail;
     const campaignType = body.campaignType || (Array.isArray(body.deliverables) ? body.deliverables.join(", ") : body.deliverables);
-    const approxBudget = body.approxBudget || body.budget_range;
+    const approxBudget = body.approxBudget || body.budget_range || body.budget;
     const message = body.message || (body.timeline ? `Timeline: ${body.timeline}` : "");
 
     if (!senderName || !senderName.trim()) {

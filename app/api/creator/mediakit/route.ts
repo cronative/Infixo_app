@@ -348,6 +348,7 @@ export async function POST(req: Request) {
 
     // Insert or Update each gig row with creator_id
     for (const pkg of incomingPackages) {
+      const gigId = pkg.id || `gig_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       const deliverablesJson = JSON.stringify(pkg.deliverables || []);
       const minPrice = pkg.minPrice || null;
       const maxPrice = pkg.maxPrice || null;
@@ -358,6 +359,7 @@ export async function POST(req: Request) {
       const turnaround = Number(pkg.turnaroundDays) || 2;
       const priceUnit = pkg.priceUnit || (pkg.title?.toLowerCase().includes("monthly") ? "per_month" : "per_package");
       const isStartingPrice = pkg.isStartingPrice ? 1 : 0;
+      const platform = pkg.platform || "instagram";
 
       await db.query(
         `INSERT INTO mediakit_gigs 
@@ -380,11 +382,11 @@ export async function POST(req: Request) {
            price_unit = VALUES(price_unit),
            is_starting_price = VALUES(is_starting_price)`,
         [
-          pkg.id,
+          gigId,
           resolvedCreatorId,
           resolvedEmail,
           pkg.title,
-          pkg.platform,
+          platform,
           pkg.price,
           minPrice,
           maxPrice,

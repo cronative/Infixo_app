@@ -9,12 +9,17 @@ export async function GET(req: Request) {
   try {
     await ensureCreatorSettingsTable();
 
-    const { searchParams } = new URL(req.url);
-    const email = searchParams.get("email");
-    const username = searchParams.get("username");
+    let { searchParams } = new URL(req.url);
+    let email = searchParams.get("email");
+    let username = searchParams.get("username");
 
     if (!email && !username) {
-      return apiError("Email or username parameter is required", 400);
+      const auth = await requireCreator(req);
+      if (!auth.error && auth.creator) {
+        email = auth.creator.email;
+      } else {
+        return apiError("Email or username parameter is required", 400);
+      }
     }
 
     // Resolve creator ID
@@ -124,3 +129,6 @@ export async function POST(req: Request) {
     return apiError(err.message || "Failed to save settings", 500);
   }
 }
+
+export const PUT = POST;
+

@@ -10,7 +10,7 @@ export async function PUT(req: NextRequest) {
     if (auth.error) return auth.error;
 
     const body = await req.json();
-    const { ids } = body;
+    const ids = body.ids || body.seriesIds;
 
     if (!Array.isArray(ids) || ids.length === 0) {
       return apiError("Array of series IDs is required", 400);
@@ -44,3 +44,5 @@ export async function PUT(req: NextRequest) {
     return apiError(err.message || "Failed to update series order", 500);
   }
 }
+
+export const POST = PUT;

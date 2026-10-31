@@ -43,3 +43,6 @@ export async function PUT(req: Request) {
     return errorResponse("SERVER_ERROR", "Could not save the new order.", 500);
   }
 }
+
+export const POST = PUT;
+

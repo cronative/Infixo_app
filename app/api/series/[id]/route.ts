@@ -4,6 +4,51 @@ import { requireCreator } from "@/lib/creatorAuth";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 
+// GET /api/series/:id (Get single series details)
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id: seriesId } = await context.params;
+    if (!seriesId) {
+      return apiError("Series ID is required", 400);
+    }
+
+    const [rows]: any = await db.query(
+      `SELECT s.*, 
+        COALESCE(
+          (SELECT JSON_ARRAYAGG(
+            JSON_OBJECT(
+              'id', e.id,
+              'episodeNumber', e.episode_number,
+              'title', e.title,
+              'externalUrl', e.external_url,
+              'platform', e.platform
+            )
+          ) FROM episodes e WHERE e.series_id = s.id ORDER BY e.episode_number ASC),
+          JSON_ARRAY()
+        ) as episodes
+       FROM series s WHERE s.id = ?`,
+      [seriesId]
+    );
+
+    if (!rows || rows.length === 0) {
+      return apiError("Series not found", 404);
+    }
+
+    const series = rows[0];
+    if (typeof series.episodes === "string") {
+      try { series.episodes = JSON.parse(series.episodes); } catch {}
+    }
+
+    return apiSuccess({ series }, "Series details retrieved successfully");
+  } catch (err: any) {
+    console.error("GET /api/series/:id error:", err);
+    return apiError(err.message || "Failed to fetch series", 500);
+  }
+}
+
 // PATCH /api/series/:id (Update series title, description, cover, genres, language, platform)
 export async function PATCH(
   req: NextRequest,

@@ -30,7 +30,7 @@ export async function PUT(
     }
 
     const body = await req.json();
-    const { ids } = body;
+    const ids = body.ids || body.episodeIds;
 
     if (!Array.isArray(ids) || ids.length === 0) {
       return apiError("Array of episode IDs is required", 400);
@@ -61,3 +61,5 @@ export async function PUT(
     return apiError(err.message || "Failed to update episode order", 500);
   }
 }
+
+export const POST = PUT;

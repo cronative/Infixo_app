@@ -93,11 +93,12 @@ export async function POST(req: Request) {
     }
 
     const b = brand || body;
-    if (!b.brandName || !b.brandName.trim()) {
+    const resolvedBrandName = (b.brandName || b.name || "").trim();
+    if (!resolvedBrandName) {
       return apiError("Brand name is required", 400);
     }
 
-    const finalLogoUrl = await saveBase64ImageToStorage(b.brandLogoUrl, "brands", "brand") || (b.brandLogoUrl && !b.brandLogoUrl.startsWith("data:") ? b.brandLogoUrl : null);
+    const finalLogoUrl = await saveBase64ImageToStorage(b.brandLogoUrl || b.logoUrl, "brands", "brand") || (b.brandLogoUrl && !b.brandLogoUrl.startsWith("data:") ? b.brandLogoUrl : null);
     const brandId = b.id || `br_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     await db.query(
       `INSERT INTO creator_brands (id, creator_id, brand_name, brand_logo_url, instagram_url, youtube_url, facebook_url, website_url, sort_order, is_active)
@@ -115,7 +116,7 @@ export async function POST(req: Request) {
       [
         brandId,
         targetId,
-        b.brandName.trim(),
+        resolvedBrandName,
         finalLogoUrl || null,
         sanitizeUrl(b.instagramUrl) || null,
         sanitizeUrl(b.youtubeUrl) || null,
