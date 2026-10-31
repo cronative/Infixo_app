@@ -107,7 +107,7 @@ export async function GET(req: Request) {
       } catch (e) {}
     }
 
-    const ALLOWED_LAYOUTS = ["default", "minimal", "creator", "spotlight", "studio"];
+    const ALLOWED_LAYOUTS = ["default", "minimal", "creator", "spotlight", "studio", "premium"];
     const layoutCandidate = creator.public_profile_layout || creator.settings_layout || visibilitySettings?.publicProfileLayout || "default";
     const publicProfileLayout = ALLOWED_LAYOUTS.includes(layoutCandidate) ? layoutCandidate : "default";
 

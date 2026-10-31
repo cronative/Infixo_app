@@ -1,8 +1,13 @@
 import { ThemeKey } from "@/types";
 import { ThemeCardProps } from "@/themes/types";
 import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
+import { PremiumProfileLayout } from "@/components/public/PremiumProfileLayout";
 
 export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
+  if (props.layoutMode === "premium") {
+    return <PremiumProfileLayout {...props} />;
+  }
+
   const {
     themeKey,
     profile,

@@ -63,7 +63,7 @@ export async function GET(req: Request) {
       }
     }
 
-    const ALLOWED_LAYOUTS = ["default", "minimal", "creator", "spotlight", "studio"];
+    const ALLOWED_LAYOUTS = ["default", "minimal", "creator", "spotlight", "studio", "premium"];
     if (!ALLOWED_LAYOUTS.includes(publicProfileLayout)) {
       publicProfileLayout = "default";
     }
@@ -94,7 +94,7 @@ export async function POST(req: Request) {
     const { visibilitySettings } = body;
     const creatorId = auth.creator.id;
 
-    const ALLOWED_LAYOUTS = ["default", "minimal", "creator", "spotlight", "studio"];
+    const ALLOWED_LAYOUTS = ["default", "minimal", "creator", "spotlight", "studio", "premium"];
     const layoutCandidate = body.publicProfileLayout || visibilitySettings?.publicProfileLayout;
     const safeLayout = ALLOWED_LAYOUTS.includes(layoutCandidate) ? layoutCandidate : "default";
 

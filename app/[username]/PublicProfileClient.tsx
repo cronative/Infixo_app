@@ -19,6 +19,7 @@ import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { CreatorPublicShell } from "@/components/public/CreatorPublicShell";
 import { getPlanQuota } from "@/services/subscriptionLimits";
+import { canUsePremiumLayout } from "@/config/plans";
 import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
 import { setPublicTrackContext, trackProfileView } from "@/lib/publicTrack";
 
@@ -97,6 +98,7 @@ export default function PublicProfileClient() {
   const [setupItems, setSetupItems] = useState<CreatorSetupItem[]>([]);
   const [otherSocials, setOtherSocials] = useState<any[]>([]);
   const [sections, setSections] = useState<any[]>([]);
+  const [subscription, setSubscription] = useState<any>(null);
   const [loaded, setLoaded] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [profilePrivate, setProfilePrivate] = useState(false);
@@ -153,6 +155,7 @@ export default function PublicProfileClient() {
         setSetupItems(EXPERT_DEMO_SETUP_ITEMS);
         setProducts(EXPERT_DEMO_PRODUCTS);
         setTheme(EXPERT_DEMO_THEME);
+        setSubscription({ planKey: "pro", status: "active" });
         setNotFound(false);
         setProfilePrivate(false);
         setLoaded(true);
@@ -183,6 +186,7 @@ export default function PublicProfileClient() {
         const isProfOk = profRes.status === 1 || profRes.success === true;
         const profile = profRes.data?.profile || profRes.profile;
         const subscription = profRes.data?.subscription || profRes.subscription;
+        setSubscription(subscription);
         const isPrivateRes =
           profRes.status === 0 &&
           (profRes.data?.isPrivate === true ||
@@ -497,6 +501,22 @@ export default function PublicProfileClient() {
   const handleStr = profile.username || decodeURIComponent(params.username ?? "username");
   const fullUrl = buildProfileUrl(handleStr);
 
+  const queryLayout = searchParams?.get("layout");
+  const creatorPlanKey = subscription?.planKey;
+  const isProOrVip = canUsePremiumLayout(creatorPlanKey);
+  const requestedPremium =
+    profile.publicProfileLayout === "premium" ||
+    (profile as any)?.visibilitySettings?.publicProfileLayout === "premium";
+
+  const effectiveLayoutMode: "tabs" | "premium" =
+    queryLayout === "premium"
+      ? "premium"
+      : queryLayout === "tabs"
+        ? "tabs"
+        : requestedPremium && isProOrVip
+          ? "premium"
+          : "tabs";
+
   async function handleShare() {
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
@@ -727,7 +747,7 @@ export default function PublicProfileClient() {
           totalAudience={totalAudience}
           variant="full"
           containedScroll={false}
-          layoutMode="tabs"
+          layoutMode={effectiveLayoutMode}
           initialTab={initialTab}
           seriesOpenMode="page"
           seriesPreviewLimit={5}

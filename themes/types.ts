@@ -49,7 +49,7 @@ export interface ThemeCardProps {
   linksOnlyMode?: boolean;
   pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   onShare?: () => void;
-  layoutMode?: "tabs" | "stacked";
+  layoutMode?: "tabs" | "stacked" | "premium";
   initialTab?: "about" | "watch" | "explore" | "work" | "collab" | "series" | "fanbase" | "links" | "shop" | "reviews" | "setup";
   hideFooter?: boolean;
 }
