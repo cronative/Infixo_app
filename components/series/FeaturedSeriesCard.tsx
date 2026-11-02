@@ -33,13 +33,16 @@ export interface FeaturedSeriesCardProps {
 function getPlatformIcon(platform: string) {
   const p = platform.toLowerCase();
   if (p.includes("youtube")) {
-    return <YoutubeIcon className={`h-2.5 w-2.5 sm:h-3 sm:w-3 ${BRAND_TEXT.youtube} shrink-0`} />;
+    return <YoutubeIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-red-500 shrink-0" />;
   }
   if (p.includes("instagram")) {
-    return <InstagramIcon className={`h-2.5 w-2.5 sm:h-3 sm:w-3 ${BRAND_TEXT.instagram} shrink-0`} />;
+    return <InstagramIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-pink-500 shrink-0" />;
   }
   if (p.includes("facebook")) {
-    return <FacebookIcon className={`h-2.5 w-2.5 sm:h-3 sm:w-3 ${BRAND_TEXT.facebook} shrink-0`} />;
+    return <FacebookIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-blue-500 shrink-0" />;
+  }
+  if (p.includes("mix") || p.includes("multi")) {
+    return <span className="text-[10px] leading-none shrink-0">✨</span>;
   }
   return null;
 }
@@ -77,27 +80,30 @@ export function FeaturedSeriesCard({
   // Wording: "1 episode" vs "5 episodes"
   const episodeText = `${episodesCount} ${episodesCount === 1 ? "episode" : "episodes"}`;
 
-  // Platform info formatted cleanly
-  const validPlatform =
-    detectedPlatform &&
-    detectedPlatform !== "Creator" &&
-    detectedPlatform !== "Multi-Platform"
-      ? detectedPlatform
-      : "";
+  // Meta line 1: "{n} episodes · {language}"
+  const line1 = [episodeText, series.language?.trim()].filter(Boolean).join(" · ");
 
-  // Meta line parts: "5 episodes · Hindi · Action · Instagram" (no empty dots)
-  const metaParts: { text: string; icon?: React.ReactNode }[] = [
-    { text: episodeText },
-    ...(series.genre && series.genre.trim()
-      ? [{ text: series.genre.trim() }]
-      : []),
-    ...(series.language && series.language.trim()
-      ? [{ text: series.language.trim() }]
-      : []),
-    ...(validPlatform
-      ? [{ text: validPlatform, icon: getPlatformIcon(validPlatform) }]
-      : []),
-  ];
+  // Platform info formatted cleanly
+  const platformName = (() => {
+    const p = (detectedPlatform || series.platform || "").toLowerCase();
+    if (p.includes("youtube")) return "YouTube";
+    if (p.includes("instagram")) return "Instagram";
+    if (p.includes("facebook")) return "Facebook";
+    if (p.includes("mix") || p.includes("multi")) return "Mix";
+    return detectedPlatform || series.platform || "YouTube";
+  })();
+
+  // Meta line 2: platform icon + name · first genre (+N if more). Mobile <=400px: hide genres.
+  const parsedGenres = (series.genre || "")
+    .split(",")
+    .map((g) => g.trim())
+    .filter(Boolean);
+
+  const firstGenre = parsedGenres[0] || "";
+  const remainingGenreCount = parsedGenres.length - 1;
+  const genreText = firstGenre
+    ? `${firstGenre}${remainingGenreCount > 0 ? ` (+${remainingGenreCount})` : ""}`
+    : "";
 
   const handleClick = (e: React.MouseEvent) => {
     if (onOpen && openMode === "internal") {
@@ -170,35 +176,34 @@ export function FeaturedSeriesCard({
           {/* Series Title: white, semibold, max 1 line with subtle text-shadow */}
           <h3
             style={{ textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}
-            className="text-base sm:text-lg font-semibold tracking-tight text-white truncate leading-snug drop-shadow-sm group-hover:text-(--accent-soft) transition-colors"
+            className="text-base sm:text-lg font-semibold tracking-tight text-white line-clamp-1 break-words leading-snug drop-shadow-sm group-hover:text-(--accent-soft) transition-colors"
           >
             {series.title}
           </h3>
 
-          {/* Bottom Row: Meta line & Pill CTA on ONE baseline */}
-          <div className="mt-1 flex items-center justify-between gap-2 w-full overflow-hidden">
-            {/* Meta Line: "5 episodes · Hindi · Instagram" (white/85 with text-shadow) */}
+          {/* Meta lines (max 2 lines) */}
+          <div className="mt-1 space-y-0.5 min-w-0">
+            {/* Line 1: {n} episodes · {language} */}
             <div
               style={{ textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}
-              className="text-[11px] sm:text-xs font-medium text-white/85 flex items-center gap-1.5 overflow-hidden min-w-0 truncate"
+              className="text-[11px] sm:text-xs font-medium text-white/85 line-clamp-1 break-words"
             >
-              {metaParts.map((part, idx) => (
-                <span key={idx} className="inline-flex items-center gap-1.5 truncate">
-                  {idx > 0 && <span className="opacity-50 font-normal">·</span>}
-                  {part.icon}
-                  <span className="truncate">{part.text}</span>
-                </span>
-              ))}
+              {line1}
             </div>
 
-            {/* Pill CTA: "▶ Watch" (<400px) or "▶ Start watching" (>=400px) */}
-            {SHOW_START_WATCHING && (
-              <span className="pointer-events-auto tap-scale inline-flex items-center justify-center gap-1.5 h-7 sm:h-8 px-2.5 sm:px-3.5 rounded-full bg-(--accent) hover:bg-(--accent-hover) text-(--on-accent) text-[11px] sm:text-xs font-bold shadow-md transition-all shrink-0 cursor-pointer whitespace-nowrap">
-                <Play className="h-2.5 w-2.5 sm:h-3 sm:w-3 fill-white text-white shrink-0" />
-                <span className="watch-text-short">Watch</span>
-                <span className="watch-text-long">Start watching</span>
-              </span>
-            )}
+            {/* Line 2: platform icon + name · first genre (+N if more). Mobile <=400px: hide genres */}
+            <div
+              style={{ textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}
+              className="text-[11px] sm:text-xs font-medium text-white/85 flex items-center gap-1.5 line-clamp-1 break-words min-w-0"
+            >
+              {getPlatformIcon(platformName)}
+              <span className="shrink-0">{platformName}</span>
+              {genreText && (
+                <span className="hidden min-[401px]:inline truncate">
+                  · {genreText}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </Link>

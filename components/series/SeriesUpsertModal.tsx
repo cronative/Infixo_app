@@ -89,6 +89,7 @@ export function SeriesUpsertModal({
 
   // Field touched & submit state for inline validation
   const [titleTouched, setTitleTouched] = useState(false);
+  const [genresTouched, setGenresTouched] = useState(false);
   const [touchedRows, setTouchedRows] = useState<
     Record<string, { number?: boolean; title?: boolean; url?: boolean }>
   >({});
@@ -102,6 +103,7 @@ export function SeriesUpsertModal({
     if (!isOpen) return;
 
     setTitleTouched(false);
+    setGenresTouched(false);
     setTouchedRows({});
     setSubmitted(false);
 
@@ -448,11 +450,18 @@ export function SeriesUpsertModal({
     ? "Series title must be 80 characters or less."
     : null;
 
+  const selectedGenresList = genres
+    .split(",")
+    .map((g) => g.trim())
+    .filter(Boolean);
+  const genresError = selectedGenresList.length === 0 ? "Pick at least 1 genre" : null;
+  const hasValidGenres = selectedGenresList.length >= 1 && selectedGenresList.length <= 3;
+
   const nonEmptyRows = rowValidations.filter((v) => !v.isEmpty);
   const hasAnyRowError = nonEmptyRows.some((v) => !v.isValid);
   const hasValidEpisodes = nonEmptyRows.length > 0 && !hasAnyRowError;
 
-  const isFormSubmittable = !seriesTitleError && Boolean(platform) && hasValidEpisodes;
+  const isFormSubmittable = !seriesTitleError && Boolean(platform) && hasValidGenres && hasValidEpisodes;
 
   // Save changes
   const handleSubmit = async (e: React.FormEvent) => {
@@ -472,6 +481,11 @@ export function SeriesUpsertModal({
 
       if (seriesTitleError) {
         showToast(seriesTitleError, "error");
+      } else if (!hasValidGenres) {
+        setGenresTouched(true);
+        showToast(genresError || "Pick at least 1 genre", "error");
+      } else if (!platform) {
+        showToast("Select a platform first.", "error");
       } else if (nonEmptyRows.length === 0) {
         showToast("At least 1 episode is required.", "error");
       } else {
@@ -588,10 +602,8 @@ export function SeriesUpsertModal({
         <ModalBody className="p-5 sm:p-6 space-y-4 flex-1 min-h-0 overflow-y-auto">
           {/* 1. Cover Image (Optional 16:9) */}
           <div>
-            <label className="block text-[13px] font-semibold text-[#0f172a] mb-1.5">
-              Cover Image <span className="text-[#94a3b8] font-normal">(Optional 16:9)</span>
-            </label>
             <SeriesCoverUpload
+              label="Cover image"
               value={coverUrl}
               onChange={(url) => setCoverUrl(url)}
             />
@@ -655,29 +667,28 @@ export function SeriesUpsertModal({
             />
           </div>
 
-          {/* 4. Genres (1-3, none preselected) & Language */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[13px] font-semibold text-[#0f172a] mb-1.5">
-                Genres <span className="text-[#94a3b8] font-normal">(Max 3)</span>
-              </label>
-              <GenreMultiSelect
-                value={genres}
-                onChange={(val) => setGenres(val)}
-              />
-            </div>
-            <div>
-              <label className="block text-[13px] font-semibold text-[#0f172a] mb-1.5">
-                Language
-              </label>
-              <LanguageSelect
-                value={language}
-                onChange={(val) => setLanguage(val)}
-              />
-            </div>
+          {/* 4. Genres (1-3, stacked full-width) */}
+          <div className={(genresTouched || submitted) && genresError ? "has-series-error" : ""}>
+            <GenreMultiSelect
+              value={genres}
+              onChange={(val) => {
+                setGenres(val);
+                setGenresTouched(true);
+              }}
+              error={(genresTouched || submitted) && genresError ? genresError : null}
+            />
           </div>
 
-          {/* 5. Platform Selector (Segmented 4 options: YouTube · Instagram · Facebook · Mix) */}
+          {/* 5. Language (stacked full-width) */}
+          <div>
+            <LanguageSelect
+              label="Language"
+              value={language}
+              onChange={(val) => setLanguage(val)}
+            />
+          </div>
+
+          {/* 6. Platform Selector (Segmented control: 2x2 grid on mobile, 4 columns on desktop) */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="block text-[13px] font-semibold text-[#0f172a]">
@@ -687,25 +698,31 @@ export function SeriesUpsertModal({
                 <span className="text-[11px] text-amber-600 font-medium">Select a platform first</span>
               )}
             </div>
-            <div className="grid grid-cols-4 gap-1.5 p-1 rounded-[5px] bg-slate-100 border border-slate-200">
+            <div
+              role="radiogroup"
+              aria-label="Series platform"
+              className="grid grid-cols-2 sm:grid-cols-4 rounded-[5px] border border-[#cbd5e1] bg-slate-100/80 overflow-hidden divide-x divide-y sm:divide-y-0 divide-[#cbd5e1] shadow-2xs"
+            >
               {(["YouTube", "Instagram", "Facebook", "Mix"] as EpisodePlatform[]).map((p) => {
                 const isSelected = platform === p;
                 return (
                   <button
                     key={p}
                     type="button"
+                    role="radio"
+                    aria-checked={isSelected}
                     disabled={saving}
                     onClick={() => handlePlatformChange(p)}
-                    className={`flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-[4px] transition-all cursor-pointer ${
+                    className={`flex items-center justify-center gap-2 py-2.5 px-3 text-xs sm:text-[13px] font-semibold transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7A2253]/30 z-10 ${
                       isSelected
-                        ? "bg-white text-[#7A2253] shadow-xs border border-slate-200/60"
-                        : "text-[#64748b] hover:text-[#0f172a] hover:bg-white/50"
+                        ? "bg-[#7A2253] text-white shadow-xs"
+                        : "bg-white text-[#475569] hover:bg-slate-100 hover:text-[#0f172a]"
                     }`}
                   >
-                    {p === "YouTube" && <YoutubeIcon className="h-3.5 w-3.5 text-red-500" />}
-                    {p === "Instagram" && <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />}
-                    {p === "Facebook" && <FacebookIcon className="h-3.5 w-3.5 text-blue-600" />}
-                    {p === "Mix" && <span className="text-[10px] font-bold">✨</span>}
+                    {p === "YouTube" && <YoutubeIcon className={`h-4 w-4 shrink-0 ${isSelected ? "text-white" : "text-red-500"}`} />}
+                    {p === "Instagram" && <InstagramIcon className={`h-4 w-4 shrink-0 ${isSelected ? "text-white" : "text-pink-500"}`} />}
+                    {p === "Facebook" && <FacebookIcon className={`h-4 w-4 shrink-0 ${isSelected ? "text-white" : "text-blue-600"}`} />}
+                    {p === "Mix" && <span className="text-xs leading-none shrink-0">✨</span>}
                     <span>{p}</span>
                   </button>
                 );
@@ -719,7 +736,7 @@ export function SeriesUpsertModal({
             )}
           </div>
 
-          {/* 6. Episodes Section (Disabled until a platform is selected) */}
+          {/* 7. Episodes Section (Disabled until a platform is selected) */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-[13px] font-semibold text-[#0f172a]">

@@ -28,13 +28,16 @@ export interface SeriesPosterCardProps {
 function getPlatformIcon(platform: string) {
   const p = platform.toLowerCase();
   if (p.includes("youtube")) {
-    return <YoutubeIcon className={`h-2.5 w-2.5 sm:h-3 sm:w-3 ${BRAND_TEXT.youtube} shrink-0`} />;
+    return <YoutubeIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-red-500 shrink-0" />;
   }
   if (p.includes("instagram")) {
-    return <InstagramIcon className={`h-2.5 w-2.5 sm:h-3 sm:w-3 ${BRAND_TEXT.instagram} shrink-0`} />;
+    return <InstagramIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-pink-500 shrink-0" />;
   }
   if (p.includes("facebook")) {
-    return <FacebookIcon className={`h-2.5 w-2.5 sm:h-3 sm:w-3 ${BRAND_TEXT.facebook} shrink-0`} />;
+    return <FacebookIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-blue-500 shrink-0" />;
+  }
+  if (p.includes("mix") || p.includes("multi")) {
+    return <span className="text-[10px] leading-none shrink-0">✨</span>;
   }
   return null;
 }
@@ -57,26 +60,27 @@ export function SeriesPosterCard({
   const seriesUrl = `/${creatorHandle}/series/${series.id}`;
 
   const episodeText = `${episodesCount} ${episodesCount === 1 ? "episode" : "episodes"}`;
-  const validPlatform =
-    detectedPlatform &&
-    detectedPlatform !== "Creator" &&
-    detectedPlatform !== "Multi-Platform"
-      ? detectedPlatform
-      : "";
+  const line1 = [episodeText, series.language?.trim()].filter(Boolean).join(" · ");
 
-  // Meta line parts: "5 episodes · Hindi · Action · YouTube" (no empty dots)
-  const metaParts: { text: string; icon?: React.ReactNode }[] = [
-    { text: episodeText },
-    ...(series.genre && series.genre.trim()
-      ? [{ text: series.genre.trim() }]
-      : []),
-    ...(series.language && series.language.trim()
-      ? [{ text: series.language.trim() }]
-      : []),
-    ...(validPlatform
-      ? [{ text: validPlatform, icon: getPlatformIcon(validPlatform) }]
-      : []),
-  ];
+  const platformName = (() => {
+    const p = (detectedPlatform || series.platform || "").toLowerCase();
+    if (p.includes("youtube")) return "YouTube";
+    if (p.includes("instagram")) return "Instagram";
+    if (p.includes("facebook")) return "Facebook";
+    if (p.includes("mix") || p.includes("multi")) return "Mix";
+    return detectedPlatform || series.platform || "YouTube";
+  })();
+
+  const parsedGenres = (series.genre || "")
+    .split(",")
+    .map((g) => g.trim())
+    .filter(Boolean);
+
+  const firstGenre = parsedGenres[0] || "";
+  const remainingGenreCount = parsedGenres.length - 1;
+  const genreText = firstGenre
+    ? `${firstGenre}${remainingGenreCount > 0 ? ` (+${remainingGenreCount})` : ""}`
+    : "";
 
   const handleClick = (e: React.MouseEvent) => {
     if (onOpen && openMode === "internal") {
@@ -93,7 +97,7 @@ export function SeriesPosterCard({
     <Link
       href={seriesUrl}
       onClick={handleClick}
-      className="group relative block w-full aspect-[3/1] rounded-xl overflow-hidden bg-(--accent) border border-(--surface-border)/[0.06] shadow-xs hover:shadow-md transition-all duration-300 focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden text-left select-none"
+      className="group relative block w-full aspect-[16/7] sm:aspect-[3/1] rounded-xl overflow-hidden bg-(--accent) border border-(--surface-border)/[0.06] shadow-xs hover:shadow-md transition-all duration-300 focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden text-left select-none"
     >
       {/* Background Poster Image or Fallback */}
       {hasPoster ? (
@@ -124,26 +128,34 @@ export function SeriesPosterCard({
 
       {/* Content on Poster: Bottom Left */}
       <div className="absolute inset-x-0 bottom-0 p-2 sm:p-3 flex flex-col justify-end text-left z-10 pointer-events-none">
-        {/* Series Title: white, semibold, max 1 line with text shadow */}
+        {/* Series Title: white, semibold, line-clamp-1 with text shadow */}
         <h3
           style={{ textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}
-          className="text-sm sm:text-base font-semibold tracking-tight text-white truncate leading-snug drop-shadow-sm group-hover:text-(--accent-soft) transition-colors"
+          className="text-sm sm:text-base font-semibold tracking-tight text-white line-clamp-1 break-words leading-snug drop-shadow-sm group-hover:text-(--accent-soft) transition-colors"
         >
           {series.title}
         </h3>
 
-        {/* Meta Line: "5 episodes · Hindi · YouTube" (white/85 with text shadow) */}
-        <div
-          style={{ textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}
-          className="text-[10px] sm:text-xs font-medium text-white/85 mt-0.5 flex items-center gap-1.5 overflow-hidden min-w-0 truncate"
-        >
-          {metaParts.map((part, idx) => (
-            <span key={idx} className="inline-flex items-center gap-1.5 truncate">
-              {idx > 0 && <span className="opacity-50 font-normal">·</span>}
-              {part.icon}
-              <span className="truncate">{part.text}</span>
-            </span>
-          ))}
+        {/* Meta Lines: max 2 lines. Line 1: {n} episodes · {language}. Line 2: platform · first genre (+N). Mobile <=400px: hide genres */}
+        <div className="mt-0.5 space-y-0.5 min-w-0">
+          <div
+            style={{ textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}
+            className="text-[10px] sm:text-xs font-medium text-white/85 line-clamp-1 break-words"
+          >
+            {line1}
+          </div>
+          <div
+            style={{ textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}
+            className="text-[10px] sm:text-xs font-medium text-white/85 flex items-center gap-1.5 line-clamp-1 break-words min-w-0"
+          >
+            {getPlatformIcon(platformName)}
+            <span className="shrink-0">{platformName}</span>
+            {genreText && (
+              <span className="hidden min-[401px]:inline truncate">
+                · {genreText}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </Link>

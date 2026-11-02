@@ -4,7 +4,7 @@ import type { CreatorProduct } from "@/types";
 import { formatProductPrice } from "@/components/products/ProductImage";
 import { ProductGrid, ProductGridCard } from "@/components/products/ProductGridCard";
 
-import { useState, useEffect, useRef, Fragment, useMemo } from "react";
+import { useState, useEffect, useRef, Fragment, useMemo, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -663,26 +663,31 @@ export function LivePreviewCard({
   const [expandedSeriesMap, setExpandedSeriesMap] = useState<Record<string, boolean>>(() => {
     return series && series.length > 0 ? { [series[0].id]: true } : {};
   });
-  const [seriesFilter, setSeriesFilter] = useState<string>("all");
-  const seriesPlatformCounts = useMemo(() => {
-    const counts: Record<string, number> = { youtube: 0, instagram: 0, facebook: 0 };
-    (series || []).forEach((s) => {
-      const allEps = getSeriesEpisodes(s);
-      const firstUrl = (allEps[0]?.externalUrl || "").toLowerCase();
-      const p = (s.platform || "").toLowerCase();
-      if (p.includes("youtube") || firstUrl.includes("youtube.com") || firstUrl.includes("youtu.be")) {
-        counts.youtube = (counts.youtube || 0) + 1;
-      } else if (p.includes("instagram") || firstUrl.includes("instagram.com")) {
-        counts.instagram = (counts.instagram || 0) + 1;
-      } else if (p.includes("facebook") || firstUrl.includes("facebook.com")) {
-        counts.facebook = (counts.facebook || 0) + 1;
-      }
-    });
-    return counts;
-  }, [series]);
+  const getCanonicalSeriesPlatform = useCallback((s: Series): "YouTube" | "Instagram" | "Facebook" | "Mix" => {
+    const p = (s.platform || "").trim().toLowerCase();
+    if (p === "mix" || p.includes("mix") || p.includes("multi")) return "Mix";
+    if (p.includes("youtube")) return "YouTube";
+    if (p.includes("instagram")) return "Instagram";
+    if (p.includes("facebook")) return "Facebook";
 
-  const distinctPlatformCount = Object.values(seriesPlatformCounts).filter((c) => c > 0).length;
-  const showPlatformChips = (series || []).length > 6 && distinctPlatformCount >= 2;
+    const allEps = getSeriesEpisodes(s);
+    const firstUrl = (allEps[0]?.externalUrl || "").toLowerCase();
+    if (firstUrl.includes("youtube.com") || firstUrl.includes("youtu.be")) return "YouTube";
+    if (firstUrl.includes("instagram.com")) return "Instagram";
+    if (firstUrl.includes("facebook.com") || firstUrl.includes("fb.watch")) return "Facebook";
+    return "YouTube";
+  }, []);
+
+  const [seriesFilter, setSeriesFilter] = useState<string>("All");
+
+  const availableSeriesPlatforms = useMemo(() => {
+    const set = new Set<"YouTube" | "Instagram" | "Facebook" | "Mix">();
+    (series || []).forEach((s) => {
+      set.add(getCanonicalSeriesPlatform(s));
+    });
+    const order: ("YouTube" | "Instagram" | "Facebook" | "Mix")[] = ["YouTube", "Instagram", "Facebook", "Mix"];
+    return order.filter((p) => set.has(p));
+  }, [series, getCanonicalSeriesPlatform]);
 
   const [seriesSortOrder, setSeriesSortOrder] = useState<string>("latest");
   const [shopSortOrder, setShopSortOrder] = useState<string>("latest");
@@ -2838,46 +2843,25 @@ export function LivePreviewCard({
               secondaryTextColor={c.secondaryText}
               headingFontFamily={typ.headingFontFamily}
               action={
-                seriesOnlyMode && series.length >= 2 ? (
-                  <div className="relative shrink-0">
-                    <select
-                      value={seriesSortOrder}
-                      onChange={(e) => setSeriesSortOrder(e.target.value)}
-                      aria-label="Sort series"
-                      className="appearance-none bg-(--card-bg) border border-(--surface-border) rounded-[5px] text-[11px] sm:text-xs font-medium text-(--text) py-1 pl-2.5 pr-6 cursor-pointer focus:outline-hidden hover:border-(--surface-border) transition-colors shadow-none"
-                    >
-                      <option value="latest">Latest First</option>
-                      <option value="oldest">Oldest First</option>
-                      <option value="episodes">Most Episodes</option>
-                    </select>
-                    <ChevronDown className="h-3 w-3 text-(--icon) absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  </div>
-                ) : showPlatformChips ? (
-                  <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                    {[
-                      { key: "all", label: "All" },
-                      { key: "youtube", label: "YouTube" },
-                      { key: "instagram", label: "Instagram" },
-                      { key: "facebook", label: "Facebook" },
-                    ]
-                      .filter((chip) => chip.key === "all" || (seriesPlatformCounts[chip.key] || 0) > 0)
-                      .map((chip) => {
-                        const isActive = seriesFilter === chip.key;
-                        return (
-                          <button
-                            key={chip.key}
-                            type="button"
-                            onClick={() => setSeriesFilter(chip.key)}
-                            className={`px-2.5 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer ${
-                              isActive
-                                ? "bg-(--accent) text-(--on-accent) shadow-xs"
-                                : "bg-black/5  text-(--text)  hover:bg-black/10 "
-                            }`}
-                          >
-                            {chip.label}
-                          </button>
-                        );
-                      })}
+                availableSeriesPlatforms.length > 0 ? (
+                  <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                    {["All", ...availableSeriesPlatforms].map((plat) => {
+                      const isActive = seriesFilter.toLowerCase() === plat.toLowerCase();
+                      return (
+                        <button
+                          key={plat}
+                          type="button"
+                          onClick={() => setSeriesFilter(plat)}
+                          className={`tap-scale px-2.5 py-1 text-[11px] sm:text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap shrink-0 border ${
+                            isActive
+                              ? "bg-(--accent) text-(--on-accent) border-(--accent) shadow-xs"
+                              : "bg-(--card-bg) text-(--text-muted) border-(--surface-border) hover:text-(--text) hover:bg-(--surface)"
+                          }`}
+                        >
+                          {plat}
+                        </button>
+                      );
+                    })}
                   </div>
                 ) : undefined
               }
@@ -2906,38 +2890,25 @@ export function LivePreviewCard({
               </div>
             ) : (
               <div className="space-y-3">
-                {displayedSeries
-                  .filter((s) => {
-                    if (seriesFilter === "all") return true;
-                    const p = (s.platform || "").toLowerCase();
-                    const allEps = getSeriesEpisodes(s);
-                    const firstUrl = (allEps[0]?.externalUrl || "").toLowerCase();
-                    return p.includes(seriesFilter) || firstUrl.includes(seriesFilter);
-                  })
-                  .sort((a, b) => {
-                    if (seriesSortOrder === "oldest") {
-                      return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
-                    }
-                    if (seriesSortOrder === "episodes") {
-                      return getSeriesEpisodes(b).length - getSeriesEpisodes(a).length;
-                    }
-                    return 0; // maintain natural curated order by default
-                  })
-                  .map((s, idx) => {
+                {(() => {
+                  const filtered = displayedSeries.filter((s) => {
+                    if (seriesFilter.toLowerCase() === "all") return true;
+                    const canonical = getCanonicalSeriesPlatform(s);
+                    return canonical.toLowerCase() === seriesFilter.toLowerCase();
+                  });
+
+                  if (filtered.length === 0) {
+                    return (
+                      <div className="rounded-[5px] border border-dashed border-(--surface-border) p-6 text-center text-xs text-(--text-muted)">
+                        No {seriesFilter} series found.
+                      </div>
+                    );
+                  }
+
+                  return filtered.map((s, idx) => {
                     const allEps = getSeriesEpisodes(s);
                     const epCount = allEps.length;
-                    const firstEpUrl = allEps[0]?.externalUrl || "";
-                    const detectedPlatform = (() => {
-                      const p = (s.platform || "").toLowerCase();
-                      const u = (firstEpUrl || "").toLowerCase();
-                      if (p.includes("creator")) return "Creator";
-                      if (p.includes("multi") || p.includes("mix")) return "Multi-Platform";
-                      if (p.includes("youtube") || u.includes("youtube.com") || u.includes("youtu.be")) return "YouTube";
-                      if (p.includes("instagram") || u.includes("instagram.com")) return "Instagram";
-                      if (p.includes("facebook") || u.includes("facebook.com")) return "Facebook";
-                      if (s.platform && s.platform.trim()) return s.platform.trim();
-                      return "YouTube";
-                    })();
+                    const detectedPlatform = getCanonicalSeriesPlatform(s);
 
                     if (idx === 0) {
                       return (
@@ -2990,7 +2961,8 @@ export function LivePreviewCard({
                         }}
                       />
                     );
-                  })}
+                  });
+                })()}
               </div>
             )}
 

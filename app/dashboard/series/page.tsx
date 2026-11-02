@@ -602,7 +602,7 @@ export default function MySeriesPage() {
                 className="flex items-center justify-between gap-3 p-3 sm:p-4 cursor-pointer hover:bg-slate-50/70 transition-colors select-none"
               >
                 {/* Left: Drag handle + Cover + Title + Stats */}
-                <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                   {/* Drag Handle */}
                   <div
                     onClick={(e) => e.stopPropagation()}
@@ -613,7 +613,7 @@ export default function MySeriesPage() {
                   </div>
 
                   {/* 16:9 96px Cover Thumbnail or Platform Icon */}
-                  <div className="relative h-14 w-24 shrink-0 rounded-[5px] bg-slate-100 overflow-hidden border border-[#ECECF0]">
+                  <div className="relative h-12 w-20 sm:h-14 sm:w-24 shrink-0 rounded-[5px] bg-slate-100 overflow-hidden border border-[#ECECF0]">
                     {coverImg && !failedCovers.has(series.id) ? (
                       <img
                         src={coverImg}
@@ -630,15 +630,34 @@ export default function MySeriesPage() {
                   </div>
 
                   {/* Title & Info */}
-                  <div className="min-w-0 flex-1">
-                    <h2 className="flex items-center gap-1.5 min-w-0 text-[14px] font-semibold text-[#18181B]">
+                  <div className="min-w-0 flex-1 text-left">
+                    <h2 className="text-[13.5px] sm:text-[14px] font-semibold text-[#18181B] leading-snug">
                       <span className="line-clamp-2 break-words" title={series.title}>{series.title}</span>
-                      {seriesList.indexOf(series) >= getPlanQuota(subscription?.planKey).maxSeries && <OverLimitBadge />}
+                      {seriesList.indexOf(series) >= getPlanQuota(subscription?.planKey).maxSeries && (
+                        <OverLimitBadge className="ml-1.5 inline-block align-middle" />
+                      )}
                     </h2>
-                    <p className="text-[12px] text-[#6B6B76] line-clamp-2 break-words mt-0.5">
-                      {episodes.length} {episodes.length === 1 ? "episode" : "episodes"} ·{" "}
-                      {series.language || "Hindi"} · {series.platform || "YouTube"}
-                    </p>
+                    <div className="mt-1 block text-[11.5px] sm:text-[12px] text-[#6B6B76] leading-normal break-words">
+                      <span>
+                        {episodes.length} {episodes.length === 1 ? "episode" : "episodes"} ·{" "}
+                        {series.language || "Hindi"} · {series.platform || "YouTube"}
+                      </span>
+                      {series.genre && series.genre.trim() ? (
+                        <span> · {series.genre.trim()}</span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSeriesToEdit(series);
+                            setUpsertModalOpen(true);
+                          }}
+                          className="inline-flex items-center gap-0.5 text-[#7A2253] font-semibold hover:underline ml-1 cursor-pointer"
+                        >
+                          + Add genre
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
 
