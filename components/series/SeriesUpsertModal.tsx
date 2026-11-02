@@ -447,8 +447,8 @@ export function SeriesUpsertModal({
   const seriesTitleError = !title.trim()
     ? "Series title is required."
     : title.trim().length > 80
-    ? "Series title must be 80 characters or less."
-    : null;
+      ? "Series title must be 80 characters or less."
+      : null;
 
   const selectedGenresList = genres
     .split(",")
@@ -460,7 +460,6 @@ export function SeriesUpsertModal({
   const nonEmptyRows = rowValidations.filter((v) => !v.isEmpty);
   const hasAnyRowError = nonEmptyRows.some((v) => !v.isValid);
   const hasValidEpisodes = nonEmptyRows.length > 0 && !hasAnyRowError;
-
   const isFormSubmittable = !seriesTitleError && Boolean(platform) && hasValidGenres && hasValidEpisodes;
 
   // Save changes
@@ -588,155 +587,159 @@ export function SeriesUpsertModal({
   return (
     <>
       <Modal
-      isOpen={isOpen}
-      onClose={() => {
-        if (!saving) onClose();
-      }}
-      size="lg"
-      title={isEditing ? "Edit Series Details" : "Create New Series"}
-      description={isEditing ? "Update your series info and episodes." : "Add a video series with episodes for your audience."}
-      icon={<Film className="h-5 w-5" />}
-      showCloseButton={!saving}
-    >
-      <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
-        <ModalBody className="p-5 sm:p-6 space-y-4 flex-1 min-h-0 overflow-y-auto">
-          {/* 1. Cover Image (Optional 16:9) */}
-          <div>
-            <SeriesCoverUpload
-              label="Cover image"
-              value={coverUrl}
-              onChange={(url) => setCoverUrl(url)}
-            />
-          </div>
-
-          {/* 2. Series Title (required, max 80) */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-[13px] font-semibold text-[#0f172a]">
-                Series Title <span className="text-rose-500">*</span>
-              </label>
-              <span className="text-[11px] text-[#94a3b8] tabular-nums">
-                {title.length}/80
-              </span>
-            </div>
-            <div
-              className={`flex items-center rounded-[5px] border ${
-                (titleTouched || submitted) && seriesTitleError
-                  ? "border-rose-500 bg-rose-50/20 focus-within:border-rose-600 has-series-error"
-                  : "border-[#e2e8f0] focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10"
-              } bg-white overflow-hidden transition-colors`}
-            >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
-                <Film className="h-4 w-4" />
-              </span>
-              <input
-                type="text"
-                maxLength={80}
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                onBlur={() => setTitleTouched(true)}
-                placeholder="e.g. 3 Days Street Food Challenge"
-                className="flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
-                disabled={saving}
-                autoFocus
+        isOpen={isOpen}
+        onClose={() => {
+          if (!saving) onClose();
+        }}
+        size="lg"
+        title={isEditing ? "Edit Series Details" : "Create New Series"}
+        description={isEditing ? "Update your series info and episodes." : "Add a video series with episodes for your audience."}
+        icon={<Film className="h-5 w-5" />}
+        showCloseButton={!saving}
+      >
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <ModalBody className="p-5 sm:p-6 space-y-4 flex-1 min-h-0 overflow-y-auto">
+            {/* 1. Cover Image (Optional 16:9) */}
+            <div>
+              <SeriesCoverUpload
+                label="Cover image"
+                value={coverUrl}
+                onChange={(url) => setCoverUrl(url)}
               />
             </div>
-            {(titleTouched || submitted) && seriesTitleError && (
-              <p className="mt-1 text-xs text-rose-500 font-medium">{seriesTitleError}</p>
-            )}
-          </div>
 
-          {/* 3. Short description (max 160) */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-[13px] font-semibold text-[#0f172a]">
-                Short Description <span className="text-[#94a3b8] font-normal">(Optional)</span>
-              </label>
-              <span className="text-[11px] text-[#94a3b8] tabular-nums">
-                {description.length}/160
-              </span>
-            </div>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value.slice(0, 160))}
-              placeholder="Short description of this series..."
-              rows={2}
-              maxLength={160}
-              disabled={saving}
-              className="w-full rounded-[5px] border border-[#e2e8f0] bg-white px-3 py-2 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 resize-none"
-            />
-          </div>
-
-          {/* 4. Genres (1-3, stacked full-width) */}
-          <div className={(genresTouched || submitted) && genresError ? "has-series-error" : ""}>
-            <GenreMultiSelect
-              value={genres}
-              onChange={(val) => {
-                setGenres(val);
-                setGenresTouched(true);
-              }}
-              error={(genresTouched || submitted) && genresError ? genresError : null}
-            />
-          </div>
-
-          {/* 5. Language (stacked full-width) */}
-          <div>
-            <LanguageSelect
-              label="Language"
-              value={language}
-              onChange={(val) => setLanguage(val)}
-            />
-          </div>
-
-          {/* 6. Platform Selector (Segmented control: 2x2 grid on mobile, 4 columns on desktop) */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-[13px] font-semibold text-[#0f172a]">
-                Platform <span className="text-rose-500">*</span>
-              </label>
-              {!platform && (
-                <span className="text-[11px] text-amber-600 font-medium">Select a platform first</span>
+            {/* 2. Series Title (required, max 80) */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[13px] font-semibold text-[#0f172a]">
+                  Series Title <span className="text-rose-500">*</span>
+                </label>
+                <span className="text-[11px] text-[#94a3b8] tabular-nums">
+                  {title.length}/80
+                </span>
+              </div>
+              <div
+                className={`flex items-center rounded-[5px] border ${(titleTouched || submitted) && seriesTitleError
+                    ? "border-rose-500 bg-rose-50/20 focus-within:border-rose-600 has-series-error"
+                    : "border-[#e2e8f0] focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10"
+                  } bg-white overflow-hidden transition-colors`}
+              >
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                  <Film className="h-4 w-4" />
+                </span>
+                <input
+                  type="text"
+                  maxLength={80}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  onBlur={() => setTitleTouched(true)}
+                  placeholder="e.g. 3 Days Street Food Challenge"
+                  className="flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  disabled={saving}
+                  autoFocus
+                />
+              </div>
+              {(titleTouched || submitted) && seriesTitleError && (
+                <p className="mt-1 text-xs text-rose-500 font-medium">{seriesTitleError}</p>
               )}
             </div>
-            <div
-              role="radiogroup"
-              aria-label="Series platform"
-              className="grid grid-cols-2 sm:grid-cols-4 rounded-[5px] border border-[#cbd5e1] bg-slate-100/80 overflow-hidden divide-x divide-y sm:divide-y-0 divide-[#cbd5e1] shadow-2xs"
-            >
-              {(["YouTube", "Instagram", "Facebook", "Mix"] as EpisodePlatform[]).map((p) => {
-                const isSelected = platform === p;
-                return (
-                  <button
-                    key={p}
-                    type="button"
-                    role="radio"
-                    aria-checked={isSelected}
-                    disabled={saving}
-                    onClick={() => handlePlatformChange(p)}
-                    className={`flex items-center justify-center gap-2 py-2.5 px-3 text-xs sm:text-[13px] font-semibold transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7A2253]/30 z-10 ${
-                      isSelected
-                        ? "bg-[#7A2253] text-white shadow-xs"
-                        : "bg-white text-[#475569] hover:bg-slate-100 hover:text-[#0f172a]"
-                    }`}
-                  >
-                    {p === "YouTube" && <YoutubeIcon className={`h-4 w-4 shrink-0 ${isSelected ? "text-white" : "text-red-500"}`} />}
-                    {p === "Instagram" && <InstagramIcon className={`h-4 w-4 shrink-0 ${isSelected ? "text-white" : "text-pink-500"}`} />}
-                    {p === "Facebook" && <FacebookIcon className={`h-4 w-4 shrink-0 ${isSelected ? "text-white" : "text-blue-600"}`} />}
-                    {p === "Mix" && <span className="text-xs leading-none shrink-0">✨</span>}
-                    <span>{p}</span>
-                  </button>
-                );
-              })}
-            </div>
-            {platformSwitchError && (
-              <p className="mt-1.5 text-xs text-rose-500 font-medium flex items-center gap-1">
-                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                <span>{platformSwitchError}</span>
-              </p>
-            )}
-          </div>
 
-          {/* 7. Episodes Section (Disabled until a platform is selected) */}
+            {/* 3. Short description (max 160) */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[13px] font-semibold text-[#0f172a]">
+                  Short Description <span className="text-[#94a3b8] font-normal">(Optional)</span>
+                </label>
+                <span className="text-[11px] text-[#94a3b8] tabular-nums">
+                  {description.length}/160
+                </span>
+              </div>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value.slice(0, 160))}
+                placeholder="Short description of this series..."
+                rows={2}
+                maxLength={160}
+                disabled={saving}
+                className="w-full rounded-[5px] border border-[#e2e8f0] bg-white px-3 py-2 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 resize-none"
+              />
+            </div>
+
+            {/* 4. Genres (1-3, stacked full-width) */}
+            <div className={(genresTouched || submitted) && genresError ? "has-series-error" : ""}>
+              <GenreMultiSelect
+                value={genres}
+                onChange={(val) => {
+                  setGenres(val);
+                  setGenresTouched(true);
+                }}
+                error={(genresTouched || submitted) && genresError ? genresError : null}
+              />
+            </div>
+
+            {/* 5. Language (stacked full-width) */}
+            <div>
+              <LanguageSelect
+                value={language}
+                onChange={(val) => setLanguage(val)}
+              />
+            </div>
+
+              {/* 6. Platform Selector (Segmented control: 2x2 grid on mobile, 4 columns on desktop) */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-[13px] font-semibold text-[#0f172a]">
+                    Platform <span className="text-rose-500">*</span>
+                  </label>
+                  {!platform && (
+                    <span className="text-[11px] text-amber-600 font-medium">Select a platform first</span>
+                  )}
+                </div>
+                <div
+                  role="radiogroup"
+                  aria-label="Series platform"
+                  className="grid grid-cols-2 sm:grid-cols-4 rounded-[5px] border border-[#cbd5e1] bg-slate-100/80 overflow-hidden divide-x divide-y sm:divide-y-0 divide-[#cbd5e1] shadow-2xs"
+                >
+                  {(["YouTube", "Instagram", "Facebook", "Mix"] as EpisodePlatform[]).map((p) => {
+                    const isSelected = platform === p;
+                    return (
+                      <button
+                        key={p}
+                        type="button"
+                        role="radio"
+                        aria-checked={isSelected}
+                        disabled={saving}
+                        onClick={() => handlePlatformChange(p)}
+                        className={`flex items-center justify-center gap-2 py-2.5 px-3 text-xs sm:text-[13px] font-semibold transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7A2253]/30 z-10 ${
+                          isSelected
+                            ? "bg-[#7A2253] text-white shadow-xs"
+                            : "bg-white text-[#475569] hover:bg-slate-100 hover:text-[#0f172a]"
+                        }`}
+                      >
+                        {p === "YouTube" && (
+                          <YoutubeIcon className={`h-4 w-4 shrink-0 ${isSelected ? "text-white" : "text-red-500"}`} />
+                        )}
+                        {p === "Instagram" && (
+                          <InstagramIcon className={`h-4 w-4 shrink-0 ${isSelected ? "text-white" : "text-pink-500"}`} />
+                        )}
+                        {p === "Facebook" && (
+                          <FacebookIcon className={`h-4 w-4 shrink-0 ${isSelected ? "text-white" : "text-blue-600"}`} />
+                        )}
+                        {p === "Mix" && <span className="text-xs leading-none shrink-0">✨</span>}
+                        <span>{p}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {platformSwitchError && (
+                  <p className="mt-1.5 text-xs text-rose-500 font-medium flex items-center gap-1">
+                    <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                    <span>{platformSwitchError}</span>
+                  </p>
+                )}
+              </div>
+
+              {/* 7. Episodes Section (Disabled until a platform is selected) */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-[13px] font-semibold text-[#0f172a]">
@@ -933,7 +936,7 @@ export function SeriesUpsertModal({
             )}
             <button
               type="submit"
-              disabled={saving || !isFormSubmittable}
+              disabled={saving}
               className="h-10 inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] px-5 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 hover:opacity-95 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {saving ? (
@@ -950,16 +953,16 @@ export function SeriesUpsertModal({
       </form>
     </Modal>
 
-    <ConfirmModal
-      isOpen={Boolean(platformConfirmTarget)}
-      onClose={() => setPlatformConfirmTarget(null)}
-      onConfirm={confirmPlatformSwitch}
-      title={`Switch platform to ${platformConfirmTarget}?`}
-      description={`Changing the series platform to ${platformConfirmTarget} will remove any episode links that don't match ${platformConfirmTarget}.`}
-      confirmText="Yes, switch platform"
-      cancelText="Cancel"
-      isDestructive={true}
-    />
-  </>
+      <ConfirmModal
+        isOpen={Boolean(platformConfirmTarget)}
+        onClose={() => setPlatformConfirmTarget(null)}
+        onConfirm={confirmPlatformSwitch}
+        title={`Switch platform to ${platformConfirmTarget}?`}
+        description={`Changing the series platform to ${platformConfirmTarget} will remove any episode links that don't match ${platformConfirmTarget}.`}
+        confirmText="Yes, switch platform"
+        cancelText="Cancel"
+        isDestructive={true}
+      />
+    </>
   );
 }
