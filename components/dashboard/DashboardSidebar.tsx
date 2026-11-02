@@ -110,7 +110,7 @@ const SIDEBAR_GROUPS: { id: string; title: string; items: NavItemConfig[] }[] = 
       },
       {
         href: "/dashboard/setup",
-        label: "Gear & Tools",
+        label: "My Setup",
         subtitle: "Show your creator setup",
         icon: Laptop,
       },

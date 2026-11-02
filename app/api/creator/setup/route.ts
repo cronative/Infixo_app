@@ -20,8 +20,12 @@ interface CreatorSetupRow extends RowDataPacket {
   name: string;
   brand: string | null;
   modelOrPlan: string | null;
+  usingSince: string | null;
   usedFor: string | null;
   note: string | null;
+  whyLoveIt: string | null;
+  budgetAlt: string | null;
+  isAffiliate: number | boolean | null;
   linkUrl: string | null;
   imageUrl: string | null;
   sortOrder: number | null;
@@ -36,8 +40,12 @@ interface SetupItemPayload {
   name?: string;
   brand?: string;
   modelOrPlan?: string;
+  usingSince?: string;
   usedFor?: string;
   note?: string;
+  whyLoveIt?: string;
+  budgetAlt?: string;
+  isAffiliate?: boolean;
   linkUrl?: string;
   imageUrl?: string | null;
   sortOrder?: number;
@@ -50,6 +58,7 @@ interface SetupPostBody extends SetupItemPayload {
   action?: string;
   item?: SetupItemPayload;
   items?: Array<{ id?: string }>;
+  whereIStarted?: string;
 }
 
 function getErrorMessage(err: unknown) {
@@ -89,21 +98,37 @@ export async function GET(req: Request) {
 
     const [rows] = await db.query<CreatorSetupRow[]>(
       `SELECT id, creator_id AS creatorId, category, item_name AS name, brand,
-              model_or_plan AS modelOrPlan, used_for AS usedFor, note, link_url AS linkUrl,
-              image_url AS imageUrl, sort_order AS sortOrder, is_active AS isActive,
-              created_at AS createdAt, updated_at AS updatedAt
+              model_or_plan AS modelOrPlan, using_since AS usingSince, used_for AS usedFor,
+              note, why_love_it AS whyLoveIt, budget_alt AS budgetAlt, is_affiliate AS isAffiliate,
+              link_url AS linkUrl, image_url AS imageUrl, sort_order AS sortOrder,
+              is_active AS isActive, created_at AS createdAt, updated_at AS updatedAt
        FROM creator_setup_items
        WHERE creator_id = ?
        ORDER BY sort_order ASC, created_at ASC`,
       [targetId]
     );
 
+    let whereIStarted: string | null = null;
+    try {
+      const [settingsRows]: any = await db.query(
+        "SELECT where_i_started FROM creator_setup_settings WHERE creator_id = ? LIMIT 1",
+        [targetId]
+      );
+      if (settingsRows && settingsRows[0]) {
+        whereIStarted = settingsRows[0].where_i_started || null;
+      }
+    } catch {}
+
     const items = rows.map((item) => ({
       ...item,
       brand: item.brand || "",
-      modelOrPlan: item.modelOrPlan || "",
+      modelOrPlan: item.modelOrPlan || item.usingSince || "",
+      usingSince: item.usingSince || item.modelOrPlan || "",
       usedFor: item.usedFor || "",
       note: item.note || "",
+      whyLoveIt: item.whyLoveIt || item.note || item.usedFor || "",
+      budgetAlt: item.budgetAlt || "",
+      isAffiliate: Boolean(item.isAffiliate),
       linkUrl: sanitizeUrl(item.linkUrl, { allowEmpty: true }) || "",
       imageUrl: item.imageUrl || null,
       sortOrder: Number(item.sortOrder || 0),
@@ -115,24 +140,48 @@ export async function GET(req: Request) {
       items.splice(getPlanLimit(await getCreatorPlanKey(targetId), "gearItems"));
     }
 
-    return apiSuccess({ items }, "Setup items retrieved successfully");
+    return apiSuccess({ items, settings: { whereIStarted } }, "Setup items retrieved successfully");
   } catch (err: unknown) {
     console.error("GET creator setup error:", err);
     return apiError(getErrorMessage(err), 500);
   }
 }
 
-// POST /api/creator/setup (Add/Update/Reorder setup items)
+// POST /api/creator/setup (Add/Update/Reorder setup items, save intro)
 export async function POST(req: Request) {
   try {
     const auth = await requireCreator(req);
     if (auth.error) return auth.error;
     const body = (await req.json()) as SetupPostBody;
-    const { action, item, items } = body;
+    const { action, item, items, whereIStarted } = body;
 
     await ensureCreatorSetupTable();
 
     const targetId = auth.creator.id;
+
+    if (action === "save_intro" || (whereIStarted !== undefined && action === undefined && !item && !body.name)) {
+      const cleanIntro = (whereIStarted || "").trim().slice(0, 150);
+      await db.query(
+        `INSERT INTO creator_setup_settings (creator_id, where_i_started)
+         VALUES (?, ?)
+         ON DUPLICATE KEY UPDATE where_i_started = VALUES(where_i_started), updated_at = NOW()`,
+        [targetId, cleanIntro || null]
+      );
+      return apiSuccess({ whereIStarted: cleanIntro }, "Setup intro saved");
+    }
+
+    if (action === "toggle_active" && body.id) {
+      await db.query(
+        "UPDATE creator_setup_items SET is_active = NOT is_active WHERE id = ? AND creator_id = ?",
+        [body.id, targetId]
+      );
+      return apiSuccess({}, "Setup item visibility toggled");
+    }
+
+    if (action === "delete" && body.id) {
+      await db.query("DELETE FROM creator_setup_items WHERE id = ? AND creator_id = ?", [body.id, targetId]);
+      return apiSuccess({}, "Setup item deleted");
+    }
 
     if (action === "reorder" && Array.isArray(items)) {
       for (let i = 0; i < items.length; i++) {
@@ -165,17 +214,25 @@ export async function POST(req: Request) {
       if (existingRows.length >= getPlanLimit(planKey, "gearItems")) return limitReachedError("gearItems", planKey);
     }
 
+    const cleanWhyLoveIt = (setupItem.whyLoveIt || setupItem.note || setupItem.usedFor || "").trim().slice(0, 120);
+    const cleanBudgetAlt = (setupItem.budgetAlt || "").trim().slice(0, 80);
+    const cleanUsingSince = (setupItem.usingSince || setupItem.modelOrPlan || "").trim();
+
     await db.query(
       `INSERT INTO creator_setup_items
-       (id, creator_id, category, item_name, brand, model_or_plan, used_for, note, link_url, image_url, sort_order, is_active)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       (id, creator_id, category, item_name, brand, model_or_plan, using_since, used_for, note, why_love_it, budget_alt, is_affiliate, link_url, image_url, sort_order, is_active)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
          category = VALUES(category),
          item_name = VALUES(item_name),
          brand = VALUES(brand),
          model_or_plan = VALUES(model_or_plan),
+         using_since = VALUES(using_since),
          used_for = VALUES(used_for),
          note = VALUES(note),
+         why_love_it = VALUES(why_love_it),
+         budget_alt = VALUES(budget_alt),
+         is_affiliate = VALUES(is_affiliate),
          link_url = VALUES(link_url),
          image_url = VALUES(image_url),
          sort_order = VALUES(sort_order),
@@ -187,9 +244,13 @@ export async function POST(req: Request) {
         setupItem.category.trim(),
         setupItem.name.trim(),
         (setupItem.brand || "").trim() || null,
-        (setupItem.modelOrPlan || "").trim() || null,
-        (setupItem.usedFor || "").trim() || null,
-        (setupItem.note || "").trim() || null,
+        cleanUsingSince || null,
+        cleanUsingSince || null,
+        cleanWhyLoveIt || null,
+        cleanWhyLoveIt || null,
+        cleanWhyLoveIt || null,
+        cleanBudgetAlt || null,
+        setupItem.isAffiliate ? 1 : 0,
         sanitizeUrl(setupItem.linkUrl) || null,
         finalImageUrl || null,
         Number(setupItem.sortOrder || 0),

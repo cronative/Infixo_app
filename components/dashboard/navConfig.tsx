@@ -64,7 +64,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/dashboard/mediakit", label: "Media Kit & Rates", subtitle: "Show your services & pricing", icon: Briefcase },
       { href: "/dashboard/team", label: "Team", subtitle: "Manage collaborators", icon: Users },
-      { href: "/dashboard/setup", label: "Gear & Tools", subtitle: "Show your creator setup", icon: Laptop },
+      { href: "/dashboard/setup", label: "My Setup", subtitle: "Show your creator setup", icon: Laptop },
     ],
   },
   {

@@ -781,14 +781,22 @@ export interface CreatorSetupItem {
   name: string;
   brand?: string;
   modelOrPlan?: string;
+  usingSince?: string;
   usedFor?: string;
   note?: string;
+  whyLoveIt?: string;
+  budgetAlt?: string;
+  isAffiliate?: boolean;
   linkUrl?: string;
   imageUrl?: string | null;
   sortOrder: number;
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface CreatorSetupSettings {
+  whereIStarted?: string | null;
 }
 
 // ---------------------------------------------------------------------------

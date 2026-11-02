@@ -363,6 +363,23 @@ async function migrateDatabase(target) {
       await addColumnIfMissing("team_members", "inflixo_username", "VARCHAR(100) DEFAULT NULL");
     }
 
+    // 019: Setup items & intro fields
+    const [setupTables] = await connection.query("SHOW TABLES LIKE 'creator_setup_items'");
+    if (setupTables.length) {
+      await addColumnIfMissing("creator_setup_items", "why_love_it", "VARCHAR(255) DEFAULT NULL");
+      await addColumnIfMissing("creator_setup_items", "budget_alt", "VARCHAR(255) DEFAULT NULL");
+      await addColumnIfMissing("creator_setup_items", "is_affiliate", "TINYINT(1) NOT NULL DEFAULT 0");
+      await addColumnIfMissing("creator_setup_items", "using_since", "VARCHAR(100) DEFAULT NULL");
+    }
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS creator_setup_settings (
+        creator_id VARCHAR(64) PRIMARY KEY,
+        where_i_started VARCHAR(255) DEFAULT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    `);
+
     console.log(`✅ ${target.name} migrated successfully.`);
   } finally {
     await connection.end();

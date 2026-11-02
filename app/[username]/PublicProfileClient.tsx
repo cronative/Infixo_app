@@ -96,6 +96,7 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
   const [collaborations, setCollaborations] = useState<any[]>([]);
   const [products, setProducts] = useState<CreatorProduct[]>([]);
   const [setupItems, setSetupItems] = useState<CreatorSetupItem[]>([]);
+  const [setupSettings, setSetupSettings] = useState<{ whereIStarted?: string | null }>({});
   const [otherSocials, setOtherSocials] = useState<any[]>([]);
   const [sections, setSections] = useState<any[]>([]);
   const [subscription, setSubscription] = useState<any>(null);
@@ -338,6 +339,10 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
           const setupItems = setupRes.data?.items || setupRes.items;
           if ((setupRes.status === 1 || setupRes.success) && Array.isArray(setupItems)) {
             setSetupItems(setupItems);
+          }
+          const setupSettingsData = setupRes.data?.settings || setupRes.settings;
+          if (setupSettingsData) {
+            setSetupSettings(setupSettingsData);
           }
 
           const otherSocials = otherSocRes.data?.otherSocials || otherSocRes.otherSocials;
@@ -743,6 +748,7 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
           series={series}
           products={products}
           setupItems={setupItems}
+          setupSettings={setupSettings}
           customLinks={customLinks}
           mediaKitPackages={mediaKitPackages}
           mediaKitSettings={mediaKitSettings}

@@ -66,6 +66,7 @@ import { BrandLogosWrap } from "@/components/collab/BrandLogosWrap";
 import { CollabEnquirySheet } from "@/components/collab/CollabEnquirySheet";
 import { MediaKitV2Content } from "@/components/mediakit/MediaKitV2Content";
 import { PublicTeamGroups } from "@/components/team/PublicTeamGroups";
+import { PublicSetupGroups, PublicSetupCard } from "@/components/setup/PublicSetupGroups";
 import { EmptyProfileCard } from "@/components/public/EmptyProfileCard";
 import {
   CreatorProfile,
@@ -380,6 +381,9 @@ export interface LivePreviewCardProps {
   linksOnlyMode?: boolean;
   mediaKitOnlyMode?: boolean;
   teamOnlyMode?: boolean;
+  setupOnlyMode?: boolean;
+  setupSettings?: { whereIStarted?: string | null };
+  allSetupHref?: string;
   /** Secondary public page (series list, reviews, products): compact creator header instead of the full profile header. */
   pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   showSettingsIcon?: boolean;
@@ -632,6 +636,8 @@ export function LivePreviewCard({
   linksOnlyMode = false,
   mediaKitOnlyMode = false,
   teamOnlyMode = false,
+  setupOnlyMode = false,
+  setupSettings,
   pageHeader,
   showSettingsIcon: showSettingsIconProp,
   onShare,
@@ -641,6 +647,7 @@ export function LivePreviewCard({
   isFinishStep: isFinishStepProp,
   layoutMode = "tabs",
   allLinksHref,
+  allSetupHref,
   initialTab,
   landingDemo = false,
 }: LivePreviewCardProps) {
@@ -648,7 +655,7 @@ export function LivePreviewCard({
   const profile: CreatorProfile = incomingProfile || EMPTY_PROFILE_FALLBACK;
   const socials: SocialAccounts = incomingSocials || EMPTY_SOCIAL_ACCOUNTS;
   const series: Series[] = incomingSeries || [];
-  const isListingPage = Boolean(seriesOnlyMode || productsOnlyMode || reviewsOnlyMode || linksOnlyMode || mediaKitOnlyMode || teamOnlyMode);
+  const isListingPage = Boolean(seriesOnlyMode || productsOnlyMode || reviewsOnlyMode || linksOnlyMode || mediaKitOnlyMode || teamOnlyMode || setupOnlyMode);
   const isPremiumLayout = !isListingPage && (layoutMode === "premium" || layoutMode === "stacked");
   const effectiveSeriesPreviewLimit = isPremiumLayout ? 3 : seriesPreviewLimit;
   const displayedSeries = typeof effectiveSeriesPreviewLimit === "number" ? series.slice(0, effectiveSeriesPreviewLimit) : series;
@@ -1048,6 +1055,15 @@ export function LivePreviewCard({
           showReviews: false,
         }
       : teamOnlyMode
+        ? {
+          ...visibilitySettings,
+          showFanbase: false,
+          showCustomLinks: false,
+          showCollabGigs: false,
+          showSeries: false,
+          showReviews: false,
+        }
+      : setupOnlyMode
         ? {
           ...visibilitySettings,
           showFanbase: false,
@@ -2253,18 +2269,51 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {/* 9. Tools I Use Section */}
-        {!isListingPage && (isPremiumLayout || (!isTabsLayout ? true : activeNavTab === "about")) && (() => {
-          const activeSetupItems = (setupList || []).filter((it) => it.isActive !== false);
-          if (activeSetupItems.length === 0 && !isDashboardPreview) return null;
-          const visibleSetupItems = isSetupExpanded ? activeSetupItems : activeSetupItems.slice(0, 4);
+        {/* 9. My Setup Section (on About tab or standalone setupOnlyMode) */}
+        {(setupOnlyMode || (!isListingPage && (isPremiumLayout || (!isTabsLayout ? true : activeNavTab === "about")))) && (() => {
+          const activeSetupItems = (setupList || []).filter((it) => it.isActive !== false && it.name?.trim());
+          if (activeSetupItems.length === 0 && !isDashboardPreview && !setupOnlyMode) return null;
+
+          const cleanHandle = (profile.username || "").replace(/^@/, "");
+          const setupHref = allSetupHref || (cleanHandle ? `/${cleanHandle}/setup` : "/dashboard/setup");
+
+          if (setupOnlyMode) {
+            return (
+              <div id="setup-section" className="relative z-10 w-full text-left animate-fade-in order-[5] mt-1 sm:mt-1.5 space-y-4">
+                <PublicSetupGroups
+                  items={activeSetupItems}
+                  variant="standalone"
+                  whereIStarted={setupSettings?.whereIStarted}
+                  primaryTextColor={c.primaryText}
+                  secondaryTextColor={c.secondaryText}
+                  mutedTextColor={c.mutedText}
+                  accentColor={c.accent}
+                  borderColor={c.border}
+                  cardBgColor={c.profileBackground}
+                  isInformational={isInformationalMode}
+                />
+              </div>
+            );
+          }
+
+          // About tab: show 4 items + "See full setup →"
+          const displayItems = activeSetupItems.slice(0, 4);
 
           return (
-            <div id="tools-section" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[5] mt-5 sm:mt-6 space-y-3" : isTabsLayout ? "order-[4] mt-1.5 sm:mt-2 space-y-2" : "order-[5] mt-6 sm:mt-7 space-y-2"}`}>
+            <div
+              id="setup-section"
+              className={`relative z-10 w-full text-left animate-fade-in ${
+                isPremiumLayout
+                  ? "order-[5] mt-5 sm:mt-6 space-y-3"
+                  : isTabsLayout
+                  ? "order-[4] mt-1.5 sm:mt-2 space-y-2"
+                  : "order-[5] mt-6 sm:mt-7 space-y-2"
+              }`}
+            >
               {isPremiumLayout && (
                 <TabSectionHeader
-                  title="Tools I Use"
-                  subtitle="A few tools I use to create my content."
+                  title="My Setup"
+                  subtitle={setupSettings?.whereIStarted || "The tools, gear and software behind my content."}
                   action={
                     <span
                       style={{
@@ -2289,27 +2338,26 @@ export function LivePreviewCard({
                 }}
                 className="rounded-[5px] border overflow-hidden text-left shadow-none"
               >
-                {/* Compact theme-tinted header (shown in tabs layout to avoid duplicate header in premium) */}
                 {!isPremiumLayout && (
                   <div
                     style={{
                       backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
                       borderColor: "var(--surface-border)",
                     }}
-                    className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
+                    className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between gap-2"
                   >
                     <div>
                       <div className="flex items-center gap-2">
-                        <Camera className="h-4 w-4 text-(--accent-text) shrink-0" />
+                        <Laptop className="h-4 w-4 text-(--accent-text) shrink-0" />
                         <h2
                           style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
                           className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
                         >
-                          Tools I Use
+                          My Setup
                         </h2>
                       </div>
                       <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
-                        A few tools I use to create my content.
+                        {setupSettings?.whereIStarted?.trim() || "The tools, gear and software behind my content."}
                       </p>
                     </div>
                     <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
@@ -2318,71 +2366,34 @@ export function LivePreviewCard({
                   </div>
                 )}
 
-                {/* Body: Individual horizontal cards with 5px radius and ~8px gap */}
-                <div className="p-2 sm:p-2.5 space-y-2">
-                  {visibleSetupItems.map((item) => (
-                    <a
+                {/* 4 items grid using compact cards */}
+                <div className="p-2 sm:p-2.5 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {displayItems.map((item) => (
+                    <PublicSetupCard
                       key={item.id}
-                      href={item.linkUrl || "#"}
-                      target={item.linkUrl ? "_blank" : undefined}
-                      rel="noopener noreferrer"
-                      onClick={(e) => {
-                        if (isInformationalMode) {
-                          e.preventDefault();
-                          showToast(`Viewing setup item: ${item.name}`);
-                        } else if (item.linkUrl) {
-                          trackPublicEvent("setup_click", String(item.id));
-                        }
-                      }}
-                      style={{
-                        backgroundColor: "transparent",
-                        borderColor: "var(--surface-border)",
-                      }}
-                      className="rounded-[5px] border p-2.5 sm:p-3 flex items-center justify-between gap-2.5 transition-colors hover:border-(--surface-border)/40 cursor-pointer text-left group"
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                        <div
-                          style={{
-                            backgroundColor: "color-mix(in srgb, var(--accent) 8%, var(--surface))",
-                            borderColor: "var(--surface-border)",
-                          }}
-                          className="h-9 w-9 rounded-[5px] border flex items-center justify-center shrink-0 text-(--accent-text)"
-                        >
-                          <Camera className="h-4 w-4 stroke-[1.75]" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div
-                            style={{ color: c.primaryText }}
-                            className="text-[13px] font-medium leading-[18px] truncate group-hover:text-(--accent-text) transition-colors text-(--text)"
-                          >
-                            {item.name}
-                          </div>
-                          <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[17px] text-(--text-muted) mt-0.5 truncate">
-                            {item.usedFor || item.note || item.modelOrPlan || item.brand}
-                          </p>
-                        </div>
-                      </div>
-                      <ExternalLink className="h-3 w-3 text-(--text-muted) group-hover:text-(--text) shrink-0 transition-colors" />
-                    </a>
+                      item={item}
+                      primaryTextColor={c.primaryText}
+                      secondaryTextColor={c.secondaryText}
+                      mutedTextColor={c.mutedText}
+                      accentColor={c.accent}
+                      borderColor={c.border}
+                      cardBgColor={c.profileBackground}
+                      isInformational={isInformationalMode}
+                    />
                   ))}
                 </div>
 
-                {activeSetupItems.length > 4 && (
-                  <div style={{ borderColor: "var(--surface-border)" }} className="border-t">
-                    <button
-                      type="button"
-                      onClick={() => setIsSetupExpanded(!isSetupExpanded)}
-                      className="w-full py-2 px-3 text-xs font-semibold text-(--text) hover:opacity-80 flex items-center justify-center gap-1.5 transition-opacity cursor-pointer text-center"
-                    >
-                      <span>{isSetupExpanded ? "Show Less" : `View All Items (${activeSetupItems.length})`}</span>
-                      {isSetupExpanded ? (
-                        <ChevronUp className="h-3.5 w-3.5 shrink-0" />
-                      ) : (
-                        <ArrowRight className="h-3.5 w-3.5 shrink-0" />
-                      )}
-                    </button>
-                  </div>
-                )}
+                {/* Bottom link: "See full setup →" */}
+                <div style={{ borderColor: "var(--surface-border)" }} className="border-t">
+                  <Link
+                    href={setupHref}
+                    className="w-full py-2.5 px-3 text-xs font-bold flex items-center justify-center gap-1.5 transition-opacity hover:opacity-80 text-center cursor-pointer"
+                    style={{ color: c.accent }}
+                  >
+                    <span>See full setup</span>
+                    <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+                  </Link>
+                </div>
               </div>
             </div>
           );
@@ -3772,48 +3783,38 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {/* 5. Creator Setups Section (Rendered in Tabular/Landing view; Premium layout uses dedicated Tools I Use) */}
-        {!isListingPage && !isPremiumLayout && (landingDemo ? (!isTabsLayout || activeNavTab === "shop") : (activeNavTab === "setup")) && (
+        {/* 5. Creator Setups Section for landing demo if activeNavTab === "shop" */}
+        {!isListingPage && !isPremiumLayout && landingDemo && activeNavTab === "shop" && (
           (() => {
             const activeSetupItems = (setupList || []).filter((it) => it.isActive !== false);
             if (activeSetupItems.length === 0) return null;
             const visibleSetupItems = isSetupExpanded ? activeSetupItems : activeSetupItems.slice(0, 3);
 
             return (
-              <div id="setup-section" className={`relative z-10 ${isPremiumLayout ? "order-[5] mt-4 sm:mt-5 space-y-2" : isTabsLayout ? "order-[4] mt-1.5 sm:mt-2 space-y-2" : "order-[45] mt-6 sm:mt-7 space-y-2.5"} w-full text-left animate-fade-in`}>
-                {isPremiumLayout ? (
-                  <TabSectionHeader
-                    title="Creator Setups"
-                    subtitle="Tools & gear I use to create."
-                    primaryTextColor={c.primaryText}
-                    secondaryTextColor={c.secondaryText}
-                    headingFontFamily={typ.headingFontFamily}
-                  />
-                ) : (
-                  <div>
-                    <div className="flex items-center justify-between px-0.5">
-                      <div className="flex items-center gap-2">
-                        <Laptop className="h-4.5 w-4.5 text-(--accent-text) shrink-0" />
-                        <h2
-                          style={{
-                            color: c.primaryText,
-                            fontFamily: typ.headingFontFamily,
-                            fontWeight: 800,
-                          }}
-                          className="text-lg sm:text-xl font-extrabold tracking-tight"
-                        >
-                          {landingDemo ? "My Setup & Shop" : "My Setup"}
-                        </h2>
-                      </div>
+              <div id="setup-section" className="relative z-10 order-[45] mt-6 sm:mt-7 space-y-2.5 w-full text-left animate-fade-in">
+                <div>
+                  <div className="flex items-center justify-between px-0.5">
+                    <div className="flex items-center gap-2">
+                      <Laptop className="h-4.5 w-4.5 text-(--accent-text) shrink-0" />
+                      <h2
+                        style={{
+                          color: c.primaryText,
+                          fontFamily: typ.headingFontFamily,
+                          fontWeight: 800,
+                        }}
+                        className="text-lg sm:text-xl font-extrabold tracking-tight"
+                      >
+                        My Setup &amp; Shop
+                      </h2>
                     </div>
-                    <p
-                      style={{ color: c.secondaryText }}
-                      className="text-xs sm:text-[13px] text-(--text-muted) font-normal px-0.5 mt-1"
-                    >
-                      {landingDemo ? "Gear I use & products I've made." : "Tools & gear I use to create."}
-                    </p>
                   </div>
-                )}
+                  <p
+                    style={{ color: c.secondaryText }}
+                    className="text-xs sm:text-[13px] text-(--text-muted) font-normal px-0.5 mt-1"
+                  >
+                    Gear I use &amp; products I&apos;ve made.
+                  </p>
+                </div>
 
                 <div className="w-full pt-1">
                   <ProductGrid>
@@ -3823,7 +3824,8 @@ export function LivePreviewCard({
                         name={item.name}
                         imageUrl={item.imageUrl}
                         href={item.linkUrl}
-                        note={item.usedFor || item.modelOrPlan || item.brand}
+                        note={item.whyLoveIt || item.usedFor || item.modelOrPlan || item.brand}
+                        isAffiliate={item.isAffiliate}
                         onClick={(e) => {
                           if (isInformationalMode) e.preventDefault();
                           else trackPublicEvent("setup_click", String(item.id));

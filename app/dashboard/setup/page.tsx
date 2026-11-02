@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo, ChangeEvent } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Laptop,
   Plus,
@@ -35,6 +36,7 @@ import {
   Cloud,
   ShoppingBag,
   MoreHorizontal,
+  ArrowUpRight,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -147,9 +149,10 @@ const DEFAULT_SETUP_ITEMS: CreatorSetupItem[] = [
     category: "Camera / Phone",
     name: "A7 III",
     brand: "SONY",
-    modelOrPlan: "2023",
-    usedFor: "shoot the video",
-    note: "Best camera for vlogging and cinematic shots.",
+    usingSince: "2023",
+    whyLoveIt: "Best camera for vlogging, low light and cinematic 4K shots.",
+    budgetAlt: "Sony ZV-E10 or your phone with a basic gimbal",
+    isAffiliate: true,
     linkUrl: "https://amazon.com",
     imageUrl: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&auto=format&fit=crop&q=80",
     sortOrder: 0,
@@ -161,9 +164,10 @@ const DEFAULT_SETUP_ITEMS: CreatorSetupItem[] = [
     category: "Microphone",
     name: "VideoMic Pro",
     brand: "RØDE",
-    modelOrPlan: "2023",
-    usedFor: "clear audio recording",
-    note: "Great mic for outdoor and indoor shoots.",
+    usingSince: "2023",
+    whyLoveIt: "Crystal clear audio recording for all outdoor and indoor shoots.",
+    budgetAlt: "Boya BY-M1 lapel microphone",
+    isAffiliate: true,
     linkUrl: "https://amazon.com",
     imageUrl: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=400&auto=format&fit=crop&q=80",
     sortOrder: 1,
@@ -173,11 +177,11 @@ const DEFAULT_SETUP_ITEMS: CreatorSetupItem[] = [
     id: "setup_manfrotto",
     creatorId: "demo",
     category: "Tripod / Stand",
-    name: "Tripod",
+    name: "Carbon Tripod",
     brand: "Manfrotto",
-    modelOrPlan: "2022",
-    usedFor: "stable shots",
-    note: "Perfect for travel and studio setups.",
+    usingSince: "2022",
+    whyLoveIt: "Lightweight and rock-solid for studio and travel setups.",
+    isAffiliate: false,
     linkUrl: "https://amazon.com",
     imageUrl: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=400&auto=format&fit=crop&q=80",
     sortOrder: 2,
@@ -189,9 +193,10 @@ const DEFAULT_SETUP_ITEMS: CreatorSetupItem[] = [
     category: "Lighting",
     name: "LED SL60W",
     brand: "Godox",
-    modelOrPlan: "2022",
-    usedFor: "lighting setup",
-    note: "Budget friendly and powerful light.",
+    usingSince: "2022",
+    whyLoveIt: "Affordable studio key light with soft daylight balance.",
+    budgetAlt: "Desk lamp bounced off a white wall or ring light",
+    isAffiliate: true,
     linkUrl: "https://amazon.com",
     imageUrl: "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=400&auto=format&fit=crop&q=80",
     sortOrder: 3,
@@ -203,9 +208,10 @@ const DEFAULT_SETUP_ITEMS: CreatorSetupItem[] = [
     category: "Editing Software",
     name: "Premiere Pro",
     brand: "Adobe",
-    modelOrPlan: "2023",
-    usedFor: "video editing",
-    note: "My main editing software for all videos.",
+    usingSince: "2021",
+    whyLoveIt: "My go-to video editing software for all long-form and short-form videos.",
+    budgetAlt: "CapCut Desktop or DaVinci Resolve (free)",
+    isAffiliate: false,
     linkUrl: "https://adobe.com",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/4/40/Adobe_Premiere_Pro_CC_icon.svg",
     sortOrder: 4,
@@ -215,11 +221,12 @@ const DEFAULT_SETUP_ITEMS: CreatorSetupItem[] = [
     id: "setup_chatgpt",
     creatorId: "demo",
     category: "AI Tool",
-    name: "ChatGPT",
+    name: "ChatGPT Plus",
     brand: "OpenAI",
-    modelOrPlan: "2024",
-    usedFor: "content ideas, scripts",
-    note: "Helps me with ideation and script writing.",
+    usingSince: "2023",
+    whyLoveIt: "Invaluable for researching hooks, structuring outlines and brainstorming titles.",
+    budgetAlt: "ChatGPT Free tier",
+    isAffiliate: false,
     linkUrl: "https://chatgpt.com",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg",
     sortOrder: 5,
@@ -232,6 +239,8 @@ export default function DashboardSetupPage() {
   const { showToast } = useToast();
 
   const [items, setItems] = useState<CreatorSetupItem[]>([]);
+  const [whereIStarted, setWhereIStarted] = useState("");
+  const [isSavingIntro, setIsSavingIntro] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>("All");
@@ -246,14 +255,16 @@ export default function DashboardSetupPage() {
   const [category, setCategory] = useState<CreatorSetupCategory>("Camera / Phone");
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
-  const [modelOrPlan, setModelOrPlan] = useState("");
-  const [usedFor, setUsedFor] = useState("");
-  const [note, setNote] = useState("");
+  const [usingSince, setUsingSince] = useState("");
+  const [whyLoveIt, setWhyLoveIt] = useState("");
+  const [budgetAlt, setBudgetAlt] = useState("");
+  const [isAffiliate, setIsAffiliate] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [isActive, setIsActive] = useState(true);
 
   const creatorLookup = profile.id || profile.email || profile.username;
+  const cleanHandle = (profile.username || "").replace(/^@/, "");
 
   useEffect(() => {
     let cancelled = false;
@@ -267,11 +278,17 @@ export default function DashboardSetupPage() {
           );
           const apiResponse = await httpResponse.json();
           const fetchedItems = apiResponse.data?.items || apiResponse.items;
+          const fetchedSettings = apiResponse.data?.settings || apiResponse.settings;
 
-          if (!cancelled && apiResponse.status === 1 && Array.isArray(fetchedItems) && fetchedItems.length > 0) {
-            setItems(fetchedItems);
-            creatorSetupRepository.saveAll(fetchedItems);
-            return;
+          if (!cancelled && apiResponse.status === 1) {
+            if (fetchedSettings?.whereIStarted) {
+              setWhereIStarted(fetchedSettings.whereIStarted);
+            }
+            if (Array.isArray(fetchedItems) && fetchedItems.length > 0) {
+              setItems(fetchedItems);
+              creatorSetupRepository.saveAll(fetchedItems);
+              return;
+            }
           }
         }
 
@@ -301,15 +318,40 @@ export default function DashboardSetupPage() {
     };
   }, [creatorLookup]);
 
+  const handleSaveIntro = async () => {
+    setIsSavingIntro(true);
+    try {
+      const res = await fetch("/api/creator/setup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "save_intro",
+          whereIStarted: whereIStarted.trim().slice(0, 150),
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.status === 1) {
+        showToast("Where I started intro saved! ✨");
+      } else {
+        showToast(data.message || "Could not save intro.", "error");
+      }
+    } catch {
+      showToast("Could not save intro. Please try again.", "error");
+    } finally {
+      setIsSavingIntro(false);
+    }
+  };
+
   const handleOpenModal = (item?: CreatorSetupItem) => {
     if (item) {
       setEditingItem(item);
       setCategory(item.category as CreatorSetupCategory);
       setName(item.name);
       setBrand(item.brand || "");
-      setModelOrPlan(item.modelOrPlan || "");
-      setUsedFor(item.usedFor || "");
-      setNote(item.note || "");
+      setUsingSince(item.usingSince || item.modelOrPlan || "");
+      setWhyLoveIt(item.whyLoveIt || item.note || item.usedFor || "");
+      setBudgetAlt(item.budgetAlt || "");
+      setIsAffiliate(Boolean(item.isAffiliate));
       setLinkUrl(item.linkUrl || "");
       setImageUrl(item.imageUrl || null);
       setIsActive(item.isActive !== false);
@@ -318,9 +360,10 @@ export default function DashboardSetupPage() {
       setCategory("Camera / Phone");
       setName("");
       setBrand("");
-      setModelOrPlan("");
-      setUsedFor("");
-      setNote("");
+      setUsingSince("");
+      setWhyLoveIt("");
+      setBudgetAlt("");
+      setIsAffiliate(false);
       setLinkUrl("");
       setImageUrl(null);
       setIsActive(true);
@@ -361,14 +404,32 @@ export default function DashboardSetupPage() {
         category,
         name: name.trim(),
         brand: brand.trim() || undefined,
-        modelOrPlan: modelOrPlan.trim() || undefined,
-        usedFor: usedFor.trim() || undefined,
-        note: note.trim() || undefined,
+        usingSince: usingSince.trim() || undefined,
+        modelOrPlan: usingSince.trim() || undefined,
+        whyLoveIt: whyLoveIt.trim().slice(0, 120) || undefined,
+        note: whyLoveIt.trim().slice(0, 120) || undefined,
+        budgetAlt: budgetAlt.trim().slice(0, 80) || undefined,
+        isAffiliate,
         linkUrl: linkUrl.trim() || undefined,
         imageUrl: imageUrl || undefined,
         isActive,
         sortOrder: editingItem ? editingItem.sortOrder : items.length,
       };
+
+      const res = await fetch("/api/creator/setup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "save_item",
+          item: newItem,
+        }),
+      });
+      const data = await res.json();
+
+      if (!res.ok || data.status === 0) {
+        showToast(data.message || "Could not save setup item.", "error");
+        return;
+      }
 
       const updated = editingItem
         ? items.map((it) => (it.id === editingItem.id ? newItem : it))
@@ -376,17 +437,6 @@ export default function DashboardSetupPage() {
 
       setItems(updated);
       creatorSetupRepository.saveAll(updated);
-
-      if (creatorLookup) {
-        await fetch("/api/creator/setup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            creatorId: creatorLookup,
-            items: updated,
-          }),
-        }).catch(() => null);
-      }
 
       showToast(editingItem ? "Gear updated successfully! ✨" : "Gear added to your setup! ✨");
       setIsModalOpen(false);
@@ -401,20 +451,13 @@ export default function DashboardSetupPage() {
     if (!itemToDelete) return;
     setIsSubmitting(true);
     try {
+      await fetch(`/api/creator/setup?id=${encodeURIComponent(itemToDelete.id)}`, {
+        method: "DELETE",
+      });
+
       const updated = items.filter((it) => it.id !== itemToDelete.id);
       setItems(updated);
       creatorSetupRepository.saveAll(updated);
-
-      if (creatorLookup) {
-        await fetch("/api/creator/setup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            creatorId: creatorLookup,
-            items: updated,
-          }),
-        }).catch(() => null);
-      }
 
       showToast("Gear item removed.");
       setItemToDelete(null);
@@ -426,24 +469,26 @@ export default function DashboardSetupPage() {
   };
 
   const handleToggleActive = async (item: CreatorSetupItem) => {
-    const updated = items.map((it) =>
-      it.id === item.id ? { ...it, isActive: !it.isActive } : it
-    );
-    setItems(updated);
-    creatorSetupRepository.saveAll(updated);
-
-    if (creatorLookup) {
+    try {
       await fetch("/api/creator/setup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          creatorId: creatorLookup,
-          items: updated,
+          action: "toggle_active",
+          id: item.id,
         }),
-      }).catch(() => null);
-    }
+      });
 
-    showToast(item.isActive ? "Item hidden from profile." : "Item visible on profile.");
+      const updated = items.map((it) =>
+        it.id === item.id ? { ...it, isActive: !it.isActive } : it
+      );
+      setItems(updated);
+      creatorSetupRepository.saveAll(updated);
+
+      showToast(item.isActive ? "Item hidden from profile." : "Item visible on profile.");
+    } catch {
+      showToast("Could not toggle visibility.", "error");
+    }
   };
 
   const filteredItems = useMemo(() => {
@@ -454,9 +499,10 @@ export default function DashboardSetupPage() {
         const matchesName = it.name.toLowerCase().includes(q);
         const matchesBrand = it.brand?.toLowerCase().includes(q);
         const matchesCategory = it.category.toLowerCase().includes(q);
-        const matchesUsedFor = it.usedFor?.toLowerCase().includes(q);
-        const matchesModel = it.modelOrPlan?.toLowerCase().includes(q);
-        if (!matchesName && !matchesBrand && !matchesCategory && !matchesUsedFor && !matchesModel) {
+        const matchesWhy = (it.whyLoveIt || it.note || it.usedFor || "").toLowerCase().includes(q);
+        const matchesUsing = (it.usingSince || it.modelOrPlan || "").toLowerCase().includes(q);
+        const matchesBudget = it.budgetAlt?.toLowerCase().includes(q);
+        if (!matchesName && !matchesBrand && !matchesCategory && !matchesWhy && !matchesUsing && !matchesBudget) {
           return false;
         }
       }
@@ -477,18 +523,66 @@ export default function DashboardSetupPage() {
     });
   }, [items, searchQuery, selectedCategoryFilter]);
 
+  const maxGear = getPlanQuota(subscription?.planKey).maxGearItems;
+
   return (
     <PageContainer>
       <PageHeader
         {...PAGE_COPY.setup}
         meta={`${items.length} ${items.length === 1 ? "item" : "items"}`}
         actions={
-          <button type="button" onClick={() => handleOpenModal()} className="dash-btn-primary">
-            <Plus className="h-4 w-4" />
-            <span>Add gear or tool</span>
-          </button>
+          <div className="flex items-center gap-2">
+            {cleanHandle && (
+              <Link
+                href={`/${cleanHandle}/setup`}
+                target="_blank"
+                className="dash-btn-secondary"
+              >
+                <span>View setup</span>
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </Link>
+            )}
+            <button type="button" onClick={() => handleOpenModal()} className="dash-btn-primary">
+              <Plus className="h-4 w-4" />
+              <span>Add gear or tool</span>
+            </button>
+          </div>
         }
       />
+
+      {/* Section intro: Where I started (150 chars max) */}
+      <div className="rounded-[5px] border border-[#ECECF0] bg-white p-3.5 sm:p-4 text-left shadow-none">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-2">
+          <div>
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-[#7A2253]" />
+              <h3 className="text-xs sm:text-sm font-bold text-[#0f172a]">Where I started</h3>
+            </div>
+            <p className="text-[11px] text-[#64748b] mt-0.5">
+              Tell your audience how you started creating (max 150 chars). Shown at the top of your setup page.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-[#94a3b8] font-mono">{whereIStarted.length}/150</span>
+            <button
+              type="button"
+              onClick={handleSaveIntro}
+              disabled={isSavingIntro}
+              className="h-8 px-3 rounded-[5px] bg-[#7A2253] text-white text-xs font-semibold hover:bg-[#601b41] disabled:opacity-50 transition-colors cursor-pointer"
+            >
+              {isSavingIntro ? "Saving..." : "Save intro"}
+            </button>
+          </div>
+        </div>
+        <textarea
+          value={whereIStarted}
+          onChange={(e) => setWhereIStarted(e.target.value.slice(0, 150))}
+          placeholder="e.g. I shot my first 50 videos on an iPhone 8 with window light. Upgrade only when your gear holds you back."
+          rows={2}
+          maxLength={150}
+          className="w-full rounded-[5px] border border-[#e2e8f0] p-2.5 text-xs text-[#0f172a] placeholder-[#94a3b8] focus:border-[#7A2253] focus:outline-hidden transition-colors resize-none"
+        />
+      </div>
 
       {/* Filter Tabs & Search Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -590,6 +684,9 @@ export default function DashboardSetupPage() {
           {filteredItems.map((item) => {
             const IconComponent = getCategoryIcon(item.category);
             const displayCategory = getCategoryDisplayLabel(item.category);
+            const isOverLimit = items.indexOf(item) >= maxGear;
+            const usingText = item.usingSince || item.modelOrPlan;
+            const whyText = item.whyLoveIt || item.note || item.usedFor;
 
             return (
               <div
@@ -599,29 +696,32 @@ export default function DashboardSetupPage() {
                 }`}
               >
                 <div>
-                  {/* Top Bar: Category Chip + Visibility Toggle */}
+                  {/* Top Bar: Category Chip + OverLimit Chip + Visibility Toggle */}
                   <div className="flex items-center justify-between gap-2 pb-1">
                     <span className="inline-flex items-center gap-1.5 h-6 rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0] px-2 text-[12px] font-medium text-[#3F3F46]">
                       <IconComponent className="h-3.5 w-3.5 text-[#6B6B76]" />
                       <span>{displayCategory}</span>
                     </span>
 
-                    <button
-                      type="button"
-                      onClick={() => handleToggleActive(item)}
-                      title={item.isActive ? "Visible on profile. Click to hide." : "Hidden from profile. Click to show."}
-                      className="cursor-pointer text-emerald-500 hover:text-emerald-600 transition-colors p-0.5"
-                    >
-                      {item.isActive ? (
-                        <Eye className="h-4 w-4 text-emerald-500" />
-                      ) : (
-                        <EyeOff className="h-4 w-4 text-[#94a3b8]" />
-                      )}
-                    </button>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {isOverLimit && <OverLimitBadge />}
+                      <button
+                        type="button"
+                        onClick={() => handleToggleActive(item)}
+                        title={item.isActive ? "Visible on profile. Click to hide." : "Hidden from profile. Click to show."}
+                        className="cursor-pointer text-emerald-500 hover:text-emerald-600 transition-colors p-0.5"
+                      >
+                        {item.isActive ? (
+                          <Eye className="h-4 w-4 text-emerald-500" />
+                        ) : (
+                          <EyeOff className="h-4 w-4 text-[#94a3b8]" />
+                        )}
+                      </button>
+                    </div>
                   </div>
 
                   {/* Middle Row: Product Image on Left + Info on Right */}
-                  <div className="flex items-center gap-3 pt-2.5 pb-1.5">
+                  <div className="flex items-start gap-3 pt-2.5 pb-1.5">
                     {/* Image Container */}
                     <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[5px] bg-[#fafafa] p-1.5 border border-[#f1f5f9]">
                       {item.imageUrl ? (
@@ -637,59 +737,64 @@ export default function DashboardSetupPage() {
                       )}
                     </div>
 
-                    {/* Product Details: Brand, Name, Year, Used For */}
+                    {/* Product Details: Brand, Name, Using since */}
                     <div className="min-w-0 flex-1 space-y-0.5">
                       {item.brand && (
-                        <p className="line-clamp-2 break-words text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">
+                        <p className="line-clamp-1 break-words text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">
                           {item.brand}
                         </p>
                       )}
-                      <h3 className="flex items-center gap-1.5 min-w-0 font-display text-sm sm:text-[15px] font-bold text-[#0f172a] leading-tight" title={item.name}>
-                        <span className="line-clamp-2 break-words" title={item.name}>{item.name}</span>
-                        {items.indexOf(item) >= getPlanQuota(subscription?.planKey).maxGearItems && <OverLimitBadge />}
+                      <h3 className="font-display text-sm sm:text-[15px] font-bold text-[#0f172a] leading-tight line-clamp-2 break-words" title={item.name}>
+                        {item.name}
                       </h3>
-                      {item.modelOrPlan && (
-                        <p className="line-clamp-2 break-words text-[11px] text-[#94a3b8] font-normal leading-tight" title={item.modelOrPlan}>
-                          {item.modelOrPlan}
-                        </p>
-                      )}
-                      {item.usedFor && (
-                        <p className="text-xs text-(--muted) pt-1 leading-snug line-clamp-2 break-words" title={item.usedFor}>
-                          <span className="font-bold text-[#7A2253]">Used for: </span>
-                          <span>{item.usedFor}</span>
+                      {usingText && (
+                        <p className="line-clamp-1 break-words text-[11px] text-[#94a3b8] font-normal leading-tight">
+                          Using since {usingText}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  {/* Note / Description */}
-                  {item.note && (
-                    <p className="mt-1.5 text-xs text-[#64748b] leading-relaxed line-clamp-2">
-                      {item.note}
+                  {/* Why I love it (120 chars) */}
+                  {whyText && (
+                    <p className="mt-1 text-xs text-[#64748b] leading-relaxed line-clamp-2 italic">
+                      &ldquo;{whyText}&rdquo;
                     </p>
+                  )}
+
+                  {/* Budget alternative callout */}
+                  {item.budgetAlt && (
+                    <div className="mt-2 rounded-[4px] border border-[#f1f5f9] bg-[#f8fafc] px-2 py-1 text-[11px] leading-tight text-[#475569]">
+                      <span className="font-semibold text-[#7A2253]">Starting out? Try this instead: </span>
+                      <span>{item.budgetAlt}</span>
+                    </div>
                   )}
                 </div>
 
-                {/* Footer: View Gear -> on left, Edit & Delete on right */}
+                {/* Footer: View Gear + Affiliate tag on left, Edit & Delete on right */}
                 <div className="mt-3 flex items-center justify-between border-t border-[#f1f5f9] pt-2.5">
-                  {item.linkUrl ? (
-                    <a
-                      href={item.linkUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs font-bold text-[#7A2253] transition-colors hover:underline cursor-pointer"
-                    >
-                      <span>View Product</span>
-                      <span className="text-sm font-bold">&rarr;</span>
-                    </a>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 text-xs font-bold text-[#7A2253] cursor-default">
-                      <span>View Product</span>
-                      <span className="text-sm font-bold">&rarr;</span>
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2 min-w-0">
+                    {item.isAffiliate && (
+                      <span className="inline-flex items-center text-[10px] font-semibold uppercase tracking-wider text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded-[3px] border border-amber-200/60 shrink-0">
+                        Affiliate
+                      </span>
+                    )}
+                    {item.linkUrl ? (
+                      <a
+                        href={item.linkUrl}
+                        target="_blank"
+                        rel={item.isAffiliate ? "sponsored noopener" : "noopener noreferrer"}
+                        className="inline-flex items-center gap-1 text-xs font-bold text-[#7A2253] transition-colors hover:underline cursor-pointer truncate"
+                      >
+                        <span>View Product</span>
+                        <span className="text-sm font-bold">&rarr;</span>
+                      </a>
+                    ) : (
+                      <span className="text-xs text-[#94a3b8]">No link</span>
+                    )}
+                  </div>
 
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     <button
                       type="button"
                       onClick={() => handleOpenModal(item)}
@@ -815,11 +920,11 @@ export default function DashboardSetupPage() {
               </div>
             </div>
 
-            {/* Model / Year & Used For */}
+            {/* Using since & Budget alternative */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="space-y-1">
                 <label className="block text-[13px] font-medium text-[#0f172a]">
-                  Model / Year / Version
+                  Using since
                 </label>
                 <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
@@ -827,53 +932,96 @@ export default function DashboardSetupPage() {
                   </div>
                   <input
                     type="text"
-                    value={modelOrPlan}
-                    onChange={(e) => setModelOrPlan(e.target.value)}
-                    placeholder="e.g. 2023, 2024, Pro"
+                    value={usingSince}
+                    onChange={(e) => setUsingSince(e.target.value)}
+                    placeholder="e.g. 2023, 2024, or 2 years"
                     className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
-                  What do you use it for?
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="block text-[13px] font-medium text-[#0f172a]">
+                    Budget alternative <span className="font-normal text-[#94a3b8]">(Optional)</span>
+                  </label>
+                  <span className="text-[11px] text-[#94a3b8] font-mono">{budgetAlt.length}/80</span>
+                </div>
                 <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
                     <Sparkles className="h-4 w-4" />
                   </div>
                   <input
                     type="text"
-                    value={usedFor}
-                    onChange={(e) => setUsedFor(e.target.value)}
-                    placeholder="e.g. shoot the video, clear audio recording"
+                    value={budgetAlt}
+                    maxLength={80}
+                    onChange={(e) => setBudgetAlt(e.target.value.slice(0, 80))}
+                    placeholder="e.g. Sony ZV-E10 or your phone with a lapel mic"
                     className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Link URL */}
+            {/* Why I love it (Merged: Used for + Note, 120 chars) */}
             <div className="space-y-1">
-              <label className="block text-[13px] font-medium text-[#0f172a]">
-                Product / Affiliate / Store Link
-              </label>
-              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
-                  <LinkIcon className="h-4 w-4" />
+              <div className="flex items-center justify-between">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
+                  Why I love it
+                </label>
+                <span className="text-[11px] text-[#94a3b8] font-mono">{whyLoveIt.length}/120</span>
+              </div>
+              <div className="flex rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex w-10 shrink-0 items-start justify-center pt-2.5 border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                  <FileText className="h-4 w-4" />
                 </div>
-                <input
-                  type="url"
-                  value={linkUrl}
-                  onChange={(e) => setLinkUrl(e.target.value)}
-                  placeholder="https://amazon.com/... or https://company.com"
-                  className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                <textarea
+                  value={whyLoveIt}
+                  maxLength={120}
+                  onChange={(e) => setWhyLoveIt(e.target.value.slice(0, 120))}
+                  placeholder="e.g. Best camera for vlogging, low light and cinematic 4K shots."
+                  rows={2}
+                  className="flex-1 p-2.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none resize-none"
                 />
-                <div className="pr-3 text-[#64748b]">
-                  <ExternalLink className="h-4 w-4" />
+              </div>
+            </div>
+
+            {/* Link URL & Affiliate toggle */}
+            <div className="space-y-2">
+              <div className="space-y-1">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
+                  Product / Affiliate / Store Link
+                </label>
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                    <LinkIcon className="h-4 w-4" />
+                  </div>
+                  <input
+                    type="url"
+                    value={linkUrl}
+                    onChange={(e) => setLinkUrl(e.target.value)}
+                    placeholder="https://amazon.com/... or https://company.com"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  />
+                  <div className="pr-3 text-[#64748b]">
+                    <ExternalLink className="h-4 w-4" />
+                  </div>
                 </div>
               </div>
+
+              {/* Affiliate Checkbox */}
+              <label className="flex items-center gap-2.5 cursor-pointer select-none pt-0.5">
+                <input
+                  type="checkbox"
+                  checked={isAffiliate}
+                  onChange={(e) => setIsAffiliate(e.target.checked)}
+                  className="h-4 w-4 rounded-[3px] border-[#cbd5e1] text-[#7A2253] focus:ring-[#7A2253] cursor-pointer"
+                />
+                <span className="text-xs font-semibold text-[#0f172a]">
+                  This is an affiliate link{" "}
+                  <span className="text-[11px] font-normal text-[#64748b]">(displays an honest &quot;Affiliate&quot; badge)</span>
+                </span>
+              </label>
             </div>
 
             {/* Image Upload + Tips Container */}
@@ -934,30 +1082,11 @@ export default function DashboardSetupPage() {
                     <span>Tips</span>
                   </div>
                   <ul className="text-[11px] text-[#64748b] space-y-0.5 leading-snug list-disc list-inside">
-                    <li>Use a clean photo or official product image</li>
-                    <li>It will be shown on your public profile</li>
-                    <li>Recommended size: 1:1 ratio (square)</li>
+                    <li>Use a clean product photo or company logo</li>
+                    <li>Square 1:1 image works best</li>
+                    <li>Leave empty to use category icon</li>
                   </ul>
                 </div>
-              </div>
-            </div>
-
-            {/* Note or Recommendation */}
-            <div className="space-y-1">
-              <label className="block text-[13px] font-medium text-[#0f172a]">
-                Note or Recommendation
-              </label>
-              <div className="flex rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <div className="flex w-10 shrink-0 items-start justify-center pt-2.5 border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
-                  <FileText className="h-4 w-4" />
-                </div>
-                <textarea
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  placeholder="e.g. Best camera for vlogging and cinematic shots."
-                  rows={2}
-                  className="flex-1 p-2.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none resize-y"
-                />
               </div>
             </div>
 

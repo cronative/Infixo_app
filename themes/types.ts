@@ -50,6 +50,9 @@ export interface ThemeCardProps {
   allLinksHref?: string;
   mediaKitOnlyMode?: boolean;
   teamOnlyMode?: boolean;
+  setupOnlyMode?: boolean;
+  setupSettings?: { whereIStarted?: string | null };
+  allSetupHref?: string;
   pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   onShare?: () => void;
   layoutMode?: "tabs" | "stacked" | "premium";
