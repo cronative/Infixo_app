@@ -30,10 +30,14 @@ export async function PATCH(req: Request) {
     try {
       await conn.beginTransaction();
       for (let index = 0; index < validIds.length; index++) {
-        await conn.query(
-          "UPDATE creator_products SET sort_order = ? WHERE id = ? AND creator_id = ? AND deleted_at IS NULL",
-          [index, validIds[index], auth.creator.id]
-        );
+        try {
+          await conn.query(
+            "UPDATE creator_products SET sort_order = ? WHERE id = ? AND creator_id = ? AND deleted_at IS NULL",
+            [index, validIds[index], auth.creator.id]
+          );
+        } catch (e: any) {
+          if (e?.code !== "ER_BAD_FIELD_ERROR" && !e?.message?.includes("Unknown column")) throw e;
+        }
       }
       await conn.commit();
     } catch (err) {

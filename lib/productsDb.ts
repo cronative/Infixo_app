@@ -4,6 +4,7 @@ import { getPlanQuota } from "@/services/subscriptionLimits";
 import type { CreatorProduct, ShopProduct } from "@/types";
 
 export const PRODUCT_COLUMNS = "id, name, image_url AS imageUrl, price_paise AS pricePaise, product_url AS productUrl, note, is_affiliate AS isAffiliate, coupon_code AS couponCode, discount_text AS discountText, is_top_pick AS isTopPick, sort_order AS sortOrder";
+export const LEGACY_PRODUCT_COLUMNS = "id, name, image_url AS imageUrl, price_paise AS pricePaise, product_url AS productUrl, note, is_affiliate AS isAffiliate";
 
 type ProductRow = RowDataPacket & {
   id: string;
@@ -62,19 +63,55 @@ export function toShopProduct(product: CreatorProduct): ShopProduct {
 }
 
 export async function getCreatorProducts(creatorId: string): Promise<CreatorProduct[]> {
-  const [rows] = await db.query<ProductRow[]>(
-    `SELECT ${PRODUCT_COLUMNS} FROM creator_products WHERE creator_id = ? AND deleted_at IS NULL ORDER BY is_top_pick DESC, sort_order ASC, created_at ASC`,
-    [creatorId],
-  );
-  return rows.map(mapRow);
+  try {
+    const [rows] = await db.query<ProductRow[]>(
+      `SELECT ${PRODUCT_COLUMNS} FROM creator_products WHERE creator_id = ? AND deleted_at IS NULL ORDER BY is_top_pick DESC, sort_order ASC, created_at ASC`,
+      [creatorId],
+    );
+    return rows.map(mapRow);
+  } catch (error: any) {
+    if (error?.code === "ER_BAD_FIELD_ERROR" || error?.message?.includes("Unknown column")) {
+      console.warn("[productsDb] getCreatorProducts: column missing in creator_products, falling back to legacy schema:", error.message);
+      try {
+        const [rows] = await db.query<ProductRow[]>(
+          `SELECT ${LEGACY_PRODUCT_COLUMNS} FROM creator_products WHERE creator_id = ? AND deleted_at IS NULL ORDER BY created_at ASC`,
+          [creatorId],
+        );
+        return rows.map(mapRow);
+      } catch (fallbackError: any) {
+        console.error("[productsDb] getCreatorProducts fallback failed:", fallbackError);
+        throw fallbackError;
+      }
+    }
+    console.error("[productsDb] getCreatorProducts error:", error);
+    throw error;
+  }
 }
 
 export async function getCreatorProduct(creatorId: string, id: string, { deleted = false } = {}): Promise<CreatorProduct | null> {
-  const [rows] = await db.query<ProductRow[]>(
-    `SELECT ${PRODUCT_COLUMNS} FROM creator_products WHERE id = ? AND creator_id = ? AND deleted_at IS ${deleted ? "NOT NULL" : "NULL"} LIMIT 1`,
-    [id, creatorId],
-  );
-  return rows[0] ? mapRow(rows[0]) : null;
+  try {
+    const [rows] = await db.query<ProductRow[]>(
+      `SELECT ${PRODUCT_COLUMNS} FROM creator_products WHERE id = ? AND creator_id = ? AND deleted_at IS ${deleted ? "NOT NULL" : "NULL"} LIMIT 1`,
+      [id, creatorId],
+    );
+    return rows[0] ? mapRow(rows[0]) : null;
+  } catch (error: any) {
+    if (error?.code === "ER_BAD_FIELD_ERROR" || error?.message?.includes("Unknown column")) {
+      console.warn("[productsDb] getCreatorProduct: column missing in creator_products, falling back to legacy schema:", error.message);
+      try {
+        const [rows] = await db.query<ProductRow[]>(
+          `SELECT ${LEGACY_PRODUCT_COLUMNS} FROM creator_products WHERE id = ? AND creator_id = ? AND deleted_at IS ${deleted ? "NOT NULL" : "NULL"} LIMIT 1`,
+          [id, creatorId],
+        );
+        return rows[0] ? mapRow(rows[0]) : null;
+      } catch (fallbackError: any) {
+        console.error("[productsDb] getCreatorProduct fallback failed:", fallbackError);
+        throw fallbackError;
+      }
+    }
+    console.error("[productsDb] getCreatorProduct error:", error);
+    throw error;
+  }
 }
 
 export async function getProductQuota(creatorId: string) {

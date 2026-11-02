@@ -32,7 +32,8 @@ export async function GET(req: Request) {
       : allProducts.slice(0, quota.maxProducts);
 
     return apiSuccess({ products }, "Shop loaded.", { headers: { "Cache-Control": "no-store" } });
-  } catch {
+  } catch (error: any) {
+    console.error("GET /api/public/products failed:", error?.message || error);
     return apiError("Could not load this Shop. Please try again.", 500);
   }
 }

@@ -58,32 +58,62 @@ export async function POST(req: Request) {
     try {
       await conn.beginTransaction();
       if (fields.isTopPick) {
-        await conn.query("UPDATE creator_products SET is_top_pick = 0 WHERE creator_id = ?", [auth.creator.id]);
+        try {
+          await conn.query("UPDATE creator_products SET is_top_pick = 0 WHERE creator_id = ?", [auth.creator.id]);
+        } catch (e: any) {
+          if (e?.code !== "ER_BAD_FIELD_ERROR" && !e?.message?.includes("Unknown column")) throw e;
+        }
       }
-      const [maxRows] = await conn.query<any[]>(
-        "SELECT COALESCE(MAX(sort_order), -1) + 1 AS next_order FROM creator_products WHERE creator_id = ?",
-        [auth.creator.id]
-      );
-      if (!sortOrder) {
-        sortOrder = maxRows[0]?.next_order ?? 0;
+      try {
+        const [maxRows] = await conn.query<any[]>(
+          "SELECT COALESCE(MAX(sort_order), -1) + 1 AS next_order FROM creator_products WHERE creator_id = ?",
+          [auth.creator.id]
+        );
+        if (!sortOrder) {
+          sortOrder = maxRows[0]?.next_order ?? 0;
+        }
+      } catch (e: any) {
+        if (e?.code !== "ER_BAD_FIELD_ERROR" && !e?.message?.includes("Unknown column")) throw e;
+        if (!sortOrder) sortOrder = 0;
       }
-      await conn.query(
-        "INSERT INTO creator_products (id, creator_id, name, image_url, price_paise, product_url, note, coupon_code, discount_text, is_top_pick, sort_order, is_affiliate, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)",
-        [
-          id,
-          auth.creator.id,
-          fields.name,
-          imageUrl,
-          fields.pricePaise,
-          fields.url,
-          fields.note,
-          fields.couponCode,
-          fields.discountText,
-          fields.isTopPick ? 1 : 0,
-          sortOrder,
-          fields.isAffiliate ? 1 : 0,
-        ],
-      );
+      try {
+        await conn.query(
+          "INSERT INTO creator_products (id, creator_id, name, image_url, price_paise, product_url, note, coupon_code, discount_text, is_top_pick, sort_order, is_affiliate, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)",
+          [
+            id,
+            auth.creator.id,
+            fields.name,
+            imageUrl,
+            fields.pricePaise,
+            fields.url,
+            fields.note,
+            fields.couponCode,
+            fields.discountText,
+            fields.isTopPick ? 1 : 0,
+            sortOrder,
+            fields.isAffiliate ? 1 : 0,
+          ],
+        );
+      } catch (insertErr: any) {
+        if (insertErr?.code === "ER_BAD_FIELD_ERROR" || insertErr?.message?.includes("Unknown column")) {
+          console.warn("[POST /api/products] New columns missing in creator_products, falling back to legacy insert:", insertErr.message);
+          await conn.query(
+            "INSERT INTO creator_products (id, creator_id, name, image_url, price_paise, product_url, note, is_affiliate, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL)",
+            [
+              id,
+              auth.creator.id,
+              fields.name,
+              imageUrl,
+              fields.pricePaise,
+              fields.url,
+              fields.note,
+              fields.isAffiliate ? 1 : 0,
+            ],
+          );
+        } else {
+          throw insertErr;
+        }
+      }
       await conn.commit();
     } catch (err) {
       await conn.rollback();

@@ -35,27 +35,56 @@ export async function PATCH(req: Request, { params }: Params) {
     try {
       await conn.beginTransaction();
       if (fields.isTopPick) {
-        await conn.query("UPDATE creator_products SET is_top_pick = 0 WHERE creator_id = ?", [auth.creator.id]);
+        try {
+          await conn.query("UPDATE creator_products SET is_top_pick = 0 WHERE creator_id = ?", [auth.creator.id]);
+        } catch (e: any) {
+          if (e?.code !== "ER_BAD_FIELD_ERROR" && !e?.message?.includes("Unknown column")) throw e;
+        }
       }
-      const [result] = await conn.query<ResultSetHeader>(
-        "UPDATE creator_products SET name = ?, image_url = ?, price_paise = ?, product_url = ?, note = ?, coupon_code = ?, discount_text = ?, is_top_pick = ?, is_affiliate = ? WHERE id = ? AND creator_id = ? AND deleted_at IS NULL",
-        [
-          fields.name,
-          imageUrl,
-          fields.pricePaise,
-          fields.url,
-          fields.note,
-          fields.couponCode,
-          fields.discountText,
-          fields.isTopPick ? 1 : 0,
-          fields.isAffiliate ? 1 : 0,
-          id,
-          auth.creator.id,
-        ],
-      );
-      if (!result.affectedRows) {
-        await conn.rollback();
-        return errorResponse("NOT_FOUND", "Product not found.", 404);
+      try {
+        const [result] = await conn.query<ResultSetHeader>(
+          "UPDATE creator_products SET name = ?, image_url = ?, price_paise = ?, product_url = ?, note = ?, coupon_code = ?, discount_text = ?, is_top_pick = ?, is_affiliate = ? WHERE id = ? AND creator_id = ? AND deleted_at IS NULL",
+          [
+            fields.name,
+            imageUrl,
+            fields.pricePaise,
+            fields.url,
+            fields.note,
+            fields.couponCode,
+            fields.discountText,
+            fields.isTopPick ? 1 : 0,
+            fields.isAffiliate ? 1 : 0,
+            id,
+            auth.creator.id,
+          ],
+        );
+        if (!result.affectedRows) {
+          await conn.rollback();
+          return errorResponse("NOT_FOUND", "Product not found.", 404);
+        }
+      } catch (updateErr: any) {
+        if (updateErr?.code === "ER_BAD_FIELD_ERROR" || updateErr?.message?.includes("Unknown column")) {
+          console.warn("[PATCH /api/products/:id] New columns missing in creator_products, falling back to legacy update:", updateErr.message);
+          const [result] = await conn.query<ResultSetHeader>(
+            "UPDATE creator_products SET name = ?, image_url = ?, price_paise = ?, product_url = ?, note = ?, is_affiliate = ? WHERE id = ? AND creator_id = ? AND deleted_at IS NULL",
+            [
+              fields.name,
+              imageUrl,
+              fields.pricePaise,
+              fields.url,
+              fields.note,
+              fields.isAffiliate ? 1 : 0,
+              id,
+              auth.creator.id,
+            ],
+          );
+          if (!result.affectedRows) {
+            await conn.rollback();
+            return errorResponse("NOT_FOUND", "Product not found.", 404);
+          }
+        } else {
+          throw updateErr;
+        }
       }
       await conn.commit();
     } catch (err) {
