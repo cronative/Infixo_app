@@ -96,6 +96,11 @@ export async function GET(req: Request) {
     const accessError = await authorizeCreatorRead(req, targetId, Boolean(searchParams.get("username")));
     if (accessError) return accessError;
 
+    const cleanLookup = lookupVal.trim().replace(/^@/, "");
+    const possibleIds = Array.from(
+      new Set([targetId, creatorId, lookupVal, cleanLookup, `@${cleanLookup}`].filter(Boolean) as string[])
+    );
+
     const [rows] = await db.query<CreatorSetupRow[]>(
       `SELECT id, creator_id AS creatorId, category, item_name AS name, brand,
               model_or_plan AS modelOrPlan, using_since AS usingSince, used_for AS usedFor,
@@ -103,16 +108,16 @@ export async function GET(req: Request) {
               link_url AS linkUrl, image_url AS imageUrl, sort_order AS sortOrder,
               is_active AS isActive, created_at AS createdAt, updated_at AS updatedAt
        FROM creator_setup_items
-       WHERE creator_id = ?
+       WHERE creator_id IN (?)
        ORDER BY sort_order ASC, created_at ASC`,
-      [targetId]
+      [possibleIds]
     );
 
     let whereIStarted: string | null = null;
     try {
       const [settingsRows]: any = await db.query(
-        "SELECT where_i_started FROM creator_setup_settings WHERE creator_id = ? LIMIT 1",
-        [targetId]
+        "SELECT where_i_started FROM creator_setup_settings WHERE creator_id IN (?) LIMIT 1",
+        [possibleIds]
       );
       if (settingsRows && settingsRows[0]) {
         whereIStarted = settingsRows[0].where_i_started || null;

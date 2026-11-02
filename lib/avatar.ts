@@ -4,10 +4,10 @@
  * - "Tony Stark" -> "TS"
  * - "Tony" -> "TO"
  * - "Maya Lin Smith" -> "MS"
- * - "" -> "C"
+ * - "" -> fallback ("CR")
  */
-export function getInitials(name?: string): string {
-  if (!name || !name.trim()) return "C";
+export function getInitials(name?: string | null, fallback = "CR"): string {
+  if (!name || !name.trim()) return fallback;
   const cleaned = name.trim();
   const parts = cleaned.split(/\s+/);
   
@@ -19,3 +19,6 @@ export function getInitials(name?: string): string {
   const last = parts[parts.length - 1][0] || "";
   return (first + last).toUpperCase();
 }
+
+export const initials = getInitials;
+

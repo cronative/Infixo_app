@@ -220,6 +220,15 @@ export default function PublicMediaKitPage() {
       ? `${window.location.origin}/${cleanHandle}/mediakit`
       : `https://inflixo.com/${cleanHandle}/mediakit`;
 
+  const [isPrint, setIsPrint] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const p = new URLSearchParams(window.location.search).get("print");
+      if (p === "1" || p === "true") setIsPrint(true);
+    }
+  }, []);
+
   async function handleShareMediaKit() {
     const title = `${profile?.displayName || cleanHandle} — Media Kit on Inflixo`;
     const text = `Explore ${profile?.displayName || cleanHandle}'s editorial media kit & collaboration packages on Inflixo.`;
@@ -236,7 +245,7 @@ export default function PublicMediaKitPage() {
   }
 
   return (
-    <CreatorPublicShell themeKey={theme} fixedViewport={true}>
+    <CreatorPublicShell themeKey={theme} fixedViewport={!isPrint}>
       <ThemeCard
         themeKey={theme}
         profile={profile}
@@ -252,12 +261,16 @@ export default function PublicMediaKitPage() {
         containedScroll={false}
         seriesOpenMode="page"
         mediaKitOnlyMode
-        pageHeader={{
-          pageLabel: "Media Kit",
-          backHref: `/${cleanHandle}`,
-          backLabel: "Back to profile",
-        }}
-        onShare={handleShareMediaKit}
+        pageHeader={
+          isPrint
+            ? undefined
+            : {
+                pageLabel: "Media Kit",
+                backHref: `/${cleanHandle}`,
+                backLabel: "Back to profile",
+              }
+        }
+        onShare={isPrint ? undefined : handleShareMediaKit}
       />
     </CreatorPublicShell>
   );

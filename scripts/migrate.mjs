@@ -380,6 +380,18 @@ async function migrateDatabase(target) {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `);
 
+    // 020: Rename existing teams named "{profile}'s Team" or "My Team" -> "The Crew"
+    if (teamTables.length) {
+      await connection.query(`
+        UPDATE creator_teams
+        SET team_name = 'The Crew'
+        WHERE team_name LIKE "%'s Team"
+           OR team_name LIKE "%'s team"
+           OR team_name = 'My Team'
+           OR team_name = 'The Team'
+      `);
+    }
+
     console.log(`✅ ${target.name} migrated successfully.`);
   } finally {
     await connection.end();

@@ -10,6 +10,7 @@ import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { getInitials } from "@/lib/avatar";
 
 const STATUS_CONFIG: Record<CollaborationStatus, { label: string; bg: string; text: string; border: string }> = {
   NEW: { label: "New", bg: "bg-[#EAF7F0]", text: "text-[#17845B]", border: "border-[#17845B]/20" },
@@ -218,7 +219,7 @@ export default function DashboardRequestsPage() {
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] font-semibold text-[12px] shrink-0">
-                    {req.senderName.charAt(0).toUpperCase()}
+                    {getInitials(req.senderName)}
                   </div>
 
                   <div className="min-w-0 flex-1 space-y-0.5">

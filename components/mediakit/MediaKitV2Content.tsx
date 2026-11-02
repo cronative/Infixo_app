@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { renderSVG } from "uqr";
 import {
   Sparkles,
   Play,
@@ -55,6 +56,7 @@ export interface MediaKitV2ContentProps {
   hideTeam?: boolean;
   onEnquirePackage?: (pkg: MediaKitPackage | null) => void;
   isInformational?: boolean;
+  isPrint?: boolean;
 }
 
 function getSeriesEpisodes(s: Series): any[] {
@@ -65,41 +67,6 @@ function getSeriesEpisodes(s: Series): any[] {
     return (s as any).episodes;
   }
   return [];
-}
-
-function getInlineEmbedInfo(url?: string): { type: "youtube" | "instagram" | "facebook" | "external"; embedUrl: string } | null {
-  if (!url || !url.trim()) return null;
-  const raw = url.trim();
-
-  // YouTube
-  const ytMatch = raw.match(
-    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i
-  );
-  if (ytMatch && ytMatch[1]) {
-    return {
-      type: "youtube",
-      embedUrl: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0`,
-    };
-  }
-
-  // Instagram Reel / Post
-  const igMatch = raw.match(/instagram\.com\/(?:reel|reels|p|tv)\/([A-Za-z0-9_-]+)/i);
-  if (igMatch && igMatch[1]) {
-    return {
-      type: "instagram",
-      embedUrl: `https://www.instagram.com/reel/${igMatch[1]}/embed`,
-    };
-  }
-
-  // Facebook Video
-  if (raw.includes("facebook.com") || raw.includes("fb.watch")) {
-    return {
-      type: "facebook",
-      embedUrl: `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(raw)}&show_text=false&autoplay=true`,
-    };
-  }
-
-  return { type: "external", embedUrl: raw };
 }
 
 function formatPackagePrice(pkg: MediaKitPackage): string {
@@ -130,11 +97,20 @@ export function MediaKitV2Content({
   hideTeam = false,
   onEnquirePackage,
   isInformational = false,
+  isPrint: propIsPrint = false,
 }: MediaKitV2ContentProps) {
   const { showToast } = useToast();
-  const [playingSeriesId, setPlayingSeriesId] = useState<string | null>(null);
-  const [selectedEpIdxBySeries, setSelectedEpIdxBySeries] = useState<Record<string, number>>({});
   const [copiedLink, setCopiedLink] = useState(false);
+  const [urlIsPrint, setUrlIsPrint] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const p = new URLSearchParams(window.location.search).get("print");
+      if (p === "1" || p === "true") setUrlIsPrint(true);
+    }
+  }, []);
+
+  const activeIsPrint = Boolean(propIsPrint || urlIsPrint);
 
   const cleanHandle = (profile.username || "creator").replace(/^@/, "");
   const displayName = profile.displayName || cleanHandle;
@@ -203,7 +179,16 @@ export function MediaKitV2Content({
   const fitTags = (settings?.fitTags || []).map((t) => t.trim()).filter(Boolean).slice(0, 3);
   const nofitTags = (settings?.nofitTags || []).map((t) => t.trim()).filter(Boolean).slice(0, 3);
   const promises = (settings?.promises || []).map((p) => p.trim()).filter(Boolean).slice(0, 4);
-  const signatureName = (settings?.signatureName || displayName).trim();
+
+  const creatorFirstName = useMemo(() => {
+    const raw = (profile.displayName || cleanHandle || "").trim();
+    const firstWord = raw.split(/\s+/)[0] || "";
+    return firstWord ? firstWord.charAt(0).toUpperCase() + firstWord.slice(1) : "Creator";
+  }, [profile.displayName, cleanHandle]);
+
+  const signatureName = (settings?.signatureName && settings.signatureName.trim())
+    ? settings.signatureName.trim()
+    : creatorFirstName;
 
   const topSeries = useMemo(() => (series || []).slice(0, 3), [series]);
   const activePackages = useMemo(() => (packages || []).filter((p) => p.isActive !== false), [packages]);
@@ -234,6 +219,14 @@ export function MediaKitV2Content({
     }
     return `${base.replace(/\/$/, "")}/${cleanHandle}/mediakit`;
   }, [cleanHandle]);
+
+  const qrSvg = useMemo(() => {
+    try {
+      return renderSVG(mediaKitPublicUrl);
+    } catch {
+      return null;
+    }
+  }, [mediaKitPublicUrl]);
 
   const handleCopyMediaKitLink = async () => {
     if (isInformational) {
@@ -425,158 +418,67 @@ export function MediaKitV2Content({
             </h3>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3.5">
             {topSeries.map((s) => {
               const episodes = getSeriesEpisodes(s);
-              const selectedEpIdx = selectedEpIdxBySeries[s.id] || 0;
-              const activeEp = episodes[selectedEpIdx] || episodes[0];
-              const embedInfo = getInlineEmbedInfo(activeEp?.externalUrl);
-              const isPlaying = playingSeriesId === s.id;
               const posterSrc = s.posterDataUrl || episodes[0]?.thumbnailDataUrl || null;
+              const epCount = episodes.length;
+              const episodeText = `${epCount} ${epCount === 1 ? "episode" : "episodes"}`;
+              const metaParts = [
+                s.genre?.trim(),
+                s.language?.trim(),
+                episodeText,
+                s.platform?.trim() || "Series",
+              ].filter(Boolean);
 
               return (
                 <div
                   key={s.id}
-                  className="overflow-hidden rounded-xl border border-[#E7E0D6] bg-white transition-all"
+                  className="overflow-hidden rounded-xl border border-[#E7E0D6] bg-white transition-all print-avoid-break"
                 >
-                  {isPlaying && embedInfo && embedInfo.type !== "external" ? (
-                    <div className="space-y-3 p-3 sm:p-4 bg-[#1C1917] text-white">
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="min-w-0">
-                          <p className="text-xs font-bold text-[#F5D0E2] truncate">{s.title}</p>
-                          <p className="text-[11px] text-stone-300 truncate">
-                            Ep {selectedEpIdx + 1}: {activeEp?.title || "Episode"}
-                          </p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setPlayingSeriesId(null)}
-                          className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-white hover:bg-white/20 cursor-pointer"
-                        >
-                          <X className="h-3.5 w-3.5" />
-                          <span>Close player</span>
-                        </button>
-                      </div>
+                  <div className="flex flex-col sm:flex-row items-stretch gap-3.5 p-3.5 sm:p-4">
+                    <Link
+                      href={`/${cleanHandle}/series`}
+                      className="group relative h-28 sm:h-24 sm:w-40 shrink-0 overflow-hidden rounded-lg bg-[#1C1917]"
+                    >
+                      <SeriesPoster
+                        src={posterSrc}
+                        title={s.title}
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        iconSize={22}
+                      />
+                    </Link>
 
-                      <div className="relative w-full overflow-hidden rounded-lg bg-black aspect-video">
-                        <iframe
-                          src={embedInfo.embedUrl}
-                          title={activeEp?.title || s.title}
-                          className="h-full w-full border-0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        />
-                      </div>
-
-                      {episodes.length > 1 && (
-                        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                          {episodes.slice(0, 6).map((ep, idx) => (
-                            <button
-                              key={ep.id || idx}
-                              type="button"
-                              onClick={() =>
-                                setSelectedEpIdxBySeries((prev) => ({ ...prev, [s.id]: idx }))
-                              }
-                              className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors cursor-pointer ${
-                                idx === selectedEpIdx
-                                  ? "bg-[#7A2253] text-white"
-                                  : "bg-white/10 text-stone-300 hover:bg-white/20"
-                              }`}
-                            >
-                              Ep {idx + 1}
-                            </button>
+                    <div className="min-w-0 flex-1 flex flex-col justify-between gap-2">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-semibold text-[#78716C]">
+                          {metaParts.map((part, i) => (
+                            <React.Fragment key={i}>
+                              {i > 0 && <span>·</span>}
+                              <span>{part}</span>
+                            </React.Fragment>
                           ))}
                         </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col sm:flex-row items-stretch gap-3.5 p-3.5 sm:p-4">
-                      {/* Thumbnail with Play trigger */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (!activeEp?.externalUrl) return;
-                          if (embedInfo?.type === "external") {
-                            window.open(activeEp.externalUrl, "_blank", "noopener,noreferrer");
-                          } else {
-                            setPlayingSeriesId(s.id);
-                          }
-                        }}
-                        className="group relative h-36 sm:h-24 sm:w-40 shrink-0 overflow-hidden rounded-lg bg-[#1C1917] cursor-pointer"
-                      >
-                        <SeriesPoster
-                          src={posterSrc}
-                          title={s.title}
-                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          iconSize={22}
-                        />
-                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/40 transition-colors">
-                          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-[#7A2253] shadow-md transition-transform group-hover:scale-110">
-                            <Play className="h-4 w-4 fill-current ml-0.5" />
-                          </span>
-                        </div>
-                      </button>
+                        <h4 className="mt-0.5 text-base font-bold text-[#1C1917] leading-snug">
+                          {s.title}
+                        </h4>
+                        {s.description && (
+                          <p className="mt-1 text-xs text-[#57534E] line-clamp-2 leading-relaxed">
+                            {s.description}
+                          </p>
+                        )}
+                      </div>
 
-                      {/* Series Editorial Details */}
-                      <div className="min-w-0 flex-1 flex flex-col justify-between gap-2">
-                        <div>
-                          <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-semibold text-[#78716C]">
-                            <span>{s.platform || "Original Series"}</span>
-                            {s.genre && (
-                              <>
-                                <span>·</span>
-                                <span>{s.genre}</span>
-                              </>
-                            )}
-                            {s.language && (
-                              <>
-                                <span>·</span>
-                                <span>{s.language}</span>
-                              </>
-                            )}
-                            <span>·</span>
-                            <span>
-                              {episodes.length} {episodes.length === 1 ? "episode" : "episodes"}
-                            </span>
-                          </div>
-                          <h4 className="mt-0.5 text-base font-bold text-[#1C1917] leading-snug">
-                            {s.title}
-                          </h4>
-                          {s.description && (
-                            <p className="mt-1 text-xs text-[#57534E] line-clamp-2 leading-relaxed">
-                              {s.description}
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-3 pt-1">
-                          {activeEp?.externalUrl && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                if (embedInfo?.type === "external") {
-                                  window.open(activeEp.externalUrl, "_blank", "noopener,noreferrer");
-                                } else {
-                                  setPlayingSeriesId(s.id);
-                                }
-                              }}
-                              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#7A2253] hover:underline cursor-pointer"
-                            >
-                              <Play className="h-3.5 w-3.5 fill-current" />
-                              <span>Play Episode 1 inline</span>
-                            </button>
-                          )}
-                          <Link
-                            href={`/${cleanHandle}/series/${s.id}`}
-                            className="inline-flex items-center gap-1 text-xs font-medium text-[#78716C] hover:text-[#1C1917]"
-                          >
-                            <span>Full series</span>
-                            <ArrowUpRight className="h-3.5 w-3.5" />
-                          </Link>
-                        </div>
+                      <div className="pt-1">
+                        <Link
+                          href={`/${cleanHandle}/series`}
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#7A2253] hover:underline"
+                        >
+                          <span>Watch series →</span>
+                        </Link>
                       </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               );
             })}
@@ -651,10 +553,15 @@ export function MediaKitV2Content({
       {/* =================================================================== */}
       {/* 5. PACKAGES — "The story I'd tell for you" & "What your brand gets" */}
       {/* =================================================================== */}
+      {/* Page break between Page 1 (Who I am) and Page 2 (Working together) for print */}
+      <div
+        className="print-page-break hidden print:block"
+        style={{ pageBreakAfter: "always", breakAfter: "page" }}
+      />
       {showPackages && (
         <section
           aria-label="Collaboration Packages"
-          className="rounded-xl border border-[#E7E0D6] bg-[#FAF7F2] p-5 sm:p-7 text-[#1C1917] shadow-2xs space-y-5"
+          className="rounded-xl border border-[#E7E0D6] bg-[#FAF7F2] p-5 sm:p-7 text-[#1C1917] shadow-2xs space-y-5 print-avoid-break"
         >
           <div className="flex flex-wrap items-end justify-between gap-2">
             <div className="space-y-1">
@@ -668,9 +575,6 @@ export function MediaKitV2Content({
                 Partnership formats &amp; stories
               </h3>
             </div>
-            <span className="text-xs italic text-[#78716C]">
-              Final scope shaped together
-            </span>
           </div>
 
           <div className="space-y-4">
@@ -759,10 +663,7 @@ export function MediaKitV2Content({
                   )}
 
                   {/* CTA Row */}
-                  <div className="pt-2 border-t border-[#F5F1EB] flex flex-wrap items-center justify-between gap-3">
-                    <span className="text-xs italic text-[#78716C]">
-                      Final scope shaped together
-                    </span>
+                  <div className="pt-2 border-t border-[#F5F1EB] flex flex-wrap items-center justify-end gap-3">
                     <button
                       type="button"
                       onClick={() => onEnquirePackage?.(pkg)}
@@ -837,10 +738,6 @@ export function MediaKitV2Content({
                 What brands say after working together
               </h3>
             </div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E7E0D6] bg-white px-3 py-1 text-[11px] font-semibold text-[#57534E]">
-              <Check className="h-3 w-3 text-[#7A2253]" />
-              <span>Reviewed via Inflixo invite</span>
-            </span>
           </div>
 
           <div className="space-y-3.5">
@@ -925,11 +822,11 @@ export function MediaKitV2Content({
       {/* =================================================================== */}
       <section
         aria-label="Closing Letter"
-        className="rounded-xl border border-[#E7E0D6] bg-[#FAF7F2] p-6 sm:p-8 text-[#1C1917] shadow-2xs space-y-6"
+        className="rounded-xl border border-[#E7E0D6] bg-[#FAF7F2] p-6 sm:p-8 text-[#1C1917] shadow-2xs space-y-6 print-avoid-break"
       >
         <div className="space-y-3">
           <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-            A Note Before We Begin
+            Before you go
           </span>
           <p
             style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
@@ -944,17 +841,34 @@ export function MediaKitV2Content({
             <p className="text-xs uppercase tracking-widest text-[#78716C]">Warmly,</p>
             <p
               style={{
-                fontFamily: "'Brush Script MT', 'Snell Roundhand', 'Apple Chancery', 'Segoe Script', Georgia, cursive",
+                fontFamily: "'Caveat', 'Playfair Display', cursive, serif",
               }}
-              className="mt-1 text-3xl sm:text-4xl text-[#7A2253] italic select-none"
+              className="mt-1 text-3xl sm:text-4xl text-[#7A2253] italic font-semibold select-none"
             >
               {signatureName}
             </p>
           </div>
         </div>
 
+        {/* QR Code + verification banner for Print / Public */}
+        {qrSvg && (
+          <div className="pt-4 border-t border-[#E7E0D6] flex items-center justify-between gap-4">
+            <div className="space-y-1 text-left">
+              <p className="text-xs font-bold text-[#1C1917]">Official Creator Media Kit</p>
+              <p className="text-[11px] text-[#57534E]">Scan to watch series, inspect real-time audience &amp; enquire</p>
+              <p className="text-[10px] text-[#78716C]">
+                inflixo.com/{cleanHandle}/mediakit · Numbers as of {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+              </p>
+            </div>
+            <div
+              className="h-16 w-16 shrink-0 rounded-lg border border-[#E7E0D6] p-1 bg-white"
+              dangerouslySetInnerHTML={{ __html: qrSvg }}
+            />
+          </div>
+        )}
+
         {/* 3 CTAs: Start a conversation / Download PDF / Copy link */}
-        <div className="pt-4 border-t border-[#E7E0D6] flex flex-wrap items-center gap-2.5">
+        <div className={activeIsPrint ? "hidden" : "pt-4 border-t border-[#E7E0D6] flex flex-wrap items-center gap-2.5 no-print"}>
           <button
             type="button"
             onClick={() => onEnquirePackage?.(null)}
@@ -992,6 +906,34 @@ export function MediaKitV2Content({
           </button>
         </div>
       </section>
+
+      {/* Print stylesheet for 2-Page A4 PDF layout */}
+      <style jsx global>{`
+        @media print {
+          @page {
+            size: A4;
+            margin: 10mm 12mm;
+          }
+          body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .no-print, [data-no-print="true"] {
+            display: none !important;
+          }
+          .print-page-break {
+            page-break-after: always !important;
+            break-after: page !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          .print-avoid-break {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

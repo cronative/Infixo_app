@@ -64,9 +64,12 @@ export function SeriesPosterCard({
       ? detectedPlatform
       : "";
 
-  // Meta line parts: "5 episodes · Hindi · YouTube" (no empty dots)
+  // Meta line parts: "5 episodes · Hindi · Action · YouTube" (no empty dots)
   const metaParts: { text: string; icon?: React.ReactNode }[] = [
     { text: episodeText },
+    ...(series.genre && series.genre.trim()
+      ? [{ text: series.genre.trim() }]
+      : []),
     ...(series.language && series.language.trim()
       ? [{ text: series.language.trim() }]
       : []),

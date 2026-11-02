@@ -173,9 +173,18 @@ export default function SetupPageClient() {
         const freshTheme = resolveThemeKey(freshProfile.themeKey);
         const rawSocials = socialsRes.data?.socials || socialsRes.socials;
         const freshSocials = Array.isArray(rawSocials) ? buildSocialAccounts(rawSocials) : EMPTY_SOCIAL_ACCOUNTS;
-        const freshItems = Array.isArray(setupRes.data?.items || setupRes.items)
+        let freshItems = Array.isArray(setupRes.data?.items || setupRes.items)
           ? (setupRes.data?.items || setupRes.items)
           : [];
+        if (freshItems.length === 0) {
+          try {
+            const { creatorSetupRepository } = await import("@/repositories/localRepository");
+            const localItems = creatorSetupRepository.getAll();
+            if (Array.isArray(localItems) && localItems.length > 0) {
+              freshItems = localItems;
+            }
+          } catch {}
+        }
         const freshSettings = setupRes.data?.settings || setupRes.settings || {};
 
         setProfile(freshProfile);

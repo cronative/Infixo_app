@@ -253,7 +253,28 @@ export function PublicSetupGroups({
 }: PublicSetupGroupsProps) {
   const activeItems = (items || []).filter((it) => it.isActive !== false && it.name?.trim());
 
-  if (activeItems.length === 0) return null;
+  if (activeItems.length === 0) {
+    if (variant === "standalone") {
+      return (
+        <div
+          style={{ borderColor: borderColor || "var(--surface-border)" }}
+          className="rounded-[5px] border p-8 text-center"
+        >
+          <Laptop
+            className="mx-auto h-8 w-8 mb-2 opacity-50"
+            style={{ color: mutedTextColor || "var(--text-muted)" }}
+          />
+          <p
+            style={{ color: mutedTextColor || "var(--text-muted)" }}
+            className="text-xs font-medium"
+          >
+            No setup items added yet.
+          </p>
+        </div>
+      );
+    }
+    return null;
+  }
 
   // Group by stage in the required order: Shoot -> Sound -> Light -> Edit -> Ideas & AI -> Other
   const stageGroups: Array<{ stage: StageDefinition; items: CreatorSetupItem[] }> = [];

@@ -66,7 +66,7 @@ import { BrandLogosWrap } from "@/components/collab/BrandLogosWrap";
 import { CollabEnquirySheet } from "@/components/collab/CollabEnquirySheet";
 import { MediaKitV2Content } from "@/components/mediakit/MediaKitV2Content";
 import { PublicTeamGroups } from "@/components/team/PublicTeamGroups";
-import { PublicSetupGroups, PublicSetupCard } from "@/components/setup/PublicSetupGroups";
+import { PublicSetupGroups, PublicSetupCard, STAGES, getStageForCategory } from "@/components/setup/PublicSetupGroups";
 import { EmptyProfileCard } from "@/components/public/EmptyProfileCard";
 import {
   CreatorProfile,
@@ -2198,7 +2198,10 @@ export function LivePreviewCard({
                       </p>
                     </div>
                     <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
-                      {aboutSocialCards.length || fanbaseSocialCards.length || 3} platforms
+                      {(() => {
+                        const count = aboutSocialCards.length || fanbaseSocialCards.length || 3;
+                        return `${count} ${count === 1 ? "platform" : "platforms"}`;
+                      })()}
                     </span>
                   </div>
 
@@ -2280,18 +2283,30 @@ export function LivePreviewCard({
           if (setupOnlyMode) {
             return (
               <div id="setup-section" className="relative z-10 w-full text-left animate-fade-in order-[5] mt-1 sm:mt-1.5 space-y-4">
-                <PublicSetupGroups
-                  items={activeSetupItems}
-                  variant="standalone"
-                  whereIStarted={setupSettings?.whereIStarted}
-                  primaryTextColor={c.primaryText}
-                  secondaryTextColor={c.secondaryText}
-                  mutedTextColor={c.mutedText}
-                  accentColor={c.accent}
-                  borderColor={c.border}
-                  cardBgColor={c.profileBackground}
-                  isInformational={isInformationalMode}
-                />
+                {activeSetupItems.length > 0 ? (
+                  <PublicSetupGroups
+                    items={activeSetupItems}
+                    variant="standalone"
+                    whereIStarted={setupSettings?.whereIStarted}
+                    primaryTextColor={c.primaryText}
+                    secondaryTextColor={c.secondaryText}
+                    mutedTextColor={c.mutedText}
+                    accentColor={c.accent}
+                    borderColor={c.border}
+                    cardBgColor={c.profileBackground}
+                    isInformational={isInformationalMode}
+                  />
+                ) : (
+                  <div
+                    style={{ borderColor: "var(--surface-border)" }}
+                    className="rounded-[5px] border p-8 text-center"
+                  >
+                    <Laptop className="mx-auto h-8 w-8 mb-2 opacity-50" style={{ color: c.mutedText }} />
+                    <p style={{ color: c.mutedText }} className="text-xs font-medium">
+                      No setup items added yet.
+                    </p>
+                  </div>
+                )}
               </div>
             );
           }
@@ -2366,21 +2381,43 @@ export function LivePreviewCard({
                   </div>
                 )}
 
-                {/* 4 items grid using compact cards */}
-                <div className="p-2 sm:p-2.5 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {displayItems.map((item) => (
-                    <PublicSetupCard
-                      key={item.id}
-                      item={item}
-                      primaryTextColor={c.primaryText}
-                      secondaryTextColor={c.secondaryText}
-                      mutedTextColor={c.mutedText}
-                      accentColor={c.accent}
-                      borderColor={c.border}
-                      cardBgColor={c.profileBackground}
-                      isInformational={isInformationalMode}
-                    />
-                  ))}
+                {/* 4 items grouped by stage: Shoot / Sound / Light / Edit / Ideas & AI */}
+                <div className="p-2 sm:p-2.5 space-y-3">
+                  {STAGES.map((stageDef) => {
+                    const stageItems = displayItems.filter(
+                      (it) => getStageForCategory(it.category) === stageDef.id
+                    );
+                    if (stageItems.length === 0) return null;
+                    const StageIcon = stageDef.icon;
+                    return (
+                      <div key={stageDef.id} className="space-y-1.5">
+                        <div className="flex items-center gap-1.5 px-0.5">
+                          <StageIcon className="h-3.5 w-3.5" style={{ color: c.accent }} />
+                          <span
+                            style={{ color: c.mutedText }}
+                            className="text-[11px] font-bold uppercase tracking-wider"
+                          >
+                            {stageDef.label}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {stageItems.map((item) => (
+                            <PublicSetupCard
+                              key={item.id}
+                              item={item}
+                              primaryTextColor={c.primaryText}
+                              secondaryTextColor={c.secondaryText}
+                              mutedTextColor={c.mutedText}
+                              accentColor={c.accent}
+                              borderColor={c.border}
+                              cardBgColor={c.profileBackground}
+                              isInformational={isInformationalMode}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 {/* Bottom link: "See full setup →" */}
@@ -3548,7 +3585,7 @@ export function LivePreviewCard({
                   <div className="flex flex-col space-y-2 w-full">
                     {visibleReviews.map((rev) => {
                       const ratingNum = Number(rev.rating) || 5;
-                      const initial = rev.clientName ? rev.clientName.trim().charAt(0).toUpperCase() : "B";
+                      const initial = getInitials(rev.clientName, "B");
 
                       return (
                         <div
@@ -3747,7 +3784,7 @@ export function LivePreviewCard({
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2 min-w-0">
                           <div className="h-7 w-7 rounded-lg bg-(--accent)/10 text-(--accent-text) font-bold text-xs flex items-center justify-center shrink-0">
-                            {rev.clientName ? rev.clientName.charAt(0).toUpperCase() : "B"}
+                            {getInitials(rev.clientName, "B")}
                           </div>
                           <div className="min-w-0">
                             <p style={{ color: c.primaryText }} className="text-[13px] font-medium text-(--text) leading-[18px] truncate flex items-center gap-1">

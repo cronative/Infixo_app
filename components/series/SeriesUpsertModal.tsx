@@ -88,7 +88,7 @@ export function SeriesUpsertModal({
       setPlatform(plat);
       setDescription(seriesToEdit.description || "");
       setCoverUrl(seriesToEdit.posterDataUrl || null);
-      setGenres(seriesToEdit.genre || defaultCategories);
+      setGenres(seriesToEdit.genre || "");
       setLanguage(seriesToEdit.language || defaultLanguage);
       setPlatformSwitchError(null);
       setShowMoreOptions(true);
@@ -115,7 +115,7 @@ export function SeriesUpsertModal({
       setPlatform("YouTube");
       setDescription("");
       setCoverUrl(null);
-      setGenres(defaultCategories || "");
+      setGenres("");
       setLanguage(defaultLanguage || "Hindi");
       setPlatformSwitchError(null);
       setShowMoreOptions(false);

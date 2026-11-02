@@ -81,7 +81,7 @@ export function PublicTeamGroups({
           <div
             className={
               isEditorial
-                ? "grid grid-cols-1 sm:grid-cols-2 gap-3"
+                ? "flex flex-col space-y-2.5 w-full"
                 : "space-y-2"
             }
           >
@@ -141,7 +141,7 @@ export function PublicTeamGroups({
                               ? "#1C1917"
                               : primaryTextColor || "var(--text)",
                           }}
-                          className="text-xs sm:text-[13.5px] font-bold leading-snug truncate"
+                          className="text-xs sm:text-[13.5px] font-bold leading-snug break-words"
                         >
                           {member.name}
                         </p>
