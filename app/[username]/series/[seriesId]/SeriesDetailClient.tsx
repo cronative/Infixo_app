@@ -727,31 +727,15 @@ export function SeriesDetailClient({
                       <a
                         key={ep.id || index}
                         href={ep.externalUrl || "#"}
-                        target={ep.externalUrl ? "_blank" : undefined}
+                        target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => trackEpisodeClick(ep)}
-                        aria-label={`Watch episode ${partNum}: ${cleanTitle} on ${epPlatformName}`}
-                        className="group/ep flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl border border-slate-200/70 dark:border-white/10 bg-white dark:bg-zinc-900 hover:bg-[#7A2253]/[0.03] dark:hover:bg-white/[0.04] hover:border-[#7A2253]/30 dark:hover:border-white/20 transition-all text-left focus-visible:ring-2 focus-visible:ring-[#7A2253] focus-visible:outline-hidden cursor-pointer"
+                        aria-label={`Ep ${partNum} · ${cleanTitle}`}
+                        className="group/ep flex items-center justify-between gap-3 px-3.5 py-3 rounded-[5px] border border-slate-200/70 dark:border-white/10 bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-white/[0.04] hover:border-[#7A2253]/30 dark:hover:border-white/20 transition-all text-left cursor-pointer"
                       >
-                        {/* Left: Number Box (36×36) + (Optional Mixed Platform Icon) + Title */}
-                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                          <span className="shrink-0 flex h-9 w-9 items-center justify-center rounded-[5px] bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-white text-xs font-bold tabular-nums border border-slate-200/60 dark:border-white/10">
-                            {partNumStr}
-                          </span>
-
-                          <div className="flex items-center gap-2 min-w-0 flex-1">
-                            {!allSamePlatform && (
-                              <span className="shrink-0">
-                                {renderPlatformIcon(epPlatformName, "h-3.5 w-3.5")}
-                              </span>
-                            )}
-                            <h3 className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white truncate group-hover/ep:text-[#7A2253] dark:group-hover/ep:text-rose-400 transition-colors">
-                              {cleanTitle}
-                            </h3>
-                          </div>
-                        </div>
-
-                        {/* Right: small ↗ icon */}
+                        <span className="text-xs sm:text-[13px] font-semibold text-slate-900 dark:text-white truncate group-hover/ep:text-[#7A2253] dark:group-hover/ep:text-rose-400 transition-colors">
+                          Ep {partNum} · {cleanTitle}
+                        </span>
                         <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover/ep:text-[#7A2253] dark:group-hover/ep:text-rose-400 transition-colors shrink-0" />
                       </a>
                     );

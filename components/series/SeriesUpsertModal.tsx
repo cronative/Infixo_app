@@ -24,6 +24,7 @@ import {
   validateUrlForSeriesPlatform,
   canSwitchSeriesPlatform,
   slugifySeriesTitle,
+  normalizeVideoUrl,
 } from "@/lib/videoUrl";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 
@@ -33,7 +34,17 @@ export interface EpisodeFormRow {
   url: string;
   title: string;
   loadingTitle?: boolean;
-  isEditingTitle?: boolean;
+}
+
+function isRowCompletelyEmpty(row: EpisodeFormRow, defaultPos: number): boolean {
+  const noUrl = !row.url || !row.url.trim();
+  const noTitle = !row.title || !row.title.trim();
+  const noNumber =
+    row.number === "" ||
+    row.number === null ||
+    row.number === undefined ||
+    Number(row.number) === defaultPos;
+  return noUrl && noTitle && noNumber;
 }
 
 interface SeriesUpsertModalProps {
@@ -75,12 +86,23 @@ export function SeriesUpsertModal({
   const [saving, setSaving] = useState(false);
   const [platformSwitchError, setPlatformSwitchError] = useState<string | null>(null);
 
+  // Field touched & submit state for inline validation
+  const [titleTouched, setTitleTouched] = useState(false);
+  const [touchedRows, setTouchedRows] = useState<
+    Record<string, { number?: boolean; title?: boolean; url?: boolean }>
+  >({});
+  const [submitted, setSubmitted] = useState(false);
+
   const titleCacheRef = useRef<Record<string, string>>({});
   const previewAbortRef = useRef<Record<string, AbortController>>({});
 
   // Initialize form when opening or editing
   useEffect(() => {
     if (!isOpen) return;
+
+    setTitleTouched(false);
+    setTouchedRows({});
+    setSubmitted(false);
 
     if (seriesToEdit) {
       setTitle(seriesToEdit.title || "");
@@ -147,72 +169,109 @@ export function SeriesUpsertModal({
     setPlatform(newPlatform);
   };
 
-  // Auto-fetch title for a URL
-  const fetchTitleForUrl = async (rowId: string, url: string, currentNumber: number | string) => {
-    const trimmed = url.trim();
-    if (!trimmed) return;
-
-    if (titleCacheRef.current[trimmed]) {
-      setEpisodeRows((prev) =>
-        prev.map((r) =>
-          r.id === rowId ? { ...r, title: titleCacheRef.current[trimmed], loadingTitle: false } : r
-        )
-      );
-      return;
-    }
-
-    // Abort previous fetch for this row
-    if (previewAbortRef.current[rowId]) {
-      previewAbortRef.current[rowId].abort();
-    }
-    const controller = new AbortController();
-    previewAbortRef.current[rowId] = controller;
+  // URL input/paste handler with official oEmbed for YouTube & default "Episode {n}" for IG/FB
+  const handleUrlChangeOrPaste = async (rowId: string, rawVal: string, rowIndex: number) => {
+    const cleanUrl = normalizeVideoUrl(rawVal.trim());
+    const currentNumber = episodeRows[rowIndex]?.number || rowIndex + 1;
 
     setEpisodeRows((prev) =>
-      prev.map((r) => (r.id === rowId ? { ...r, loadingTitle: true } : r))
+      prev.map((r) => (r.id === rowId ? { ...r, url: cleanUrl } : r))
     );
 
-    try {
-      const res = await fetch(`/api/link-preview?url=${encodeURIComponent(trimmed)}`, {
-        signal: controller.signal,
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const fetchedTitle = data.title || `Episode ${currentNumber}`;
-        titleCacheRef.current[trimmed] = fetchedTitle;
+    if (!cleanUrl) return;
+
+    const check = validateUrlForSeriesPlatform(cleanUrl, platform);
+    if (!check.allowed) return;
+
+    if (check.detectedPlatform === "YouTube") {
+      if (titleCacheRef.current[cleanUrl]) {
+        const cached = titleCacheRef.current[cleanUrl];
         setEpisodeRows((prev) =>
-          prev.map((r) =>
-            r.id === rowId ? { ...r, title: fetchedTitle, loadingTitle: false } : r
-          )
+          prev.map((r) => {
+            if (r.id !== rowId) return r;
+            if (!r.title.trim() || /^Episode\s*\d*$/i.test(r.title.trim())) {
+              return { ...r, title: cached.slice(0, 100) };
+            }
+            return r;
+          })
         );
-      } else {
-        const fallback = `Episode ${currentNumber}`;
-        setEpisodeRows((prev) =>
-          prev.map((r) => (r.id === rowId ? { ...r, title: fallback, loadingTitle: false } : r))
-        );
+        return;
       }
-    } catch (e: any) {
-      if (e.name !== "AbortError") {
-        const fallback = `Episode ${currentNumber}`;
-        setEpisodeRows((prev) =>
-          prev.map((r) => (r.id === rowId ? { ...r, title: fallback, loadingTitle: false } : r))
-        );
+
+      if (previewAbortRef.current[rowId]) {
+        previewAbortRef.current[rowId].abort();
       }
+      const controller = new AbortController();
+      previewAbortRef.current[rowId] = controller;
+
+      setEpisodeRows((prev) =>
+        prev.map((r) => (r.id === rowId ? { ...r, loadingTitle: true } : r))
+      );
+
+      try {
+        const res = await fetch(`/api/link-preview?url=${encodeURIComponent(cleanUrl)}`, {
+          signal: controller.signal,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const fetchedTitle = data.title || `Episode ${currentNumber}`;
+          titleCacheRef.current[cleanUrl] = fetchedTitle;
+          setEpisodeRows((prev) =>
+            prev.map((r) => {
+              if (r.id !== rowId) return r;
+              if (!r.title.trim() || /^Episode\s*\d*$/i.test(r.title.trim())) {
+                return { ...r, title: fetchedTitle.slice(0, 100), loadingTitle: false };
+              }
+              return { ...r, loadingTitle: false };
+            })
+          );
+        } else {
+          setEpisodeRows((prev) =>
+            prev.map((r) => (r.id === rowId ? { ...r, loadingTitle: false } : r))
+          );
+        }
+      } catch (e: any) {
+        if (e.name !== "AbortError") {
+          setEpisodeRows((prev) =>
+            prev.map((r) => (r.id === rowId ? { ...r, loadingTitle: false } : r))
+          );
+        }
+      }
+    } else if (check.detectedPlatform === "Instagram" || check.detectedPlatform === "Facebook") {
+      setEpisodeRows((prev) =>
+        prev.map((r) => {
+          if (r.id !== rowId) return r;
+          if (!r.title.trim() || /^Episode\s*\d*$/i.test(r.title.trim())) {
+            return { ...r, title: `Episode ${currentNumber}` };
+          }
+          return r;
+        })
+      );
     }
   };
 
-  // Paste shortcut: split multiline pastes into consecutive rows
+  // Paste shortcut: split multiline pastes into consecutive cards
   const handlePasteLinks = (
     e: React.ClipboardEvent<HTMLInputElement>,
     rowIndex: number
   ) => {
     const pasteText = e.clipboardData.getData("text");
-    if (!pasteText.includes("\n")) return; // Let default single-line paste handle
+    if (!pasteText.includes("\n")) {
+      // Single line paste: strip tracking params immediately
+      e.preventDefault();
+      const stripped = normalizeVideoUrl(pasteText.trim());
+      handleUrlChangeOrPaste(episodeRows[rowIndex].id, stripped, rowIndex);
+      setTouchedRows((prev) => ({
+        ...prev,
+        [episodeRows[rowIndex].id]: { ...prev[episodeRows[rowIndex].id], url: true },
+      }));
+      return;
+    }
 
     e.preventDefault();
     const lines = pasteText
       .split("\n")
-      .map((l) => l.trim())
+      .map((l) => normalizeVideoUrl(l.trim()))
       .filter(Boolean);
 
     if (lines.length === 0) return;
@@ -226,7 +285,7 @@ export function SeriesUpsertModal({
         ...updated[rowIndex],
         url: lines[0],
       };
-      fetchTitleForUrl(updated[rowIndex].id, lines[0], updated[rowIndex].number);
+      handleUrlChangeOrPaste(updated[rowIndex].id, lines[0], rowIndex);
 
       // Fill or add subsequent rows
       for (let i = 1; i < lines.length; i++) {
@@ -239,7 +298,7 @@ export function SeriesUpsertModal({
             ...updated[nextIdx],
             url: lineUrl,
           };
-          fetchTitleForUrl(updated[nextIdx].id, lineUrl, updated[nextIdx].number);
+          handleUrlChangeOrPaste(updated[nextIdx].id, lineUrl, nextIdx);
         } else {
           const newRowId = `row_${Date.now()}_${i}`;
           updated.push({
@@ -248,7 +307,7 @@ export function SeriesUpsertModal({
             url: lineUrl,
             title: "",
           });
-          fetchTitleForUrl(newRowId, lineUrl, nextNum);
+          handleUrlChangeOrPaste(newRowId, lineUrl, nextIdx);
         }
       }
 
@@ -256,7 +315,7 @@ export function SeriesUpsertModal({
     });
   };
 
-  // Remove a row and auto-resequence remaining numbers
+  // Remove a card
   const handleRemoveRow = (rowIndex: number) => {
     setEpisodeRows((prev) => {
       const remaining = prev.filter((_, idx) => idx !== rowIndex);
@@ -267,8 +326,12 @@ export function SeriesUpsertModal({
     });
   };
 
-  // Add next episode row
+  // Add next episode card
   const handleAddRow = () => {
+    if (maxEpisodes !== Infinity && episodeRows.length >= maxEpisodes) {
+      showToast(`Max ${maxEpisodes} episodes on your plan`, "info");
+      return;
+    }
     setEpisodeRows((prev) => [
       ...prev,
       {
@@ -280,89 +343,134 @@ export function SeriesUpsertModal({
     ]);
   };
 
-  // Evaluate validation for each row
+  // Row validations
   const rowValidations = useMemo(() => {
     return episodeRows.map((row, idx) => {
-      let urlError: string | null = null;
-      let numberError: string | null = null;
+      const isEmpty = isRowCompletelyEmpty(row, idx + 1);
+      if (isEmpty) {
+        return {
+          isEmpty: true,
+          numberError: null,
+          titleError: null,
+          urlError: null,
+          isValid: true,
+        };
+      }
 
-      // Validate number
-      const parsedNum = Number(row.number);
-      if (!row.number || isNaN(parsedNum) || parsedNum <= 0) {
-        numberError = "Episode number must be valid";
+      let numberError: string | null = null;
+      let titleError: string | null = null;
+      let urlError: string | null = null;
+
+      // 1. Episode No. (required, whole number >= 1, unique in series)
+      if (row.number === "" || row.number === null || row.number === undefined) {
+        numberError = "Episode number is required.";
       } else {
-        const duplicateNumIndex = episodeRows.findIndex(
-          (other, oIdx) => oIdx !== idx && Number(other.number) === parsedNum
-        );
-        if (duplicateNumIndex !== -1) {
-          numberError = "Episode number must be unique";
+        const parsedNum = Number(row.number);
+        if (isNaN(parsedNum) || !Number.isInteger(parsedNum) || parsedNum < 1) {
+          numberError = "Episode number must be a whole number ≥ 1.";
+        } else {
+          const dupIdx = episodeRows.findIndex(
+            (other, oIdx) =>
+              oIdx !== idx &&
+              !isRowCompletelyEmpty(other, oIdx + 1) &&
+              Number(other.number) === parsedNum
+          );
+          if (dupIdx !== -1) {
+            numberError = "Episode number already used.";
+          }
         }
       }
 
-      // Validate URL if filled
-      const trimmedUrl = row.url.trim();
-      if (trimmedUrl) {
+      // 2. Title (text, required, max 100)
+      const trimmedTitle = (row.title || "").trim();
+      if (!trimmedTitle) {
+        titleError = "Title is required.";
+      } else if (trimmedTitle.length > 100) {
+        titleError = "Title must be 100 characters or less.";
+      }
+
+      // 3. Video link (url, required, must match series platform)
+      const trimmedUrl = (row.url || "").trim();
+      if (!trimmedUrl) {
+        urlError = "Video link is required.";
+      } else {
         const check = validateUrlForSeriesPlatform(trimmedUrl, platform);
         if (!check.allowed) {
-          urlError = check.reason || `Invalid link for ${platform} series`;
+          urlError = check.reason || `Only ${platform} links are allowed in a ${platform} series.`;
         } else {
-          // Check for duplicate links among preceding rows
-          const prevDuplicateIndex = episodeRows.findIndex(
+          // Duplicate check inside same series
+          const norm = normalizeVideoUrl(trimmedUrl).toLowerCase();
+          const dupUrlIdx = episodeRows.findIndex(
             (other, oIdx) =>
-              oIdx < idx &&
-              other.url.trim() &&
-              validateUrlForSeriesPlatform(other.url.trim(), platform).normalizedUrl ===
-                check.normalizedUrl
+              oIdx !== idx &&
+              !isRowCompletelyEmpty(other, oIdx + 1) &&
+              other.url &&
+              normalizeVideoUrl(other.url.trim()).toLowerCase() === norm
           );
-          if (prevDuplicateIndex !== -1) {
-            urlError = `This video is already added as Ep ${episodeRows[prevDuplicateIndex].number}`;
+          if (dupUrlIdx !== -1) {
+            urlError = "This episode is already added.";
           }
         }
       }
 
       return {
-        urlError,
+        isEmpty: false,
         numberError,
-        isFilled: Boolean(trimmedUrl),
-        isValid: !urlError && !numberError,
+        titleError,
+        urlError,
+        isValid: !numberError && !titleError && !urlError,
       };
     });
   }, [episodeRows, platform]);
 
-  // Overall form validity
-  const hasInvalidFilledRows = useMemo(() => {
-    return rowValidations.some((v) => v.isFilled && (!v.isValid || Boolean(v.urlError)));
-  }, [rowValidations]);
+  const seriesTitleError = !title.trim()
+    ? "Series title is required."
+    : title.trim().length > 80
+    ? "Series title must be 80 characters or less."
+    : null;
 
-  const hasDuplicateNumbers = useMemo(() => {
-    return rowValidations.some((v) => Boolean(v.numberError));
-  }, [rowValidations]);
+  const nonEmptyRows = rowValidations.filter((v) => !v.isEmpty);
+  const hasAnyRowError = nonEmptyRows.some((v) => !v.isValid);
+  const hasValidEpisodes = nonEmptyRows.length > 0 && !hasAnyRowError;
 
-  const isFormSubmittable = !hasInvalidFilledRows && !hasDuplicateNumbers && title.trim().length > 0;
+  const isFormSubmittable = !seriesTitleError && hasValidEpisodes;
 
   // Save changes
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const cleanTitle = title.trim();
-    if (!cleanTitle) {
-      showToast("Please enter a series title.", "error");
+    setSubmitted(true);
+
+    if (!isFormSubmittable) {
+      setTimeout(() => {
+        const firstErrorEl = document.querySelector(".has-series-error");
+        if (firstErrorEl) {
+          firstErrorEl.scrollIntoView({ behavior: "smooth", block: "center" });
+          if ("focus" in firstErrorEl) {
+            (firstErrorEl as HTMLElement).focus();
+          }
+        }
+      }, 50);
+
+      if (seriesTitleError) {
+        showToast(seriesTitleError, "error");
+      } else if (nonEmptyRows.length === 0) {
+        showToast("At least 1 episode is required.", "error");
+      } else {
+        showToast("Please fix the errors in your episode cards before saving.", "error");
+      }
       return;
     }
 
-    if (hasInvalidFilledRows || hasDuplicateNumbers) {
-      showToast("Please fix the errors in your episode rows before saving.", "error");
-      return;
-    }
-
-    // Filter out empty rows, sort by number, renumber 1..N
-    const filledRows = episodeRows.filter((r) => r.url.trim() !== "");
-    const sorted = [...filledRows].sort((a, b) => Number(a.number) - Number(b.number));
+    // Filter out empty rows, sort by number, strip tracking params
+    const validRows = episodeRows.filter((r, idx) => !isRowCompletelyEmpty(r, idx + 1));
+    const sorted = [...validRows].sort((a, b) => Number(a.number) - Number(b.number));
     const episodesPayload = sorted.map((r, idx) => ({
-      number: idx + 1,
-      url: r.url.trim(),
+      number: Math.max(1, parseInt(String(r.number), 10) || idx + 1),
+      url: normalizeVideoUrl(r.url.trim()),
       title: r.title.trim() || `Episode ${idx + 1}`,
     }));
 
+    const cleanTitle = title.trim();
     setSaving(true);
 
     try {
@@ -452,26 +560,41 @@ export function SeriesUpsertModal({
     >
       <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
         <ModalBody className="p-5 sm:p-6 space-y-4 flex-1 min-h-0 overflow-y-auto">
-          {/* 1. Series Title */}
+          {/* 1. Series Title (required, max 80) */}
           <div>
-            <label className="block text-[13px] font-semibold text-[#0f172a] mb-1.5">
-              Series Title <span className="text-rose-500">*</span>
-            </label>
-            <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-[13px] font-semibold text-[#0f172a]">
+                Series Title <span className="text-rose-500">*</span>
+              </label>
+              <span className="text-[11px] text-[#94a3b8] tabular-nums">
+                {title.length}/80
+              </span>
+            </div>
+            <div
+              className={`flex items-center rounded-[5px] border ${
+                (titleTouched || submitted) && seriesTitleError
+                  ? "border-rose-500 bg-rose-50/20 focus-within:border-rose-600 has-series-error"
+                  : "border-[#e2e8f0] focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10"
+              } bg-white overflow-hidden transition-colors`}
+            >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
                 <Film className="h-4 w-4" />
               </span>
               <input
                 type="text"
+                maxLength={80}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                onBlur={() => setTitleTouched(true)}
                 placeholder="e.g. 3 Days Street Food Challenge"
                 className="flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
-                required
                 disabled={saving}
                 autoFocus
               />
             </div>
+            {(titleTouched || submitted) && seriesTitleError && (
+              <p className="mt-1 text-xs text-rose-500 font-medium">{seriesTitleError}</p>
+            )}
           </div>
 
           {/* Platform Selector (Segmented 4 options: YouTube · Instagram · Facebook · Mix) */}
@@ -511,166 +634,163 @@ export function SeriesUpsertModal({
             )}
           </div>
 
-          {/* 2. Episodes Section (Separate fields per episode) */}
+          {/* 2. Episodes Section (Each episode = one card, stacked fields) */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-[13px] font-semibold text-[#0f172a]">
                 Episodes
               </label>
               <span className="text-xs text-[#64748b]">
-                {episodeRows.filter((r) => r.url.trim()).length} episode(s) entered
+                {episodeRows.filter((r, i) => !isRowCompletelyEmpty(r, i + 1)).length} episode(s) entered
               </span>
             </div>
 
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               {episodeRows.map((row, idx) => {
                 const validation = rowValidations[idx];
+                const touched = touchedRows[row.id] || {};
+                const showNumberErr = (touched.number || submitted) && validation.numberError;
+                const showTitleErr = (touched.title || submitted) && validation.titleError;
+                const showUrlErr = (touched.url || submitted) && validation.urlError;
 
                 return (
                   <div
                     key={row.id}
-                    className="p-2.5 rounded-[5px] border border-slate-200 bg-slate-50/60 transition-colors space-y-1.5"
+                    className="relative p-3.5 sm:p-4 rounded-[5px] border border-slate-200 bg-white space-y-3 transition-colors shadow-xs text-left"
                   >
-                    <div className="flex items-center gap-2">
-                      {/* Ep No. (64px wide numeric input) */}
-                      <div className="w-16 shrink-0">
-                        <input
-                          type="number"
-                          min={1}
-                          value={row.number}
+                    {/* Card Top: Episode label + delete (x) button top-right */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-[#18181B]">
+                        Episode {row.number || idx + 1}
+                      </span>
+                      {episodeRows.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveRow(idx)}
                           disabled={saving}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setEpisodeRows((prev) =>
-                              prev.map((r, i) => (i === idx ? { ...r, number: val } : r))
-                            );
-                          }}
-                          className={`w-full rounded-[4px] border bg-white px-2 py-1.5 text-xs text-center font-bold text-[#0f172a] focus:outline-none ${
-                            validation.numberError
-                              ? "border-rose-400 bg-rose-50/40 focus:border-rose-500"
-                              : "border-[#e2e8f0] focus:border-[#7A2253]"
-                          }`}
-                          placeholder="No."
-                          title="Episode number"
-                        />
-                      </div>
-
-                      {/* Video Link Field */}
-                      <div className="flex-1 min-w-0">
-                        <input
-                          type="text"
-                          value={row.url}
-                          disabled={saving}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setEpisodeRows((prev) =>
-                              prev.map((r, i) => (i === idx ? { ...r, url: val } : r))
-                            );
-                            if (val.trim()) {
-                              fetchTitleForUrl(row.id, val, row.number);
-                            }
-                          }}
-                          onPaste={(e) => handlePasteLinks(e, idx)}
-                          placeholder={getPlatformPlaceholder(platform)}
-                          className={`w-full rounded-[4px] border bg-white px-3 py-1.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none ${
-                            validation.urlError
-                              ? "border-rose-400 bg-rose-50/40 focus:border-rose-500"
-                              : "border-[#e2e8f0] focus:border-[#7A2253]"
-                          }`}
-                        />
-                      </div>
-
-                      {/* Remove Row [ ✕ ] */}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveRow(idx)}
-                        disabled={saving || episodeRows.length <= 1}
-                        className="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-slate-200/60 disabled:opacity-30 cursor-pointer shrink-0"
-                        title="Remove episode row"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
+                          className="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                          title="Remove episode"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      )}
                     </div>
 
-                    {/* Fixed-height status/title/error row to prevent vertical layout shift when titles load */}
-                    <div className="pl-18 min-h-[22px] flex items-center text-xs text-[#64748b]">
-                      {validation.numberError || validation.urlError ? (
-                        <p className="text-[11px] font-medium text-rose-600 flex items-center gap-1 truncate">
-                          <AlertCircle className="h-3 w-3 shrink-0" />
-                          <span className="truncate">{validation.numberError || validation.urlError}</span>
-                        </p>
-                      ) : row.url.trim() ? (
-                        row.loadingTitle ? (
-                          <span className="flex items-center gap-1 text-[11px] text-slate-400 italic">
-                            <Loader2 className="h-3 w-3 animate-spin text-[#7A2253]" />
-                            <span>Fetching video title...</span>
-                          </span>
-                        ) : row.isEditingTitle ? (
-                          <div className="flex items-center gap-1 w-full max-w-sm">
-                            <input
-                              type="text"
-                              value={row.title}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                setEpisodeRows((prev) =>
-                                  prev.map((r, i) => (i === idx ? { ...r, title: val } : r))
-                                );
-                              }}
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter" || e.key === "Escape") {
-                                  e.preventDefault();
-                                  setEpisodeRows((prev) =>
-                                    prev.map((r, i) =>
-                                      i === idx ? { ...r, isEditingTitle: false } : r
-                                    )
-                                  );
-                                }
-                              }}
-                              className="flex-1 rounded-[3px] border border-[#7A2253] bg-white px-1.5 py-0.5 text-xs font-medium text-[#0f172a] focus:outline-none"
-                              autoFocus
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setEpisodeRows((prev) =>
-                                  prev.map((r, i) =>
-                                    i === idx ? { ...r, isEditingTitle: false } : r
-                                  )
-                                );
-                              }}
-                              className="p-0.5 text-[#7A2253] hover:bg-slate-100 rounded cursor-pointer"
-                            >
-                              <Check className="h-3.5 w-3.5" />
-                            </button>
-                          </div>
-                        ) : (
-                          <span
-                            onClick={() => {
-                              setEpisodeRows((prev) =>
-                                prev.map((r, i) =>
-                                  i === idx
-                                    ? {
-                                        ...r,
-                                        isEditingTitle: true,
-                                        title: r.title || `Episode ${r.number}`,
-                                      }
-                                    : r
-                                )
-                              );
-                            }}
-                            className="truncate cursor-pointer hover:text-[#7A2253] hover:underline flex items-center gap-1 text-[11px]"
-                            title="Click to edit title"
-                          >
-                            <span className="font-semibold text-slate-700 truncate">
-                              {row.title || `Episode ${row.number}`}
-                            </span>
-                            <Pencil className="h-2.5 w-2.5 opacity-60 shrink-0" />
-                          </span>
-                        )
-                      ) : (
-                        <span className="text-[11px] text-slate-400 select-none">
-                          Title loads automatically when you paste a link
+                    {/* 1. Episode No. (number input, default = position) */}
+                    <div>
+                      <label className="block text-xs font-semibold text-[#0f172a] mb-1">
+                        Episode No. <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        min={1}
+                        step={1}
+                        value={row.number}
+                        disabled={saving}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setEpisodeRows((prev) =>
+                            prev.map((r, i) => (i === idx ? { ...r, number: val } : r))
+                          );
+                        }}
+                        onBlur={() => {
+                          setTouchedRows((prev) => ({
+                            ...prev,
+                            [row.id]: { ...prev[row.id], number: true },
+                          }));
+                        }}
+                        placeholder="e.g. 1"
+                        className={`w-full rounded-[4px] border bg-white px-3 py-1.5 text-xs text-[#0f172a] focus:outline-none transition-colors ${
+                          showNumberErr
+                            ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-series-error"
+                            : "border-[#e2e8f0] focus:border-[#7A2253]"
+                        }`}
+                      />
+                      {showNumberErr && (
+                        <p className="mt-1 text-xs text-rose-500 font-medium">{validation.numberError}</p>
+                      )}
+                    </div>
+
+                    {/* 2. Title (text, required, max 100) */}
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-xs font-semibold text-[#0f172a]">
+                          Title <span className="text-rose-500">*</span>
+                        </label>
+                        <span className="text-[11px] text-[#94a3b8] tabular-nums">
+                          {(row.title || "").length}/100
                         </span>
+                      </div>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          maxLength={100}
+                          value={row.title}
+                          disabled={saving}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setEpisodeRows((prev) =>
+                              prev.map((r, i) => (i === idx ? { ...r, title: val } : r))
+                            );
+                          }}
+                          onBlur={() => {
+                            setTouchedRows((prev) => ({
+                              ...prev,
+                              [row.id]: { ...prev[row.id], title: true },
+                            }));
+                          }}
+                          placeholder="Episode title"
+                          className={`w-full rounded-[4px] border bg-white px-3 py-1.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none transition-colors ${
+                            showTitleErr
+                              ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-series-error"
+                              : "border-[#e2e8f0] focus:border-[#7A2253]"
+                          }`}
+                        />
+                        {row.loadingTitle && (
+                          <span className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[11px] text-[#7A2253]">
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          </span>
+                        )}
+                      </div>
+                      {showTitleErr && (
+                        <p className="mt-1 text-xs text-rose-500 font-medium">{validation.titleError}</p>
+                      )}
+                    </div>
+
+                    {/* 3. Video link (url, required) */}
+                    <div>
+                      <label className="block text-xs font-semibold text-[#0f172a] mb-1">
+                        Video link <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        type="url"
+                        value={row.url}
+                        disabled={saving}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setEpisodeRows((prev) =>
+                            prev.map((r, i) => (i === idx ? { ...r, url: val } : r))
+                          );
+                        }}
+                        onPaste={(e) => handlePasteLinks(e, idx)}
+                        onBlur={() => {
+                          setTouchedRows((prev) => ({
+                            ...prev,
+                            [row.id]: { ...prev[row.id], url: true },
+                          }));
+                          if (row.url.trim()) {
+                            handleUrlChangeOrPaste(row.id, row.url, idx);
+                          }
+                        }}
+                        placeholder={getPlatformPlaceholder(platform)}
+                        className={`w-full rounded-[4px] border bg-white px-3 py-1.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none transition-colors ${
+                          showUrlErr
+                            ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-series-error"
+                            : "border-[#e2e8f0] focus:border-[#7A2253]"
+                        }`}
+                      />
+                      {showUrlErr && (
+                        <p className="mt-1 text-xs text-rose-500 font-medium">{validation.urlError}</p>
                       )}
                     </div>
                   </div>
@@ -678,11 +798,11 @@ export function SeriesUpsertModal({
               })}
             </div>
 
-            {/* + Add episode button or Limit message */}
+            {/* + Add episode button below last card OR plan limit */}
             <div className="pt-2">
               {isAtLimit ? (
                 <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-[5px] font-medium">
-                  {maxEpisodes}/{maxEpisodes} episodes · Upgrade for more
+                  Max {maxEpisodes} episodes on your plan
                 </p>
               ) : (
                 <button
@@ -778,13 +898,12 @@ export function SeriesUpsertModal({
           </button>
 
           <div className="flex items-center gap-2">
-            {!isFormSubmittable && (
+            {!isFormSubmittable && submitted && (
               <span className="text-[11px] text-rose-500 font-medium">
-                {hasDuplicateNumbers
-                  ? "Episode numbers must be unique"
-                  : hasInvalidFilledRows
-                  ? "Fix invalid episode links"
-                  : "Enter a series title"}
+                {seriesTitleError ||
+                  (nonEmptyRows.length === 0
+                    ? "At least 1 episode is required"
+                    : "Fix errors above")}
               </span>
             )}
             <button

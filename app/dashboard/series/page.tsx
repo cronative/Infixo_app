@@ -37,7 +37,7 @@ import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import { PhonePreview } from "@/components/dashboard/PhonePreview";
-import { getSeriesCoverUrl, slugifySeriesTitle, validateVideoUrl, validateUrlForSeriesPlatform } from "@/lib/videoUrl";
+import { getSeriesCoverUrl, slugifySeriesTitle, validateVideoUrl, validateUrlForSeriesPlatform, normalizeVideoUrl } from "@/lib/videoUrl";
 import { OverLimitBadge } from "@/components/ui/OverLimitBadge";
 import { getPlanQuota } from "@/services/subscriptionLimits";
 import { SeriesCoverLogo } from "@/components/series/SeriesCoverLogo";
@@ -309,18 +309,47 @@ export default function MySeriesPage() {
 
     const urls = text
       .split(/\s+/)
-      .map((u) => u.trim())
+      .map((u) => normalizeVideoUrl(u.trim()))
       .filter(Boolean);
+
+    if (urls.length === 0) return;
 
     const targetSeries = seriesList.find((s) => s.id === seriesId);
     const seriesPlat = targetSeries?.platform || "YouTube";
+    const currentEps = targetSeries?.seasons?.[0]?.episodes || [];
+
+    // Plan limit check
+    if (
+      planData.limits.episodesPerSeries !== Infinity &&
+      currentEps.length + urls.length > planData.limits.episodesPerSeries
+    ) {
+      showToast(`Max ${planData.limits.episodesPerSeries} episodes on your plan`, "error");
+      return;
+    }
+
+    const existingNormUrls = new Set(
+      currentEps.map((e) => normalizeVideoUrl(e.externalUrl || "").toLowerCase())
+    );
+
+    const seenInBatch = new Set<string>();
 
     for (let i = 0; i < urls.length; i++) {
-      const check = validateUrlForSeriesPlatform(urls[i], seriesPlat);
+      const u = urls[i];
+      const check = validateUrlForSeriesPlatform(u, seriesPlat);
       if (!check.allowed) {
-        showToast(check.reason || `Invalid link for ${seriesPlat} series.`, "error");
+        showToast(
+          check.reason || `Only ${seriesPlat} links are allowed in a ${seriesPlat} series.`,
+          "error"
+        );
         return;
       }
+
+      const lower = u.toLowerCase();
+      if (existingNormUrls.has(lower) || seenInBatch.has(lower)) {
+        showToast("This episode is already added.", "error");
+        return;
+      }
+      seenInBatch.add(lower);
     }
 
     setAddingInline((prev) => ({ ...prev, [seriesId]: true }));
@@ -335,10 +364,10 @@ export default function MySeriesPage() {
       setSeriesList((prev) =>
         prev.map((s) => {
           if (s.id !== seriesId) return s;
-          const currentEps = s.seasons?.[0]?.episodes || [];
+          const eps = s.seasons?.[0]?.episodes || [];
           return {
             ...s,
-            seasons: [{ ...s.seasons[0], episodes: [...currentEps, ...addedEpisodes] }],
+            seasons: [{ ...s.seasons[0], episodes: [...eps, ...addedEpisodes] }],
           };
         })
       );
@@ -833,7 +862,7 @@ export default function MySeriesPage() {
                         <span className="flex items-center gap-1.5 font-medium">
                           <AlertCircle className="h-3.5 w-3.5 text-amber-600 shrink-0" />
                           <span>
-                            {episodes.length}/{planData.limits.episodesPerSeries} episodes limit reached
+                            Max {planData.limits.episodesPerSeries} episodes on your plan
                           </span>
                         </span>
                         <button

@@ -271,50 +271,18 @@ export function EpisodeQuickDrawer({
                   const epTitleStr = ep.title?.trim() || `Episode ${partNum}`;
 
                   return (
-                    <div
+                    <a
                       key={ep.id || idx}
-                      className="group flex items-center justify-between gap-3 px-3.5 py-2.5 sm:py-3 transition-colors hover:bg-slate-50/80 text-left"
+                      href={ep.externalUrl || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex items-center justify-between gap-3 px-3.5 py-3 transition-colors hover:bg-slate-50 text-left"
                     >
-                      {/* Left: Number + Platform Icon + Title */}
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <span className="font-mono text-xs font-bold text-slate-400 w-6 shrink-0 text-left">
-                          {partNumStr}.
-                        </span>
-
-                        <span className={`flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-xl text-white shadow-xs ${getPlatformBadgeBg(ep.platform || series.platform)}`}>
-                          {getPlatformIcon(ep.platform || series.platform)}
-                        </span>
-
-                        <div className="min-w-0 space-y-0.5">
-                          <p className="truncate text-xs sm:text-[13px] font-bold text-slate-900 group-hover:text-[#7A2253] transition-colors">
-                            {epTitleStr}
-                          </p>
-                          {(ep as any).duration && (
-                            <p className="text-[11px] text-slate-400 font-medium">
-                              {(ep as any).duration}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Right: Play Action Button */}
-                      {ep.externalUrl ? (
-                        <a
-                          href={ep.externalUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="tap-scale shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-[#7A2253] hover:bg-brand-hover px-3.5 py-1.5 text-xs font-bold text-white transition-all shadow-xs cursor-pointer hover:scale-102"
-                        >
-                          <Play className="h-3 w-3 fill-current" />
-                          <span>Play</span>
-                          <ExternalLink className="h-3 w-3 opacity-70" />
-                        </a>
-                      ) : (
-                        <span className="text-[11px] font-semibold text-slate-400 px-2 py-1">
-                          Coming soon
-                        </span>
-                      )}
-                    </div>
+                      <span className="text-xs sm:text-[13px] font-semibold text-slate-900 group-hover:text-[#7A2253] transition-colors truncate">
+                        Ep {partNum} · {epTitleStr}
+                      </span>
+                      <ExternalLink className="h-3.5 w-3.5 text-slate-400 group-hover:text-[#7A2253] shrink-0" />
+                    </a>
                   );
                 })}
               </div>

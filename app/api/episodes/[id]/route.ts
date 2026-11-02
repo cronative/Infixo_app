@@ -33,10 +33,19 @@ export async function PATCH(
 
     const current = epRows[0];
     const body = await req.json();
-    const { title, url, externalUrl } = body;
+    const { title, url, externalUrl, episodeNumber } = body;
 
     const updates: string[] = [];
     const params: any[] = [];
+
+    if (episodeNumber !== undefined) {
+      const num = parseInt(String(episodeNumber), 10);
+      if (isNaN(num) || num < 1) {
+        return apiError("Episode number must be a whole number ≥ 1", 400);
+      }
+      updates.push("episode_number = ?");
+      params.push(num);
+    }
 
     if (title !== undefined) {
       const cleanTitle = String(title).trim();

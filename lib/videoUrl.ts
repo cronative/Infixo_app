@@ -160,25 +160,14 @@ export function validateVideoUrl(rawUrl: string): VideoUrlValidationResult {
 
     // 2. Instagram Validation
     if (host.includes("instagram.com")) {
-      // /reel/<id> or /reels/<id>
-      const reelMatch = pathname.match(/\/reels?\/([a-zA-Z0-9_-]+)/);
-      if (reelMatch && reelMatch[1]) {
+      // /reel/<id>, /reels/<id>, /p/<id>, or /tv/<id>
+      const igMatch = pathname.match(/\/(?:reels?|p|tv)\/([a-zA-Z0-9_-]+)/);
+      if (igMatch && igMatch[1]) {
         return {
           isValid: true,
           platform: "Instagram",
           normalizedUrl: normalized,
-          videoId: reelMatch[1],
-        };
-      }
-
-      // /p/<id>
-      const postMatch = pathname.match(/\/p\/([a-zA-Z0-9_-]+)/);
-      if (postMatch && postMatch[1]) {
-        return {
-          isValid: true,
-          platform: "Instagram",
-          normalizedUrl: normalized,
-          videoId: postMatch[1],
+          videoId: igMatch[1],
         };
       }
 
@@ -186,7 +175,7 @@ export function validateVideoUrl(rawUrl: string): VideoUrlValidationResult {
         isValid: false,
         platform: "Instagram",
         normalizedUrl: normalized,
-        error: "Enter a link to a specific Instagram Reel or Post (e.g. instagram.com/reel/...).",
+        error: "Enter a link to a specific Instagram Reel, Post, or Video (e.g. instagram.com/reel/...).",
       };
     }
 
@@ -227,7 +216,7 @@ export function validateVideoUrl(rawUrl: string): VideoUrlValidationResult {
         };
       }
 
-      // /watch/?v=<id>
+      // /watch/?v=<id> or /watch/<id>
       const fbWatchV = url.searchParams.get("v");
       if (fbWatchV && fbWatchV.trim()) {
         return {
@@ -237,12 +226,21 @@ export function validateVideoUrl(rawUrl: string): VideoUrlValidationResult {
           videoId: fbWatchV.trim(),
         };
       }
+      const fbWatchPath = pathname.match(/\/watch\/([a-zA-Z0-9_.-]+)/);
+      if (fbWatchPath && fbWatchPath[1]) {
+        return {
+          isValid: true,
+          platform: "Facebook",
+          normalizedUrl: normalized,
+          videoId: fbWatchPath[1],
+        };
+      }
 
       return {
         isValid: false,
         platform: "Facebook",
         normalizedUrl: normalized,
-        error: "Enter a link to a specific Facebook Video or Reel (e.g. fb.watch/... or facebook.com/reel/...).",
+        error: "Enter a link to a specific Facebook Video, Reel, or Watch (e.g. fb.watch/... or facebook.com/reel/...).",
       };
     }
 
@@ -337,7 +335,7 @@ export function validateUrlForSeriesPlatform(
     if (val.platform !== "YouTube") {
       return {
         allowed: false,
-        reason: "Only YouTube video links are allowed in a YouTube series.",
+        reason: "Only YouTube links are allowed in a YouTube series.",
         detectedPlatform: val.platform,
         normalizedUrl: val.normalizedUrl,
       };
@@ -346,7 +344,7 @@ export function validateUrlForSeriesPlatform(
     if (val.platform !== "Instagram") {
       return {
         allowed: false,
-        reason: "Only Instagram Reel / Post links are allowed in an Instagram series.",
+        reason: "Only Instagram links are allowed in an Instagram series.",
         detectedPlatform: val.platform,
         normalizedUrl: val.normalizedUrl,
       };
@@ -355,7 +353,7 @@ export function validateUrlForSeriesPlatform(
     if (val.platform !== "Facebook") {
       return {
         allowed: false,
-        reason: "Only Facebook Video / Reel links are allowed in a Facebook series.",
+        reason: "Only Facebook links are allowed in a Facebook series.",
         detectedPlatform: val.platform,
         normalizedUrl: val.normalizedUrl,
       };
@@ -364,7 +362,7 @@ export function validateUrlForSeriesPlatform(
     if (val.platform !== "YouTube" && val.platform !== "Instagram" && val.platform !== "Facebook") {
       return {
         allowed: false,
-        reason: "Mix series only accepts YouTube, Instagram, and Facebook video links.",
+        reason: "Only YouTube, Instagram, or Facebook links are allowed in a Mix series.",
         detectedPlatform: val.platform,
         normalizedUrl: val.normalizedUrl,
       };

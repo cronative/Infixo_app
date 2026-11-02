@@ -183,7 +183,7 @@ export const SeriesService = {
 
   async updateEpisode(
     episodeId: string,
-    patch: { title?: string; url?: string; externalUrl?: string }
+    patch: { title?: string; url?: string; externalUrl?: string; episodeNumber?: number }
   ): Promise<void> {
     const res = await fetch(`/api/episodes/${encodeURIComponent(episodeId)}`, {
       method: "PATCH",
@@ -191,6 +191,7 @@ export const SeriesService = {
       body: JSON.stringify({
         title: patch.title,
         url: patch.url || patch.externalUrl,
+        episodeNumber: patch.episodeNumber,
       }),
     });
 
