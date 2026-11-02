@@ -91,7 +91,7 @@ export function FacebookFetcher({ username, onConfirmSync, onBeforeFetch, varian
           ...socials.facebook,
           url: `https://facebook.com/${fetchedPage.username}`,
           username: fetchedPage.username,
-          name: fetchedPage.name,
+          name: fetchedPage.username,
           followers: fetchedPage.followers,
           posts: fetchedPage.likes,
           isVerified: Boolean(fetchedPage.verified),
@@ -107,7 +107,7 @@ export function FacebookFetcher({ username, onConfirmSync, onBeforeFetch, varian
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           platform: "facebook",
-          accountName: fetchedPage.name || fetchedPage.username,
+          accountName: fetchedPage.username,
           username: fetchedPage.username,
           followerCount: fetchedPage.followers || 0,
           mediaCount: fetchedPage.likes || 0,
@@ -123,19 +123,11 @@ export function FacebookFetcher({ username, onConfirmSync, onBeforeFetch, varian
       const resJson = await res.json();
       const createdRow = resJson?.data;
 
-      const patch: Partial<typeof profile> = {};
-      if (!profile.displayName || profile.displayName === "Your name") {
-        patch.displayName = fetchedPage.name || fetchedPage.username;
-      }
       if (!profile.bio && fetchedPage.intro) {
-        patch.bio = fetchedPage.intro.slice(0, 160);
+        updateProfile({ bio: fetchedPage.intro.slice(0, 160) });
       }
 
-      if (Object.keys(patch).length > 0) {
-        updateProfile(patch);
-      }
-
-      showToast(`Facebook Page "${fetchedPage.name}" linked successfully! ✨🎉`);
+      showToast(`Facebook Page @${fetchedPage.username} linked successfully! ✨🎉`);
 
       if (onConfirmSync) {
         onConfirmSync(createdRow || fetchedPage);

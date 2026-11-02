@@ -37,7 +37,7 @@ import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import { PhonePreview } from "@/components/dashboard/PhonePreview";
-import { slugifySeriesTitle, validateVideoUrl, validateUrlForSeriesPlatform } from "@/lib/videoUrl";
+import { getSeriesCoverUrl, slugifySeriesTitle, validateVideoUrl, validateUrlForSeriesPlatform } from "@/lib/videoUrl";
 import { OverLimitBadge } from "@/components/ui/OverLimitBadge";
 import { getPlanQuota } from "@/services/subscriptionLimits";
 import { SeriesCoverLogo } from "@/components/series/SeriesCoverLogo";
@@ -549,7 +549,7 @@ export default function MySeriesPage() {
         {filteredSeries.map((series, sIndex) => {
           const episodes = series.seasons?.[0]?.episodes || [];
           const isExpanded = expandedSeriesIds.has(series.id);
-          const coverImg = series.posterDataUrl;
+          const coverImg = getSeriesCoverUrl(series);
 
           const publicSeriesSlug = slugifySeriesTitle(series.title);
           const publicSeriesUrl = `${origin}/${username}/series/${publicSeriesSlug}`;

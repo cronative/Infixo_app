@@ -842,11 +842,15 @@ export function LivePreviewCard({
   useEffect(() => {
     if (passedTeam !== undefined) {
       setTeamData(passedTeam || { members: [] });
-    } else if (profile.username === "demo_creator") {
+      return;
+    }
+    if (profile.username === "demo_creator") {
       import("@/data/expertDemoCreator").then(({ EXPERT_DEMO_TEAM }) => {
         setTeamData(EXPERT_DEMO_TEAM);
       });
-    } else if (isDashboardPreview) {
+      return;
+    }
+    if (isDashboardPreview) {
       const localTeam = teamRepository.get();
       if (localTeam) {
         setTeamData({
@@ -856,6 +860,18 @@ export function LivePreviewCard({
       } else {
         setTeamData({ members: [] });
       }
+    }
+    if (profile.username) {
+      fetch(`/api/creator/team?username=${encodeURIComponent(profile.username)}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((json) => {
+          const t = json?.data?.team || json?.team;
+          const m = json?.data?.members || json?.members || t?.members || [];
+          if (t && Array.isArray(m)) {
+            setTeamData({ team: t, members: m });
+          }
+        })
+        .catch(() => {});
     }
   }, [passedTeam, isDashboardPreview, profile.username]);
 
@@ -1321,7 +1337,7 @@ export function LivePreviewCard({
         .filter((acc) => acc.username || (acc.followerCount && acc.followerCount > 0))
         .map((acc: any) => {
           const platform = (acc.platform || "").toLowerCase();
-          const rawHandle = (acc.username || acc.accountName || "").replace(/^@/, "");
+          const rawHandle = (acc.username || "").replace(/^@/, "");
           const isYoutube = platform === "youtube";
           const isInstagram = platform === "instagram";
           const isFacebook = platform === "facebook";
@@ -1346,7 +1362,7 @@ export function LivePreviewCard({
               : platform === "facebook"
               ? "Facebook"
               : platform;
-          const label = acc.accountName || platformLabel;
+          const label = platformLabel;
           const unit = isYoutube ? "Subscribers" : "Followers";
           return {
             id: acc.id,
@@ -1354,7 +1370,7 @@ export function LivePreviewCard({
             platformLabel,
             label,
             handle: rawHandle,
-            name: acc.accountName || rawHandle,
+            name: rawHandle,
             count,
             unit,
             url,
@@ -1532,7 +1548,7 @@ export function LivePreviewCard({
   const hasReviewsContent = !isListingPage && effectiveVisibilitySettings.showReviews !== false && approvedReviews.length > 0;
 
   const hasFanbaseTab = !isListingPage && effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || fanbaseSocialCards.length > 0);
-  const hasAboutTab = !isListingPage && (Boolean(profile.bio?.trim()) || hasFanbaseTab || hasSetupContent);
+  const hasAboutTab = !isListingPage && (Boolean(profile.bio?.trim()) || hasFanbaseTab || hasSetupContent || activeTeamMembers.length > 0);
   const hasWatchTab = hasSeriesContent;
   const hasLinksTab = hasLinksContent;
   const hasShopTab = hasShopContent;
@@ -2515,7 +2531,7 @@ export function LivePreviewCard({
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-1.5 min-w-0">
                                   <span style={{ color: c.primaryText }} className="text-[13px] font-medium leading-[18px] truncate group-hover:text-(--accent-text) transition-colors text-(--text)">
-                                    {item.label}
+                                    {displayHandle}
                                   </span>
                                   {isPrimaryAccount && (
                                     <span
@@ -2531,7 +2547,7 @@ export function LivePreviewCard({
                                   )}
                                 </div>
                                 <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[17px] text-(--text-muted) mt-0.5 truncate">
-                                  {displayHandle}
+                                  {item.platformLabel || item.label}
                                 </p>
                               </div>
                             </div>
@@ -3100,7 +3116,7 @@ export function LivePreviewCard({
         )}
 
         {/* 8. Creator Team */}
-        {!isListingPage && (isPremiumLayout || (!isTabsLayout ? true : (activeNavTab === "collab" || activeNavTab === "work" || activeNavTab === "reviews"))) && activeTeamMembers.length > 0 && (
+        {!isListingPage && (isPremiumLayout || (!isTabsLayout ? true : (activeNavTab === "about" || activeNavTab === "collab" || activeNavTab === "work" || activeNavTab === "reviews"))) && activeTeamMembers.length > 0 && (
           <div
             id="team-section"
             style={

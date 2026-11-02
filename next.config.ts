@@ -45,6 +45,16 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: "/uploads/:path*",
+          destination: "/api/assets/uploads/:path*",
+        },
+      ],
+    };
+  },
   async headers() {
     return [
       {

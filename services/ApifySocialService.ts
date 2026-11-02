@@ -251,7 +251,7 @@ export class ApifySocialService {
       const result: ApifyYouTubeResult = {
         channel_id: channel.id || channel.channelId || clean,
         channel_name: clean,
-        title: channel.title || channel.name || clean,
+        title: clean,
         description: channel.description || "",
         subscriber_count_text: channel.subscriberCountText || `${channel.subscribers || 0} subscribers`,
         subscribers: Number(channel.subscribers || channel.numberOfSubscribers || 0),

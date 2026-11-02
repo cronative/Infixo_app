@@ -58,10 +58,10 @@ export async function getCreatorProduct(creatorId: string, id: string, { deleted
 
 export async function getProductQuota(creatorId: string) {
   const [subRows] = await db.query<(RowDataPacket & { plan_key: string })[]>(
-    "SELECT plan_key FROM subscriptions WHERE creator_id = ? AND status = 'active' ORDER BY updated_at DESC LIMIT 1",
+    "SELECT plan_key FROM subscriptions WHERE creator_id = ? AND status IN ('active', 'trial') ORDER BY updated_at DESC LIMIT 1",
     [creatorId],
   );
-  const plan = subRows[0]?.plan_key || "starter";
+  const plan = subRows[0]?.plan_key || "trial";
   const [countRows] = await db.query<(RowDataPacket & { count: number })[]>(
     "SELECT COUNT(*) AS count FROM creator_products WHERE creator_id = ? AND deleted_at IS NULL",
     [creatorId],

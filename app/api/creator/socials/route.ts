@@ -105,7 +105,7 @@ export async function GET(req: Request) {
       socials: rows.map((r: any) => ({
         id: r.id,
         platform: r.platform,
-        accountName: r.account_name,
+        accountName: r.username,
         username: r.username,
         followerCount: Number(r.follower_count) || 0,
         mediaCount: Number(r.media_count) || 0,
@@ -198,7 +198,7 @@ export async function POST(req: Request) {
         : followerCount;
 
     const isVerified = Boolean(body.isVerified) ? 1 : 0;
-    const displayName = accountName || cleanUsername;
+    const displayName = cleanUsername;
 
     // 4. Insert row
     const [insertResult]: any = await db.query(

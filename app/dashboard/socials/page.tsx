@@ -675,7 +675,7 @@ function PlatformSection({
               <Plus className="h-4 w-4" />
             </div>
             <span className="text-[13px] font-medium text-[#18181B] group-hover:text-[#7A2253] transition-colors">
-              + Add another {title}
+              {accounts.length === 0 ? `+ Add ${title}` : `+ Add another ${title}`}
             </span>
             <span className="text-[12px] text-[#6B6B76]">
               {accounts.length === 0 ? "Connect your primary account" : "Connect secondary profile"}

@@ -1325,27 +1325,27 @@ export default function OnboardingPage() {
                   <ul className="space-y-2 text-xs text-[#281C25]">
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-                      <span>5 series</span>
+                      <span>3 series · 5 episodes each</span>
                     </li>
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-                      <span>5 episodes per series</span>
+                      <span>5 links</span>
                     </li>
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-                      <span>10 custom links</span>
+                      <span>1 shop product</span>
                     </li>
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-                      <span>3 products</span>
+                      <span>1 gear item</span>
                     </li>
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-                      <span>3 creator setups</span>
+                      <span>1 collab package</span>
                     </li>
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-                      <span>1 collaboration package</span>
+                      <span>3 reviews</span>
                     </li>
                   </ul>
                 </div>
@@ -1384,27 +1384,27 @@ export default function OnboardingPage() {
                   <ul className="space-y-2 text-xs text-[#281C25]">
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-                      <span>30 series</span>
+                      <span>20 series · 25 episodes each</span>
                     </li>
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-                      <span>30 episodes per series</span>
+                      <span>20 links</span>
                     </li>
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-                      <span>30 custom links</span>
+                      <span>20 shop products</span>
                     </li>
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-                      <span>30 products</span>
+                      <span>20 gear items</span>
                     </li>
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-                      <span>30 creator setups</span>
+                      <span>2 collab packages</span>
                     </li>
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-                      <span>2 media kits</span>
+                      <span>5 reviews</span>
                     </li>
                   </ul>
                 </div>
@@ -1447,19 +1447,19 @@ export default function OnboardingPage() {
                     </li>
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-                      <span>Unlimited custom links</span>
+                      <span>Unlimited links</span>
                     </li>
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-                      <span>Unlimited products</span>
+                      <span>Unlimited shop products</span>
                     </li>
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-                      <span>Unlimited creator setups</span>
+                      <span>Unlimited gear items</span>
                     </li>
                     <li className="flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-                      <span>Unlimited media kits &amp; collabs</span>
+                      <span>Unlimited collab packages &amp; reviews</span>
                     </li>
                   </ul>
                 </div>

@@ -403,7 +403,7 @@ export default function DashboardTeamPage() {
             {/* Right: View ↗, Collapse/Expand ("Add member" lives in the page header) */}
             <div className="flex items-center gap-2 shrink-0">
               <a
-                href={`/${profile.username || "creator"}`}
+                href={`/${profile.username || "creator"}?tab=about`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-[13px] font-medium text-[#18181B] transition-colors"

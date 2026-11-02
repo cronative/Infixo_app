@@ -12,8 +12,15 @@ const MAX_HTML_BYTES = 4 * 1024 * 1024;
 const MAX_PRICE_RUPEES = 10_000_000;
 const BROWSER_HEADERS = {
   "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-  Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-  "Accept-Language": "en-IN,en;q=0.9",
+  Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+  "Accept-Language": "en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7",
+  "Sec-Ch-Ua": '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
+  "Sec-Ch-Ua-Mobile": "?0",
+  "Sec-Ch-Ua-Platform": '"macOS"',
+  "Sec-Fetch-Dest": "document",
+  "Sec-Fetch-Mode": "navigate",
+  "Sec-Fetch-Site": "none",
+  "Upgrade-Insecure-Requests": "1",
 };
 
 const NAMED_ENTITIES: Record<string, string> = { amp: "&", quot: '"', apos: "'", lt: "<", gt: ">", nbsp: " " };
@@ -111,17 +118,42 @@ export function extractProductPreview(html: string, pageUrl: string): ProductPre
   const meta = readMeta(html);
   const store = storeFromUrl(pageUrl);
 
-  let name = clean(meta["og:title"] || meta["twitter:title"] || html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]);
+  const amazonProductTitle = html.match(/<span\b[^>]*id=["']productTitle["'][^>]*>([\s\S]*?)<\/span>/i)?.[1];
+  let name = clean(amazonProductTitle || meta["og:title"] || meta["twitter:title"] || html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]);
+  // Strip common Amazon title prefixes/suffixes
+  name = name.replace(/^Amazon\.in\s*:\s*Buy\s+/i, "").replace(/\s*:\s*Amazon\.in.*$/i, "").trim();
   // Bot-check / error pages are often titled with just the store name.
-  if (name && store && name.toLowerCase() === store.toLowerCase()) name = "";
+  if (name && (
+    (store && name.toLowerCase() === store.toLowerCase()) ||
+    /^(amazon\.in|amazon\.com|robot check|page not found)$/i.test(name)
+  )) {
+    name = "";
+  }
 
-  // Amazon omits og:image; its main product image carries data-old-hires.
-  const landingImage = html.match(/<img\b[^>]*id=["']landingImage["'][^>]*>/i)?.[0];
+  // Fallback for Amazon product URLs with a readable slug (/Product-Name-Slug/dp/ASIN) when blocked by CAPTCHA
+  if (!name) {
+    try {
+      const u = new URL(pageUrl);
+      const slugMatch = u.pathname.match(/^\/([^/]+)\/(?:dp|gp\/product)\/[A-Z0-9]{10}/i);
+      if (slugMatch && slugMatch[1] && slugMatch[1].toLowerCase() !== "gp") {
+        name = decodeURIComponent(slugMatch[1]).replace(/[-_]+/g, " ").trim();
+      }
+    } catch {}
+  }
+
+  // Amazon omits og:image; its main product image carries data-old-hires or data-a-dynamic-image.
+  const landingImage = html.match(/<img\b[^>]*id=["'](?:landingImage|imgBlkFront)["'][^>]*>/i)?.[0];
   const landingAttrs = landingImage ? parseAttributes(landingImage) : {};
+  let dynamicImg = "";
+  if (landingAttrs["data-a-dynamic-image"]) {
+    const dynMatch = decodeEntities(landingAttrs["data-a-dynamic-image"]).match(/https:\/\/[^"'\s]+/i);
+    if (dynMatch) dynamicImg = dynMatch[0];
+  }
   const rawImage = meta["og:image:secure_url"] || meta["og:image"] || meta["twitter:image"] || meta["twitter:image:src"]
-    || landingAttrs["data-old-hires"] || landingAttrs.src || "";
+    || landingAttrs["data-old-hires"] || dynamicImg || landingAttrs.src || "";
 
-  const price = toRupees(meta["product:price:amount"]) ?? toRupees(meta["og:price:amount"]) ?? jsonLdPrice(html);
+  const amazonPriceWhole = html.match(/<span\b[^>]*class=["'][^"']*a-price-whole[^"']*["'][^>]*>([\d,]+)/i)?.[1];
+  const price = toRupees(meta["product:price:amount"]) ?? toRupees(meta["og:price:amount"]) ?? jsonLdPrice(html) ?? toRupees(amazonPriceWhole);
 
   return {
     name: name ? name.slice(0, 80).trim() : null,
@@ -135,10 +167,14 @@ export async function fetchProductPreview(url: string): Promise<ProductPreview> 
   const empty: ProductPreview = { name: null, image: null, price: null, store: storeFromUrl(url) };
   try {
     const res = await safeFetch(url, { headers: BROWSER_HEADERS, timeoutMs: 5000 });
-    if (!res.ok || !(res.headers.get("content-type") || "text/html").includes("html")) return empty;
+    if (!res.ok) {
+      // Even when HTTP status is 503 (e.g. Amazon bot block), extract slug from URL if available
+      return extractProductPreview("", url);
+    }
+    if (!(res.headers.get("content-type") || "text/html").includes("html")) return empty;
     const html = (await readLimitedBody(res, MAX_HTML_BYTES, { truncate: true })).toString("utf8");
     return extractProductPreview(html, url);
   } catch {
-    return empty;
+    return extractProductPreview("", url);
   }
 }

@@ -88,7 +88,7 @@ export function YoutubeFetcher({ handle, onConfirmSync, onBeforeFetch, variant =
           ...socials.youtube,
           url: `https://youtube.com/@${fetchedChannel.channel_name}`,
           username: fetchedChannel.channel_name,
-          channelTitle: fetchedChannel.title,
+          channelTitle: fetchedChannel.channel_name,
           subscribers: fetchedChannel.subscribers,
           isVerified: Boolean(fetchedChannel.verified),
           description: fetchedChannel.description,
@@ -103,7 +103,7 @@ export function YoutubeFetcher({ handle, onConfirmSync, onBeforeFetch, variant =
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           platform: "youtube",
-          accountName: fetchedChannel.title || fetchedChannel.channel_name,
+          accountName: fetchedChannel.channel_name,
           username: fetchedChannel.channel_name,
           followerCount: fetchedChannel.subscribers || 0,
           mediaCount: 0,
@@ -119,16 +119,8 @@ export function YoutubeFetcher({ handle, onConfirmSync, onBeforeFetch, variant =
       const resJson = await res.json();
       const createdRow = resJson?.data;
 
-      const patch: Partial<typeof profile> = {};
-      if (!profile.displayName || profile.displayName === "Your name") {
-        patch.displayName = fetchedChannel.title || fetchedChannel.channel_name;
-      }
       if (!profile.bio && fetchedChannel.description) {
-        patch.bio = fetchedChannel.description.slice(0, 160);
-      }
-
-      if (Object.keys(patch).length > 0) {
-        updateProfile(patch);
+        updateProfile({ bio: fetchedChannel.description.slice(0, 160) });
       }
 
       showToast(`YouTube channel @${fetchedChannel.channel_name} linked successfully! ✨🎉`);

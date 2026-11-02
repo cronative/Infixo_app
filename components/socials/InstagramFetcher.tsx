@@ -88,7 +88,7 @@ export function InstagramFetcher({ username, onConfirmSync, onBeforeFetch, varia
           ...socials.instagram,
           url: `https://instagram.com/${fetchedUser.username}`,
           username: fetchedUser.username,
-          name: fetchedUser.full_name,
+          name: fetchedUser.username,
           followers: fetchedUser.follower_count,
           posts: fetchedUser.media_count,
           isVerified: Boolean(fetchedUser.is_verified),
@@ -104,7 +104,7 @@ export function InstagramFetcher({ username, onConfirmSync, onBeforeFetch, varia
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           platform: "instagram",
-          accountName: fetchedUser.full_name || fetchedUser.username,
+          accountName: fetchedUser.username,
           username: fetchedUser.username,
           followerCount: fetchedUser.follower_count || 0,
           mediaCount: fetchedUser.media_count || 0,
@@ -120,16 +120,8 @@ export function InstagramFetcher({ username, onConfirmSync, onBeforeFetch, varia
       const resJson = await res.json();
       const createdRow = resJson?.data;
 
-      const patch: Partial<typeof profile> = {};
-      if (!profile.displayName || profile.displayName === "Your name") {
-        patch.displayName = fetchedUser.full_name || fetchedUser.username;
-      }
       if (!profile.bio && fetchedUser.biography) {
-        patch.bio = fetchedUser.biography.slice(0, 160);
-      }
-
-      if (Object.keys(patch).length > 0) {
-        updateProfile(patch);
+        updateProfile({ bio: fetchedUser.biography.slice(0, 160) });
       }
 
       showToast(`Instagram profile @${fetchedUser.username} linked successfully! ✨🎉`);

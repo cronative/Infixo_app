@@ -183,11 +183,19 @@ export default function DashboardLinksPage() {
     setOpen(true);
   }
 
-  function urlBlurred() {
+  function urlBlurred(event?: React.FocusEvent<HTMLInputElement>) {
     const next = withHttps(url);
     setUrl(next);
-    if (!titleEdited || !title.trim()) {
+    const movingToTitle = (event?.relatedTarget as HTMLElement | null)?.id === "link-title";
+    if (!movingToTitle && (!titleEdited || !title.trim())) {
       const suggestion = titleFromUrl(next);
+      if (suggestion) setTitle(suggestion);
+    }
+  }
+
+  function titleBlurred() {
+    if (!titleEdited && !title.trim() && url.trim()) {
+      const suggestion = titleFromUrl(withHttps(url));
       if (suggestion) setTitle(suggestion);
     }
   }
@@ -207,7 +215,7 @@ export default function DashboardLinksPage() {
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (saving) return;
-    const cleanTitle = title.trim();
+    const cleanTitle = title.trim() || (mode === "link" && !titleEdited ? titleFromUrl(withHttps(url)) : "");
     if (!cleanTitle) { showToast(mode === "group" ? "Enter a group title." : "Enter a title.", "error"); return; }
 
     let input: LinkInputDto;
@@ -560,8 +568,9 @@ export default function DashboardLinksPage() {
                       type="text"
                       value={title}
                       onChange={(e) => { setTitle(e.target.value); setTitleEdited(true); }}
+                      onBlur={titleBlurred}
                       maxLength={MAX_TITLE}
-                      placeholder="e.g. Book tickets"
+                      placeholder={titleFromUrl(withHttps(url)) || "e.g. Book tickets"}
                       className={fieldInputClass}
                     />
                   </div>

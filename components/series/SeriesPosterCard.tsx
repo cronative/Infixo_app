@@ -12,6 +12,7 @@ import { Series } from "@/types";
 import { initials } from "@/utils/format";
 import { BRAND_TEXT } from "@/lib/brandColors";
 import { SeriesCoverLogo } from "@/components/series/SeriesCoverLogo";
+import { getSeriesCoverUrl } from "@/lib/videoUrl";
 
 export interface SeriesPosterCardProps {
   series: Series;
@@ -81,7 +82,8 @@ export function SeriesPosterCard({
     }
   };
 
-  const hasPoster = Boolean(series.posterDataUrl) && !imgError;
+  const coverUrl = getSeriesCoverUrl(series);
+  const hasPoster = Boolean(coverUrl) && !imgError;
   const focalPoint = (series as any).focalPoint || (series as any).posterPosition || "center";
 
   return (
@@ -93,7 +95,7 @@ export function SeriesPosterCard({
       {/* Background Poster Image or Fallback */}
       {hasPoster ? (
         <Image
-          src={series.posterDataUrl!}
+          src={coverUrl!}
           alt=""
           fill
           sizes="(max-width: 600px) 100vw, 540px"

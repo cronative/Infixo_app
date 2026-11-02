@@ -277,6 +277,39 @@ export function extractVideoThumbnail(url: string, platform?: string): string | 
 }
 
 /**
+ * Returns the series poster URL if set, otherwise falls back to the first episode's thumbnail.
+ */
+export function getSeriesCoverUrl(series: {
+  posterDataUrl?: string | null;
+  seasons?: Array<{
+    episodes?: Array<{
+      thumbnailDataUrl?: string | null;
+      externalUrl?: string | null;
+      url?: string | null;
+    }>;
+  }>;
+} | null | undefined): string | null {
+  if (!series) return null;
+  if (series.posterDataUrl && series.posterDataUrl.trim()) {
+    return series.posterDataUrl.trim();
+  }
+  const seasons = series.seasons || [];
+  for (const season of seasons) {
+    for (const ep of season.episodes || []) {
+      if (ep.thumbnailDataUrl && ep.thumbnailDataUrl.trim()) {
+        return ep.thumbnailDataUrl.trim();
+      }
+      const rawUrl = ep.externalUrl || ep.url || "";
+      if (rawUrl) {
+        const thumb = extractVideoThumbnail(rawUrl);
+        if (thumb) return thumb;
+      }
+    }
+  }
+  return null;
+}
+
+/**
  * Validates a video URL against a specific series platform (YouTube, Instagram, Facebook, Mix).
  */
 export function validateUrlForSeriesPlatform(

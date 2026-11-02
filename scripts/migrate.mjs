@@ -306,6 +306,11 @@ async function migrateDatabase(target) {
       WHERE cos.step_name != 'finish'
         AND (cos.is_completed = 1 OR cos.completed_at IS NOT NULL OR s.id IS NOT NULL)`);
 
+    // 015: ensure social_accounts.account_name stores only the clean username (never a video title or channel name)
+    await connection.query(`UPDATE social_accounts
+      SET account_name = username
+      WHERE username IS NOT NULL AND username != '' AND account_name != username`);
+
     console.log(`✅ ${target.name} migrated successfully.`);
   } finally {
     await connection.end();
