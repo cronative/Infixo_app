@@ -3314,7 +3314,7 @@ export function LivePreviewCard({
               creatorDisplayName={profile.displayName || profile.username}
               creatorEmail={profile.email}
               creatorWhatsapp={(profile as any).whatsappNumber}
-              packages={(mediaKitPackages || []).filter((p) => p.isActive)}
+              packages={(mediaKitPackages || []).filter((p) => p.isActive !== false)}
               preselectedPackage={selectedEnquiryPackage}
               settings={mediaKitSettings}
               brandPrimary="var(--accent)"

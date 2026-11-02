@@ -38,6 +38,7 @@ export type EmailTemplateType =
   | "welcome"
   | "onboarding_completed"
   | "collab_request_received"
+  | "collab_request_brand_confirmation"
   | "collab_request_accepted"
   | "collab_request_declined"
   | "new_collab_gig"
@@ -449,21 +450,46 @@ export function renderEmailTemplate(type: EmailTemplateType, options: EmailTempl
         ${renderHeroBadge("NEW BRAND INQUIRY")}
         
         <h1 class="email-hero-title" style="color: #111827; font-size: 26px; font-weight: 800; margin: 0 0 10px 0;">
-          Inquiry from ${clientName}! 💼
+          New collab request from ${clientName}
         </h1>
         <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
           ${clientName} wants to collaborate with you on your <strong>"${projectTitle}"</strong> rate card package.
         </p>
 
-        ${renderInfoTable([
-        { label: "Brand Representative", value: clientName },
-        { label: "Client Email", value: clientEmail },
-        { label: "Package", value: projectTitle },
-      ])}
+        ${renderInfoTable(options.customItems || [
+          { label: "Brand Representative", value: clientName },
+          { label: "Client Email", value: clientEmail },
+          { label: "Package", value: projectTitle },
+        ])}
 
         ${renderCtaButton("View Collab Inquiry →", ctaUrl || "https://inflixo.com/dashboard/mediakit")}
       `;
-      return wrapInCanvas(body, "Direct Brand Inquiry", creatorName);
+      return wrapInCanvas(body, `New collab request from ${clientName}`, creatorName);
+    }
+
+    // 6b. Collab Request Brand Confirmation
+    case "collab_request_brand_confirmation": {
+      const body = `
+        ${renderHeroBadge("REQUEST RECEIVED")}
+        
+        <h1 class="email-hero-title" style="color: #111827; font-size: 24px; font-weight: 800; margin: 0 0 10px 0;">
+          Thanks, ${creatorName} has received your request.
+        </h1>
+        <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
+          Hi ${clientName}, thank you for reaching out! <strong>${creatorName}</strong> has received your collaboration brief for <strong>"${projectTitle}"</strong> and will get back to you via email shortly.
+        </p>
+
+        ${renderInfoTable(options.customItems || [
+          { label: "Creator", value: creatorName },
+          { label: "Package", value: projectTitle },
+          { label: "Contact", value: clientName },
+        ])}
+
+        <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin: 24px 0 0 0;">
+          If you have any extra campaign briefs or assets, feel free to reply directly to this thread once ${creatorName} gets in touch.
+        </p>
+      `;
+      return wrapInCanvas(body, `Thanks, ${creatorName} has received your request.`, creatorName);
     }
 
     // 7. Subscription / Payment Successful

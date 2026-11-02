@@ -196,7 +196,8 @@ export async function sendCollabRequestReceivedEmail(
     customItems,
   });
 
-  const subject = `💼 New Brand Collaboration Inquiry from ${clientName}!`;
+  const brandLabel = options.companyName || options.senderName;
+  const subject = `New collab request from ${brandLabel}`;
 
   try {
     await transporter.sendMail({
@@ -209,6 +210,52 @@ export async function sendCollabRequestReceivedEmail(
     return { success: true };
   } catch (err: any) {
     console.error("❌ Failed to send collab inquiry email to creator:", err.message || err);
+    return { success: false, error: err.message || String(err) };
+  }
+}
+
+export async function sendCollabRequestBrandConfirmationEmail(
+  brandEmail: string,
+  options: {
+    creatorDisplayName: string;
+    contactName: string;
+    brandName: string;
+    packageName: string;
+    budget?: string;
+    message: string;
+  }
+): Promise<{ success: boolean; error?: string }> {
+  const from = process.env.EMAIL_FROM || '"Inflixo App" <inflixoapp@gmail.com>';
+  const subject = `Thanks, ${options.creatorDisplayName} has received your request.`;
+
+  const customItems = [
+    { label: "Creator", value: options.creatorDisplayName },
+    { label: "Brand / Company", value: options.brandName },
+    { label: "Contact Person", value: options.contactName },
+    { label: "Package / Proposal", value: options.packageName },
+    ...(options.budget ? [{ label: "Proposed Budget", value: options.budget }] : []),
+    { label: "Your Message", value: options.message },
+  ];
+
+  const html = renderEmailTemplate("collab_request_brand_confirmation", {
+    creatorName: options.creatorDisplayName,
+    clientName: options.contactName,
+    clientEmail: brandEmail,
+    projectTitle: options.packageName,
+    customItems,
+  });
+
+  try {
+    await transporter.sendMail({
+      from,
+      to: brandEmail,
+      subject,
+      html,
+    });
+    console.log(`✉️ Collab request confirmation sent to brand (${brandEmail})`);
+    return { success: true };
+  } catch (err: any) {
+    console.error("❌ Failed to send collab confirmation email to brand:", err.message || err);
     return { success: false, error: err.message || String(err) };
   }
 }

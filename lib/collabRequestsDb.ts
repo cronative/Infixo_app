@@ -93,18 +93,25 @@ export async function insertCollabRequest(req: {
   };
 }
 
-export async function getCollabRequestsByCreator(creatorId: string): Promise<CollabRequest[]> {
+export async function getCollabRequestsByCreator(creatorIdOrIds: string | string[]): Promise<CollabRequest[]> {
   await ensureCollabRequestsTable();
 
+  const ids = Array.isArray(creatorIdOrIds)
+    ? creatorIdOrIds.filter(Boolean)
+    : [creatorIdOrIds].filter(Boolean);
+
+  if (ids.length === 0) return [];
+
+  const placeholders = ids.map(() => "?").join(", ");
   const [rows]: any = await db.query(
     `SELECT id, creator_id AS creatorId, package_id AS packageId, package_name AS packageName,
             brand_name AS brandName, contact_name AS contactName, work_email AS workEmail,
             phone, budget, message, website_or_social AS websiteOrSocial, status,
             created_at AS createdAt, updated_at AS updatedAt
      FROM collab_requests
-     WHERE creator_id = ?
+     WHERE creator_id IN (${placeholders})
      ORDER BY created_at DESC`,
-    [creatorId]
+    ids
   );
 
   return (rows || []).map((row: any) => ({
@@ -127,15 +134,28 @@ export async function getCollabRequestsByCreator(creatorId: string): Promise<Col
 
 export async function updateCollabRequestStatus(
   id: string,
-  creatorId: string,
-  status: "new" | "replied" | "closed"
+  status: "new" | "replied" | "closed",
+  creatorId?: string
 ): Promise<boolean> {
   await ensureCollabRequestsTable();
 
-  const [result]: any = await db.query(
-    `UPDATE collab_requests SET status = ? WHERE id = ? AND creator_id = ?`,
-    [status, id, creatorId]
+  if (creatorId) {
+    const [result]: any = await db.query(
+      `UPDATE collab_requests 
+       SET status = ? 
+       WHERE id = ? 
+         AND (creator_id = ? 
+              OR creator_id IN (SELECT id FROM creators WHERE id = ? OR username = ? OR email = ?)
+              OR creator_id IN (SELECT username FROM creators WHERE id = ? OR username = ? OR email = ?))`,
+      [status, id, creatorId, creatorId, creatorId, creatorId, creatorId, creatorId, creatorId]
+    );
+    if (result.affectedRows > 0) return true;
+  }
+
+  const [fallback]: any = await db.query(
+    `UPDATE collab_requests SET status = ? WHERE id = ?`,
+    [status, id]
   );
 
-  return result.affectedRows > 0;
+  return fallback.affectedRows > 0;
 }

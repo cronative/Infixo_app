@@ -39,9 +39,6 @@ export function CollabEnquirySheet({
   settings,
   brandPrimary = "#7A2253",
 }: CollabEnquirySheetProps) {
-  // Extract creator first name
-  const creatorFirstName = creatorDisplayName.trim().split(/\s+/)[0] || "Creator";
-
   // Form State
   const [brandName, setBrandName] = useState("");
   const [contactName, setContactName] = useState("");
@@ -69,7 +66,7 @@ export function CollabEnquirySheet({
   useEffect(() => {
     if (isOpen) {
       if (preselectedPackage) {
-        setSelectedPkgId(preselectedPackage.id);
+        setSelectedPkgId(String(preselectedPackage.id));
       } else {
         setSelectedPkgId("custom");
       }
@@ -90,8 +87,15 @@ export function CollabEnquirySheet({
     setErrors({});
     setApiErrorMsg(null);
 
-    const activePkg = packages.find((p) => p.id === selectedPkgId);
-    const packageName = selectedPkgId === "custom" ? "Custom collab" : activePkg?.title || "Collaboration";
+    const activePkg = packages.find((p) => String(p.id) === String(selectedPkgId));
+    let packageName = "Collaboration";
+    if (selectedPkgId === "custom") {
+      packageName = "Custom collab";
+    } else if (activePkg?.title) {
+      packageName = activePkg.title;
+    } else if (preselectedPackage && String(preselectedPackage.id) === String(selectedPkgId)) {
+      packageName = preselectedPackage.title;
+    }
 
     const payload: CollabEnquiryInput = {
       creatorId,
@@ -159,7 +163,7 @@ export function CollabEnquirySheet({
   const resolvedWhatsapp = settings?.whatsappNumber?.trim() || creatorWhatsapp.trim();
   const cleanPhone = resolvedWhatsapp.replace(/[^0-9]/g, "");
   const showWhatsapp = settings?.allowWhatsapp !== false && Boolean(cleanPhone);
-  const waPrefill = encodeURIComponent(`Hi ${creatorFirstName}, I'm reaching out regarding a brand collaboration.`);
+  const waPrefill = encodeURIComponent(`Hi ${creatorDisplayName}, I'm reaching out regarding a brand collaboration.`);
   const waUrl = `https://wa.me/${cleanPhone}?text=${waPrefill}`;
 
   const resolvedEmail = settings?.sponsorEmail?.trim() || creatorEmail.trim();
@@ -186,7 +190,7 @@ export function CollabEnquirySheet({
         <div className="px-5 py-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between shrink-0">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-              Collab request to {creatorFirstName}
+              Collab request to {creatorDisplayName}
             </h2>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
               Fill out this quick brief to get rates and availability.
@@ -217,7 +221,7 @@ export function CollabEnquirySheet({
                   Request sent!
                 </h3>
                 <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 max-w-sm mx-auto leading-relaxed">
-                  {creatorFirstName} will reply on email.
+                  {creatorDisplayName} will reply on email.
                 </p>
               </div>
 
@@ -356,11 +360,16 @@ export function CollabEnquirySheet({
                     className="w-full h-9.5 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400 cursor-pointer"
                   >
                     <option value="custom">Custom collab</option>
+                    {preselectedPackage && !packages.some((p) => String(p.id) === String(preselectedPackage.id)) && (
+                      <option value={String(preselectedPackage.id)}>
+                        {preselectedPackage.title} {preselectedPackage.price ? `(${String(preselectedPackage.price).startsWith("₹") ? preselectedPackage.price : `₹${preselectedPackage.price}`})` : ""}
+                      </option>
+                    )}
                     {packages
-                      .filter((p) => p.isActive)
+                      .filter((p) => p.isActive !== false)
                       .map((pkg) => (
-                        <option key={pkg.id} value={pkg.id}>
-                          {pkg.title} ({pkg.price?.startsWith("₹") ? pkg.price : `₹${pkg.price}`})
+                        <option key={pkg.id} value={String(pkg.id)}>
+                          {pkg.title} {pkg.price ? `(${String(pkg.price).startsWith("₹") ? pkg.price : `₹${pkg.price}`})` : ""}
                         </option>
                       ))}
                   </select>

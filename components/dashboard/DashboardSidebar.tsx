@@ -167,6 +167,7 @@ export function DashboardSidebar() {
   const pathname = usePathname();
   const { profile, subscription } = useCreator();
   const [collapsed, setCollapsed] = useState(false);
+  const [newCollabCount, setNewCollabCount] = useState<number>(0);
 
   // Restore collapsed state from localStorage
   useEffect(() => {
@@ -175,6 +176,36 @@ export function DashboardSidebar() {
       if (saved === "true") setCollapsed(true);
     } catch {}
   }, []);
+
+  // Fetch new collab requests count for sidebar badge
+  useEffect(() => {
+    const targetId = profile.id || profile.username || profile.email;
+    if (!targetId) return;
+    let active = true;
+
+    const fetchCollabCount = async () => {
+      try {
+        const res = await fetch(`/api/collab-requests?creatorId=${encodeURIComponent(targetId)}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (active && json.data) {
+            const count = json.data.newCount ?? (json.data.requests || []).filter((r: any) => r.status === "new").length;
+            setNewCollabCount(count || 0);
+          }
+        }
+      } catch {}
+    };
+
+    fetchCollabCount();
+    const handleUpdate = () => fetchCollabCount();
+    window.addEventListener("collab-requests-updated", handleUpdate);
+    const interval = setInterval(fetchCollabCount, 60 * 1000);
+    return () => {
+      active = false;
+      window.removeEventListener("collab-requests-updated", handleUpdate);
+      clearInterval(interval);
+    };
+  }, [profile.id, profile.username, profile.email]);
 
   const toggleCollapsed = () => {
     setCollapsed((prev) => {
@@ -323,9 +354,19 @@ export function DashboardSidebar() {
                     />
 
                     {!collapsed && (
-                      <span className="line-clamp-2 break-words text-[14px] font-medium leading-normal">
+                      <span className="line-clamp-2 break-words text-[14px] font-medium leading-normal flex-1">
                         {item.label}
                       </span>
+                    )}
+
+                    {/* New-request count badge for Media Kit & Rates */}
+                    {item.href === "/dashboard/mediakit" && newCollabCount > 0 && !collapsed && (
+                      <span className="ml-auto inline-flex items-center justify-center rounded-full bg-[#7A2253] text-white text-[10.5px] font-bold h-4.5 min-w-[18px] px-1.5 shrink-0 shadow-none">
+                        {newCollabCount > 9 ? "9+" : newCollabCount}
+                      </span>
+                    )}
+                    {item.href === "/dashboard/mediakit" && newCollabCount > 0 && collapsed && (
+                      <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[#7A2253]" />
                     )}
                   </Link>
                 );
