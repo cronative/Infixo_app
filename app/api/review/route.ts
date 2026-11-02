@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { sendReviewReceivedEmail } from "@/lib/email";
+import { getAppBaseUrl } from "@/lib/emailTemplates";
 import { ensureReviewsTable } from "@/lib/reviewsDb";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 
@@ -123,13 +124,22 @@ export async function POST(req: Request) {
       `UPDATE creator_reviews
        SET rating = ?, rating_content_quality = ?, rating_professionalism = ?,
            rating_timely_delivery = ?, comment = ?, client_name = ?,
-           client_designation = ?, status = 'pending_approval'
+           client_designation = ?, status = 'pending_approval', invitation_status = 'submitted'
        WHERE token = ? AND status = 'pending_invite'`,
       [rOverall, rCQ, rProf, rTD, finalComment, finalClientName, finalDesignation, token]
     );
     if (updateResult.affectedRows !== 1) {
       return apiError("This review link has already been used", 409, { isAlreadySubmitted: true });
     }
+
+    console.log("[POST /api/review] Brand review submitted:", {
+      reviewId: review.id,
+      invitationId: review.id,
+      creatorId: review.creator_id,
+      invitationStatus: "submitted",
+      reviewStatus: "pending_approval",
+      rating: rOverall,
+    });
 
     // Resolve creator email & send notification email to creator
     try {
@@ -147,8 +157,7 @@ export async function POST(req: Request) {
       }
 
       if (creatorEmail) {
-        const configuredOrigin = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
-        const dashboardUrl = `${(configuredOrigin || new URL(req.url).origin).replace(/\/$/, "")}/dashboard/reviews`;
+        const dashboardUrl = `${getAppBaseUrl()}/dashboard/reviews`;
 
         await sendReviewReceivedEmail(creatorEmail, {
           creatorName: creatorDisplayName,

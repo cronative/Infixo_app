@@ -77,22 +77,15 @@ export default function DashboardReviewsPage() {
   // Fetch reviews on mount
   useEffect(() => {
     async function loadReviews() {
-      const email = profile.email || "";
-      const username = profile.username || "";
-
       try {
-        if (email || username) {
-          const httpResponse = await fetch(
-            `/api/creator/reviews?email=${encodeURIComponent(email)}&username=${encodeURIComponent(username)}`
-          );
-          const apiResponse = await httpResponse.json();
-          const revList = apiResponse.data?.reviews || apiResponse.reviews;
+        const httpResponse = await fetch("/api/creator/reviews");
+        const apiResponse = await httpResponse.json();
+        const revList = apiResponse.data?.reviews || apiResponse.reviews;
 
-          if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && Array.isArray(revList)) {
-            setReviews(revList);
-            reviewsRepository.saveAll(revList);
-            return;
-          }
+        if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success) && Array.isArray(revList)) {
+          setReviews(revList);
+          reviewsRepository.saveAll(revList);
+          return;
         }
       } catch (err) {
         console.warn("Failed to fetch reviews from DB:", err);
@@ -102,7 +95,7 @@ export default function DashboardReviewsPage() {
     }
 
     loadReviews();
-  }, [profile.email, profile.username]);
+  }, [profile.id, profile.email, profile.username]);
 
   // Click outside to close 3-dot menus
   useEffect(() => {
@@ -274,15 +267,19 @@ export default function DashboardReviewsPage() {
     }
   };
 
-  // Counts
+  // Counts: don't count unsubmitted invitations (pending_invite) as reviews
+  const actualReviewsCount = useMemo(
+    () => reviews.filter((r) => r.status !== "pending_invite").length,
+    [reviews]
+  );
   const pendingCount = useMemo(() => reviews.filter((r) => r.status === "pending_approval").length, [reviews]);
   const approvedCount = useMemo(() => reviews.filter((r) => r.status === "approved").length, [reviews]);
-  const invitedCount = useMemo(() => reviews.filter((r) => r.status === "pending_invite").length, [reviews]);
+  const invitedCount = useMemo(() => reviews.length, [reviews]);
 
   const filteredReviews = useMemo(() => {
     if (activeTab === "pending") return reviews.filter((r) => r.status === "pending_approval");
     if (activeTab === "approved") return reviews.filter((r) => r.status === "approved");
-    if (activeTab === "invited") return reviews.filter((r) => r.status === "pending_invite");
+    if (activeTab === "invited") return reviews;
     return reviews;
   }, [reviews, activeTab]);
 
@@ -291,7 +288,7 @@ export default function DashboardReviewsPage() {
       {/* 1. PAGE HEADER */}
       <PageHeader
         {...PAGE_COPY.reviews}
-        meta={`${reviews.length} ${reviews.length === 1 ? "review" : "reviews"}`}
+        meta={`${actualReviewsCount} ${actualReviewsCount === 1 ? "review" : "reviews"}`}
         actions={
           <button type="button" onClick={() => setIsModalOpen(true)} className="dash-btn-primary">
             <Plus className="h-3.5 w-3.5" />
@@ -300,7 +297,7 @@ export default function DashboardReviewsPage() {
         }
       />
 
-      {/* 2. ZERO STATE: When 0 reviews, show unified empty state directly */}
+      {/* 2. ZERO STATE: When 0 reviews & 0 invitations, show unified empty state directly */}
       {reviews.length === 0 ? (
         <EmptyState
           icon={<Star className="h-7 w-7" />}
@@ -322,7 +319,9 @@ export default function DashboardReviewsPage() {
         <div className="space-y-3.5">
           {/* Compact Summary Line */}
           <div className="flex flex-wrap items-center gap-2 rounded-[5px] border border-[#ECECF0] bg-white px-4 py-2.5 sm:py-3 shadow-none text-[13px] font-medium text-[#18181B]">
-            <span className="font-semibold text-[#18181B]">{reviews.length} reviews</span>
+            <span className="font-semibold text-[#18181B]">
+              {actualReviewsCount} {actualReviewsCount === 1 ? "review" : "reviews"}
+            </span>
             <span className="text-[#6B6B76]/40">·</span>
             <span className="text-[#18181B]">{approvedCount} published</span>
             <span className="text-[#6B6B76]/40">·</span>
@@ -479,9 +478,13 @@ export default function DashboardReviewsPage() {
                             Pending
                           </span>
                         )}
-                        {rev.status === "pending_invite" && (
+                        {rev.status === "pending_invite" ? (
                           <span className="h-6 inline-flex items-center gap-1 text-[12px] font-medium text-[#6B6B76] bg-[#FAFAFB] px-2 rounded-[5px] border border-[#ECECF0]">
                             Awaiting response
+                          </span>
+                        ) : (
+                          <span className="h-6 inline-flex items-center gap-1 text-[12px] font-medium text-[#7A2253] bg-[#F7EEF2] px-2 rounded-[5px] border border-[#FCE7F3]">
+                            Invite submitted
                           </span>
                         )}
                         {rev.status === "rejected" && (

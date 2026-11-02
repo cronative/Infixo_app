@@ -3634,55 +3634,73 @@ export function LivePreviewCard({
         {/* 6. Standalone Reviews Only Mode (when accessing dedicated reviews tab directly) */}
         {reviewsOnlyMode && (
           <div id="reviews-only-section" className="relative z-10 order-[30] w-full text-left animate-fade-in mt-1.5 sm:mt-2 space-y-2">
-            <div className="space-y-2">
-              {(typeof reviewsPreviewLimit === "number" ? approvedReviews.slice(0, reviewsPreviewLimit) : approvedReviews).map((rev) => {
-                const ratingNum = Number(rev.rating) || 5;
-                return (
-                  <div
-                    key={rev.id}
-                    style={{
-                      backgroundColor: "transparent",
-                      borderColor: "var(--surface-border)",
-                    }}
-                    className="rounded-[5px] border p-2.5 sm:p-3 space-y-2 text-left shadow-none"
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div className="h-7 w-7 rounded-lg bg-(--accent)/10 text-(--accent-text) font-bold text-xs flex items-center justify-center shrink-0">
-                          {rev.clientName ? rev.clientName.charAt(0).toUpperCase() : "B"}
-                        </div>
-                        <div className="min-w-0">
-                          <p style={{ color: c.primaryText }} className="text-[13px] font-medium text-(--text) leading-[18px] truncate flex items-center gap-1">
-                            <span>{rev.clientName}</span>
-                            {rev.isVerified && <CheckCircle2 className="h-3 w-3 text-(--accent-text) shrink-0" />}
-                          </p>
-                          {rev.projectTitle && (
-                            <p style={{ color: c.mutedText }} className="text-[10px] font-medium truncate">
-                              {rev.projectTitle}
+            {approvedReviews.length === 0 ? (
+              <div
+                style={{
+                  backgroundColor: c.elevatedBackground,
+                  borderColor: c.border,
+                }}
+                className="rounded-[5px] border p-5 sm:p-6 text-center space-y-1 shadow-none my-2"
+              >
+                <div className="mx-auto mb-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-(--surface) text-(--text-muted)">
+                  <Star className="h-4 w-4" />
+                </div>
+                <p style={{ color: c.primaryText }} className="text-xs sm:text-sm font-semibold">
+                  No brand reviews yet
+                </p>
+                <p style={{ color: c.mutedText }} className="text-[11px] sm:text-xs">
+                  Published brand reviews will appear here.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {(typeof reviewsPreviewLimit === "number" ? approvedReviews.slice(0, reviewsPreviewLimit) : approvedReviews).map((rev) => {
+                  const ratingNum = Number(rev.rating) || 5;
+                  return (
+                    <div
+                      key={rev.id}
+                      style={{
+                        backgroundColor: "transparent",
+                        borderColor: "var(--surface-border)",
+                      }}
+                      className="rounded-[5px] border p-2.5 sm:p-3 space-y-2 text-left shadow-none"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="h-7 w-7 rounded-lg bg-(--accent)/10 text-(--accent-text) font-bold text-xs flex items-center justify-center shrink-0">
+                            {rev.clientName ? rev.clientName.charAt(0).toUpperCase() : "B"}
+                          </div>
+                          <div className="min-w-0">
+                            <p style={{ color: c.primaryText }} className="text-[13px] font-medium text-(--text) leading-[18px] truncate flex items-center gap-1">
+                              <span>{rev.clientName}</span>
+                              <CheckCircle2 className="h-3 w-3 text-(--accent-text) shrink-0" />
                             </p>
-                          )}
+                            {rev.projectTitle && (
+                              <p style={{ color: c.mutedText }} className="text-[10px] font-medium truncate">
+                                {rev.projectTitle}
+                              </p>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                      {rev.isVerified && (
-                        <div className="flex items-center gap-0.5 text-(--accent-text) shrink-0">
+                        <div className="flex items-center gap-0.5 text-amber-500 shrink-0">
                           {Array.from({ length: 5 }).map((_, i) => (
                             <Star
                               key={i}
-                              className={`h-3 w-3 ${i < ratingNum ? "fill-(--accent) text-(--accent-text)" : "fill-(--text-muted) text-(--text-muted)"}`}
+                              className={`h-3 w-3 ${i < ratingNum ? "fill-amber-400 text-amber-500" : "text-slate-300 dark:text-zinc-600"}`}
                             />
                           ))}
                         </div>
+                      </div>
+                      {rev.comment && (
+                        <p style={{ color: c.secondaryText }} className="text-xs leading-relaxed italic pt-0.5">
+                          &ldquo;{rev.comment.trim()}&rdquo;
+                        </p>
                       )}
                     </div>
-                    {rev.comment && (
-                      <p style={{ color: c.secondaryText }} className="text-xs leading-relaxed italic pt-0.5">
-                        &ldquo;{rev.comment.trim()}&rdquo;
-                      </p>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 

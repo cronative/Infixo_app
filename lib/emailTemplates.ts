@@ -57,10 +57,18 @@ export type EmailTemplateType =
 // HTML Component Helpers
 // ---------------------------------------------------------------------------
 
-function getAppBaseUrl(): string {
-  const envUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.DEV_APP_ORIGIN;
-  if (envUrl) {
-    return envUrl.replace(/\/+$/, "");
+export function getAppBaseUrl(): string {
+  const candidates = [
+    process.env.APP_BASE_URL,
+    process.env.APP_URL,
+    process.env.NEXT_PUBLIC_APP_URL,
+    process.env.NEXT_PUBLIC_SITE_URL,
+  ];
+  for (const raw of candidates) {
+    const trimmed = (raw || "").trim().replace(/\/+$/, "");
+    if (trimmed && !trimmed.includes("localhost") && !trimmed.includes("127.0.0.1")) {
+      return trimmed;
+    }
   }
   return "https://inflixo.com";
 }

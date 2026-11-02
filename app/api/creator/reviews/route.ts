@@ -1,9 +1,9 @@
 import type { RowDataPacket } from "mysql2";
 import { db } from "@/lib/db";
 import { sendCollabReviewEmail } from "@/lib/email";
+import { getAppBaseUrl } from "@/lib/emailTemplates";
 import { ensureReviewsTable } from "@/lib/reviewsDb";
 import { requireCreator } from "@/lib/creatorAuth";
-import { requireSession, ownsResource } from "@/lib/session";
 import crypto from "crypto";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
@@ -12,6 +12,7 @@ import { getPlanLimit } from "@/config/plans";
 
 interface CreatorIdRow extends RowDataPacket {
   id: string;
+  email?: string | null;
   display_name?: string | null;
 }
 
@@ -30,6 +31,7 @@ interface CreatorReviewRow extends RowDataPacket {
   rating_timely_delivery?: number | null;
   comment?: string | null;
   status: string;
+  invitation_status?: string | null;
   created_at: string | Date;
   updated_at: string | Date;
 }
@@ -53,52 +55,49 @@ function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "Unexpected server error";
 }
 
-// GET /api/creator/reviews?email=... or ?username=...
+// GET /api/creator/reviews (dashboard session, or public ?username=...)
 export async function GET(req: Request) {
   try {
     await ensureReviewsTable();
 
     const { searchParams } = new URL(req.url);
-    const email = searchParams.get("email");
+    const emailParam = searchParams.get("email");
     const username = searchParams.get("username");
     const status = searchParams.get("status");
-    const isPublicRequest = Boolean(username);
-
-    if (email) {
-      const auth = requireSession(req);
-      if (auth.error) return auth.error;
-      if (!ownsResource(auth.session, email)) {
-        return apiError("Forbidden", 403);
-      }
-    }
+    // Only treat as public request when username is passed without email and status='approved' (or unauthenticated public view)
+    const isPublicRequest = Boolean(username && !emailParam);
 
     let creatorId: string | null = null;
+    let creatorEmail: string | null = null;
 
-    if (username) {
+    if (isPublicRequest && username) {
       const cleanUsername = username.trim().replace(/^@/, "").toLowerCase();
       const [rows] = await db.query<CreatorIdRow[]>(
-        "SELECT id FROM creators WHERE LOWER(username) = ? OR username = ? OR LOWER(username) = ? LIMIT 1",
+        "SELECT id, email FROM creators WHERE LOWER(username) = ? OR username = ? OR LOWER(username) = ? LIMIT 1",
         [cleanUsername, username.trim(), `@${cleanUsername}`]
       );
-      if (rows && rows.length > 0) creatorId = rows[0].id;
-    } else if (email) {
-      const [rows] = await db.query<CreatorIdRow[]>("SELECT id FROM creators WHERE email = ?", [email]);
-      if (rows && rows.length > 0) creatorId = rows[0].id;
-    }
-
-    if (!creatorId) {
-      if (email) creatorId = email;
+      if (rows && rows.length > 0) {
+        creatorId = rows[0].id;
+        creatorEmail = rows[0].email || null;
+      }
+      if (!creatorId) {
+        return apiSuccess({ reviews: [] }, "Reviews retrieved successfully");
+      }
+      const accessError = await authorizeCreatorRead(req, creatorId, true);
+      if (accessError) return accessError;
+    } else {
+      const auth = await requireCreator(req);
+      if (auth.error) return auth.error;
+      creatorId = auth.creator.id;
+      creatorEmail = auth.creator.email || emailParam || null;
     }
 
     if (!creatorId) {
       return apiSuccess({ reviews: [] }, "Reviews retrieved successfully");
     }
 
-    const accessError = await authorizeCreatorRead(req, creatorId, isPublicRequest);
-    if (accessError) return accessError;
-
-    let sql = "SELECT * FROM creator_reviews WHERE creator_id = ?";
-    const queryParams: string[] = [creatorId];
+    let sql = "SELECT * FROM creator_reviews WHERE (creator_id = ? OR creator_id = ?)";
+    const queryParams: string[] = [creatorId, creatorEmail || creatorId];
 
     if (isPublicRequest) {
       sql += " AND status = 'approved'";
@@ -111,24 +110,31 @@ export async function GET(req: Request) {
 
     const [rows] = await db.query<CreatorReviewRow[]>(sql, queryParams);
 
-    const reviews = (rows || []).map((r) => ({
-      id: r.id,
-      creatorId: r.creator_id,
-      ...(isPublicRequest ? {} : { token: r.token }),
-      clientName: r.client_name,
-      ...(isPublicRequest ? {} : { clientEmail: r.client_email }),
-      clientDesignation: r.client_designation || "",
-      projectTitle: r.project_title,
-      contentUrl: r.content_url || "",
-      rating: Number(r.rating || 5),
-      ratingContentQuality: Number(r.rating_content_quality || 5),
-      ratingProfessionalism: Number(r.rating_professionalism || 5),
-      ratingTimelyDelivery: Number(r.rating_timely_delivery || 5),
-      comment: r.comment || "",
-      status: r.status,
-      createdAt: r.created_at,
-      updatedAt: r.updated_at,
-    }));
+    const reviews = (rows || []).map((r) => {
+      const invitationStatus =
+        r.invitation_status ||
+        (r.status === "pending_invite" ? "pending" : "submitted");
+      return {
+        id: r.id,
+        creatorId: r.creator_id,
+        ...(isPublicRequest ? {} : { token: r.token }),
+        clientName: r.client_name,
+        ...(isPublicRequest ? {} : { clientEmail: r.client_email }),
+        clientDesignation: r.client_designation || "",
+        projectTitle: r.project_title,
+        contentUrl: r.content_url || "",
+        rating: Number(r.rating || 5),
+        ratingContentQuality: Number(r.rating_content_quality || 5),
+        ratingProfessionalism: Number(r.rating_professionalism || 5),
+        ratingTimelyDelivery: Number(r.rating_timely_delivery || 5),
+        comment: r.comment || "",
+        status: r.status,
+        invitationStatus,
+        isVerified: true,
+        createdAt: r.created_at,
+        updatedAt: r.updated_at,
+      };
+    });
 
     // Public profile: reviews beyond the plan limit are hidden (kept in the dashboard).
     if (isPublicRequest) reviews.splice(getPlanLimit(await getCreatorPlanKey(creatorId), "reviews"));
@@ -200,8 +206,8 @@ export async function POST(req: Request) {
 
     await db.query(
       `INSERT INTO creator_reviews 
-       (id, creator_id, token, client_name, client_email, client_designation, project_title, content_url, rating, comment, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 5, '', 'pending_invite')`,
+       (id, creator_id, token, client_name, client_email, client_designation, project_title, content_url, rating, comment, status, invitation_status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 5, '', 'pending_invite', 'pending')`,
       [
         reviewId,
         resolvedCreatorId,
@@ -214,10 +220,17 @@ export async function POST(req: Request) {
       ]
     );
 
-    // Build absolute review submission URL
-    const configuredOrigin = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
-    const origin = configuredOrigin || new URL(req.url).origin;
-    const reviewUrl = `${origin.replace(/\/$/, "")}/review/${token}`;
+    console.log("[POST /api/creator/reviews] Created review invitation:", {
+      reviewId,
+      creatorId: resolvedCreatorId,
+      clientName: cleanClientName,
+      status: "pending_invite",
+      invitationStatus: "pending",
+    });
+
+    // Build absolute review submission URL using APP_BASE_URL (https://inflixo.com)
+    const baseUrl = getAppBaseUrl();
+    const reviewUrl = `${baseUrl}/review/${token}`;
 
     let emailSent = false;
     let emailError: string | undefined = undefined;

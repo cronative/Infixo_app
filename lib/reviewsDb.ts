@@ -21,6 +21,7 @@ export async function ensureReviewsTable() {
         rating_timely_delivery INT NOT NULL DEFAULT 5,
         comment TEXT DEFAULT NULL,
         status ENUM('pending_invite', 'pending_approval', 'approved', 'rejected') NOT NULL DEFAULT 'pending_invite',
+        invitation_status VARCHAR(32) NOT NULL DEFAULT 'pending',
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         INDEX idx_creator_reviews (creator_id, status),
@@ -33,6 +34,7 @@ export async function ensureReviewsTable() {
       "ALTER TABLE creator_reviews ADD COLUMN rating_content_quality INT NOT NULL DEFAULT 5",
       "ALTER TABLE creator_reviews ADD COLUMN rating_professionalism INT NOT NULL DEFAULT 5",
       "ALTER TABLE creator_reviews ADD COLUMN rating_timely_delivery INT NOT NULL DEFAULT 5",
+      "ALTER TABLE creator_reviews ADD COLUMN invitation_status VARCHAR(32) NOT NULL DEFAULT 'pending'",
     ];
     for (const q of alterQueries) {
       try {
@@ -41,6 +43,15 @@ export async function ensureReviewsTable() {
         // Column already exists, ignore
       }
     }
+
+    try {
+      await db.query(`
+        UPDATE creator_reviews
+        SET invitation_status = 'submitted'
+        WHERE status IN ('pending_approval', 'approved', 'rejected')
+          AND (invitation_status IS NULL OR invitation_status = '' OR invitation_status = 'pending')
+      `);
+    } catch {}
     isEnsured = true;
   } catch (_e) {
     // Ignore error if table exists

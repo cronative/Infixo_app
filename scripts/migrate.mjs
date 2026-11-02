@@ -312,6 +312,16 @@ async function migrateDatabase(target) {
       SET account_name = username
       WHERE username IS NOT NULL AND username != '' AND account_name != username`);
 
+    // 016: ensure creator_reviews has invitation_status and backfill submitted rows
+    const [reviewTables] = await connection.query("SHOW TABLES LIKE 'creator_reviews'");
+    if (reviewTables.length) {
+      await addColumnIfMissing("creator_reviews", "invitation_status", "VARCHAR(32) NOT NULL DEFAULT 'pending'");
+      await connection.query(`UPDATE creator_reviews
+        SET invitation_status = 'submitted'
+        WHERE status IN ('pending_approval', 'approved', 'rejected')
+          AND (invitation_status IS NULL OR invitation_status = '' OR invitation_status = 'pending')`);
+    }
+
     console.log(`✅ ${target.name} migrated successfully.`);
   } finally {
     await connection.end();
