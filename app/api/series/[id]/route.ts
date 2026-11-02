@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { requireCreator } from "@/lib/creatorAuth";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
+import { normalizeSeriesGenres } from "@/lib/seriesGenres";
 
 // GET /api/series/:id (Get single series details)
 export async function GET(
@@ -103,7 +104,7 @@ export async function PATCH(
     const genreVal = genre !== undefined ? genre : genres;
     if (genreVal !== undefined) {
       updates.push("genres = ?");
-      params.push(String(genreVal).trim());
+      params.push(normalizeSeriesGenres(String(genreVal)));
     }
 
     if (language !== undefined) {

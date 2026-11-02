@@ -8,6 +8,7 @@ import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 import { extractVideoThumbnail, validateVideoUrl, validateUrlForSeriesPlatform } from "@/lib/videoUrl";
 import { resolveThemeKey } from "@/lib/themeKeys";
+import { normalizeSeriesGenres } from "@/lib/seriesGenres";
 
 // GET /api/series
 // Identity comes from session cookie by default (or ?username= for public profiles)
@@ -314,7 +315,7 @@ export async function POST(req: Request) {
         finalPosterUrl,
         description || "",
         seriesPlatform,
-        genre || "",
+        normalizeSeriesGenres(genre || (body as any)?.genres || ""),
         language || "Hindi",
       ]
     );

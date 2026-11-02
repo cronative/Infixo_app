@@ -20,6 +20,7 @@ import { Series, EpisodePlatform } from "@/types";
 import { SeriesCoverUpload } from "@/components/series/SeriesCoverUpload";
 import { GenreMultiSelect } from "@/components/ui/GenreMultiSelect";
 import { LanguageSelect } from "@/components/ui/LanguageSelect";
+import { normalizeSeriesGenres } from "@/lib/seriesGenres";
 import { YoutubeIcon, InstagramIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import {
   validateUrlForSeriesPlatform,
@@ -451,8 +452,8 @@ export function SeriesUpsertModal({
       : null;
 
   const selectedGenresList = genres
-    .split(",")
-    .map((g) => g.trim())
+    .split(/[,•|/]/)
+    .map((g) => g.trim().replace(/^Genre:\s*/i, ""))
     .filter(Boolean);
   const genresError = selectedGenresList.length === 0 ? "Pick at least 1 genre" : null;
   const hasValidGenres = selectedGenresList.length >= 1 && selectedGenresList.length <= 3;
@@ -509,6 +510,7 @@ export function SeriesUpsertModal({
     });
 
     const cleanTitle = title.trim();
+    const cleanGenres = normalizeSeriesGenres(genres);
     setSaving(true);
 
     try {
@@ -517,7 +519,7 @@ export function SeriesUpsertModal({
           title: cleanTitle,
           description: description.trim(),
           posterDataUrl: coverUrl,
-          genre: genres,
+          genre: cleanGenres,
           language,
           platform,
           episodes: episodesPayload,
@@ -531,7 +533,7 @@ export function SeriesUpsertModal({
           title: cleanTitle,
           description: description.trim(),
           posterDataUrl: coverUrl,
-          genre: genres,
+          genre: cleanGenres,
           language,
           platform,
           episodes: episodesPayload,
