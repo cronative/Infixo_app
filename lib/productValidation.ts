@@ -57,7 +57,27 @@ export function validateProductFields(value: unknown) {
     throw new ProductValidationError("Recommendation note must be 120 characters or fewer.");
   }
 
-  const isAffiliate = body.isAffiliate !== undefined ? Boolean(body.isAffiliate) : true;
+  let couponCode: string | null = null;
+  if (typeof body.couponCode === "string" && body.couponCode.trim()) {
+    const trimmed = body.couponCode.trim().toUpperCase();
+    if (!/^[A-Z0-9_-]{2,20}$/.test(trimmed)) {
+      throw new ProductValidationError("Coupon code must be 2 to 20 letters, numbers, hyphens or underscores.");
+    }
+    couponCode = trimmed;
+  }
+
+  let discountText: string | null = null;
+  if (typeof body.discountText === "string" && body.discountText.trim()) {
+    const trimmed = body.discountText.trim();
+    if (trimmed.length > 30) {
+      throw new ProductValidationError("Discount text must be 30 characters or fewer.");
+    }
+    discountText = trimmed;
+  }
+
+  const isTopPick = body.isTopPick !== undefined ? Boolean(body.isTopPick) : false;
+  const sortOrder = typeof body.sortOrder === "number" && Number.isInteger(body.sortOrder) && body.sortOrder >= 0 ? body.sortOrder : 0;
+  const isAffiliate = body.isAffiliate !== undefined ? Boolean(body.isAffiliate) : false;
   const rawImage = typeof body.image === "string" ? body.image.trim() : (typeof body.imageUrl === "string" ? body.imageUrl.trim() : "");
 
   return {
@@ -65,6 +85,10 @@ export function validateProductFields(value: unknown) {
     url: cleanUrl,
     pricePaise: parseProductPrice(body.price),
     note: rawNote || null,
+    couponCode,
+    discountText,
+    isTopPick,
+    sortOrder,
     isAffiliate,
     image: rawImage,
   };

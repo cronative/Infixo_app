@@ -3,9 +3,11 @@ import { readLimitedBody, safeFetch } from "@/lib/safeFetch";
 /** Product details scraped from a store page. Fields we can't find are null, never a placeholder. */
 export interface ProductPreview {
   name: string | null;
+  title?: string;
   image: string | null;
   price: number | null;
   store: string | null;
+  code?: string;
 }
 
 const MAX_HTML_BYTES = 4 * 1024 * 1024;
@@ -37,6 +39,32 @@ function decodeEntities(text: string) {
 
 function clean(text: string | undefined | null) {
   return text ? decodeEntities(text).replace(/\s+/g, " ").trim() : "";
+}
+
+export function cleanProductTitle(raw: string, store?: string | null): string {
+  let title = clean(raw);
+  // Strip common Amazon title prefixes/suffixes
+  title = title.replace(/^Amazon\.in\s*:\s*Buy\s+/i, "").replace(/^Buy\s+/i, "").replace(/\s*:\s*Amazon\.in.*$/i, "").trim();
+
+  // Split on " | ", " - ", " – ", ", " and take first chunk if length > 5
+  const chunks = title.split(/\s*(?:\||–|-|,)\s*/);
+  if (chunks.length > 1 && chunks[0].trim().length > 5) {
+    title = chunks[0].trim();
+  }
+
+  // Strip trailing brand name if matches store
+  if (store) {
+    const brandName = store.replace(/\.[a-z.]+$/i, "");
+    if (brandName.length > 2) {
+      const brandPattern = new RegExp(`\\s*[-|–:]\\s*${brandName}.*$`, "i");
+      title = title.replace(brandPattern, "").trim();
+    }
+  }
+
+  // Strip leading Buy again if remaining
+  title = title.replace(/^Buy\s+/i, "").trim();
+
+  return title.slice(0, 80).trim();
 }
 
 function parseAttributes(tag: string) {
@@ -119,13 +147,13 @@ export function extractProductPreview(html: string, pageUrl: string): ProductPre
   const store = storeFromUrl(pageUrl);
 
   const amazonProductTitle = html.match(/<span\b[^>]*id=["']productTitle["'][^>]*>([\s\S]*?)<\/span>/i)?.[1];
-  let name = clean(amazonProductTitle || meta["og:title"] || meta["twitter:title"] || html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]);
-  // Strip common Amazon title prefixes/suffixes
-  name = name.replace(/^Amazon\.in\s*:\s*Buy\s+/i, "").replace(/\s*:\s*Amazon\.in.*$/i, "").trim();
+  let rawName = clean(amazonProductTitle || meta["og:title"] || meta["twitter:title"] || html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]);
+  let name = cleanProductTitle(rawName, store);
+
   // Bot-check / error pages are often titled with just the store name.
   if (name && (
     (store && name.toLowerCase() === store.toLowerCase()) ||
-    /^(amazon\.in|amazon\.com|robot check|page not found)$/i.test(name)
+    /^(amazon\.in|amazon\.com|robot check|page not found|access denied|just a moment|security check)$/i.test(name)
   )) {
     name = "";
   }
@@ -136,7 +164,7 @@ export function extractProductPreview(html: string, pageUrl: string): ProductPre
       const u = new URL(pageUrl);
       const slugMatch = u.pathname.match(/^\/([^/]+)\/(?:dp|gp\/product)\/[A-Z0-9]{10}/i);
       if (slugMatch && slugMatch[1] && slugMatch[1].toLowerCase() !== "gp") {
-        name = decodeURIComponent(slugMatch[1]).replace(/[-_]+/g, " ").trim();
+        name = cleanProductTitle(decodeURIComponent(slugMatch[1]).replace(/[-_]+/g, " "), store);
       }
     } catch {}
   }
@@ -157,6 +185,7 @@ export function extractProductPreview(html: string, pageUrl: string): ProductPre
 
   return {
     name: name ? name.slice(0, 80).trim() : null,
+    title: name ? name.slice(0, 80).trim() : "",
     image: rawImage ? absoluteHttpsUrl(clean(rawImage), pageUrl) : null,
     price,
     store,
@@ -164,17 +193,38 @@ export function extractProductPreview(html: string, pageUrl: string): ProductPre
 }
 
 export async function fetchProductPreview(url: string): Promise<ProductPreview> {
-  const empty: ProductPreview = { name: null, image: null, price: null, store: storeFromUrl(url) };
+  const store = storeFromUrl(url);
   try {
-    const res = await safeFetch(url, { headers: BROWSER_HEADERS, timeoutMs: 5000 });
+    const res = await safeFetch(url, { headers: BROWSER_HEADERS, timeoutMs: 4000 });
     if (!res.ok) {
-      // Even when HTTP status is 503 (e.g. Amazon bot block), extract slug from URL if available
-      return extractProductPreview("", url);
+      const fallback = extractProductPreview("", url);
+      return {
+        code: "FETCH_BLOCKED",
+        title: fallback.name || "",
+        name: fallback.name,
+        image: null,
+        price: null,
+        store,
+      };
     }
-    if (!(res.headers.get("content-type") || "text/html").includes("html")) return empty;
+    if (!(res.headers.get("content-type") || "text/html").includes("html")) {
+      return { code: "FETCH_BLOCKED", title: "", name: null, image: null, price: null, store };
+    }
     const html = (await readLimitedBody(res, MAX_HTML_BYTES, { truncate: true })).toString("utf8");
-    return extractProductPreview(html, url);
+    const preview = extractProductPreview(html, url);
+    if (!preview.name && !preview.image) {
+      return { ...preview, code: "FETCH_BLOCKED", title: "" };
+    }
+    return preview;
   } catch {
-    return extractProductPreview("", url);
+    const fallback = extractProductPreview("", url);
+    return {
+      code: "FETCH_BLOCKED",
+      title: fallback.name || "",
+      name: fallback.name,
+      image: null,
+      price: null,
+      store,
+    };
   }
 }

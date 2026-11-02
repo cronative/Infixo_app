@@ -19,6 +19,9 @@ export interface LinkItem {
   pinned: boolean;
   iconUrl: string | null;
   position: number;
+  description?: string | null;
+  expiresAt?: string | null;
+  expired?: boolean;
   children: LinkChild[];
 }
 
@@ -35,6 +38,8 @@ type LinkRow = RowDataPacket & {
   iconUrl: string | null;
   isPinned: number | null;
   sortOrder: number | null;
+  description: string | null;
+  expiresAt: string | Date | null;
 };
 
 let columnsEnsured = false;
@@ -46,10 +51,12 @@ export async function ensureLinkColumns() {
   const existing = new Set(cols.map((col) => col.Field));
   if (!existing.has("is_pinned")) await db.query("ALTER TABLE creator_custom_links ADD COLUMN is_pinned TINYINT(1) NOT NULL DEFAULT 0");
   if (!existing.has("icon_url")) await db.query("ALTER TABLE creator_custom_links ADD COLUMN icon_url VARCHAR(1000) DEFAULT NULL");
+  if (!existing.has("description")) await db.query("ALTER TABLE creator_custom_links ADD COLUMN description VARCHAR(60) NULL");
+  if (!existing.has("expires_at")) await db.query("ALTER TABLE creator_custom_links ADD COLUMN expires_at DATETIME NULL");
   columnsEnsured = true;
 }
 
-const LINK_COLUMNS = "id, parent_id AS parentId, link_type AS linkType, title, url, icon_url AS iconUrl, is_pinned AS isPinned, sort_order AS sortOrder";
+const LINK_COLUMNS = "id, parent_id AS parentId, link_type AS linkType, title, url, icon_url AS iconUrl, is_pinned AS isPinned, sort_order AS sortOrder, description, expires_at AS expiresAt";
 
 /** Top-level links in `position` order (sort_order), groups with their children. Shared by dashboard and public profile. */
 export async function listLinks(creatorId: string): Promise<LinkItem[]> {
@@ -69,6 +76,8 @@ export async function listLinks(creatorId: string): Promise<LinkItem[]> {
     .filter((row) => !row.parentId)
     .map((row, index) => {
       const isGroup = row.linkType === "collection";
+      const expiresAtIso = row.expiresAt ? new Date(row.expiresAt).toISOString() : null;
+      const isExpired = Boolean(expiresAtIso && new Date(expiresAtIso).getTime() <= Date.now());
       return {
         id: row.id,
         kind: isGroup ? "group" : "link",
@@ -77,6 +86,9 @@ export async function listLinks(creatorId: string): Promise<LinkItem[]> {
         pinned: !isGroup && Boolean(row.isPinned),
         iconUrl: row.iconUrl || null,
         position: index,
+        description: row.description || null,
+        expiresAt: expiresAtIso,
+        expired: isExpired,
         children: isGroup ? children.get(row.id) || [] : [],
       };
     });
@@ -109,8 +121,11 @@ function validateTitle(value: unknown, label = "Title"): string {
 }
 
 function validateUrl(value: unknown): string {
-  const raw = typeof value === "string" ? value.trim() : "";
+  let raw = typeof value === "string" ? value.trim() : "";
   if (!raw) throw new LinkValidationError("URL is required.", "INVALID_URL");
+  if (!/^[a-z][a-z0-9+.-]*:/i.test(raw)) {
+    raw = `https://${raw.replace(/^\/+/, "")}`;
+  }
   if (/^(javascript|data|vbscript|file):/i.test(raw.replace(/\s+/g, ""))) {
     throw new LinkValidationError("This kind of link isn't allowed.", "INVALID_URL");
   }
@@ -126,11 +141,30 @@ function validateUrl(value: unknown): string {
   return raw;
 }
 
+function validateDescription(value: unknown): string | null {
+  if (value === null || value === undefined) return null;
+  if (typeof value !== "string") throw new LinkValidationError("Description must be text.", "INVALID_DESCRIPTION");
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  if (trimmed.length > 60) throw new LinkValidationError("Description must be 60 characters or fewer.", "INVALID_DESCRIPTION");
+  return trimmed;
+}
+
+function validateExpiresAt(value: unknown): string | null {
+  if (value === null || value === undefined || value === "") return null;
+  const d = new Date(value as string);
+  if (isNaN(d.getTime())) throw new LinkValidationError("Enter a valid expiry date.", "INVALID_EXPIRY");
+  if (d.getTime() <= Date.now()) throw new LinkValidationError("Expiry date must be in the future.", "INVALID_EXPIRY");
+  return d.toISOString();
+}
+
 export interface LinkInput {
   kind: "link" | "group";
   title: string;
   url: string;
   pinned: boolean;
+  description?: string | null;
+  expiresAt?: string | null;
   children: { id?: string; title: string; url: string }[];
 }
 
@@ -140,8 +174,19 @@ export function validateLinkInput(value: unknown): LinkInput {
   const kind = body.kind === "group" ? "group" : body.kind === "link" ? "link" : null;
   if (!kind) throw new LinkValidationError("kind must be \"link\" or \"group\".", "INVALID_KIND");
 
+  const description = validateDescription(body.description);
+  const expiresAt = validateExpiresAt(body.expiresAt || body.expires_at);
+
   if (kind === "link") {
-    return { kind, title: validateTitle(body.title), url: validateUrl(body.url), pinned: body.pinned === true, children: [] };
+    return {
+      kind,
+      title: validateTitle(body.title),
+      url: validateUrl(body.url),
+      pinned: body.pinned === true,
+      description,
+      expiresAt,
+      children: [],
+    };
   }
 
   const rawChildren = Array.isArray(body.children) ? body.children : [];
@@ -156,7 +201,15 @@ export function validateLinkInput(value: unknown): LinkInput {
       url: validateUrl(item.url),
     };
   });
-  return { kind, title: validateTitle(body.title, "Group title"), url: "", pinned: false, children };
+  return {
+    kind,
+    title: validateTitle(body.title, "Group title"),
+    url: "",
+    pinned: false,
+    description,
+    expiresAt,
+    children,
+  };
 }
 
 export const newLinkId = () => `link_${randomUUID()}`;

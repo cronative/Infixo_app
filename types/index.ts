@@ -305,6 +305,9 @@ export interface CustomLink {
   title: string;
   url: string;
   subtitle?: string;
+  description?: string | null;
+  expiresAt?: string | null;
+  expired?: boolean;
   icon?: string;
   isEnabled?: boolean;
   kind?: "link" | "collection";
@@ -319,6 +322,7 @@ export interface CustomLinkItem {
   id: string;
   title: string;
   url: string;
+  description?: string | null;
   icon?: string;
   isEnabled?: boolean;
   thumbnail?: string;
@@ -927,6 +931,10 @@ export interface CreatorProduct {
   productUrl: string;
   note?: string | null;
   isAffiliate?: boolean;
+  couponCode?: string | null;
+  discountText?: string | null;
+  isTopPick?: boolean;
+  sortOrder?: number;
 }
 
 /** Product as exchanged with /api/products (price in whole rupees). */
@@ -938,4 +946,8 @@ export interface ShopProduct {
   price: number | null;
   note: string;
   isAffiliate: boolean;
+  couponCode?: string | null;
+  discountText?: string | null;
+  isTopPick?: boolean;
+  sortOrder?: number;
 }

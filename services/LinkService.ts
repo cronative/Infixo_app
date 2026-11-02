@@ -7,6 +7,9 @@ export interface LinkDto {
   pinned: boolean;
   iconUrl: string | null;
   position: number;
+  description?: string | null;
+  expiresAt?: string | null;
+  expired?: boolean;
   children: LinkChildDto[];
 }
 export interface LinkInputDto {
@@ -14,6 +17,8 @@ export interface LinkInputDto {
   title: string;
   url?: string;
   pinned?: boolean;
+  description?: string | null;
+  expiresAt?: string | null;
   children?: { id?: string; title: string; url: string }[];
 }
 export interface LinksList { items: LinkDto[]; used: number; limit: number | null; plan: string }

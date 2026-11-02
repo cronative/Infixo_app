@@ -68,31 +68,38 @@ function buildSocialAccounts(rows: Array<Record<string, unknown>>): SocialAccoun
   const accounts: SocialAccounts = { ...EMPTY_SOCIAL_ACCOUNTS };
   rows.forEach((row) => {
     const platform = String(row.platform || "").toLowerCase();
+    const isPrimary = Boolean(row.isPrimary || row.is_primary);
     const handle = String(row.username || row.accountName || "");
     const cleanHandle = handle.replace(/^@/, "");
     const count = Number(row.followerCount || row.followers || 0);
 
     if (platform === "instagram") {
-      accounts.instagram = {
-        ...accounts.instagram,
-        followers: count,
-        username: handle,
-        url: cleanHandle ? `https://instagram.com/${cleanHandle}` : "",
-      };
+      if (isPrimary || !accounts.instagram.username) {
+        accounts.instagram = {
+          ...accounts.instagram,
+          followers: count,
+          username: handle,
+          url: cleanHandle ? `https://instagram.com/${cleanHandle}` : "",
+        };
+      }
     } else if (platform === "youtube") {
-      accounts.youtube = {
-        ...accounts.youtube,
-        subscribers: count,
-        username: handle,
-        url: cleanHandle ? `https://youtube.com/@${cleanHandle}` : "",
-      };
+      if (isPrimary || !accounts.youtube.username) {
+        accounts.youtube = {
+          ...accounts.youtube,
+          subscribers: count,
+          username: handle,
+          url: cleanHandle ? `https://youtube.com/@${cleanHandle}` : "",
+        };
+      }
     } else if (platform === "facebook") {
-      accounts.facebook = {
-        ...accounts.facebook,
-        followers: count,
-        username: handle,
-        url: cleanHandle ? `https://facebook.com/${cleanHandle}` : "",
-      };
+      if (isPrimary || !accounts.facebook.username) {
+        accounts.facebook = {
+          ...accounts.facebook,
+          followers: count,
+          username: handle,
+          url: cleanHandle ? `https://facebook.com/${cleanHandle}` : "",
+        };
+      }
     }
   });
   return accounts;
@@ -122,6 +129,7 @@ export default function AllSeriesClient() {
 
   const [profile, setProfile] = useState<CreatorProfile>(cachedData?.profile || EMPTY_PROFILE);
   const [socials, setSocials] = useState<SocialAccounts>(cachedData?.socials || EMPTY_SOCIAL_ACCOUNTS);
+  const [allSocialAccounts, setAllSocialAccounts] = useState<any[]>([]);
   const [series, setSeries] = useState<Series[]>(cachedData?.series || []);
   const [theme, setTheme] = useState<ThemeKey>(resolveThemeKey(cachedData?.theme));
   const [loaded, setLoaded] = useState(Boolean(cachedData));
@@ -212,6 +220,9 @@ export default function AllSeriesClient() {
         const freshTheme = resolveThemeKey(freshProfile.themeKey);
         const rawSocials = socialsRes.data?.socials || socialsRes.socials;
         const freshSocials = Array.isArray(rawSocials) ? buildSocialAccounts(rawSocials) : EMPTY_SOCIAL_ACCOUNTS;
+        if (Array.isArray(rawSocials)) {
+          setAllSocialAccounts(rawSocials);
+        }
         const rawSeries = seriesRes.data?.series || seriesRes.series;
         const freshSeries = Array.isArray(rawSeries) ? rawSeries : [];
 
@@ -334,6 +345,7 @@ export default function AllSeriesClient() {
           themeKey={theme}
           profile={profile}
           socials={socials}
+          allSocialAccounts={allSocialAccounts}
           series={series}
           customLinks={[]}
           mediaKitPackages={[]}

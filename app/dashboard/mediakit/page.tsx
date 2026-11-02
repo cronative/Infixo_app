@@ -454,6 +454,7 @@ export default function DashboardMediaKitPage() {
   // Collab requests & snapshot fields
   const [collabRequests, setCollabRequests] = useState<any[]>([]);
   const [loadingRequests, setLoadingRequests] = useState(false);
+  const [expandedRequests, setExpandedRequests] = useState<Record<string, boolean>>({});
   const [settingAvgReelViews, setSettingAvgReelViews] = useState("");
   const [settingEngagementRate, setSettingEngagementRate] = useState("");
   const [settingTopCities, setSettingTopCities] = useState("");
@@ -1604,170 +1605,191 @@ export default function DashboardMediaKitPage() {
         )}
 
       {/* 4.5. COLLAB REQUESTS INBOX */}
-      <SectionCard
-        title="Collab requests"
-        subtitle="Requests brands send from your public profile."
-        icon={<Mail className="h-4 w-4" />}
-        action={
-          <span className="text-[12px] text-[#6B6B76]">
-            {collabRequests.length} {collabRequests.length === 1 ? "request" : "requests"}
-          </span>
-        }
-        bodyClassName="p-4"
-      >
-        {loadingRequests ? (
-          <div className="p-8 text-center text-xs text-[#64748b] bg-white rounded-[5px] border border-[#e2e8f0]">
-            Loading collab requests...
-          </div>
-        ) : collabRequests.length === 0 ? (
-          <div className="p-8 text-center bg-white rounded-[5px] border border-dashed border-[#cbd5e1]">
-            <Mail className="h-8 w-8 text-[#94a3b8] mx-auto mb-2" />
-            <p className="text-xs font-bold text-[#0f172a]">No collab requests yet</p>
-            <p className="text-[11px] text-[#64748b] mt-1 max-w-sm mx-auto">
-              When brands submit an inquiry via the &quot;Send a collab request&quot; button on your profile, it will appear here.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {collabRequests.map((req) => {
-              const brand = req.brandName || req.brand_name || "Brand";
-              const pkgTitle = req.packageName || req.package_name || "Custom collab";
-              const budgetText = req.budget || "Budget not specified";
-              const dateRaw = req.createdAt || req.created_at;
-              const dateFormatted = dateRaw
-                ? new Date(dateRaw).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" })
-                : "";
-              const contactPerson = req.contactName || req.contact_name;
-              const email = req.workEmail || req.work_email || req.email || "";
-              const phone = req.phone || req.whatsapp || "";
-              const cleanPhone = phone.replace(/[^0-9]/g, "");
-              const creatorName = profile.displayName || profile.username || "Creator";
-              const currentStatus = req.status || "new";
+      <div id="requests" className="scroll-mt-6">
+        <SectionCard
+          title="Collab requests"
+          subtitle="Requests brands send from your public profile."
+          icon={<Mail className="h-4 w-4" />}
+          action={
+            <span className="text-[12px] text-[#6B6B76]">
+              {collabRequests.length} {collabRequests.length === 1 ? "request" : "requests"}
+            </span>
+          }
+          bodyClassName="p-4"
+        >
+          {loadingRequests ? (
+            <div className="p-8 text-center text-xs text-[#64748b] bg-white rounded-[5px] border border-[#e2e8f0]">
+              Loading collab requests...
+            </div>
+          ) : collabRequests.length === 0 ? (
+            <div className="p-8 text-center bg-white rounded-[5px] border border-dashed border-[#cbd5e1]">
+              <Mail className="h-8 w-8 text-[#94a3b8] mx-auto mb-2" />
+              <p className="text-xs font-bold text-[#0f172a]">No collab requests yet</p>
+              <p className="text-[11px] text-[#64748b] mt-1 max-w-sm mx-auto">
+                When brands submit an inquiry via the &quot;Send a collab request&quot; button on your profile, it will appear here.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {collabRequests.map((req) => {
+                const brand = req.brandName || req.brand_name || "Brand";
+                const contactPerson = req.contactName || req.contact_name;
+                const pkgTitle = req.packageName || req.package_name || "Custom collab";
+                const budgetText = req.budget || "Budget not specified";
+                const dateRaw = req.createdAt || req.created_at;
+                const dateFormatted = dateRaw
+                  ? new Date(dateRaw).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" })
+                  : "";
+                const email = req.workEmail || req.work_email || req.email || "";
+                const phone = req.phone || req.whatsapp || "";
+                const cleanPhone = phone.replace(/[^0-9]/g, "");
+                const creatorName = profile.displayName || profile.username || "Creator";
+                const currentStatus = req.status || "new";
+                const isExpanded = Boolean(expandedRequests[req.id]);
+                const rawMessage = req.message || "";
+                const isLongMessage = rawMessage.length > 140;
 
-              return (
-                <div key={req.id} className="p-4 bg-white rounded-[5px] border border-[#e2e8f0] shadow-2xs space-y-3 text-left">
-                  {/* Top line: brand · package · budget · date · status chip (New / Replied / Closed) */}
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#f1f5f9] pb-2.5">
-                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-[#475569]">
-                      <span className="font-bold text-sm text-[#0f172a]">{brand}</span>
-                      <span className="text-[#94a3b8]">·</span>
-                      <span className="font-medium text-[#0f172a]">{pkgTitle}</span>
-                      <span className="text-[#94a3b8]">·</span>
-                      <span className="text-[#64748b]">{budgetText}</span>
-                      {dateFormatted && (
-                        <>
-                          <span className="text-[#94a3b8]">·</span>
-                          <span className="text-[#94a3b8]">{dateFormatted}</span>
-                        </>
-                      )}
-                    </div>
-                    <div>
-                      <span
-                        className={`inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-[5px] border ${
-                          currentStatus === "new"
-                            ? "bg-amber-50 text-amber-700 border-amber-200"
-                            : currentStatus === "replied"
-                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                            : "bg-zinc-100 text-zinc-600 border-zinc-200"
-                        }`}
-                      >
-                        {currentStatus === "new" ? "New" : currentStatus === "replied" ? "Replied" : "Closed"}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Contact details */}
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#64748b]">
-                    {contactPerson && (
-                      <div>
-                        <span className="text-[#94a3b8]">Contact:</span>{" "}
-                        <span className="font-medium text-[#1e293b]">{contactPerson}</span>
+                return (
+                  <div key={req.id} className="p-4 bg-white rounded-[5px] border border-[#e2e8f0] shadow-2xs space-y-3 text-left">
+                    {/* Top line: brand · name · package · budget · date · status chip (New / Replied / Closed) */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#f1f5f9] pb-2.5">
+                      <div className="flex flex-wrap items-center gap-1.5 text-xs text-[#475569]">
+                        <span className="font-bold text-sm text-[#0f172a]">{brand}</span>
+                        {contactPerson && (
+                          <>
+                            <span className="text-[#94a3b8]">·</span>
+                            <span className="text-[#334155] font-medium">{contactPerson}</span>
+                          </>
+                        )}
+                        <span className="text-[#94a3b8]">·</span>
+                        <span className="font-medium text-[#0f172a]">{pkgTitle}</span>
+                        <span className="text-[#94a3b8]">·</span>
+                        <span className="text-[#64748b]">{budgetText}</span>
+                        {dateFormatted && (
+                          <>
+                            <span className="text-[#94a3b8]">·</span>
+                            <span className="text-[#94a3b8]">{dateFormatted}</span>
+                          </>
+                        )}
                       </div>
-                    )}
-                    {email && (
                       <div>
-                        <span className="text-[#94a3b8]">Email:</span>{" "}
-                        <a href={`mailto:${email}`} className="text-[#7A2253] hover:underline font-medium">
-                          {email}
-                        </a>
-                      </div>
-                    )}
-                    {phone && (
-                      <div>
-                        <span className="text-[#94a3b8]">Phone:</span>{" "}
-                        <span className="font-medium text-[#1e293b]">{phone}</span>
-                      </div>
-                    )}
-                    {(req.websiteOrSocial || req.website_or_social) && (
-                      <div>
-                        <span className="text-[#94a3b8]">Link:</span>{" "}
-                        <a
-                          href={
-                            (req.websiteOrSocial || req.website_or_social).startsWith("http")
-                              ? (req.websiteOrSocial || req.website_or_social)
-                              : `https://${req.websiteOrSocial || req.website_or_social}`
-                          }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[#7A2253] hover:underline"
+                        <span
+                          className={`inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-[5px] border ${
+                            currentStatus === "new"
+                              ? "bg-amber-50 text-amber-700 border-amber-200"
+                              : currentStatus === "replied"
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                              : "bg-zinc-100 text-zinc-600 border-zinc-200"
+                          }`}
                         >
-                          {req.websiteOrSocial || req.website_or_social}
-                        </a>
+                          {currentStatus === "new" ? "New" : currentStatus === "replied" ? "Replied" : "Closed"}
+                        </span>
                       </div>
-                    )}
-                  </div>
+                    </div>
 
-                  {/* Message */}
-                  {req.message && (
-                    <p className="text-xs text-[#334155] bg-[#f8fafc] p-2.5 rounded-[5px] border border-[#f1f5f9] whitespace-pre-wrap leading-relaxed">
-                      {req.message}
-                    </p>
-                  )}
-
-                  {/* Bottom Action Bar: "Reply on email", "WhatsApp" (if phone given), status dropdown */}
-                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-                    <div className="flex flex-wrap items-center gap-2">
+                    {/* Contact details */}
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#64748b]">
                       {email && (
-                        <a
-                          href={`mailto:${email}?subject=${encodeURIComponent(`Re: ${pkgTitle} collab with ${creatorName}`)}`}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 transition-opacity"
-                        >
-                          <Mail className="h-3.5 w-3.5" />
-                          <span>Reply on email</span>
-                        </a>
+                        <div>
+                          <span className="text-[#94a3b8]">Email:</span>{" "}
+                          <a href={`mailto:${email}`} className="text-[#7A2253] hover:underline font-medium">
+                            {email}
+                          </a>
+                        </div>
                       )}
-                      {cleanPhone && (
-                        <a
-                          href={`https://wa.me/${cleanPhone}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs font-semibold hover:bg-emerald-100 transition-colors"
-                        >
-                          <MessageCircle className="h-3.5 w-3.5 text-emerald-600" />
-                          <span>WhatsApp</span>
-                        </a>
+                      {phone && (
+                        <div>
+                          <span className="text-[#94a3b8]">Phone:</span>{" "}
+                          <span className="font-medium text-[#1e293b]">{phone}</span>
+                        </div>
+                      )}
+                      {(req.websiteOrSocial || req.website_or_social) && (
+                        <div>
+                          <span className="text-[#94a3b8]">Link:</span>{" "}
+                          <a
+                            href={
+                              (req.websiteOrSocial || req.website_or_social).startsWith("http")
+                                ? (req.websiteOrSocial || req.website_or_social)
+                                : `https://${req.websiteOrSocial || req.website_or_social}`
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#7A2253] hover:underline"
+                          >
+                            {req.websiteOrSocial || req.website_or_social}
+                          </a>
+                        </div>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-1.5 text-xs text-[#64748b]">
-                      <span className="text-[11px] font-medium">Status:</span>
-                      <select
-                        value={currentStatus}
-                        onChange={(e) => handleUpdateStatus(req.id, e.target.value as "new" | "replied" | "closed")}
-                        className="h-7 px-2 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-medium text-[#0f172a] outline-none focus:border-[#7A2253] cursor-pointer"
-                      >
-                        <option value="new">New</option>
-                        <option value="replied">Replied</option>
-                        <option value="closed">Closed</option>
-                      </select>
+                    {/* Message (Full / Expandable) */}
+                    {rawMessage && (
+                      <div className="text-xs text-[#334155] bg-[#f8fafc] p-2.5 rounded-[5px] border border-[#f1f5f9] leading-relaxed">
+                        <p className={`whitespace-pre-wrap ${!isExpanded && isLongMessage ? "line-clamp-2" : ""}`}>
+                          {rawMessage}
+                        </p>
+                        {isLongMessage && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setExpandedRequests((prev) => ({
+                                ...prev,
+                                [req.id]: !prev[req.id],
+                              }))
+                            }
+                            className="mt-1 text-[11px] font-semibold text-[#7A2253] hover:underline cursor-pointer"
+                          >
+                            {isExpanded ? "Show less" : "Read full message"}
+                          </button>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Bottom Action Bar: "Reply on email", "WhatsApp" (if phone given), status dropdown */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {email && (
+                          <a
+                            href={`mailto:${email}?subject=${encodeURIComponent(`Re: ${pkgTitle} collab with ${creatorName}`)}`}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 transition-opacity"
+                          >
+                            <Mail className="h-3.5 w-3.5" />
+                            <span>Reply on email</span>
+                          </a>
+                        )}
+                        {cleanPhone && (
+                          <a
+                            href={`https://wa.me/${cleanPhone}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs font-semibold hover:bg-emerald-100 transition-colors"
+                          >
+                            <MessageCircle className="h-3.5 w-3.5 text-emerald-600" />
+                            <span>WhatsApp</span>
+                          </a>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-1.5 text-xs text-[#64748b]">
+                        <span className="text-[11px] font-medium">Status:</span>
+                        <select
+                          value={currentStatus}
+                          onChange={(e) => handleUpdateStatus(req.id, e.target.value as "new" | "replied" | "closed")}
+                          className="h-7 px-2 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-medium text-[#0f172a] outline-none focus:border-[#7A2253] cursor-pointer"
+                        >
+                          <option value="new">New</option>
+                          <option value="replied">Replied</option>
+                          <option value="closed">Closed</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </SectionCard>
+                );
+              })}
+            </div>
+          )}
+        </SectionCard>
+      </div>
 
       {/* 5. CREATE / EDIT SERVICE MODAL */}
       <Modal

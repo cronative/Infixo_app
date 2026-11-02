@@ -563,24 +563,6 @@ export function SeriesDetailClient({
               </div>
             </div>
 
-            {/* Center Floating White Play Button */}
-            {allEpisodes[0]?.externalUrl && (
-              <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                <a
-                  href={allEpisodes[0].externalUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => trackEpisodeClick(allEpisodes[0])}
-                  className="group/play cursor-pointer pointer-events-auto"
-                  title="Play Episode 1"
-                >
-                  <span className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-[5px] bg-white text-[#7A2253] shadow-2xl transition-transform duration-300 group-hover/play:scale-110">
-                    <Play className="h-6 w-6 fill-[#7A2253] ml-0.5" />
-                  </span>
-                </a>
-              </div>
-            )}
-
             {/* Bottom Subtle Vignette Overlay */}
             <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/60 via-black/25 to-transparent pointer-events-none" />
 
@@ -591,11 +573,12 @@ export function SeriesDetailClient({
                   <Play className="h-3 w-3 fill-white" />
                   <span>{allEpisodes.length} Episodes</span>
                 </span>
-                <span className="opacity-40">|</span>
-                <span className="flex items-center gap-1.5">
-                  <Clock className="h-3 w-3" />
-                  <span>{genresList[0] || "Travel"} Series</span>
-                </span>
+                {genresList.length > 0 && (
+                  <>
+                    <span className="opacity-40">|</span>
+                    <span>{genresList.join(" · ")}</span>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -617,22 +600,6 @@ export function SeriesDetailClient({
                 </span>
               ))}
             </div>
-
-            {/* Primary CTA: "▶ Start Episode 1" */}
-            {allEpisodes.length > 0 && allEpisodes[0]?.externalUrl && (
-              <div className="pt-1 pb-1">
-                <a
-                  href={allEpisodes[0].externalUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => trackEpisodeClick(allEpisodes[0])}
-                  className="inline-flex h-11 items-center justify-center gap-2.5 rounded-[5px] bg-[#7A2253] px-6 text-sm font-bold text-white shadow-lg shadow-[#7A2253]/25 hover:bg-[#601a41] transition-all cursor-pointer w-full sm:w-auto"
-                >
-                  <Play className="h-4 w-4 fill-white" />
-                  <span>▶ Start Episode 1</span>
-                </a>
-              </div>
-            )}
 
             {/* Category Tags as small neutral chips below meta line */}
             {genresList.length > 0 && (
@@ -733,7 +700,7 @@ export function SeriesDetailClient({
                         aria-label={`Ep ${partNum} · ${cleanTitle}`}
                         className="group/ep flex items-center justify-between gap-3 px-3.5 py-3 rounded-[5px] border border-slate-200/70 dark:border-white/10 bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-white/[0.04] hover:border-[#7A2253]/30 dark:hover:border-white/20 transition-all text-left cursor-pointer"
                       >
-                        <span className="text-xs sm:text-[13px] font-semibold text-slate-900 dark:text-white truncate group-hover/ep:text-[#7A2253] dark:group-hover/ep:text-rose-400 transition-colors">
+                        <span className="text-xs sm:text-[13px] font-semibold text-slate-900 dark:text-white line-clamp-2 break-words group-hover/ep:text-[#7A2253] dark:group-hover/ep:text-rose-400 transition-colors">
                           Ep {partNum} · {cleanTitle}
                         </span>
                         <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover/ep:text-[#7A2253] dark:group-hover/ep:text-rose-400 transition-colors shrink-0" />
@@ -764,16 +731,13 @@ export function SeriesDetailClient({
                     <span className="text-sm font-bold text-slate-900 dark:text-white truncate">
                       {creator?.displayName || username}
                     </span>
-                    <svg className="w-3.5 h-3.5 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L9 14.17l9.59-9.59L20 6l-10 11z" />
-                    </svg>
                   </div>
                   <p className="text-xs text-slate-400 truncate pt-0.5">
                     <span>@{username.replace(/^@/, "")}</span>
-                    {(creator?.bio || creator?.category) && (
+                    {creator?.bio && (
                       <>
                         <span className="mx-1 text-slate-400">·</span>
-                        <span>{creator.bio || creator.category}</span>
+                        <span>{creator.bio}</span>
                       </>
                     )}
                   </p>

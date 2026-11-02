@@ -31,12 +31,25 @@ export async function GET(req: Request) {
     if (accessError) return accessError;
 
     // Public profile: links beyond the plan limit are hidden (a group counts as 1; kept in the dashboard).
+    // Expired items still count toward plan limit, but are excluded on the public view.
     const linkLimit = getPlanLimit(await getCreatorPlanKey(targetCreatorId), "links");
-    const links = (await listLinks(targetCreatorId)).slice(0, linkLimit).map((link) =>
+    const rawLinks = await listLinks(targetCreatorId);
+    const now = Date.now();
+
+    const linksWithinLimit = rawLinks.slice(0, linkLimit);
+    const activeLinks = linksWithinLimit.filter((link) => {
+      if (link.expiresAt) {
+        return new Date(link.expiresAt).getTime() > now;
+      }
+      return true;
+    });
+
+    const links = activeLinks.map((link) =>
       link.kind === "group"
         ? {
             id: link.id,
             title: link.title,
+            description: link.description || undefined,
             url: "",
             kind: "collection" as const,
             isEnabled: true,
@@ -51,6 +64,7 @@ export async function GET(req: Request) {
         : {
             id: link.id,
             title: link.title,
+            description: link.description || undefined,
             url: sanitizeUrl(link.url, { allowEmpty: true }) || "",
             kind: "link" as const,
             isEnabled: true,

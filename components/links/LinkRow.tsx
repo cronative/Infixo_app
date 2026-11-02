@@ -32,6 +32,8 @@ export function LinkRow({
 
   // Title: preserve emojis exactly as typed
   const title = link.title || "";
+  const isFeatured = Boolean(isPinned || (link as any).isPinned);
+  const subtitleText = link.description || destinationText;
 
   // Thumbnail fallback; otherwise the favicon saved on the server (known platforms keep their brand icon).
   const [faviconFailed, setFaviconFailed] = useState(false);
@@ -81,11 +83,25 @@ export function LinkRow({
 
           {/* Text Content */}
           <div className="min-w-0 flex-1 flex flex-col justify-center">
-            <span className="link-row-title text-[13px] font-medium text-(--text) group-hover:text-(--accent-text) transition-colors leading-[18px]">
-              {title}
-            </span>
+            <div className="flex items-center gap-1.5 min-w-0">
+              <span className="link-row-title text-[13px] font-medium text-(--text) group-hover:text-(--accent-text) transition-colors leading-[18px] truncate">
+                {title}
+              </span>
+              {isFeatured && (
+                <span
+                  style={{
+                    color: "var(--accent-text)",
+                    backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
+                    borderColor: "var(--surface-border)",
+                  }}
+                  className="inline-flex items-center text-[9.5px] font-bold px-1.5 py-0.2 rounded-[3px] border leading-tight shrink-0 select-none"
+                >
+                  ⭐ Featured
+                </span>
+              )}
+            </div>
             <span className="text-[11px] text-(--text-muted) font-normal truncate leading-[16px] mt-0.5">
-              {destinationText}
+              {subtitleText}
             </span>
           </div>
         </div>
@@ -104,7 +120,9 @@ export function LinkRow({
       rel="noopener noreferrer"
       aria-label={`${title} – opens ${ariaDestination}`}
       onClick={onClick}
-      className={`group relative flex items-center justify-between gap-3 min-h-[48px] h-auto min-[400px]:h-[48px] px-3.5 py-2 rounded-[5px] border border-(--surface-border) bg-transparent text-left transition-all duration-150 ease-out hover:border-(--surface-border) hover:bg-(--surface)/40 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-1 cursor-pointer select-none shadow-none ${className}`}
+      className={`group relative flex items-center justify-between gap-3 min-h-[48px] h-auto min-[400px]:h-[48px] px-3.5 py-2 rounded-[5px] border ${
+        isFeatured ? "border-(--accent) shadow-2xs" : "border-(--surface-border)"
+      } bg-transparent text-left transition-all duration-150 ease-out hover:bg-(--surface)/40 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-1 cursor-pointer select-none ${className}`}
     >
       <div className="flex items-center gap-3 min-w-0 flex-1">
         {/* 32×32 Icon Tile */}
@@ -129,11 +147,25 @@ export function LinkRow({
 
         {/* Text Content */}
         <div className="min-w-0 flex-1 flex flex-col justify-center py-0.5">
-          <span className="link-row-title text-[13px] font-medium text-(--text) group-hover:text-(--accent-text) transition-colors leading-[18px]">
-            {title}
-          </span>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="link-row-title text-[13px] font-medium text-(--text) group-hover:text-(--accent-text) transition-colors leading-[18px] truncate">
+              {title}
+            </span>
+            {isFeatured && (
+              <span
+                style={{
+                  color: "var(--accent-text)",
+                  backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
+                  borderColor: "var(--surface-border)",
+                }}
+                className="inline-flex items-center text-[10px] font-bold px-1.5 py-0.2 rounded-[3px] border leading-tight shrink-0 select-none"
+              >
+                ⭐ Featured
+              </span>
+            )}
+          </div>
           <span className="text-xs text-(--text-muted) font-normal truncate leading-[17px] mt-0.5">
-            {destinationText}
+            {subtitleText}
           </span>
         </div>
       </div>

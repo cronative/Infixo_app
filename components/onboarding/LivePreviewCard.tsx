@@ -698,9 +698,11 @@ export function LivePreviewCard({
   const sortedProducts: CreatorProduct[] = useMemo(() => {
     const list: CreatorProduct[] = [...products];
     if (shopSortOrder === "price_asc") {
-      list.sort((a, b) => (a.pricePaise || 0) - (b.pricePaise || 0));
+      list.sort((a, b) => (a.pricePaise || 0) - (a.pricePaise || 0));
     } else if (shopSortOrder === "price_desc") {
       list.sort((a, b) => (b.pricePaise || 0) - (a.pricePaise || 0));
+    } else {
+      list.sort((a, b) => (b.isTopPick ? 1 : 0) - (a.isTopPick ? 1 : 0) || (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
     }
     if (productsOnlyMode) return list;
     if (typeof productsPreviewLimit === "number") {
@@ -3110,7 +3112,7 @@ export function LivePreviewCard({
               </div>
             ) : (
               <ProductGrid>
-                {(isPremiumLayout ? sortedProducts.slice(0, 3) : (isProductsExpanded || productsOnlyMode ? sortedProducts : sortedProducts.slice(0, 6))).map((product: CreatorProduct) => (
+                {(isPremiumLayout ? sortedProducts.slice(0, 3) : (isProductsExpanded || productsOnlyMode ? sortedProducts : sortedProducts.slice(0, 6))).map((product: CreatorProduct, idx: number) => (
                   <ProductGridCard
                     key={product.id}
                     name={product.name}
@@ -3118,7 +3120,10 @@ export function LivePreviewCard({
                     href={product.productUrl || (product as any).url || ""}
                     price={formatProductPrice(product.pricePaise)}
                     note={product.note}
-                    isAffiliate={product.isAffiliate !== false}
+                    isAffiliate={Boolean(product.isAffiliate)}
+                    couponCode={product.couponCode}
+                    discountText={product.discountText}
+                    isTopPick={Boolean(product.isTopPick) && idx === 0}
                     onClick={(e) => {
                       if (isInformationalMode) {
                         e.preventDefault();
@@ -3164,10 +3169,10 @@ export function LivePreviewCard({
               </div>
             )}
 
-            {/* Affiliate Disclaimer: inside content at bottom */}
-            {products && products.length > 0 && (
+            {/* Affiliate Disclaimer: inside content at bottom, ONLY IF at least one product has is_affiliate = true */}
+            {products && products.some((p) => p.isAffiliate) && (
               <p className="text-center text-[10px] sm:text-[10.5px] pt-3 pb-1 opacity-70" style={{ color: c.mutedText }}>
-                Some links may be affiliate links.
+                Some links are affiliate links.
               </p>
             )}
           </section>

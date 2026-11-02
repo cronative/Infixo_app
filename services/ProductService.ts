@@ -1,8 +1,19 @@
 import type { CreatorProduct, ShopProduct } from "@/types";
 
-export interface ProductInput { url: string; name: string; image: string; price: number | null; note: string; isAffiliate: boolean }
+export interface ProductInput {
+  url: string;
+  name: string;
+  image: string;
+  price: number | null;
+  note: string;
+  couponCode?: string | null;
+  discountText?: string | null;
+  isTopPick?: boolean;
+  sortOrder?: number;
+  isAffiliate: boolean;
+}
 export interface ShopList { items: ShopProduct[]; used: number; limit: number | null; plan: string }
-export interface LinkPreview { name: string; image: string; price: number | null }
+export interface LinkPreview { name: string; image: string; price: number | null; code?: string }
 
 /** Error from /api/products, carrying the API's `error.code` (e.g. LIMIT_REACHED). */
 export class ProductApiError extends Error {
@@ -40,8 +51,14 @@ export const ProductService = {
   update: (id: string, input: ProductInput) => call<ShopProduct>(`/api/products/${encodeURIComponent(id)}`, json("PATCH", input)),
   remove: (id: string) => call<{ id: string }>(`/api/products/${encodeURIComponent(id)}`, { method: "DELETE" }),
   restore: (id: string) => call<ShopProduct>(`/api/products/${encodeURIComponent(id)}/restore`, { method: "POST" }),
+  reorder: (ids: string[]) =>
+    call<{ success: boolean }>("/api/products/reorder", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids }),
+    }),
   async preview(url: string, signal?: AbortSignal): Promise<LinkPreview> {
-    const body = await call<{ name: string | null; image: string | null; price: number | null }>(`/api/link-preview?type=product&url=${encodeURIComponent(url)}`, { signal });
-    return { name: body.name || "", image: body.image || "", price: typeof body.price === "number" ? body.price : null };
+    const body = await call<{ name: string | null; image: string | null; price: number | null; code?: string }>(`/api/link-preview?type=product&url=${encodeURIComponent(url)}`, { signal });
+    return { name: body.name || "", image: body.image || "", price: typeof body.price === "number" ? body.price : null, code: body.code };
   },
 };

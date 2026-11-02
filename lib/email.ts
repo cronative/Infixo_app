@@ -169,6 +169,9 @@ export async function sendCollabRequestReceivedEmail(
     senderEmail: string;
     campaignType?: string;
     approxBudget?: string;
+    phone?: string;
+    websiteOrSocial?: string;
+    submittedDate?: string;
     message: string;
     dashboardUrl?: string;
   }
@@ -176,15 +179,18 @@ export async function sendCollabRequestReceivedEmail(
   const from = process.env.EMAIL_FROM || '"Inflixo App" <inflixoapp@gmail.com>';
   const clientName = options.companyName ? `${options.senderName} (${options.companyName})` : options.senderName;
   const projectTitle = options.campaignType || "Collaboration Proposal";
-  const ctaUrl = options.dashboardUrl || "https://inflixo.com/dashboard/requests";
+  const ctaUrl = options.dashboardUrl || "https://inflixo.com/dashboard/mediakit#requests";
 
   const customItems = [
     { label: "Contact Person", value: options.senderName },
     ...(options.companyName ? [{ label: "Brand / Company", value: options.companyName }] : []),
     { label: "Client Email", value: options.senderEmail },
+    ...(options.phone ? [{ label: "Phone / WhatsApp", value: options.phone }] : []),
+    ...(options.websiteOrSocial ? [{ label: "Website / Handle", value: options.websiteOrSocial }] : []),
     ...(options.approxBudget ? [{ label: "Proposed Budget", value: options.approxBudget }] : []),
-    ...(options.campaignType ? [{ label: "Campaign Format", value: options.campaignType }] : []),
-    { label: "Message", value: options.message },
+    ...(options.campaignType ? [{ label: "Package / Proposal", value: options.campaignType }] : []),
+    ...(options.submittedDate ? [{ label: "Submitted Date", value: options.submittedDate }] : []),
+    { label: "Message / Brief", value: options.message },
   ];
 
   const html = renderEmailTemplate("collab_request_received", {
@@ -203,10 +209,11 @@ export async function sendCollabRequestReceivedEmail(
     await transporter.sendMail({
       from,
       to: creatorEmail,
+      replyTo: options.senderEmail,
       subject,
       html,
     });
-    console.log(`✉️ Collab inquiry email sent to creator (${creatorEmail})`);
+    console.log(`✉️ Collab inquiry email sent to creator (${creatorEmail}) with Reply-To ${options.senderEmail}`);
     return { success: true };
   } catch (err: any) {
     console.error("❌ Failed to send collab inquiry email to creator:", err.message || err);
@@ -222,11 +229,13 @@ export async function sendCollabRequestBrandConfirmationEmail(
     brandName: string;
     packageName: string;
     budget?: string;
+    replyTime?: string;
     message: string;
   }
 ): Promise<{ success: boolean; error?: string }> {
   const from = process.env.EMAIL_FROM || '"Inflixo App" <inflixoapp@gmail.com>';
-  const subject = `Thanks, ${options.creatorDisplayName} has received your request.`;
+  const replyTime = options.replyTime || "within 24 hours";
+  const subject = `Thanks ${options.contactName}, ${options.creatorDisplayName} has received your request and usually replies ${replyTime}.`;
 
   const customItems = [
     { label: "Creator", value: options.creatorDisplayName },
@@ -242,6 +251,7 @@ export async function sendCollabRequestBrandConfirmationEmail(
     clientName: options.contactName,
     clientEmail: brandEmail,
     projectTitle: options.packageName,
+    microCopy: replyTime,
     customItems,
   });
 

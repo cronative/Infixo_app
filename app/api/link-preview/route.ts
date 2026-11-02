@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     }
     const product = await fetchProductPreview(normalizedUrl);
     // Only cache real results so a transient block or timeout isn't remembered for a day.
-    if (product.name || product.image) {
+    if ((product.name || product.image) && product.code !== "FETCH_BLOCKED") {
       if (previewCache.size > 500) {
         const oldestKey = previewCache.keys().next().value;
         if (oldestKey) previewCache.delete(oldestKey);

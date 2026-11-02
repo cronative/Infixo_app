@@ -57,8 +57,18 @@ export async function PATCH(req: Request, { params }: Params) {
         await connection.query("UPDATE creator_custom_links SET is_pinned = 0 WHERE creator_id = ? AND id <> ?", [auth.creator.id, id]);
       }
       await connection.query(
-        "UPDATE creator_custom_links SET link_type = ?, title = ?, url = ?, icon_url = ?, is_pinned = ? WHERE id = ? AND creator_id = ?",
-        [input.kind === "group" ? "collection" : "link", input.title, input.url, input.kind === "link" ? iconFor(input.url) : null, input.pinned ? 1 : 0, id, auth.creator.id],
+        "UPDATE creator_custom_links SET link_type = ?, title = ?, url = ?, icon_url = ?, is_pinned = ?, description = ?, expires_at = ? WHERE id = ? AND creator_id = ?",
+        [
+          input.kind === "group" ? "collection" : "link",
+          input.title,
+          input.url,
+          input.kind === "link" ? iconFor(input.url) : null,
+          input.pinned ? 1 : 0,
+          input.description || null,
+          input.expiresAt ? new Date(input.expiresAt) : null,
+          id,
+          auth.creator.id,
+        ],
       );
       await connection.query("DELETE FROM creator_custom_links WHERE creator_id = ? AND parent_id = ?", [auth.creator.id, id]);
       if (input.kind === "group") {

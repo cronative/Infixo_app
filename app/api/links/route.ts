@@ -75,9 +75,21 @@ export async function POST(req: Request) {
         await connection.query("UPDATE creator_custom_links SET is_pinned = 0 WHERE creator_id = ?", [auth.creator.id]);
       }
       await connection.query(
-        `INSERT INTO creator_custom_links (id, creator_id, email, parent_id, link_type, title, url, icon, icon_url, is_enabled, is_pinned, sort_order)
-         VALUES (?, ?, ?, NULL, ?, ?, ?, 'link', ?, 1, ?, ?)`,
-        [id, auth.creator.id, auth.creator.email, input.kind === "group" ? "collection" : "link", input.title, input.url, input.kind === "link" ? icons[0] : null, input.pinned ? 1 : 0, position],
+        `INSERT INTO creator_custom_links (id, creator_id, email, parent_id, link_type, title, url, icon, icon_url, is_enabled, is_pinned, sort_order, description, expires_at)
+         VALUES (?, ?, ?, NULL, ?, ?, ?, 'link', ?, 1, ?, ?, ?, ?)`,
+        [
+          id,
+          auth.creator.id,
+          auth.creator.email,
+          input.kind === "group" ? "collection" : "link",
+          input.title,
+          input.url,
+          input.kind === "link" ? icons[0] : null,
+          input.pinned ? 1 : 0,
+          position,
+          input.description || null,
+          input.expiresAt ? new Date(input.expiresAt) : null,
+        ],
       );
       if (input.kind === "group") {
         await insertChildren(connection, auth.creator, id, input.children.map((child, index) => ({ id: newLinkId(), title: child.title, url: child.url, iconUrl: icons[index] })));

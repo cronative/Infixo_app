@@ -446,10 +446,15 @@ export function renderEmailTemplate(type: EmailTemplateType, options: EmailTempl
 
     // 6. Collab Request Received
     case "collab_request_received": {
+      const brandPhone = options.customItems?.find((i) => i.label === "Phone / WhatsApp")?.value;
+      const cleanPhone = brandPhone ? brandPhone.replace(/[^0-9]/g, "") : "";
+      const baseDashboardUrl = `${getAppBaseUrl()}/dashboard/mediakit#requests`;
+      const dashboardTarget = ctaUrl && !ctaUrl.includes("localhost") ? ctaUrl : baseDashboardUrl;
+
       const body = `
         ${renderHeroBadge("NEW BRAND INQUIRY")}
         
-        <h1 class="email-hero-title" style="color: #111827; font-size: 26px; font-weight: 800; margin: 0 0 10px 0;">
+        <h1 class="email-hero-title" style="color: #111827; font-size: 24px; font-weight: 800; margin: 0 0 10px 0;">
           New collab request from ${clientName}
         </h1>
         <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
@@ -462,18 +467,39 @@ export function renderEmailTemplate(type: EmailTemplateType, options: EmailTempl
           { label: "Package", value: projectTitle },
         ])}
 
-        ${renderCtaButton("View Collab Inquiry →", ctaUrl || "https://inflixo.com/dashboard/mediakit")}
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 25px 0 10px 0;">
+          <tr>
+            <td style="padding-right: 8px; padding-bottom: 8px;">
+              <a href="mailto:${clientEmail}?subject=Re:%20${encodeURIComponent(projectTitle || "Collaboration")}%20collab" style="display: inline-block; background-color: #7A2253; color: #ffffff; font-size: 13px; font-weight: 700; text-decoration: none; padding: 10px 18px; border-radius: 6px;">
+                Reply to brand
+              </a>
+            </td>
+            ${cleanPhone ? `
+            <td style="padding-right: 8px; padding-bottom: 8px;">
+              <a href="https://wa.me/${cleanPhone}" target="_blank" style="display: inline-block; background-color: #10b981; color: #ffffff; font-size: 13px; font-weight: 700; text-decoration: none; padding: 10px 18px; border-radius: 6px;">
+                WhatsApp
+              </a>
+            </td>
+            ` : ""}
+            <td style="padding-bottom: 8px;">
+              <a href="${dashboardTarget}" target="_blank" style="display: inline-block; background-color: #ffffff; color: #18181b; border: 1px solid #d4d4d8; font-size: 13px; font-weight: 600; text-decoration: none; padding: 9px 16px; border-radius: 6px;">
+                View in dashboard
+              </a>
+            </td>
+          </tr>
+        </table>
       `;
       return wrapInCanvas(body, `New collab request from ${clientName}`, creatorName);
     }
 
     // 6b. Collab Request Brand Confirmation
     case "collab_request_brand_confirmation": {
+      const replyTime = options.microCopy || "within 24 hours";
       const body = `
         ${renderHeroBadge("REQUEST RECEIVED")}
         
         <h1 class="email-hero-title" style="color: #111827; font-size: 24px; font-weight: 800; margin: 0 0 10px 0;">
-          Thanks, ${creatorName} has received your request.
+          Thanks ${clientName}, ${creatorName} has received your request and usually replies ${replyTime}.
         </h1>
         <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
           Hi ${clientName}, thank you for reaching out! <strong>${creatorName}</strong> has received your collaboration brief for <strong>"${projectTitle}"</strong> and will get back to you via email shortly.
@@ -486,10 +512,10 @@ export function renderEmailTemplate(type: EmailTemplateType, options: EmailTempl
         ])}
 
         <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin: 24px 0 0 0;">
-          If you have any extra campaign briefs or assets, feel free to reply directly to this thread once ${creatorName} gets in touch.
+          If you have any extra campaign briefs or assets, feel free to reply directly to this email.
         </p>
       `;
-      return wrapInCanvas(body, `Thanks, ${creatorName} has received your request.`, creatorName);
+      return wrapInCanvas(body, `Thanks ${clientName}, ${creatorName} has received your request`, creatorName);
     }
 
     // 7. Subscription / Payment Successful

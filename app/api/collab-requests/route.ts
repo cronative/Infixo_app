@@ -96,8 +96,28 @@ export async function POST(req: Request) {
       console.warn("Collab request in-app notification error (non-fatal):", notifErr?.message || notifErr);
     }
 
+    // Fetch creator's expected reply time for brand acknowledgement
+    let replyTime = "within 24 hours";
+    try {
+      const [mkRows]: any = await db.query(
+        `SELECT reply_time FROM mediakit_settings WHERE creator_id = ? LIMIT 1`,
+        [canonicalCreatorId]
+      );
+      if (mkRows?.[0]?.reply_time) {
+        replyTime = mkRows[0].reply_time;
+      }
+    } catch {}
+
     // 5. Email notification to creator
     const targetCreatorEmail = creatorEmail || (data.creatorId.includes("@") ? data.creatorId : null);
+    const submittedDateStr = new Date().toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
     if (targetCreatorEmail) {
       try {
         await sendCollabRequestReceivedEmail(targetCreatorEmail, {
@@ -107,8 +127,11 @@ export async function POST(req: Request) {
           senderEmail: data.workEmail,
           campaignType: data.packageName || "Collaboration Request",
           approxBudget: data.budget || undefined,
-          message: `${data.message}${data.phone ? `\n\nPhone/WhatsApp: ${data.phone}` : ""}${data.websiteOrSocial ? `\nWebsite/Social: ${data.websiteOrSocial}` : ""}`,
-          dashboardUrl: `${getAppBaseUrl()}/dashboard/mediakit`,
+          phone: data.phone || undefined,
+          websiteOrSocial: data.websiteOrSocial || undefined,
+          submittedDate: submittedDateStr,
+          message: data.message,
+          dashboardUrl: `${getAppBaseUrl()}/dashboard/mediakit#requests`,
         });
       } catch (err: any) {
         console.warn("Collab request notification email error (non-fatal):", err?.message || err);
@@ -124,6 +147,7 @@ export async function POST(req: Request) {
           brandName: data.brandName,
           packageName: data.packageName || "Collaboration",
           budget: data.budget || undefined,
+          replyTime,
           message: data.message,
         });
       } catch (brandEmailErr: any) {

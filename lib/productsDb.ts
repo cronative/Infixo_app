@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { getPlanQuota } from "@/services/subscriptionLimits";
 import type { CreatorProduct, ShopProduct } from "@/types";
 
-export const PRODUCT_COLUMNS = "id, name, image_url AS imageUrl, price_paise AS pricePaise, product_url AS productUrl, note, is_affiliate AS isAffiliate";
+export const PRODUCT_COLUMNS = "id, name, image_url AS imageUrl, price_paise AS pricePaise, product_url AS productUrl, note, is_affiliate AS isAffiliate, coupon_code AS couponCode, discount_text AS discountText, is_top_pick AS isTopPick, sort_order AS sortOrder";
 
 type ProductRow = RowDataPacket & {
   id: string;
@@ -13,6 +13,10 @@ type ProductRow = RowDataPacket & {
   productUrl: string;
   note: string | null;
   isAffiliate: number | boolean | null;
+  couponCode: string | null;
+  discountText: string | null;
+  isTopPick: number | boolean | null;
+  sortOrder: number | null;
 };
 
 function normalizeProductImageUrl(url: string | null | undefined): string {
@@ -32,11 +36,15 @@ function mapRow(row: ProductRow): CreatorProduct {
     pricePaise: row.pricePaise === null ? null : Number(row.pricePaise),
     productUrl: row.productUrl,
     note: row.note || null,
-    isAffiliate: row.isAffiliate === null || row.isAffiliate === undefined ? true : Boolean(row.isAffiliate),
+    isAffiliate: row.isAffiliate === null || row.isAffiliate === undefined ? false : Boolean(row.isAffiliate),
+    couponCode: row.couponCode || null,
+    discountText: row.discountText || null,
+    isTopPick: Boolean(row.isTopPick),
+    sortOrder: Number(row.sortOrder || 0),
   };
 }
 
-/** Shape returned by /api/products: whole rupees, `{ url, name, image, price, note, isAffiliate }`. */
+/** Shape returned by /api/products: whole rupees, `{ url, name, image, price, note, isAffiliate, couponCode, discountText, isTopPick, sortOrder }`. */
 export function toShopProduct(product: CreatorProduct): ShopProduct {
   return {
     id: product.id,
@@ -45,13 +53,17 @@ export function toShopProduct(product: CreatorProduct): ShopProduct {
     image: product.imageUrl,
     price: product.pricePaise === null ? null : Math.round(product.pricePaise / 100),
     note: product.note || "",
-    isAffiliate: product.isAffiliate !== false,
+    isAffiliate: Boolean(product.isAffiliate),
+    couponCode: product.couponCode || null,
+    discountText: product.discountText || null,
+    isTopPick: Boolean(product.isTopPick),
+    sortOrder: Number(product.sortOrder || 0),
   };
 }
 
 export async function getCreatorProducts(creatorId: string): Promise<CreatorProduct[]> {
   const [rows] = await db.query<ProductRow[]>(
-    `SELECT ${PRODUCT_COLUMNS} FROM creator_products WHERE creator_id = ? AND deleted_at IS NULL ORDER BY created_at ASC, id ASC`,
+    `SELECT ${PRODUCT_COLUMNS} FROM creator_products WHERE creator_id = ? AND deleted_at IS NULL ORDER BY is_top_pick DESC, sort_order ASC, created_at ASC`,
     [creatorId],
   );
   return rows.map(mapRow);

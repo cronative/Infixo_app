@@ -14,6 +14,9 @@ import {
   Image as ImageIcon,
   Search,
   Sparkles,
+  GripVertical,
+  Percent,
+  Ticket,
 } from "lucide-react";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { Chip } from "@/components/ui/Chip";
@@ -33,10 +36,31 @@ import { PhonePreview } from "@/components/dashboard/PhonePreview";
 import type { ShopProduct } from "@/types";
 import { OverLimitBadge } from "@/components/ui/OverLimitBadge";
 
-interface ProductForm { url: string; name: string; image: string; price: string; note: string; isAffiliate: boolean }
+interface ProductForm {
+  url: string;
+  name: string;
+  image: string;
+  price: string;
+  note: string;
+  couponCode: string;
+  discountText: string;
+  isTopPick: boolean;
+  isAffiliate: boolean;
+}
 
-const blank: ProductForm = { url: "", name: "", image: "", price: "", note: "", isAffiliate: true };
+const blank: ProductForm = {
+  url: "",
+  name: "",
+  image: "",
+  price: "",
+  note: "",
+  couponCode: "",
+  discountText: "",
+  isTopPick: false,
+  isAffiliate: false,
+};
 const FETCH_FAILED = "Couldn't fetch details. Please add them manually.";
+const FETCH_BLOCKED_MSG = "Couldn't auto-fetch details from this link. You can fill them in manually.";
 const SEARCH_THRESHOLD = 6;
 const fieldClass = "flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors";
 const iconBoxClass = "flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]";
@@ -78,6 +102,8 @@ export default function ProductsPage() {
   const [busy, setBusy] = useState(false);
   const [imageBusy, setImageBusy] = useState(false);
   const [previewState, setPreviewState] = useState<"idle" | "loading" | "failed">("idle");
+  const [fetchBlocked, setFetchBlocked] = useState(false);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [priceFocused, setPriceFocused] = useState(false);
   const [productToDelete, setProductToDelete] = useState<ShopProduct | null>(null);
@@ -106,6 +132,7 @@ export default function ProductsPage() {
   function closeForm() {
     imageVersion.current++;
     previewController.current?.abort();
+    setFetchBlocked(false);
     setOpen(false);
   }
 
@@ -124,9 +151,12 @@ export default function ProductsPage() {
       image: product.image,
       price: product.price === null ? "" : String(product.price),
       note: product.note,
-      isAffiliate: product.isAffiliate,
+      couponCode: product.couponCode || "",
+      discountText: product.discountText || "",
+      isTopPick: Boolean(product.isTopPick),
+      isAffiliate: Boolean(product.isAffiliate),
     } : blank);
-    setError(""); setImageBusy(false); setPreviewState("idle"); setOpen(true);
+    setError(""); setImageBusy(false); setPreviewState("idle"); setFetchBlocked(false); setOpen(true);
   }
 
   async function fetchPreview(rawUrl: string) {
@@ -137,10 +167,23 @@ export default function ProductsPage() {
     previewController.current = controller;
     previewedUrl.current = url;
     setPreviewState("loading");
+    setFetchBlocked(false);
     try {
       const preview = await ProductService.preview(url, controller.signal);
       if (controller.signal.aborted) return;
-      if (!preview.name && !preview.image) { setPreviewState("failed"); return; }
+      if (preview.code === "FETCH_BLOCKED") {
+        setFetchBlocked(true);
+        if (preview.name) {
+          setForm((val) => ({ ...val, name: val.name || preview.name }));
+        }
+        setPreviewState("idle");
+        return;
+      }
+      if (!preview.name && !preview.image) {
+        setFetchBlocked(true);
+        setPreviewState("failed");
+        return;
+      }
       // Only fill what the creator hasn't typed yet.
       setForm((value) => ({
         ...value,
@@ -150,7 +193,10 @@ export default function ProductsPage() {
       }));
       setPreviewState(preview.image ? "idle" : "failed");
     } catch {
-      if (!controller.signal.aborted) setPreviewState("failed");
+      if (!controller.signal.aborted) {
+        setFetchBlocked(true);
+        setPreviewState("failed");
+      }
     }
   }
 
@@ -191,17 +237,41 @@ export default function ProductsPage() {
       image: form.image,
       price: roundPrice(form.price) ? Number(roundPrice(form.price)) : null,
       note: form.note.trim(),
+      couponCode: form.couponCode.trim() ? form.couponCode.trim().toUpperCase() : null,
+      discountText: form.discountText.trim() ? form.discountText.trim() : null,
+      isTopPick: form.isTopPick,
       isAffiliate: form.isAffiliate,
     };
     try {
       const product = editing ? await ProductService.update(editing.id, input) : await ProductService.create(input);
-      setProducts((items) => editing ? items.map((item) => item.id === product.id ? product : item) : [...items, product]);
+      setProducts((items) => {
+        const next = editing
+          ? items.map((item) => (item.id === product.id ? product : (form.isTopPick ? { ...item, isTopPick: false } : item)))
+          : [...items.map((item) => (form.isTopPick ? { ...item, isTopPick: false } : item)), product];
+        return [...next].sort((a, b) => (b.isTopPick ? 1 : 0) - (a.isTopPick ? 1 : 0) || (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+      });
       closeForm();
       showToast(editing ? "Product updated" : "Product added");
     } catch (err) {
       showToast(err instanceof Error ? err.message : "Could not save product.", "error");
       if (err instanceof ProductApiError && err.code === "LIMIT_REACHED") setShowLimitModal(true);
     } finally { operation.current = false; setBusy(false); }
+  }
+
+  async function drop(targetIndex: number) {
+    if (dragIndex === null || dragIndex === targetIndex) return;
+    const reordered = [...products];
+    const [moved] = reordered.splice(dragIndex, 1);
+    reordered.splice(targetIndex, 0, moved);
+    setProducts(reordered);
+    setDragIndex(null);
+    try {
+      await ProductService.reorder(reordered.map((p) => p.id));
+      showToast("Products reordered");
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "Could not reorder products.", "error");
+      setReload((v) => v + 1);
+    }
   }
 
   async function restore(product: ShopProduct, index: number) {
@@ -333,11 +403,46 @@ export default function ProductsPage() {
         )
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {displayProducts.map((product) => (
+          {displayProducts.map((product, index) => (
             <article
               key={product.id}
-              className="rounded-[5px] border border-[#ECECF0] bg-white overflow-hidden shadow-none flex flex-col"
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={() => void drop(index)}
+              className={`rounded-[5px] border border-[#ECECF0] bg-white overflow-hidden shadow-none flex flex-col transition-all ${
+                dragIndex === index ? "opacity-40" : ""
+              }`}
             >
+              {/* Card top bar with drag handle and badges */}
+              <div className="flex items-center justify-between gap-1.5 px-3 py-2 border-b border-[#ECECF0] bg-[#FAFAFB]">
+                <span
+                  draggable
+                  onDragStart={() => setDragIndex(index)}
+                  onDragEnd={() => setDragIndex(null)}
+                  className="text-[#94a3b8] hover:text-[#0f172a] cursor-grab active:cursor-grabbing p-1 -ml-1 shrink-0"
+                  title="Drag to reorder"
+                  aria-label={`Drag to reorder ${product.name}`}
+                >
+                  <GripVertical className="h-4 w-4" />
+                </span>
+                <div className="flex items-center gap-1.5 flex-wrap justify-end min-w-0">
+                  {product.isTopPick && (
+                    <span className="h-5 inline-flex items-center gap-1 rounded-[4px] bg-amber-50 border border-amber-200 px-1.5 text-[10.5px] font-bold text-amber-800 shrink-0">
+                      ⭐ Top Pick
+                    </span>
+                  )}
+                  {product.couponCode && (
+                    <span className="h-5 inline-flex items-center rounded-[4px] bg-[#FFF5F8] border border-[#7A2253]/25 px-1.5 text-[10.5px] font-semibold text-[#7A2253] shrink-0 font-mono">
+                      Code: {product.couponCode}
+                    </span>
+                  )}
+                  {product.discountText && (
+                    <span className="h-5 inline-flex items-center rounded-[4px] bg-emerald-50 border border-emerald-200 px-1.5 text-[10.5px] font-semibold text-emerald-800 shrink-0">
+                      {product.discountText}
+                    </span>
+                  )}
+                </div>
+              </div>
+
               <ProductImage
                 src={product.image}
                 name={product.name}
@@ -430,9 +535,13 @@ export default function ProductsPage() {
                     className={inputClass}
                   />
                 </div>
-                {previewState === "failed" && (
+                {fetchBlocked ? (
+                  <p className="rounded-[5px] bg-amber-50 border border-amber-200 px-3 py-2 text-[12px] text-amber-800">
+                    {FETCH_BLOCKED_MSG}
+                  </p>
+                ) : previewState === "failed" ? (
                   <p className="text-[11px] text-[#b45309]">{FETCH_FAILED}</p>
-                )}
+                ) : null}
               </div>
 
               {/* 2. Product name */}
@@ -521,7 +630,55 @@ export default function ProductsPage() {
                 </div>
               </div>
 
-              {/* 5. Why I recommend it */}
+              {/* 5. Coupon code */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between gap-2">
+                  <label htmlFor="product-coupon" className="block text-[13px] font-medium text-[#0f172a]">
+                    Coupon code <span className="font-normal text-[#94a3b8]">(optional)</span>
+                  </label>
+                  <span className="text-[11px] text-[#64748b]">{form.couponCode.length}/20</span>
+                </div>
+                <div className={fieldClass}>
+                  <div className={iconBoxClass}>
+                    <Ticket className="h-4 w-4" />
+                  </div>
+                  <input
+                    id="product-coupon"
+                    type="text"
+                    value={form.couponCode}
+                    onChange={(e) => setForm({ ...form, couponCode: e.target.value.toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 20) })}
+                    maxLength={20}
+                    placeholder="e.g. SAVE20"
+                    className={`${inputClass} uppercase tracking-wider font-mono`}
+                  />
+                </div>
+              </div>
+
+              {/* 6. Discount text */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between gap-2">
+                  <label htmlFor="product-discount" className="block text-[13px] font-medium text-[#0f172a]">
+                    Discount text <span className="font-normal text-[#94a3b8]">(optional)</span>
+                  </label>
+                  <span className="text-[11px] text-[#64748b]">{form.discountText.length}/30</span>
+                </div>
+                <div className={fieldClass}>
+                  <div className={iconBoxClass}>
+                    <Percent className="h-4 w-4" />
+                  </div>
+                  <input
+                    id="product-discount"
+                    type="text"
+                    value={form.discountText}
+                    onChange={(e) => setForm({ ...form, discountText: e.target.value.slice(0, 30) })}
+                    maxLength={30}
+                    placeholder="e.g. 15% off or Flat ₹200 off"
+                    className={inputClass}
+                  />
+                </div>
+              </div>
+
+              {/* 7. Why I recommend it */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between gap-2">
                   <label htmlFor="product-note" className="block text-[13px] font-medium text-[#0f172a]">
@@ -544,11 +701,35 @@ export default function ProductsPage() {
                 </div>
               </div>
 
-              {/* 6. Affiliate link */}
+              {/* 8. Top Pick toggle */}
               <div className="flex items-center justify-between gap-3 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-3">
                 <div className="min-w-0">
-                  <p id="product-affiliate-label" className="text-[13px] font-medium text-[#0f172a]">Affiliate link</p>
-                  <p className="text-[11px] text-[#64748b]">Shows a small &quot;Affiliate&quot; label on the card.</p>
+                  <p id="product-toppick-label" className="text-[13px] font-medium text-[#0f172a]">⭐ Mark as Top Pick</p>
+                  <p className="text-[11px] text-[#64748b]">Pinned as the hero card at the top of your shop. At most 1.</p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={form.isTopPick}
+                  aria-labelledby="product-toppick-label"
+                  onClick={() => setForm({ ...form, isTopPick: !form.isTopPick })}
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 ${
+                    form.isTopPick ? "bg-[#7A2253]" : "bg-[#e2e8f0]"
+                  }`}
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
+                      form.isTopPick ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* 9. Affiliate product */}
+              <div className="flex items-center justify-between gap-3 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-3">
+                <div className="min-w-0">
+                  <p id="product-affiliate-label" className="text-[13px] font-medium text-[#0f172a]">Affiliate product</p>
+                  <p className="text-[11px] text-[#64748b]">Shows a small &quot;Affiliate&quot; tag and adds FTC disclosure to footer.</p>
                 </div>
                 <button
                   type="button"

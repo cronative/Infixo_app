@@ -71,9 +71,72 @@ function titleFromUrl(url: string) {
 /** Keeps the shared local cache (dashboard home, preview) in the legacy CustomLink shape. */
 function cacheLinks(items: LinkDto[]) {
   const legacy: CustomLink[] = items.map((link) => link.kind === "group"
-    ? { id: link.id, title: link.title, url: "", kind: "collection", isEnabled: true, items: link.children.map((child) => ({ id: child.id, title: child.title, url: child.url, iconUrl: child.iconUrl || undefined, isEnabled: true })) }
-    : { id: link.id, title: link.title, url: link.url, kind: "link", isEnabled: true, isPinned: link.pinned, iconUrl: link.iconUrl || undefined });
+    ? {
+        id: link.id,
+        title: link.title,
+        description: link.description || undefined,
+        expiresAt: link.expiresAt || undefined,
+        expired: link.expired,
+        url: "",
+        kind: "collection",
+        isEnabled: true,
+        items: link.children.map((child) => ({ id: child.id, title: child.title, url: child.url, iconUrl: child.iconUrl || undefined, isEnabled: true }))
+      }
+    : {
+        id: link.id,
+        title: link.title,
+        description: link.description || undefined,
+        expiresAt: link.expiresAt || undefined,
+        expired: link.expired,
+        url: link.url,
+        kind: "link",
+        isEnabled: true,
+        isPinned: link.pinned,
+        iconUrl: link.iconUrl || undefined
+      });
   try { customLinksRepository.save(legacy); } catch {}
+}
+
+function isoToLocalInput(isoString: string | null | undefined): string {
+  if (!isoString) return "";
+  try {
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return "";
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const year = d.getFullYear();
+    const month = pad(d.getMonth() + 1);
+    const day = pad(d.getDate());
+    const hours = pad(d.getHours());
+    const minutes = pad(d.getMinutes());
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  } catch {
+    return "";
+  }
+}
+
+function localInputToUtcIso(localString: string): string | null {
+  if (!localString.trim()) return null;
+  try {
+    const d = new Date(localString);
+    if (isNaN(d.getTime())) return null;
+    return d.toISOString();
+  } catch {
+    return null;
+  }
+}
+
+function formatHidesOn(isoString: string | null | undefined): string {
+  if (!isoString) return "";
+  try {
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return "";
+    const isPast = d.getTime() <= Date.now();
+    const dateFormatted = d.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+    const timeFormatted = d.toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true });
+    return `${isPast ? "Expired on" : "Hides on"} ${dateFormatted}, ${timeFormatted}`;
+  } catch {
+    return "";
+  }
 }
 
 function LinkIconBox({ kind, url, iconUrl, small = false }: { kind: "link" | "group"; url: string; iconUrl: string | null; title?: string; small?: boolean }) {
@@ -126,6 +189,8 @@ export default function DashboardLinksPage() {
   const [titleEdited, setTitleEdited] = useState(false);
   const [url, setUrl] = useState("");
   const [pinned, setPinned] = useState(false);
+  const [description, setDescription] = useState("");
+  const [expiresAtLocal, setExpiresAtLocal] = useState("");
   const [children, setChildren] = useState<ChildRow[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -170,6 +235,7 @@ export default function DashboardLinksPage() {
     setEditing(null);
     setMode("link");
     setTitle(""); setTitleEdited(false); setUrl(""); setPinned(false);
+    setDescription(""); setExpiresAtLocal("");
     setChildren([blankChild(), blankChild()]);
     setOpen(true);
   }
@@ -180,6 +246,8 @@ export default function DashboardLinksPage() {
     setMode(link.kind);
     setTitle(link.title); setTitleEdited(true);
     setUrl(link.url); setPinned(link.pinned);
+    setDescription(link.description || "");
+    setExpiresAtLocal(isoToLocalInput(link.expiresAt));
     setChildren(link.kind === "group" && link.children.length
       ? link.children.map((child) => ({ key: `row_${++rowKey}`, id: child.id, title: child.title, url: child.url }))
       : [blankChild(), blankChild()]);
@@ -221,18 +289,25 @@ export default function DashboardLinksPage() {
     const cleanTitle = title.trim() || (mode === "link" && !titleEdited ? titleFromUrl(withHttps(url)) : "");
     if (!cleanTitle) { showToast(mode === "group" ? "Enter a group title." : "Enter a title.", "error"); return; }
 
+    const utcExpires = localInputToUtcIso(expiresAtLocal);
+    if (utcExpires && new Date(utcExpires).getTime() <= Date.now()) {
+      showToast("Expiry date must be in the future.", "error");
+      return;
+    }
+    const cleanDesc = description.trim().slice(0, 60) || null;
+
     let input: LinkInputDto;
     if (mode === "link") {
       const cleanUrl = withHttps(url);
       if (!cleanUrl) { showToast("Enter a URL.", "error"); return; }
-      input = { kind: "link", title: cleanTitle, url: cleanUrl, pinned };
+      input = { kind: "link", title: cleanTitle, url: cleanUrl, pinned, description: cleanDesc, expiresAt: utcExpires };
     } else {
       const rows = children
         .map((row) => ({ id: row.id, title: row.title.trim(), url: withHttps(row.url) }))
         .filter((row) => row.title || row.url);
       if (rows.some((row) => !row.title || !row.url)) { showToast("Add a title and URL for each link, or clear the row.", "error"); return; }
       if (!rows.length) { showToast("Add at least one link to the group.", "error"); return; }
-      input = { kind: "group", title: cleanTitle, children: rows };
+      input = { kind: "group", title: cleanTitle, description: cleanDesc, expiresAt: utcExpires, children: rows };
     }
 
     setSaving(true);
@@ -344,14 +419,15 @@ export default function DashboardLinksPage() {
           {links.map((link, index) => {
             const isGroup = link.kind === "group";
             const isOpen = expanded.has(link.id);
+            const isExpired = Boolean(link.expired || (link.expiresAt && new Date(link.expiresAt).getTime() <= Date.now()));
             return (
               <div
                 key={link.id}
                 onDragOver={(e: DragEvent) => e.preventDefault()}
                 onDrop={() => void drop(index)}
-                className={`text-left transition-colors ${dragIndex === index ? "opacity-50" : ""}`}
+                className={`text-left transition-colors ${dragIndex === index ? "opacity-50" : ""} ${isExpired ? "bg-slate-50/70" : ""}`}
               >
-                <div className="flex items-center justify-between gap-3 px-3.5 sm:px-4 py-3 min-h-[58px] hover:bg-[#FAFAFB]">
+                <div className={`flex items-center justify-between gap-3 px-3.5 sm:px-4 py-3 min-h-[58px] hover:bg-[#FAFAFB] ${isExpired ? "opacity-75" : ""}`}>
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <span
                       draggable
@@ -372,16 +448,29 @@ export default function DashboardLinksPage() {
                       aria-expanded={isGroup ? isOpen : undefined}
                       className="min-w-0 flex-1 text-left cursor-pointer group"
                     >
-                      <span className="flex items-center gap-1.5 min-w-0">
-                        <span className="line-clamp-2 break-words text-[14px] font-semibold text-[#18181B] group-hover:text-[#7A2253] transition-colors" title={link.title}>{link.title}</span>
+                      <span className="flex items-center gap-1.5 min-w-0 flex-wrap">
+                        <span className={`line-clamp-2 break-words text-[14px] font-semibold transition-colors ${isExpired ? "text-slate-600 line-through" : "text-[#18181B] group-hover:text-[#7A2253]"}`} title={link.title}>{link.title}</span>
+                        {isExpired && (
+                          <span className="shrink-0 h-5 inline-flex items-center text-[11px] font-bold bg-slate-200 text-slate-700 px-1.5 rounded-[4px] leading-none uppercase tracking-wider">Expired</span>
+                        )}
                         {limit !== null && index >= limit && <OverLimitBadge />}
-                        {link.pinned && (
+                        {link.pinned && !isExpired && (
                           <span className="shrink-0 h-6 inline-flex items-center text-[12px] font-medium bg-[#F7EEF2] text-[#7A2253] px-2 rounded-[5px] leading-none">Pinned</span>
                         )}
                         {isGroup && <ChevronDown className={`h-3.5 w-3.5 shrink-0 text-[#94a3b8] transition-transform ${isOpen ? "rotate-180" : ""}`} />}
                       </span>
                       <span className="block line-clamp-2 break-words text-[12px] text-[#6B6B76]">
-                        {isGroup ? `${link.children.length} ${link.children.length === 1 ? "link" : "links"}` : extractBareDomain(link.url)}
+                        {link.description && (
+                          <span className="text-slate-700 font-normal mr-1.5">&ldquo;{link.description}&rdquo; ·</span>
+                        )}
+                        <span>
+                          {isGroup ? `${link.children.length} ${link.children.length === 1 ? "link" : "links"}` : extractBareDomain(link.url)}
+                        </span>
+                        {link.expiresAt && (
+                          <span className={`ml-2 text-[11px] ${isExpired ? "text-slate-500 font-normal" : "text-amber-700 font-medium"}`}>
+                            · {formatHidesOn(link.expiresAt)}
+                          </span>
+                        )}
                       </span>
                     </button>
                   </div>
@@ -579,6 +668,48 @@ export default function DashboardLinksPage() {
                   </div>
                 </div>
 
+                <div className="space-y-1.5">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <label htmlFor="link-desc" className="text-xs sm:text-[13px] font-bold text-slate-900">Why click? <span className="text-slate-400 font-normal">(optional)</span></label>
+                    <span className="text-[11px] sm:text-xs text-slate-400 font-normal">{description.length}/60</span>
+                  </div>
+                  <div className={fieldClass}>
+                    <input
+                      id="link-desc"
+                      type="text"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value.slice(0, 60))}
+                      maxLength={60}
+                      placeholder="e.g. 20% discount on my merch until Sunday"
+                      className={fieldInputClass}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <label htmlFor="link-expires" className="text-xs sm:text-[13px] font-bold text-slate-900">Hide automatically after <span className="text-slate-400 font-normal">(optional)</span></label>
+                    {expiresAtLocal && (
+                      <button
+                        type="button"
+                        onClick={() => setExpiresAtLocal("")}
+                        className="text-[11px] sm:text-xs text-[#7A2253] hover:underline font-medium cursor-pointer"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                  <div className={fieldClass}>
+                    <input
+                      id="link-expires"
+                      type="datetime-local"
+                      value={expiresAtLocal}
+                      onChange={(e) => setExpiresAtLocal(e.target.value)}
+                      className={`${fieldInputClass} font-mono`}
+                    />
+                  </div>
+                </div>
+
                 <div className="flex items-center justify-between p-3.5 rounded-[5px] border border-slate-200 bg-white hover:bg-slate-50/50 transition-colors">
                   <div className="space-y-0.5 pr-3">
                     <label htmlFor="link-pin" className="text-xs sm:text-[13px] font-bold text-slate-900 cursor-pointer">Pin this link</label>
@@ -608,6 +739,48 @@ export default function DashboardLinksPage() {
                       maxLength={MAX_TITLE}
                       placeholder="e.g. World tour tickets"
                       className={fieldInputClass}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <label htmlFor="group-desc" className="text-xs sm:text-[13px] font-bold text-slate-900">Why click? <span className="text-slate-400 font-normal">(optional)</span></label>
+                    <span className="text-[11px] sm:text-xs text-slate-400 font-normal">{description.length}/60</span>
+                  </div>
+                  <div className={fieldClass}>
+                    <input
+                      id="group-desc"
+                      type="text"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value.slice(0, 60))}
+                      maxLength={60}
+                      placeholder="e.g. Tour dates and special passes"
+                      className={fieldInputClass}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <label htmlFor="group-expires" className="text-xs sm:text-[13px] font-bold text-slate-900">Hide automatically after <span className="text-slate-400 font-normal">(optional)</span></label>
+                    {expiresAtLocal && (
+                      <button
+                        type="button"
+                        onClick={() => setExpiresAtLocal("")}
+                        className="text-[11px] sm:text-xs text-[#7A2253] hover:underline font-medium cursor-pointer"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                  <div className={fieldClass}>
+                    <input
+                      id="group-expires"
+                      type="datetime-local"
+                      value={expiresAtLocal}
+                      onChange={(e) => setExpiresAtLocal(e.target.value)}
+                      className={`${fieldInputClass} font-mono`}
                     />
                   </div>
                 </div>

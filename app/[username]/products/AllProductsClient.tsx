@@ -64,31 +64,38 @@ function buildSocialAccounts(rows: Array<Record<string, unknown>>): SocialAccoun
   const accounts: SocialAccounts = { ...EMPTY_SOCIAL_ACCOUNTS };
   rows.forEach((row) => {
     const platform = String(row.platform || "").toLowerCase();
+    const isPrimary = Boolean(row.isPrimary || row.is_primary);
     const handle = String(row.username || row.accountName || "");
     const cleanHandle = handle.replace(/^@/, "");
     const count = Number(row.followerCount || row.followers || 0);
 
     if (platform === "instagram") {
-      accounts.instagram = {
-        ...accounts.instagram,
-        followers: count,
-        username: handle,
-        url: cleanHandle ? `https://instagram.com/${cleanHandle}` : "",
-      };
+      if (isPrimary || !accounts.instagram.username) {
+        accounts.instagram = {
+          ...accounts.instagram,
+          followers: count,
+          username: handle,
+          url: cleanHandle ? `https://instagram.com/${cleanHandle}` : "",
+        };
+      }
     } else if (platform === "youtube") {
-      accounts.youtube = {
-        ...accounts.youtube,
-        subscribers: count,
-        username: handle,
-        url: cleanHandle ? `https://youtube.com/@${cleanHandle}` : "",
-      };
+      if (isPrimary || !accounts.youtube.username) {
+        accounts.youtube = {
+          ...accounts.youtube,
+          subscribers: count,
+          username: handle,
+          url: cleanHandle ? `https://youtube.com/@${cleanHandle}` : "",
+        };
+      }
     } else if (platform === "facebook") {
-      accounts.facebook = {
-        ...accounts.facebook,
-        followers: count,
-        username: handle,
-        url: cleanHandle ? `https://facebook.com/${cleanHandle}` : "",
-      };
+      if (isPrimary || !accounts.facebook.username) {
+        accounts.facebook = {
+          ...accounts.facebook,
+          followers: count,
+          username: handle,
+          url: cleanHandle ? `https://facebook.com/${cleanHandle}` : "",
+        };
+      }
     }
   });
   return accounts;
@@ -103,6 +110,7 @@ export default function AllProductsClient() {
 
   const [profile, setProfile] = useState<CreatorProfile>(EMPTY_PROFILE);
   const [socials, setSocials] = useState<SocialAccounts>(EMPTY_SOCIAL_ACCOUNTS);
+  const [allSocialAccounts, setAllSocialAccounts] = useState<any[]>([]);
   const [products, setProducts] = useState<CreatorProduct[]>([]);
   const [theme, setTheme] = useState<ThemeKey>(DEFAULT_THEME_KEY);
   const [loading, setLoading] = useState(true);
@@ -200,6 +208,9 @@ export default function AllProductsClient() {
         const resolvedTheme = resolveThemeKey(profData.themeKey || profData.theme_key);
 
         const socialsData = socialsRes.data?.socials || socialsRes.socials || [];
+        if (Array.isArray(socialsData)) {
+          setAllSocialAccounts(socialsData);
+        }
         const mappedSocials = Array.isArray(socialsData)
           ? buildSocialAccounts(socialsData)
           : typeof socialsData === "object" && socialsData !== null
@@ -302,6 +313,7 @@ export default function AllProductsClient() {
         themeKey={theme}
         profile={profile}
         socials={socials}
+        allSocialAccounts={allSocialAccounts}
         series={[]}
         products={products}
         customLinks={[]}

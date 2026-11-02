@@ -13,6 +13,7 @@ import {
   Film,
 } from "lucide-react";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { useToast } from "@/contexts/ToastContext";
 import { SeriesService } from "@/services/SeriesService";
 import { Series, EpisodePlatform } from "@/types";
@@ -72,19 +73,19 @@ export function SeriesUpsertModal({
   const isEditing = Boolean(seriesToEdit);
 
   const [title, setTitle] = useState("");
-  const [platform, setPlatform] = useState<EpisodePlatform>("YouTube");
+  const [platform, setPlatform] = useState<EpisodePlatform | "">("");
   const [episodeRows, setEpisodeRows] = useState<EpisodeFormRow[]>([
     { id: "row-1", number: 1, url: "", title: "" },
     { id: "row-2", number: 2, url: "", title: "" },
     { id: "row-3", number: 3, url: "", title: "" },
   ]);
-  const [showMoreOptions, setShowMoreOptions] = useState(false);
   const [description, setDescription] = useState("");
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
   const [genres, setGenres] = useState("");
   const [language, setLanguage] = useState(defaultLanguage);
   const [saving, setSaving] = useState(false);
   const [platformSwitchError, setPlatformSwitchError] = useState<string | null>(null);
+  const [platformConfirmTarget, setPlatformConfirmTarget] = useState<EpisodePlatform | null>(null);
 
   // Field touched & submit state for inline validation
   const [titleTouched, setTitleTouched] = useState(false);
@@ -113,16 +114,15 @@ export function SeriesUpsertModal({
       setGenres(seriesToEdit.genre || "");
       setLanguage(seriesToEdit.language || defaultLanguage);
       setPlatformSwitchError(null);
-      setShowMoreOptions(true);
 
       const eps = seriesToEdit.seasons?.[0]?.episodes || [];
       if (eps.length > 0) {
         setEpisodeRows(
           eps.map((ep, idx) => ({
             id: ep.id || `row-${idx}-${Date.now()}`,
-            number: ep.episodeNumber || idx + 1,
+            number: idx + 1,
             url: ep.externalUrl || "",
-            title: ep.title || `Episode ${ep.episodeNumber || idx + 1}`,
+            title: ep.title || `Episode ${idx + 1}`,
           }))
         );
       } else {
@@ -134,13 +134,12 @@ export function SeriesUpsertModal({
       }
     } else {
       setTitle("");
-      setPlatform("YouTube");
+      setPlatform("");
       setDescription("");
       setCoverUrl(null);
       setGenres("");
       setLanguage(defaultLanguage || "Hindi");
       setPlatformSwitchError(null);
-      setShowMoreOptions(false);
       setEpisodeRows([
         { id: "row-1", number: 1, url: "", title: "" },
         { id: "row-2", number: 2, url: "", title: "" },
@@ -149,24 +148,44 @@ export function SeriesUpsertModal({
     }
   }, [isOpen, seriesToEdit, defaultLanguage, defaultCategories]);
 
-  // Handle switching series platform (check compatibility if editing)
+  // Handle switching series platform (check compatibility if existing episodes have links)
   const handlePlatformChange = (newPlatform: EpisodePlatform) => {
     if (newPlatform === platform) return;
 
-    if (isEditing && seriesToEdit) {
-      const currentEps = seriesToEdit.seasons?.[0]?.episodes || [];
-      const check = canSwitchSeriesPlatform(
-        currentEps.map((e) => ({ external_url: e.externalUrl, platform: e.platform })),
-        newPlatform
-      );
-      if (!check.canSwitch) {
-        setPlatformSwitchError(check.reason || `Remove non-${newPlatform} episodes first`);
+    const episodesWithLinks = episodeRows.filter((r) => r.url && r.url.trim());
+    if (episodesWithLinks.length > 0) {
+      const nonMatching = episodesWithLinks.some((r) => {
+        const check = validateUrlForSeriesPlatform(r.url.trim(), newPlatform);
+        return !check.allowed;
+      });
+
+      if (nonMatching) {
+        setPlatformConfirmTarget(newPlatform);
         return;
       }
     }
 
     setPlatformSwitchError(null);
     setPlatform(newPlatform);
+  };
+
+  const confirmPlatformSwitch = () => {
+    if (!platformConfirmTarget) return;
+    const target = platformConfirmTarget;
+    // Remove non-matching episode links
+    setEpisodeRows((prev) =>
+      prev.map((r) => {
+        if (!r.url || !r.url.trim()) return r;
+        const check = validateUrlForSeriesPlatform(r.url.trim(), target);
+        if (!check.allowed) {
+          return { ...r, url: "", title: "" };
+        }
+        return r;
+      })
+    );
+    setPlatform(target);
+    setPlatformSwitchError(null);
+    setPlatformConfirmTarget(null);
   };
 
   // URL input/paste handler with official oEmbed for YouTube & default "Episode {n}" for IG/FB
@@ -408,7 +427,7 @@ export function SeriesUpsertModal({
               normalizeVideoUrl(other.url.trim()).toLowerCase() === norm
           );
           if (dupUrlIdx !== -1) {
-            urlError = "This episode is already added.";
+            urlError = "This video is already in this series.";
           }
         }
       }
@@ -433,7 +452,7 @@ export function SeriesUpsertModal({
   const hasAnyRowError = nonEmptyRows.some((v) => !v.isValid);
   const hasValidEpisodes = nonEmptyRows.length > 0 && !hasAnyRowError;
 
-  const isFormSubmittable = !seriesTitleError && hasValidEpisodes;
+  const isFormSubmittable = !seriesTitleError && Boolean(platform) && hasValidEpisodes;
 
   // Save changes
   const handleSubmit = async (e: React.FormEvent) => {
@@ -461,14 +480,20 @@ export function SeriesUpsertModal({
       return;
     }
 
-    // Filter out empty rows, sort by number, strip tracking params
+    // Filter out empty rows, sort by number, strip tracking params, auto-renumber
     const validRows = episodeRows.filter((r, idx) => !isRowCompletelyEmpty(r, idx + 1));
     const sorted = [...validRows].sort((a, b) => Number(a.number) - Number(b.number));
-    const episodesPayload = sorted.map((r, idx) => ({
-      number: Math.max(1, parseInt(String(r.number), 10) || idx + 1),
-      url: normalizeVideoUrl(r.url.trim()),
-      title: r.title.trim() || `Episode ${idx + 1}`,
-    }));
+    const episodesPayload = sorted.map((r, idx) => {
+      const cleanUrl = normalizeVideoUrl(r.url.trim());
+      const check = validateUrlForSeriesPlatform(cleanUrl, platform || "Mix");
+      const epPlatform = check.detectedPlatform || (platform === "Mix" ? "YouTube" : platform);
+      return {
+        number: idx + 1,
+        url: cleanUrl,
+        title: r.title.trim() || `Episode ${idx + 1}`,
+        platform: epPlatform,
+      };
+    });
 
     const cleanTitle = title.trim();
     setSaving(true);
@@ -547,7 +572,8 @@ export function SeriesUpsertModal({
   const isAtLimit = maxEpisodes !== Infinity && episodeRows.length >= maxEpisodes;
 
   return (
-    <Modal
+    <>
+      <Modal
       isOpen={isOpen}
       onClose={() => {
         if (!saving) onClose();
@@ -560,7 +586,18 @@ export function SeriesUpsertModal({
     >
       <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
         <ModalBody className="p-5 sm:p-6 space-y-4 flex-1 min-h-0 overflow-y-auto">
-          {/* 1. Series Title (required, max 80) */}
+          {/* 1. Cover Image (Optional 16:9) */}
+          <div>
+            <label className="block text-[13px] font-semibold text-[#0f172a] mb-1.5">
+              Cover Image <span className="text-[#94a3b8] font-normal">(Optional 16:9)</span>
+            </label>
+            <SeriesCoverUpload
+              value={coverUrl}
+              onChange={(url) => setCoverUrl(url)}
+            />
+          </div>
+
+          {/* 2. Series Title (required, max 80) */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="block text-[13px] font-semibold text-[#0f172a]">
@@ -597,11 +634,59 @@ export function SeriesUpsertModal({
             )}
           </div>
 
-          {/* Platform Selector (Segmented 4 options: YouTube · Instagram · Facebook · Mix) */}
+          {/* 3. Short description (max 160) */}
           <div>
-            <label className="block text-[13px] font-semibold text-[#0f172a] mb-1.5">
-              Platform
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-[13px] font-semibold text-[#0f172a]">
+                Short Description <span className="text-[#94a3b8] font-normal">(Optional)</span>
+              </label>
+              <span className="text-[11px] text-[#94a3b8] tabular-nums">
+                {description.length}/160
+              </span>
+            </div>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value.slice(0, 160))}
+              placeholder="Short description of this series..."
+              rows={2}
+              maxLength={160}
+              disabled={saving}
+              className="w-full rounded-[5px] border border-[#e2e8f0] bg-white px-3 py-2 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 resize-none"
+            />
+          </div>
+
+          {/* 4. Genres (1-3, none preselected) & Language */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[13px] font-semibold text-[#0f172a] mb-1.5">
+                Genres <span className="text-[#94a3b8] font-normal">(Max 3)</span>
+              </label>
+              <GenreMultiSelect
+                value={genres}
+                onChange={(val) => setGenres(val)}
+              />
+            </div>
+            <div>
+              <label className="block text-[13px] font-semibold text-[#0f172a] mb-1.5">
+                Language
+              </label>
+              <LanguageSelect
+                value={language}
+                onChange={(val) => setLanguage(val)}
+              />
+            </div>
+          </div>
+
+          {/* 5. Platform Selector (Segmented 4 options: YouTube · Instagram · Facebook · Mix) */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-[13px] font-semibold text-[#0f172a]">
+                Platform <span className="text-rose-500">*</span>
+              </label>
+              {!platform && (
+                <span className="text-[11px] text-amber-600 font-medium">Select a platform first</span>
+              )}
+            </div>
             <div className="grid grid-cols-4 gap-1.5 p-1 rounded-[5px] bg-slate-100 border border-slate-200">
               {(["YouTube", "Instagram", "Facebook", "Mix"] as EpisodePlatform[]).map((p) => {
                 const isSelected = platform === p;
@@ -634,255 +719,178 @@ export function SeriesUpsertModal({
             )}
           </div>
 
-          {/* 2. Episodes Section (Each episode = one card, stacked fields) */}
+          {/* 6. Episodes Section (Disabled until a platform is selected) */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-[13px] font-semibold text-[#0f172a]">
                 Episodes
               </label>
-              <span className="text-xs text-[#64748b]">
-                {episodeRows.filter((r, i) => !isRowCompletelyEmpty(r, i + 1)).length} episode(s) entered
-              </span>
-            </div>
-
-            <div className="space-y-3">
-              {episodeRows.map((row, idx) => {
-                const validation = rowValidations[idx];
-                const touched = touchedRows[row.id] || {};
-                const showNumberErr = (touched.number || submitted) && validation.numberError;
-                const showTitleErr = (touched.title || submitted) && validation.titleError;
-                const showUrlErr = (touched.url || submitted) && validation.urlError;
-
-                return (
-                  <div
-                    key={row.id}
-                    className="relative p-3.5 sm:p-4 rounded-[5px] border border-slate-200 bg-white space-y-3 transition-colors shadow-xs text-left"
-                  >
-                    {/* Card Top: Episode label + delete (x) button top-right */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-[#18181B]">
-                        Episode {row.number || idx + 1}
-                      </span>
-                      {episodeRows.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveRow(idx)}
-                          disabled={saving}
-                          className="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-slate-100 transition-colors cursor-pointer"
-                          title="Remove episode"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      )}
-                    </div>
-
-                    {/* 1. Episode No. (number input, default = position) */}
-                    <div>
-                      <label className="block text-xs font-semibold text-[#0f172a] mb-1">
-                        Episode No. <span className="text-rose-500">*</span>
-                      </label>
-                      <input
-                        type="number"
-                        min={1}
-                        step={1}
-                        value={row.number}
-                        disabled={saving}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setEpisodeRows((prev) =>
-                            prev.map((r, i) => (i === idx ? { ...r, number: val } : r))
-                          );
-                        }}
-                        onBlur={() => {
-                          setTouchedRows((prev) => ({
-                            ...prev,
-                            [row.id]: { ...prev[row.id], number: true },
-                          }));
-                        }}
-                        placeholder="e.g. 1"
-                        className={`w-full rounded-[4px] border bg-white px-3 py-1.5 text-xs text-[#0f172a] focus:outline-none transition-colors ${
-                          showNumberErr
-                            ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-series-error"
-                            : "border-[#e2e8f0] focus:border-[#7A2253]"
-                        }`}
-                      />
-                      {showNumberErr && (
-                        <p className="mt-1 text-xs text-rose-500 font-medium">{validation.numberError}</p>
-                      )}
-                    </div>
-
-                    {/* 2. Title (text, required, max 100) */}
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <label className="block text-xs font-semibold text-[#0f172a]">
-                          Title <span className="text-rose-500">*</span>
-                        </label>
-                        <span className="text-[11px] text-[#94a3b8] tabular-nums">
-                          {(row.title || "").length}/100
-                        </span>
-                      </div>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          maxLength={100}
-                          value={row.title}
-                          disabled={saving}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setEpisodeRows((prev) =>
-                              prev.map((r, i) => (i === idx ? { ...r, title: val } : r))
-                            );
-                          }}
-                          onBlur={() => {
-                            setTouchedRows((prev) => ({
-                              ...prev,
-                              [row.id]: { ...prev[row.id], title: true },
-                            }));
-                          }}
-                          placeholder="Episode title"
-                          className={`w-full rounded-[4px] border bg-white px-3 py-1.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none transition-colors ${
-                            showTitleErr
-                              ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-series-error"
-                              : "border-[#e2e8f0] focus:border-[#7A2253]"
-                          }`}
-                        />
-                        {row.loadingTitle && (
-                          <span className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[11px] text-[#7A2253]">
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                          </span>
-                        )}
-                      </div>
-                      {showTitleErr && (
-                        <p className="mt-1 text-xs text-rose-500 font-medium">{validation.titleError}</p>
-                      )}
-                    </div>
-
-                    {/* 3. Video link (url, required) */}
-                    <div>
-                      <label className="block text-xs font-semibold text-[#0f172a] mb-1">
-                        Video link <span className="text-rose-500">*</span>
-                      </label>
-                      <input
-                        type="url"
-                        value={row.url}
-                        disabled={saving}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setEpisodeRows((prev) =>
-                            prev.map((r, i) => (i === idx ? { ...r, url: val } : r))
-                          );
-                        }}
-                        onPaste={(e) => handlePasteLinks(e, idx)}
-                        onBlur={() => {
-                          setTouchedRows((prev) => ({
-                            ...prev,
-                            [row.id]: { ...prev[row.id], url: true },
-                          }));
-                          if (row.url.trim()) {
-                            handleUrlChangeOrPaste(row.id, row.url, idx);
-                          }
-                        }}
-                        placeholder={getPlatformPlaceholder(platform)}
-                        className={`w-full rounded-[4px] border bg-white px-3 py-1.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none transition-colors ${
-                          showUrlErr
-                            ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-series-error"
-                            : "border-[#e2e8f0] focus:border-[#7A2253]"
-                        }`}
-                      />
-                      {showUrlErr && (
-                        <p className="mt-1 text-xs text-rose-500 font-medium">{validation.urlError}</p>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* + Add episode button below last card OR plan limit */}
-            <div className="pt-2">
-              {isAtLimit ? (
-                <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-[5px] font-medium">
-                  Max {maxEpisodes} episodes on your plan
-                </p>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleAddRow}
-                  disabled={saving}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#7A2253] hover:text-[#601a41] hover:underline cursor-pointer py-1"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  <span>+ Add episode</span>
-                </button>
+              {platform && (
+                <span className="text-xs text-[#64748b]">
+                  {episodeRows.filter((r, i) => !isRowCompletelyEmpty(r, i + 1)).length} episode(s) entered
+                </span>
               )}
             </div>
-          </div>
 
-          {/* 3. Collapsed "More options" Section */}
-          <div className="border-t border-slate-200 pt-3">
-            <button
-              type="button"
-              onClick={() => setShowMoreOptions(!showMoreOptions)}
-              className="flex w-full items-center justify-between text-xs font-bold text-[#475569] hover:text-[#0f172a] cursor-pointer py-1"
-            >
-              <span>More options (Cover, Description, Genres, Language)</span>
-              {showMoreOptions ? (
-                <ChevronUp className="h-4 w-4 text-[#94a3b8]" />
-              ) : (
-                <ChevronDown className="h-4 w-4 text-[#94a3b8]" />
-              )}
-            </button>
-
-            {showMoreOptions && (
-              <div className="mt-3 space-y-4 pt-1">
-                {/* Series Cover Upload */}
-                <div>
-                  <label className="block text-[13px] font-semibold text-[#0f172a] mb-1.5">
-                    Cover Image (Optional 16:9)
-                  </label>
-                  <SeriesCoverUpload
-                    value={coverUrl}
-                    onChange={(url) => setCoverUrl(url)}
-                  />
-                </div>
-
-                {/* Description */}
-                <div>
-                  <label className="block text-[13px] font-semibold text-[#0f172a] mb-1.5">
-                    Description (Optional)
-                  </label>
-                  <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Short description of this series..."
-                    rows={2}
-                    disabled={saving}
-                    className="w-full rounded-[5px] border border-[#e2e8f0] bg-white px-3 py-2 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 resize-none"
-                  />
-                </div>
-
-                {/* Genres (Max 3, 12 popular chips + search) */}
-                <div>
-                  <label className="block text-[13px] font-semibold text-[#0f172a] mb-1.5">
-                    Genres (Max 3)
-                  </label>
-                  <GenreMultiSelect
-                    value={genres}
-                    onChange={(val) => setGenres(val)}
-                  />
-                </div>
-
-                {/* Language */}
-                <div>
-                  <label className="block text-[13px] font-semibold text-[#0f172a] mb-1.5">
-                    Language
-                  </label>
-                  <LanguageSelect
-                    value={language}
-                    onChange={(val) => setLanguage(val)}
-                  />
-                </div>
+            {!platform ? (
+              <div className="rounded-[5px] border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-xs font-medium text-slate-500">
+                Select a platform first to add episodes.
               </div>
+            ) : (
+              <>
+                <div className="space-y-3">
+                  {episodeRows.map((row, idx) => {
+                    const validation = rowValidations[idx];
+                    const touched = touchedRows[row.id] || {};
+                    const showNumberErr = (touched.number || submitted) && validation.numberError;
+                    const showTitleErr = (touched.title || submitted) && validation.titleError;
+                    const showUrlErr = (touched.url || submitted) && validation.urlError;
+
+                    return (
+                      <div
+                        key={row.id}
+                        className="relative p-3.5 sm:p-4 rounded-[5px] border border-slate-200 bg-white space-y-3 transition-colors shadow-xs text-left"
+                      >
+                        {/* Card Top: Episode label + delete (x) button top-right */}
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-[#18181B]">
+                            Episode {idx + 1}
+                          </span>
+                          {episodeRows.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveRow(idx)}
+                              disabled={saving}
+                              className="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                              title="Remove episode"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+
+                        {/* 1. Episode No. (auto-assigned, default = position) */}
+                        <div>
+                          <label className="block text-xs font-semibold text-[#0f172a] mb-1">
+                            Episode No.
+                          </label>
+                          <input
+                            type="number"
+                            min={1}
+                            step={1}
+                            value={idx + 1}
+                            disabled
+                            readOnly
+                            className="w-full rounded-[4px] border border-[#e2e8f0] bg-slate-50 px-3 py-1.5 text-xs text-[#0f172a] focus:outline-none cursor-not-allowed"
+                          />
+                        </div>
+
+                        {/* 2. Title (text, required, max 100) */}
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <label className="block text-xs font-semibold text-[#0f172a]">
+                              Title <span className="text-rose-500">*</span>
+                            </label>
+                            <span className="text-[11px] text-[#94a3b8] tabular-nums">
+                              {(row.title || "").length}/100
+                            </span>
+                          </div>
+                          <div className="relative">
+                            <input
+                              type="text"
+                              maxLength={100}
+                              value={row.title}
+                              disabled={saving}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setEpisodeRows((prev) =>
+                                  prev.map((r, i) => (i === idx ? { ...r, title: val } : r))
+                                );
+                              }}
+                              onBlur={() => {
+                                setTouchedRows((prev) => ({
+                                  ...prev,
+                                  [row.id]: { ...prev[row.id], title: true },
+                                }));
+                              }}
+                              placeholder={platform === "YouTube" ? "e.g. Episode Title" : `Episode ${idx + 1}`}
+                              className={`w-full rounded-[4px] border bg-white px-3 py-1.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none transition-colors ${
+                                showTitleErr
+                                  ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-series-error"
+                                  : "border-[#e2e8f0] focus:border-[#7A2253]"
+                              }`}
+                            />
+                            {row.loadingTitle && (
+                              <span className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[11px] text-[#7A2253]">
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              </span>
+                            )}
+                          </div>
+                          {showTitleErr && (
+                            <p className="mt-1 text-xs text-rose-500 font-medium">{validation.titleError}</p>
+                          )}
+                        </div>
+
+                        {/* 3. Video link (url, required) */}
+                        <div>
+                          <label className="block text-xs font-semibold text-[#0f172a] mb-1">
+                            Video link <span className="text-rose-500">*</span>
+                          </label>
+                          <input
+                            type="url"
+                            value={row.url}
+                            disabled={saving}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setEpisodeRows((prev) =>
+                                prev.map((r, i) => (i === idx ? { ...r, url: val } : r))
+                              );
+                            }}
+                            onPaste={(e) => handlePasteLinks(e, idx)}
+                            onBlur={() => {
+                              setTouchedRows((prev) => ({
+                                ...prev,
+                                [row.id]: { ...prev[row.id], url: true },
+                              }));
+                              if (row.url.trim()) {
+                                handleUrlChangeOrPaste(row.id, row.url, idx);
+                              }
+                            }}
+                            placeholder={getPlatformPlaceholder(platform)}
+                            className={`w-full rounded-[4px] border bg-white px-3 py-1.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none transition-colors ${
+                              showUrlErr
+                                ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-series-error"
+                                : "border-[#e2e8f0] focus:border-[#7A2253]"
+                            }`}
+                          />
+                          {showUrlErr && (
+                            <p className="mt-1 text-xs text-rose-500 font-medium">{validation.urlError}</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* + Add episode button below last card OR plan limit */}
+                <div className="pt-2">
+                  {isAtLimit ? (
+                    <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-[5px] font-medium">
+                      Max {maxEpisodes} episodes on your plan
+                    </p>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleAddRow}
+                      disabled={saving}
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-[#7A2253] hover:text-[#601a41] hover:underline cursor-pointer py-1"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      <span>+ Add episode</span>
+                    </button>
+                  )}
+                </div>
+              </>
             )}
           </div>
         </ModalBody>
@@ -924,5 +932,17 @@ export function SeriesUpsertModal({
         </ModalFooter>
       </form>
     </Modal>
+
+    <ConfirmModal
+      isOpen={Boolean(platformConfirmTarget)}
+      onClose={() => setPlatformConfirmTarget(null)}
+      onConfirm={confirmPlatformSwitch}
+      title={`Switch platform to ${platformConfirmTarget}?`}
+      description={`Changing the series platform to ${platformConfirmTarget} will remove any episode links that don't match ${platformConfirmTarget}.`}
+      confirmText="Yes, switch platform"
+      cancelText="Cancel"
+      isDestructive={true}
+    />
+  </>
   );
 }
