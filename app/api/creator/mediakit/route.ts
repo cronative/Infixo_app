@@ -63,10 +63,21 @@ async function ensureMediaKitTables() {
     try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN past_brands JSON DEFAULT NULL"); } catch {}
     try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN allow_whatsapp TINYINT(1) DEFAULT 1"); } catch {}
     try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN allow_email TINYINT(1) DEFAULT 1"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN intro VARCHAR(300) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN now_making VARCHAR(80) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN audience_desc VARCHAR(200) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN availability VARCHAR(20) DEFAULT 'open'"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN reply_time VARCHAR(50) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN fit_tags JSON DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN nofit_tags JSON DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN promises JSON DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN signature_name VARCHAR(120) DEFAULT NULL"); } catch {}
 
     try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN creator_id VARCHAR(100) DEFAULT NULL"); } catch {}
     try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN price_unit VARCHAR(50) DEFAULT 'per_package'"); } catch {}
     try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN is_starting_price TINYINT(1) DEFAULT 0"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN story_pitch VARCHAR(120) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN category VARCHAR(100) DEFAULT NULL"); } catch {}
 
     mediaKitTablesEnsured = true;
   } catch (e) {
@@ -133,7 +144,10 @@ export async function GET(req: Request) {
     const [settingsRows]: any = await db.query(
       `SELECT whatsapp_number, sponsor_email, min_budget, bio_highlight, accepting_sponsors,
               avg_reel_views, engagement_rate, top_cities, content_languages, categories, past_brands,
-              allow_whatsapp, allow_email, updated_at 
+              allow_whatsapp, allow_email,
+              intro, now_making, audience_desc, availability, reply_time,
+              fit_tags, nofit_tags, promises, signature_name,
+              updated_at 
        FROM mediakit_settings 
        WHERE creator_id = ? OR email = ? OR email = ?
        ORDER BY (creator_id = ?) DESC LIMIT 1`,
@@ -166,6 +180,18 @@ export async function GET(req: Request) {
       pastBrands = [];
     }
 
+    const parseJsonStringArray = (val: any, maxLen?: number): string[] => {
+      try {
+        const parsed = typeof val === "string" ? JSON.parse(val) : Array.isArray(val) ? val : [];
+        const clean = Array.isArray(parsed)
+          ? parsed.map((item) => String(item || "").trim()).filter(Boolean)
+          : [];
+        return typeof maxLen === "number" ? clean.slice(0, maxLen) : clean;
+      } catch {
+        return [];
+      }
+    };
+
     const settings = {
       whatsappNumber: s.whatsapp_number || "",
       sponsorEmail: s.sponsor_email || "",
@@ -180,6 +206,15 @@ export async function GET(req: Request) {
       pastBrands,
       allowWhatsapp: s.allow_whatsapp !== 0 && s.allow_whatsapp !== false,
       allowEmail: s.allow_email !== 0 && s.allow_email !== false,
+      intro: s.intro || "",
+      nowMaking: s.now_making || "",
+      audienceDesc: s.audience_desc || "",
+      availability: (s.availability === "busy" ? "busy" : "open") as "open" | "busy",
+      replyTime: s.reply_time || "Within 24h",
+      fitTags: parseJsonStringArray(s.fit_tags, 3),
+      nofitTags: parseJsonStringArray(s.nofit_tags, 3),
+      promises: parseJsonStringArray(s.promises, 4),
+      signatureName: s.signature_name || "",
       updatedAt: s.updated_at ? new Date(s.updated_at).toISOString() : undefined,
     };
 
@@ -188,7 +223,8 @@ export async function GET(req: Request) {
       `SELECT id, creator_id AS creatorId, email, title, platform, price, min_price AS minPrice, max_price AS maxPrice, 
               package_name AS packageName, turnaround_days AS turnaroundDays, 
               deliverables, badge, is_popular AS isPopular, is_active AS isActive,
-              price_unit AS priceUnit, is_starting_price AS isStartingPrice 
+              price_unit AS priceUnit, is_starting_price AS isStartingPrice,
+              story_pitch AS storyPitch, category
        FROM mediakit_gigs 
        WHERE creator_id = ? OR (email = ? AND (creator_id IS NULL OR creator_id = ''))
        ORDER BY created_at ASC`,
@@ -206,6 +242,8 @@ export async function GET(req: Request) {
         id: row.id,
         creatorId: row.creatorId || resolvedCreatorId,
         title: row.title,
+        storyPitch: row.storyPitch || undefined,
+        category: row.category || undefined,
         platform: row.platform,
         price: row.price,
         minPrice: row.minPrice || undefined,
@@ -251,155 +289,200 @@ export async function POST(req: Request) {
     const resolvedEmail = auth.creator.email;
 
     // 1. Save Settings tied to creator_id & email
-    const whatsapp = settings?.whatsappNumber || null;
-    const sponsorEmail = settings?.sponsorEmail || null;
-    const minBudget = settings?.minBudget || null;
-    const bioHighlight = settings?.bioHighlight || null;
-    const accepting = settings?.acceptingSponsors !== false ? 1 : 0;
-    const avgReelViews = settings?.avgReelViews || null;
-    const engagementRate = settings?.engagementRate || null;
-    const topCities = settings?.topCities || null;
-    const contentLanguages = settings?.contentLanguages
-      ? (Array.isArray(settings.contentLanguages) ? JSON.stringify(settings.contentLanguages) : String(settings.contentLanguages))
-      : null;
-    const categories = settings?.categories
-      ? (Array.isArray(settings.categories) ? JSON.stringify(settings.categories) : String(settings.categories))
-      : null;
-    const pastBrands = settings?.pastBrands ? JSON.stringify(settings.pastBrands) : null;
-    const allowWhatsapp = settings?.allowWhatsapp !== false ? 1 : 0;
-    const allowEmail = settings?.allowEmail !== false ? 1 : 0;
+    if (settings) {
+      const whatsapp = settings?.whatsappNumber || null;
+      const sponsorEmail = settings?.sponsorEmail || null;
+      const minBudget = settings?.minBudget || null;
+      const bioHighlight = settings?.bioHighlight || null;
+      const accepting = settings?.acceptingSponsors !== false ? 1 : 0;
+      const avgReelViews = settings?.avgReelViews || null;
+      const engagementRate = settings?.engagementRate || null;
+      const topCities = settings?.topCities || null;
+      const contentLanguages = settings?.contentLanguages
+        ? (Array.isArray(settings.contentLanguages) ? JSON.stringify(settings.contentLanguages) : String(settings.contentLanguages))
+        : null;
+      const categories = settings?.categories
+        ? (Array.isArray(settings.categories) ? JSON.stringify(settings.categories) : String(settings.categories))
+        : null;
+      const pastBrands = settings?.pastBrands ? JSON.stringify(settings.pastBrands) : null;
+      const allowWhatsapp = settings?.allowWhatsapp !== false ? 1 : 0;
+      const allowEmail = settings?.allowEmail !== false ? 1 : 0;
 
-    await db.query(
-      `INSERT INTO mediakit_settings 
-        (creator_id, email, whatsapp_number, sponsor_email, min_budget, bio_highlight, accepting_sponsors,
-         avg_reel_views, engagement_rate, top_cities, content_languages, categories, past_brands, allow_whatsapp, allow_email)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-       ON DUPLICATE KEY UPDATE
-         email = VALUES(email),
-         whatsapp_number = VALUES(whatsapp_number),
-         sponsor_email = VALUES(sponsor_email),
-         min_budget = VALUES(min_budget),
-         bio_highlight = VALUES(bio_highlight),
-         accepting_sponsors = VALUES(accepting_sponsors),
-         avg_reel_views = VALUES(avg_reel_views),
-         engagement_rate = VALUES(engagement_rate),
-         top_cities = VALUES(top_cities),
-         content_languages = VALUES(content_languages),
-         categories = VALUES(categories),
-         past_brands = VALUES(past_brands),
-         allow_whatsapp = VALUES(allow_whatsapp),
-         allow_email = VALUES(allow_email)`,
-      [
-        resolvedCreatorId,
-        resolvedEmail,
-        whatsapp,
-        sponsorEmail,
-        minBudget,
-        bioHighlight,
-        accepting,
-        avgReelViews,
-        engagementRate,
-        topCities,
-        contentLanguages,
-        categories,
-        pastBrands,
-        allowWhatsapp,
-        allowEmail,
-      ]
-    );
-
-    // 2. Synchronize Gigs tied to creator_id & email
-    const incomingPackages: any[] = packages || [];
-
-    // Enforce server-side gig quota based on active subscription
-    const [subRows]: any = await db.query(
-      "SELECT plan_key FROM subscriptions WHERE creator_id = ? AND status = 'active' ORDER BY updated_at DESC LIMIT 1",
-      [resolvedCreatorId]
-    );
-    const activePlanKey = subRows[0]?.plan_key || "early_access";
-    const quota = getPlanQuota(activePlanKey);
-
-    // Over-limit packages from an earlier plan are kept (never deleted); only growing past the limit is blocked.
-    const [existingGigRows]: any = await db.query(
-      "SELECT COUNT(*) AS count FROM mediakit_gigs WHERE creator_id = ? OR email = ?",
-      [resolvedCreatorId, resolvedEmail]
-    );
-    const existingGigCount = Number(existingGigRows[0]?.count || 0);
-    if (incomingPackages.length > quota.maxGigs && incomingPackages.length > existingGigCount) {
-      return apiError(
-        `Collab package limit reached (${quota.maxGigs} max) for ${quota.name} plan. Upgrade your plan to add more packages.`,
-        403,
-        { code: "LIMIT_REACHED", isLimitReached: true, type: "gig", limit: quota.maxGigs }
-      );
-    }
-
-    const incomingIds = incomingPackages.map((p) => p.id);
-
-    // Delete removed gigs for this creator_id/email
-    if (incomingIds.length > 0) {
-      const placeholders = incomingIds.map(() => "?").join(",");
-      await db.query(
-        `DELETE FROM mediakit_gigs WHERE (creator_id = ? OR email = ?) AND id NOT IN (${placeholders})`,
-        [resolvedCreatorId, resolvedEmail, ...incomingIds]
-      );
-    } else {
-      await db.query(`DELETE FROM mediakit_gigs WHERE creator_id = ? OR email = ?`, [resolvedCreatorId, resolvedEmail]);
-    }
-
-    // Insert or Update each gig row with creator_id
-    for (const pkg of incomingPackages) {
-      const gigId = pkg.id || `gig_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-      const deliverablesJson = JSON.stringify(pkg.deliverables || []);
-      const minPrice = pkg.minPrice || null;
-      const maxPrice = pkg.maxPrice || null;
-      const packageName = pkg.packageName || null;
-      const badge = pkg.badge || null;
-      const isPopular = pkg.isPopular ? 1 : 0;
-      const isActive = pkg.isActive !== false ? 1 : 0;
-      const turnaround = Number(pkg.turnaroundDays) || 2;
-      const priceUnit = pkg.priceUnit || (pkg.title?.toLowerCase().includes("monthly") ? "per_month" : "per_package");
-      const isStartingPrice = pkg.isStartingPrice ? 1 : 0;
-      const platform = pkg.platform || "instagram";
+      const intro = settings?.intro ? String(settings.intro).trim().slice(0, 300) : null;
+      const nowMaking = settings?.nowMaking ? String(settings.nowMaking).trim().slice(0, 80) : null;
+      const audienceDesc = settings?.audienceDesc ? String(settings.audienceDesc).trim().slice(0, 200) : null;
+      const availability = settings?.availability === "busy" ? "busy" : "open";
+      const replyTime = settings?.replyTime ? String(settings.replyTime).trim().slice(0, 50) : null;
+      const fitTags = Array.isArray(settings?.fitTags)
+        ? JSON.stringify(settings.fitTags.map((t: any) => String(t || "").trim()).filter(Boolean).slice(0, 3))
+        : null;
+      const nofitTags = Array.isArray(settings?.nofitTags)
+        ? JSON.stringify(settings.nofitTags.map((t: any) => String(t || "").trim()).filter(Boolean).slice(0, 3))
+        : null;
+      const promises = Array.isArray(settings?.promises)
+        ? JSON.stringify(settings.promises.map((p: any) => String(p || "").trim()).filter(Boolean).slice(0, 4))
+        : null;
+      const signatureName = settings?.signatureName ? String(settings.signatureName).trim().slice(0, 120) : null;
 
       await db.query(
-        `INSERT INTO mediakit_gigs 
-           (id, creator_id, email, title, platform, price, min_price, max_price, package_name, turnaround_days, deliverables, badge, is_popular, is_active, price_unit, is_starting_price)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `INSERT INTO mediakit_settings 
+          (creator_id, email, whatsapp_number, sponsor_email, min_budget, bio_highlight, accepting_sponsors,
+           avg_reel_views, engagement_rate, top_cities, content_languages, categories, past_brands, allow_whatsapp, allow_email,
+           intro, now_making, audience_desc, availability, reply_time, fit_tags, nofit_tags, promises, signature_name)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
-           creator_id = VALUES(creator_id),
            email = VALUES(email),
-           title = VALUES(title),
-           platform = VALUES(platform),
-           price = VALUES(price),
-           min_price = VALUES(min_price),
-           max_price = VALUES(max_price),
-           package_name = VALUES(package_name),
-           turnaround_days = VALUES(turnaround_days),
-           deliverables = VALUES(deliverables),
-           badge = VALUES(badge),
-           is_popular = VALUES(is_popular),
-           is_active = VALUES(is_active),
-           price_unit = VALUES(price_unit),
-           is_starting_price = VALUES(is_starting_price)`,
+           whatsapp_number = VALUES(whatsapp_number),
+           sponsor_email = VALUES(sponsor_email),
+           min_budget = VALUES(min_budget),
+           bio_highlight = VALUES(bio_highlight),
+           accepting_sponsors = VALUES(accepting_sponsors),
+           avg_reel_views = VALUES(avg_reel_views),
+           engagement_rate = VALUES(engagement_rate),
+           top_cities = VALUES(top_cities),
+           content_languages = VALUES(content_languages),
+           categories = VALUES(categories),
+           past_brands = VALUES(past_brands),
+           allow_whatsapp = VALUES(allow_whatsapp),
+           allow_email = VALUES(allow_email),
+           intro = VALUES(intro),
+           now_making = VALUES(now_making),
+           audience_desc = VALUES(audience_desc),
+           availability = VALUES(availability),
+           reply_time = VALUES(reply_time),
+           fit_tags = VALUES(fit_tags),
+           nofit_tags = VALUES(nofit_tags),
+           promises = VALUES(promises),
+           signature_name = VALUES(signature_name)`,
         [
-          gigId,
           resolvedCreatorId,
           resolvedEmail,
-          pkg.title,
-          platform,
-          pkg.price,
-          minPrice,
-          maxPrice,
-          packageName,
-          turnaround,
-          deliverablesJson,
-          badge,
-          isPopular,
-          isActive,
-          priceUnit,
-          isStartingPrice,
+          whatsapp,
+          sponsorEmail,
+          minBudget,
+          bioHighlight,
+          accepting,
+          avgReelViews,
+          engagementRate,
+          topCities,
+          contentLanguages,
+          categories,
+          pastBrands,
+          allowWhatsapp,
+          allowEmail,
+          intro,
+          nowMaking,
+          audienceDesc,
+          availability,
+          replyTime,
+          fitTags,
+          nofitTags,
+          promises,
+          signatureName,
         ]
       );
+    }
+
+    // 2. Synchronize Gigs tied to creator_id & email
+    if (Array.isArray(packages)) {
+      const incomingPackages: any[] = packages;
+
+      // Enforce server-side gig quota based on active subscription
+      const [subRows]: any = await db.query(
+        "SELECT plan_key FROM subscriptions WHERE creator_id = ? AND status = 'active' ORDER BY updated_at DESC LIMIT 1",
+        [resolvedCreatorId]
+      );
+      const activePlanKey = subRows[0]?.plan_key || "early_access";
+      const quota = getPlanQuota(activePlanKey);
+
+      // Over-limit packages from an earlier plan are kept (never deleted); only growing past the limit is blocked.
+      const [existingGigRows]: any = await db.query(
+        "SELECT COUNT(*) AS count FROM mediakit_gigs WHERE creator_id = ? OR email = ?",
+        [resolvedCreatorId, resolvedEmail]
+      );
+      const existingGigCount = Number(existingGigRows[0]?.count || 0);
+      if (incomingPackages.length > quota.maxGigs && incomingPackages.length > existingGigCount) {
+        return apiError(
+          `Collab package limit reached (${quota.maxGigs} max) for ${quota.name} plan. Upgrade your plan to add more packages.`,
+          403,
+          { code: "LIMIT_REACHED", isLimitReached: true, type: "gig", limit: quota.maxGigs }
+        );
+      }
+
+      const incomingIds = incomingPackages.map((p) => p.id);
+
+      // Delete removed gigs for this creator_id/email
+      if (incomingIds.length > 0) {
+        const placeholders = incomingIds.map(() => "?").join(",");
+        await db.query(
+          `DELETE FROM mediakit_gigs WHERE (creator_id = ? OR email = ?) AND id NOT IN (${placeholders})`,
+          [resolvedCreatorId, resolvedEmail, ...incomingIds]
+        );
+      } else {
+        await db.query(`DELETE FROM mediakit_gigs WHERE creator_id = ? OR email = ?`, [resolvedCreatorId, resolvedEmail]);
+      }
+
+      // Insert or Update each gig row with creator_id
+      for (const pkg of incomingPackages) {
+        const gigId = pkg.id || `gig_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+        const deliverablesJson = JSON.stringify(pkg.deliverables || []);
+        const minPrice = pkg.minPrice || null;
+        const maxPrice = pkg.maxPrice || null;
+        const packageName = pkg.packageName || null;
+        const badge = pkg.badge || null;
+        const isPopular = pkg.isPopular ? 1 : 0;
+        const isActive = pkg.isActive !== false ? 1 : 0;
+        const turnaround = Number(pkg.turnaroundDays) || 2;
+        const priceUnit = pkg.priceUnit || (pkg.title?.toLowerCase().includes("monthly") ? "per_month" : "per_package");
+        const isStartingPrice = pkg.isStartingPrice ? 1 : 0;
+        const platform = pkg.platform || "instagram";
+        const storyPitch = pkg.storyPitch ? String(pkg.storyPitch).trim().slice(0, 120) : null;
+        const category = pkg.category ? String(pkg.category).trim().slice(0, 100) : null;
+
+        await db.query(
+          `INSERT INTO mediakit_gigs 
+             (id, creator_id, email, title, platform, price, min_price, max_price, package_name, turnaround_days, deliverables, badge, is_popular, is_active, price_unit, is_starting_price, story_pitch, category)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+           ON DUPLICATE KEY UPDATE
+             creator_id = VALUES(creator_id),
+             email = VALUES(email),
+             title = VALUES(title),
+             platform = VALUES(platform),
+             price = VALUES(price),
+             min_price = VALUES(min_price),
+             max_price = VALUES(max_price),
+             package_name = VALUES(package_name),
+             turnaround_days = VALUES(turnaround_days),
+             deliverables = VALUES(deliverables),
+             badge = VALUES(badge),
+             is_popular = VALUES(is_popular),
+             is_active = VALUES(is_active),
+             price_unit = VALUES(price_unit),
+             is_starting_price = VALUES(is_starting_price),
+             story_pitch = VALUES(story_pitch),
+             category = VALUES(category)`,
+          [
+            gigId,
+            resolvedCreatorId,
+            resolvedEmail,
+            pkg.title,
+            platform,
+            pkg.price,
+            minPrice,
+            maxPrice,
+            packageName,
+            turnaround,
+            deliverablesJson,
+            badge,
+            isPopular,
+            isActive,
+            priceUnit,
+            isStartingPrice,
+            storyPitch,
+            category,
+          ]
+        );
+      }
     }
 
     return apiSuccess({

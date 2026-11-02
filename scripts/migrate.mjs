@@ -331,6 +331,26 @@ async function migrateDatabase(target) {
         WHERE status = 'rejected' AND is_visible = 1`);
     }
 
+    // 017: Media Kit v2 fields on mediakit_settings & mediakit_gigs
+    const [mkSettingsTables] = await connection.query("SHOW TABLES LIKE 'mediakit_settings'");
+    if (mkSettingsTables.length) {
+      await addColumnIfMissing("mediakit_settings", "intro", "VARCHAR(300) DEFAULT NULL");
+      await addColumnIfMissing("mediakit_settings", "now_making", "VARCHAR(80) DEFAULT NULL");
+      await addColumnIfMissing("mediakit_settings", "audience_desc", "VARCHAR(200) DEFAULT NULL");
+      await addColumnIfMissing("mediakit_settings", "availability", "VARCHAR(20) DEFAULT 'open'");
+      await addColumnIfMissing("mediakit_settings", "reply_time", "VARCHAR(50) DEFAULT NULL");
+      await addColumnIfMissing("mediakit_settings", "fit_tags", "JSON DEFAULT NULL");
+      await addColumnIfMissing("mediakit_settings", "nofit_tags", "JSON DEFAULT NULL");
+      await addColumnIfMissing("mediakit_settings", "promises", "JSON DEFAULT NULL");
+      await addColumnIfMissing("mediakit_settings", "signature_name", "VARCHAR(120) DEFAULT NULL");
+    }
+
+    const [mkGigsTables] = await connection.query("SHOW TABLES LIKE 'mediakit_gigs'");
+    if (mkGigsTables.length) {
+      await addColumnIfMissing("mediakit_gigs", "story_pitch", "VARCHAR(120) DEFAULT NULL");
+      await addColumnIfMissing("mediakit_gigs", "category", "VARCHAR(100) DEFAULT NULL");
+    }
+
     console.log(`✅ ${target.name} migrated successfully.`);
   } finally {
     await connection.end();

@@ -507,7 +507,7 @@ function MinimalLayout({
           }}
         >
           <InflixoLogoIcon color="color" className="h-4.5 w-4.5" />
-          <span>Inflixo Verified Creator</span>
+          <span>Inflixo Creator</span>
         </div>
         <p style={{ margin: 0, fontSize: 11, fontWeight: 600, color: a.mutedText }}>
           Claim your free card at <strong style={{ color: a.accent }}>inflixo.com</strong>
@@ -731,7 +731,7 @@ function BadgeLayout({
                 FANBASE REACH
               </div>
               <div style={{ marginTop: 2, fontSize: 14, fontWeight: 800, color: a.accent }}>
-                {fanbase || "Verified"}
+                {fanbase || "Creator"}
               </div>
             </div>
           </div>
@@ -964,7 +964,7 @@ function CyberLayout({
         >
           <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#10B981", boxShadow: "0 0 8px #10B981" }} />
-            <span>CYBER ID // VERIFIED</span>
+            <span>CYBER ID // CREATOR</span>
           </div>
           <span>SYS.ONLINE</span>
         </div>
@@ -1359,19 +1359,21 @@ function EditorialLayout({
           )}
         </div>
 
-        {/* Category & Verified tag */}
-        <p
-          style={{
-            margin: "12px 0 0",
-            fontSize: 11,
-            fontWeight: 800,
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            color: "#0F172A",
-          }}
-        >
-          {category ? `${category.replace(/•/g, "·")} · VERIFIED CREATOR` : "CONTENT CREATOR · VERIFIED CREATOR"}
-        </p>
+        {/* Category tag */}
+        {category && (
+          <p
+            style={{
+              margin: "12px 0 0",
+              fontSize: 11,
+              fontWeight: 800,
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              color: "#0F172A",
+            }}
+          >
+            {category.replace(/•/g, "·")}
+          </p>
+        )}
 
         {/* Total Fanbase Pill */}
         <div

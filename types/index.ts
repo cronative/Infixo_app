@@ -477,10 +477,33 @@ export interface Series {
 
 export type PackagePriceUnit = "per_reel" | "per_post" | "per_video" | "per_package" | "per_month";
 
+export const MEDIAKIT_PROMISE_PRESETS: readonly string[] = [
+  "On-time delivery, or I'll tell you early",
+  "Honest integration in my own voice",
+  "Clear disclosures on every sponsored post",
+  "One round of revisions included",
+] as const;
+
+export const MEDIAKIT_PACKAGE_CATEGORIES: readonly string[] = [
+  "Food & Beverage",
+  "Fashion & Lifestyle",
+  "Tech & Apps",
+  "Beauty & Personal Care",
+  "Travel & Hospitality",
+  "Finance & Education",
+  "Fitness & Wellness",
+  "Entertainment & Gaming",
+  "Home & D2C Brands",
+  "Local Business & Events",
+  "General Brand Partnership",
+] as const;
+
 export interface MediaKitPackage {
   id: string;
   title: string;
   description?: string;
+  storyPitch?: string;
+  category?: string;
   platform: "YouTube" | "Instagram" | "Instagram Bundle" | "Monthly Retainer" | "Facebook" | "Multi-Platform" | string;
   deliverables: string[];
   price: string;
@@ -515,6 +538,16 @@ export interface MediaKitSettings {
   pastBrands?: PastBrandItem[];
   allowWhatsapp?: boolean;
   allowEmail?: boolean;
+  // Media Kit v2 fields ("About you for brands")
+  intro?: string;
+  nowMaking?: string;
+  audienceDesc?: string;
+  availability?: "open" | "busy";
+  replyTime?: string;
+  fitTags?: string[];
+  nofitTags?: string[];
+  promises?: string[];
+  signatureName?: string;
   updatedAt?: string;
 }
 

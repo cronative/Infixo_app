@@ -64,6 +64,7 @@ import { PackageCard } from "@/components/collab/PackageCard";
 import { MediaKitSnapshotCard } from "@/components/collab/MediaKitSnapshotCard";
 import { BrandLogosWrap } from "@/components/collab/BrandLogosWrap";
 import { CollabEnquirySheet } from "@/components/collab/CollabEnquirySheet";
+import { MediaKitV2Content } from "@/components/mediakit/MediaKitV2Content";
 import { EmptyProfileCard } from "@/components/public/EmptyProfileCard";
 import {
   CreatorProfile,
@@ -376,6 +377,7 @@ export interface LivePreviewCardProps {
   allReviewsHref?: string;
   reviewsOnlyMode?: boolean;
   linksOnlyMode?: boolean;
+  mediaKitOnlyMode?: boolean;
   /** Secondary public page (series list, reviews, products): compact creator header instead of the full profile header. */
   pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   showSettingsIcon?: boolean;
@@ -626,6 +628,7 @@ export function LivePreviewCard({
   allReviewsHref,
   reviewsOnlyMode = false,
   linksOnlyMode = false,
+  mediaKitOnlyMode = false,
   pageHeader,
   showSettingsIcon: showSettingsIconProp,
   onShare,
@@ -642,7 +645,7 @@ export function LivePreviewCard({
   const profile: CreatorProfile = incomingProfile || EMPTY_PROFILE_FALLBACK;
   const socials: SocialAccounts = incomingSocials || EMPTY_SOCIAL_ACCOUNTS;
   const series: Series[] = incomingSeries || [];
-  const isListingPage = Boolean(seriesOnlyMode || productsOnlyMode || reviewsOnlyMode || linksOnlyMode);
+  const isListingPage = Boolean(seriesOnlyMode || productsOnlyMode || reviewsOnlyMode || linksOnlyMode || mediaKitOnlyMode);
   const isPremiumLayout = !isListingPage && (layoutMode === "premium" || layoutMode === "stacked");
   const effectiveSeriesPreviewLimit = isPremiumLayout ? 3 : seriesPreviewLimit;
   const displayedSeries = typeof effectiveSeriesPreviewLimit === "number" ? series.slice(0, effectiveSeriesPreviewLimit) : series;
@@ -1029,6 +1032,15 @@ export function LivePreviewCard({
           showFanbase: false,
           showCustomLinks: true,
           showCollabGigs: false,
+          showSeries: false,
+          showReviews: false,
+        }
+      : mediaKitOnlyMode
+        ? {
+          ...visibilitySettings,
+          showFanbase: false,
+          showCustomLinks: false,
+          showCollabGigs: true,
           showSeries: false,
           showReviews: false,
         }
@@ -1541,7 +1553,18 @@ export function LivePreviewCard({
   const hasSetupContent = !isListingPage && validSetupList.length > 0;
 
   const navActivePackages = (mediaKitPackages || []).filter((p) => p.isActive);
-  const hasWorkCollab = !isListingPage && effectiveVisibilitySettings.showCollabGigs !== false && navActivePackages.length > 0;
+  const hasMediaKitV2Story = Boolean(
+    mediaKitSettings?.intro?.trim() ||
+    mediaKitSettings?.nowMaking?.trim() ||
+    mediaKitSettings?.audienceDesc?.trim() ||
+    (mediaKitSettings?.fitTags && mediaKitSettings.fitTags.length > 0) ||
+    (mediaKitSettings?.nofitTags && mediaKitSettings.nofitTags.length > 0) ||
+    (mediaKitSettings?.promises && mediaKitSettings.promises.length > 0)
+  );
+  const hasWorkCollab =
+    !isListingPage &&
+    effectiveVisibilitySettings.showCollabGigs !== false &&
+    (navActivePackages.length > 0 || hasMediaKitV2Story);
   const hasReviewsContent = !isListingPage && effectiveVisibilitySettings.showReviews !== false && approvedReviews.length > 0;
 
   const hasFanbaseTab = !isListingPage && effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || fanbaseSocialCards.length > 0);
@@ -1852,7 +1875,7 @@ export function LivePreviewCard({
           isListingPage={isListingPage}
           mediaKitHref={
             containedScroll && cleanHandle && cleanHandle !== "demo_creator" && !isDashboardPreview && !pageHeader
-              ? `/${cleanHandle}/media-kit`
+              ? `/${cleanHandle}/mediakit`
               : undefined
           }
           usesDarkControls={usesDarkControls}
@@ -1957,6 +1980,43 @@ export function LivePreviewCard({
                     className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5"
                   >
                     Verified feedback and testimonials from leading brands &amp; collaboration partners.
+                  </p>
+                </div>
+                <div style={{ backgroundColor: c.divider }} className="h-px opacity-60" aria-hidden="true" />
+              </>
+            )}
+
+            {/* Title & Subtitle for Media Kit */}
+            {mediaKitOnlyMode && (
+              <>
+                <div className="px-4 sm:px-5 pt-2.5 pb-2 text-left">
+                  <div className="flex items-center justify-between px-0.5">
+                    <h2
+                      style={{
+                        color: c.primaryText,
+                        fontFamily: typ.headingFontFamily,
+                        fontWeight: 700,
+                      }}
+                      className={`flex items-center gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
+                    >
+                      <Briefcase className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
+                      <span>Media Kit</span>
+                    </h2>
+                    <a
+                      href={`/api/creator/mediakit/pdf?username=${encodeURIComponent(cleanHandle || "creator")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: c.accentText || c.primaryText }}
+                      className="text-[11px] sm:text-xs font-semibold hover:underline"
+                    >
+                      Download PDF
+                    </a>
+                  </div>
+                  <p
+                    style={{ color: c.secondaryText }}
+                    className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5"
+                  >
+                    Who I am, the people who tune in, and how we can work together.
                   </p>
                 </div>
                 <div style={{ backgroundColor: c.divider }} className="h-px opacity-60" aria-hidden="true" />
@@ -3054,7 +3114,7 @@ export function LivePreviewCard({
         )}
 
         {/* 8. Creator Team */}
-        {!isListingPage && (isPremiumLayout || (!isTabsLayout ? true : (activeNavTab === "about" || activeNavTab === "collab" || activeNavTab === "work" || activeNavTab === "reviews"))) && activeTeamMembers.length > 0 && (
+        {!isListingPage && (isPremiumLayout || (!isTabsLayout ? true : activeNavTab === "about")) && activeTeamMembers.length > 0 && (
           <div
             id="team-section"
             style={
@@ -3206,8 +3266,42 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {/* 6. Collaboration Packages Section */}
-        {!isListingPage && (isPremiumLayout || (!isTabsLayout || activeNavTab === "collab" || activeNavTab === "work")) && (() => {
+        {/* 6. Media Kit v2 / Collab Tab Section (Shared between /:username/mediakit and Collab tab) */}
+        {(mediaKitOnlyMode || (!isListingPage && (isTabsLayout ? (activeNavTab === "collab" || activeNavTab === "work") : false))) && (
+          <div id="collab-section" className="relative z-10 order-[20] mt-1 sm:mt-1.5 w-full text-left animate-fade-in">
+            <MediaKitV2Content
+              profile={profile}
+              socials={safeSocials}
+              totalAudience={totalAudience}
+              series={series}
+              packages={mediaKitPackages}
+              settings={mediaKitSettings}
+              reviews={approvedReviews}
+              team={teamData}
+              isInformational={isInformationalMode}
+              onEnquirePackage={(selected) => {
+                setSelectedEnquiryPackage(selected);
+                setIsEnquirySheetOpen(true);
+              }}
+            />
+
+            <CollabEnquirySheet
+              isOpen={isEnquirySheetOpen}
+              onClose={() => setIsEnquirySheetOpen(false)}
+              creatorId={profile.id || profile.username || "creator"}
+              creatorDisplayName={profile.displayName || profile.username}
+              creatorEmail={profile.email}
+              creatorWhatsapp={(profile as any).whatsappNumber}
+              packages={(mediaKitPackages || []).filter((p) => p.isActive)}
+              preselectedPackage={selectedEnquiryPackage}
+              settings={mediaKitSettings}
+              brandPrimary="var(--accent)"
+            />
+          </div>
+        )}
+
+        {/* 6b. Collaboration Packages Section (for non-tabs / premium layout) */}
+        {!isListingPage && (isPremiumLayout || !isTabsLayout) && (() => {
           if (effectiveVisibilitySettings.showCollabGigs === false) return null;
 
           const activePackages = (mediaKitPackages || []).filter((p) => p.isActive);
@@ -3394,7 +3488,7 @@ export function LivePreviewCard({
         })()}
 
         {/* 7. Reviews Section */}
-        {!isListingPage && (isPremiumLayout || (!isTabsLayout || activeNavTab === "collab" || activeNavTab === "work" || activeNavTab === "reviews")) && (() => {
+        {!isListingPage && (isPremiumLayout || !isTabsLayout) && (() => {
           if (effectiveVisibilitySettings.showReviews === false) return null;
           if (approvedReviews.length === 0) return null;
 
@@ -3563,7 +3657,7 @@ export function LivePreviewCard({
         })()}
 
         {/* 10. Trusted Brands Section */}
-        {!isListingPage && (isPremiumLayout || (!isTabsLayout ? true : (activeNavTab === "collab" || activeNavTab === "work" || activeNavTab === "reviews"))) && (() => {
+        {!isListingPage && (isPremiumLayout || !isTabsLayout) && (() => {
           const activeBrands = (brandsList || []).filter((b) => b.isActive !== false);
           if (activeBrands.length === 0) return null;
 

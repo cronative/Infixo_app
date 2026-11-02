@@ -36,6 +36,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
     reviewsOnlyMode,
     linksOnlyMode,
     allLinksHref,
+    mediaKitOnlyMode,
     pageHeader,
     onShare,
     layoutMode,
@@ -77,6 +78,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       reviewsOnlyMode={reviewsOnlyMode}
       linksOnlyMode={linksOnlyMode}
       allLinksHref={allLinksHref}
+      mediaKitOnlyMode={mediaKitOnlyMode}
       pageHeader={pageHeader}
       onShare={onShare}
       layoutMode={layoutMode}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import {
   Briefcase,
@@ -41,7 +42,12 @@ import {
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { MediaKitService } from "@/services/MediaKitService";
-import { MediaKitPackage, MediaKitSettings } from "@/types";
+import {
+  MediaKitPackage,
+  MediaKitSettings,
+  MEDIAKIT_PROMISE_PRESETS,
+  MEDIAKIT_PACKAGE_CATEGORIES,
+} from "@/types";
 import { authRepository } from "@/repositories/localRepository";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
@@ -410,6 +416,7 @@ export default function DashboardMediaKitPage() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isExamplesModalOpen, setIsExamplesModalOpen] = useState(false);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [menuAnchor, setMenuAnchor] = useState<{ top: number; right: number } | null>(null);
   const [packageToDelete, setPackageToDelete] = useState<MediaKitPackage | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -418,6 +425,8 @@ export default function DashboardMediaKitPage() {
 
   // Form inputs for package modal
   const [formTitle, setFormTitle] = useState("");
+  const [formCategory, setFormCategory] = useState<string>("");
+  const [formStoryPitch, setFormStoryPitch] = useState<string>("");
   const [formPlatform, setFormPlatform] = useState<string>("Instagram Reel");
   const [customPlatform, setCustomPlatform] = useState("");
   const [formMinPrice, setFormMinPrice] = useState("");
@@ -426,10 +435,21 @@ export default function DashboardMediaKitPage() {
   const [formTurnaround, setFormTurnaround] = useState<number>(2);
   const [formPriceUnit, setFormPriceUnit] = useState<string>("per_package");
   const [formIsStartingPrice, setFormIsStartingPrice] = useState(false);
-  const [formIsPopular, setFormIsPopular] = useState(false);
   const [formDeliverableInput, setFormDeliverableInput] = useState("");
   const [formDeliverables, setFormDeliverables] = useState<string[]>([]);
   const [showAllSuggestions, setShowAllSuggestions] = useState(false);
+
+  // "About you for brands" Media Kit v2 fields
+  const [brandIntro, setBrandIntro] = useState("");
+  const [brandNowMaking, setBrandNowMaking] = useState("");
+  const [brandAudienceDesc, setBrandAudienceDesc] = useState("");
+  const [brandAvailability, setBrandAvailability] = useState<"open" | "busy">("open");
+  const [brandReplyTime, setBrandReplyTime] = useState("Within 24h");
+  const [brandFitTags, setBrandFitTags] = useState<[string, string, string]>(["", "", ""]);
+  const [brandNofitTags, setBrandNofitTags] = useState<[string, string, string]>(["", "", ""]);
+  const [brandPromises, setBrandPromises] = useState<string[]>([]);
+  const [brandSignatureName, setBrandSignatureName] = useState("");
+  const [savingBrandStory, setSavingBrandStory] = useState(false);
 
   // Collab requests & snapshot fields
   const [collabRequests, setCollabRequests] = useState<any[]>([]);
@@ -479,6 +499,18 @@ export default function DashboardMediaKitPage() {
         setSettingPastBrands(Array.isArray(dbSettings.pastBrands) ? dbSettings.pastBrands.map((b: any) => b.name).join(", ") : "");
         setSettingAllowWhatsapp(dbSettings.allowWhatsapp !== false);
         setSettingAllowEmail(dbSettings.allowEmail !== false);
+
+        setBrandIntro(dbSettings.intro || "");
+        setBrandNowMaking(dbSettings.nowMaking || "");
+        setBrandAudienceDesc(dbSettings.audienceDesc || "");
+        setBrandAvailability(dbSettings.availability === "busy" ? "busy" : "open");
+        setBrandReplyTime(dbSettings.replyTime || "Within 24h");
+        const incomingFit = Array.isArray(dbSettings.fitTags) ? dbSettings.fitTags : [];
+        setBrandFitTags([incomingFit[0] || "", incomingFit[1] || "", incomingFit[2] || ""]);
+        const incomingNofit = Array.isArray(dbSettings.nofitTags) ? dbSettings.nofitTags : [];
+        setBrandNofitTags([incomingNofit[0] || "", incomingNofit[1] || "", incomingNofit[2] || ""]);
+        setBrandPromises(Array.isArray(dbSettings.promises) ? dbSettings.promises : []);
+        setBrandSignatureName(dbSettings.signatureName || profile.displayName || "");
       }
     }
     initMediaKit();
@@ -531,6 +563,34 @@ export default function DashboardMediaKitPage() {
     showToast("Media kit & brand contact options updated! 💼");
   };
 
+  const handleSaveBrandStory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingBrandStory(true);
+    try {
+      const updatedSettings: MediaKitSettings = {
+        ...settings,
+        intro: brandIntro.trim().slice(0, 300),
+        nowMaking: brandNowMaking.trim().slice(0, 80),
+        audienceDesc: brandAudienceDesc.trim().slice(0, 200),
+        availability: brandAvailability,
+        replyTime: brandReplyTime.trim() || "Within 24h",
+        fitTags: brandFitTags.map((t) => t.trim()).filter(Boolean).slice(0, 3),
+        nofitTags: brandNofitTags.map((t) => t.trim()).filter(Boolean).slice(0, 3),
+        promises: brandPromises.slice(0, 4),
+        signatureName: brandSignatureName.trim().slice(0, 120),
+        updatedAt: new Date().toISOString(),
+      };
+      setSettings(updatedSettings);
+      MediaKitService.saveSettings(updatedSettings);
+      if (activeEmail) {
+        await MediaKitService.saveToDb(activeEmail, updatedSettings, packages, activeCreatorId);
+      }
+      showToast("Saved 'About you for brands'! ✨");
+    } finally {
+      setSavingBrandStory(false);
+    }
+  };
+
   const handleOpenAddModal = () => {
     if (!canCreateGig(packages.length, subscription?.planKey)) {
       setIsLimitModalOpen(true);
@@ -538,6 +598,8 @@ export default function DashboardMediaKitPage() {
     }
     setEditingPkgId(null);
     setFormTitle("");
+    setFormCategory("");
+    setFormStoryPitch("");
     setFormPlatform("Instagram Reel");
     setCustomPlatform("");
     setFormMinPrice("");
@@ -546,7 +608,6 @@ export default function DashboardMediaKitPage() {
     setFormTurnaround(2);
     setFormPriceUnit("per_package");
     setFormIsStartingPrice(false);
-    setFormIsPopular(false);
     setFormDeliverableInput("");
     setFormDeliverables([]);
     setShowAllSuggestions(false);
@@ -557,6 +618,8 @@ export default function DashboardMediaKitPage() {
     setActiveMenuId(null);
     setEditingPkgId(pkg.id);
     setFormTitle(pkg.title);
+    setFormCategory(pkg.category || "");
+    setFormStoryPitch(pkg.storyPitch || "");
     const isStandard = (COLLABORATION_TYPES as readonly string[]).includes(pkg.platform) && pkg.platform !== "Other";
     if (isStandard) {
       setFormPlatform(pkg.platform);
@@ -580,7 +643,6 @@ export default function DashboardMediaKitPage() {
     setFormTurnaround(pkg.turnaroundDays);
     setFormPriceUnit(pkg.priceUnit || (pkg.title.toLowerCase().includes("monthly") ? "per_month" : "per_package"));
     setFormIsStartingPrice(Boolean(pkg.isStartingPrice));
-    setFormIsPopular(Boolean(pkg.isPopular));
     setFormDeliverableInput("");
     setFormDeliverables([...pkg.deliverables]);
     setShowAllSuggestions(false);
@@ -595,6 +657,8 @@ export default function DashboardMediaKitPage() {
     }
     setEditingPkgId(null);
     setFormTitle(template.title);
+    setFormCategory("");
+    setFormStoryPitch(template.description ? template.description.slice(0, 120) : "");
     setFormPlatform(template.platform);
     setCustomPlatform("");
     setFormMinPrice(template.minPrice);
@@ -603,7 +667,6 @@ export default function DashboardMediaKitPage() {
     setFormTurnaround(template.turnaroundDays);
     setFormPriceUnit(template.title.toLowerCase().includes("monthly") ? "per_month" : "per_package");
     setFormIsStartingPrice(false);
-    setFormIsPopular(false);
     setFormDeliverables([...template.deliverables]);
     setFormDeliverableInput("");
     setShowAllSuggestions(false);
@@ -628,6 +691,11 @@ export default function DashboardMediaKitPage() {
       return;
     }
 
+    if (!formCategory.trim()) {
+      showToast("Please select a category", "error");
+      return;
+    }
+
     if (formPlatform === "Other" && !customPlatform.trim()) {
       showToast("Please enter a custom collaboration type", "error");
       return;
@@ -639,7 +707,9 @@ export default function DashboardMediaKitPage() {
     const maxStr = formMaxPrice.trim() ? formatCurrencyString(formMaxPrice) : "";
     const formattedPrice = maxStr ? `${minStr}–${maxStr}` : minStr;
     const resolvedBadge = formPackageName.trim() || undefined;
-    const resolvedIsPopular = formIsPopular || formPackageName.toLowerCase().includes("popular");
+    const resolvedIsPopular = formPackageName.toLowerCase().includes("popular");
+    const resolvedStoryPitch = formStoryPitch.trim().slice(0, 120) || undefined;
+    const resolvedCategory = formCategory.trim();
 
     let updatedPkgs: MediaKitPackage[] = [];
     if (editingPkgId) {
@@ -648,6 +718,8 @@ export default function DashboardMediaKitPage() {
           ? {
             ...p,
             title: formTitle.trim(),
+            category: resolvedCategory,
+            storyPitch: resolvedStoryPitch,
             platform: resolvedPlatform,
             price: formattedPrice,
             minPrice: minStr,
@@ -666,6 +738,8 @@ export default function DashboardMediaKitPage() {
       const newPkg: MediaKitPackage = {
         id: `pkg_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
         title: formTitle.trim(),
+        category: resolvedCategory,
+        storyPitch: resolvedStoryPitch,
         platform: resolvedPlatform,
         price: formattedPrice,
         minPrice: minStr,
@@ -713,10 +787,10 @@ export default function DashboardMediaKitPage() {
 
   const handleShareService = async (pkg: MediaKitPackage) => {
     setActiveMenuId(null);
-    const handle = profile.username || "creator";
+    const handle = (profile.username || "creator").replace(/^@/, "");
     const shareUrl = typeof window !== "undefined"
-      ? `${window.location.origin}/${handle}`
-      : `https://inflixo.com/${handle}`;
+      ? `${window.location.origin}/${handle}/mediakit`
+      : `https://inflixo.com/${handle}/mediakit`;
     const success = await copyToClipboard(shareUrl);
     if (success) {
       showToast(`Link for "${pkg.title}" copied! ✨`);
@@ -789,8 +863,9 @@ export default function DashboardMediaKitPage() {
     .join(" + ");
 
   const cleanHandle = (profile.username || "creator").replace(/^@/, "");
-  const mediaKitPath = `/${cleanHandle}/media-kit`;
+  const mediaKitPath = `/${cleanHandle}/mediakit`;
   const mediaKitUrl = typeof window !== "undefined" ? `${window.location.origin}${mediaKitPath}` : mediaKitPath;
+  const pdfDownloadUrl = `/api/creator/mediakit/pdf?username=${encodeURIComponent(cleanHandle)}`;
   const activePackages = packages.filter((p) => p.isActive).length;
   const hasInstagram = Boolean(socials?.instagram?.url || socials?.instagram?.username || (socials?.instagram?.followers ?? 0) > 0);
   const hasYoutube = Boolean(socials?.youtube?.url || socials?.youtube?.username || (socials?.youtube?.subscribers ?? 0) > 0);
@@ -822,6 +897,8 @@ export default function DashboardMediaKitPage() {
     { label: "Brand contact", value: hasContactConfigured ? contactMethodsLabel || "Enabled" : "Not set up", ok: hasContactConfigured, onClick: () => setIsContactModalOpen(true) },
   ];
 
+  const activeMenuPkg = activeMenuId ? packages.find((p) => p.id === activeMenuId) || null : null;
+
   return (
     <PageContainer className="text-left">
       {/* 1. PAGE HEADER */}
@@ -829,6 +906,16 @@ export default function DashboardMediaKitPage() {
         {...PAGE_COPY.mediakit}
         actions={
           <>
+            <a
+              href={pdfDownloadUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="dash-btn-secondary"
+              title="Download A4 Media Kit PDF"
+            >
+              <FileText className="h-3.5 w-3.5" />
+              <span>Download PDF</span>
+            </a>
             <button type="button" onClick={handleShareMediaKit} className="dash-btn-secondary" title="Share public media kit">
               <Share2 className="h-3.5 w-3.5" />
               <span>Share</span>
@@ -908,6 +995,243 @@ export default function DashboardMediaKitPage() {
         />
       </StatGrid>
 
+      {/* 2.5 ABOUT YOU FOR BRANDS (MEDIA KIT V2) */}
+      <SectionCard
+        title="About you for brands"
+        subtitle="Your editorial story, audience voice, brand fit, and promises shown on your public media kit and PDF."
+        icon={<Sparkles className="h-4 w-4" />}
+        action={
+          <div className="flex items-center gap-3">
+            <a
+              href={pdfDownloadUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[12px] font-semibold text-[#64748b] hover:text-[#7A2253] transition-colors"
+            >
+              Download PDF
+            </a>
+            <a
+              href={mediaKitPath}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[13px] font-medium text-[#7A2253] hover:underline"
+            >
+              View public media kit
+            </a>
+          </div>
+        }
+        className="text-left"
+        bodyClassName="p-4 sm:p-5"
+      >
+        <form onSubmit={handleSaveBrandStory} className="space-y-4">
+          {/* Row 1: Intro + Audience Desc */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <label className="block text-[13px] font-semibold text-[#0f172a]">
+                  Hello / Brand introduction
+                </label>
+                <span className="text-[11px] text-[#64748b] font-medium">{brandIntro.length}/300</span>
+              </div>
+              <textarea
+                rows={3}
+                maxLength={300}
+                value={brandIntro}
+                onChange={(e) => setBrandIntro(e.target.value.slice(0, 300))}
+                placeholder="Write a warm, first-person note to brands about who you are and the stories you tell..."
+                className="w-full rounded-[5px] border border-[#e2e8f0] bg-white p-3 text-xs sm:text-sm text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none transition-colors resize-none"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <label className="block text-[13px] font-semibold text-[#0f172a]">
+                  Who follows along (Audience story)
+                </label>
+                <span className="text-[11px] text-[#64748b] font-medium">{brandAudienceDesc.length}/200</span>
+              </div>
+              <textarea
+                rows={3}
+                maxLength={200}
+                value={brandAudienceDesc}
+                onChange={(e) => setBrandAudienceDesc(e.target.value.slice(0, 200))}
+                placeholder="Describe the people who watch your work — what they care about, trust you for, and ask you about..."
+                className="w-full rounded-[5px] border border-[#e2e8f0] bg-white p-3 text-xs sm:text-sm text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none transition-colors resize-none"
+              />
+            </div>
+          </div>
+
+          {/* Row 2: Now making + Availability + Reply time + Signature name */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <div className="space-y-1 sm:col-span-2 lg:col-span-1">
+              <div className="flex items-center justify-between">
+                <label className="block text-[12px] font-semibold text-[#0f172a]">Currently making</label>
+                <span className="text-[10px] text-[#64748b]">{brandNowMaking.length}/80</span>
+              </div>
+              <input
+                type="text"
+                maxLength={80}
+                value={brandNowMaking}
+                onChange={(e) => setBrandNowMaking(e.target.value.slice(0, 80))}
+                placeholder="e.g., A 6-part series on hidden cafes"
+                className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-[12px] font-semibold text-[#0f172a]">Availability</label>
+              <div className="grid grid-cols-2 gap-1.5 h-9">
+                <button
+                  type="button"
+                  onClick={() => setBrandAvailability("open")}
+                  className={`rounded-[5px] border text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer transition-colors ${
+                    brandAvailability === "open"
+                      ? "bg-[#EAF7F0] border-[#10b981] text-[#047857]"
+                      : "bg-white border-[#e2e8f0] text-[#64748b] hover:bg-[#f8fafc]"
+                  }`}
+                >
+                  <span className="h-2 w-2 rounded-full bg-[#10b981]" />
+                  <span>Open</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBrandAvailability("busy")}
+                  className={`rounded-[5px] border text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer transition-colors ${
+                    brandAvailability === "busy"
+                      ? "bg-[#FFFBEB] border-[#f59e0b] text-[#b45309]"
+                      : "bg-white border-[#e2e8f0] text-[#64748b] hover:bg-[#f8fafc]"
+                  }`}
+                >
+                  <span className="h-2 w-2 rounded-full bg-[#f59e0b]" />
+                  <span>Busy</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-[12px] font-semibold text-[#0f172a]">Typical reply time</label>
+              <select
+                value={brandReplyTime}
+                onChange={(e) => setBrandReplyTime(e.target.value)}
+                className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-medium text-[#0f172a] focus:border-[#7A2253] focus:outline-none cursor-pointer"
+              >
+                <option value="Within 24h">Within 24h</option>
+                <option value="Within 48h">Within 48h</option>
+                <option value="2–3 business days">2–3 business days</option>
+                <option value="Within a week">Within a week</option>
+              </select>
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-[12px] font-semibold text-[#0f172a]">Closing signature name</label>
+              <input
+                type="text"
+                maxLength={120}
+                value={brandSignatureName}
+                onChange={(e) => setBrandSignatureName(e.target.value)}
+                placeholder={profile.displayName || "Your signature"}
+                className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Row 3: Fit tags (3) & Not-fit tags (3) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-1">
+            <div className="space-y-1.5">
+              <label className="block text-[12px] font-semibold text-[#0f172a]">
+                Great fit for (up to 3 tags)
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {[0, 1, 2].map((idx) => (
+                  <input
+                    key={`fit-${idx}`}
+                    type="text"
+                    maxLength={40}
+                    value={brandFitTags[idx] || ""}
+                    onChange={(e) => {
+                      const next: [string, string, string] = [...brandFitTags] as [string, string, string];
+                      next[idx] = e.target.value;
+                      setBrandFitTags(next);
+                    }}
+                    placeholder={idx === 0 ? "e.g., Specialty coffee" : idx === 1 ? "e.g., Indie D2C" : "e.g., Travel gear"}
+                    className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-[12px] font-semibold text-[#0f172a]">
+                Not a fit for (up to 3 tags)
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {[0, 1, 2].map((idx) => (
+                  <input
+                    key={`nofit-${idx}`}
+                    type="text"
+                    maxLength={40}
+                    value={brandNofitTags[idx] || ""}
+                    onChange={(e) => {
+                      const next: [string, string, string] = [...brandNofitTags] as [string, string, string];
+                      next[idx] = e.target.value;
+                      setBrandNofitTags(next);
+                    }}
+                    placeholder={idx === 0 ? "e.g., Betting apps" : idx === 1 ? "e.g., Crypto tokens" : "e.g., Hard scripts"}
+                    className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Row 4: Promises (4 presets) */}
+          <div className="space-y-1.5 pt-1">
+            <label className="block text-[12px] font-semibold text-[#0f172a]">
+              My promises to brands (select all that apply)
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {MEDIAKIT_PROMISE_PRESETS.map((preset) => {
+                const checked = brandPromises.includes(preset);
+                return (
+                  <label
+                    key={preset}
+                    className={`flex items-center gap-2.5 rounded-[5px] border px-3 py-2 text-xs font-medium cursor-pointer transition-colors ${
+                      checked
+                        ? "border-[#7A2253] bg-[#FFF0F5]/60 text-[#7A2253]"
+                        : "border-[#e2e8f0] bg-white text-[#334155] hover:bg-[#f8fafc]"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => {
+                        if (checked) {
+                          setBrandPromises(brandPromises.filter((p) => p !== preset));
+                        } else {
+                          setBrandPromises([...brandPromises, preset]);
+                        }
+                      }}
+                      className="rounded accent-[#7A2253]"
+                    />
+                    <span>{preset}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-end pt-2 border-t border-[#f1f5f9]">
+            <button
+              type="submit"
+              disabled={savingBrandStory}
+              className="dash-btn-primary"
+            >
+              <span>{savingBrandStory ? "Saving..." : "Save brand story"}</span>
+            </button>
+          </div>
+        </form>
+      </SectionCard>
+
       {/* 3. COLLAB PACKAGES (NO TABS) */}
       <SectionCard
         title={`Collab packages${packages.length > 0 ? ` (${packages.length})` : ""}`}
@@ -982,6 +1306,11 @@ export default function DashboardMediaKitPage() {
                             <p className="text-xs text-[#64748b]">
                               {pkg.platform}
                             </p>
+                            {pkg.storyPitch && (
+                              <p className="text-[11px] italic text-[#475569] line-clamp-2">
+                                &ldquo;{pkg.storyPitch}&rdquo;
+                              </p>
+                            )}
                             {badgeText && (
                               <div className="pt-0.5">
                                 <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] px-2 py-0.5 text-[11px] font-semibold text-[#7A2253]">
@@ -995,7 +1324,7 @@ export default function DashboardMediaKitPage() {
                         {/* 2. Category badge */}
                         <td className="py-4 px-4 align-top">
                           <span className="inline-flex items-center rounded-[5px] bg-[#f1f5f9] px-2.5 py-1 text-xs font-semibold text-[#475569]">
-                            {pkg.platform.includes("Reel") ? "Food & Beverage" : pkg.platform}
+                            {pkg.category || "—"}
                           </span>
                         </td>
 
@@ -1057,7 +1386,17 @@ export default function DashboardMediaKitPage() {
                                 type="button"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  setActiveMenuId(activeMenuId === pkg.id ? null : pkg.id);
+                                  if (activeMenuId === pkg.id) {
+                                    setActiveMenuId(null);
+                                    setMenuAnchor(null);
+                                  } else {
+                                    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                                    setMenuAnchor({
+                                      top: rect.bottom + 6,
+                                      right: Math.max(12, window.innerWidth - rect.right),
+                                    });
+                                    setActiveMenuId(pkg.id);
+                                  }
                                 }}
                                 className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white text-[#6B6B76] hover:bg-[#FAFAFB] hover:text-[#18181B] transition-colors cursor-pointer"
                                 aria-label="More options"
@@ -1065,54 +1404,6 @@ export default function DashboardMediaKitPage() {
                               >
                                 <MoreVertical className="h-4 w-4" />
                               </button>
-
-                              {activeMenuId === pkg.id && (
-                                <div
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="absolute right-0 top-full mt-1.5 w-44 rounded-[5px] border border-[#ECECF0] bg-white p-1.5 shadow-lg z-50 space-y-0.5 animate-in fade-in text-left"
-                                >
-                                  <button
-                                    type="button"
-                                    onClick={() => handleShareService(pkg)}
-                                    className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-[13px] font-medium text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer"
-                                  >
-                                    <Copy className="h-3.5 w-3.5 text-[#6B6B76]" />
-                                    <span>Share Link</span>
-                                  </button>
-
-                                  <button
-                                    type="button"
-                                    onClick={() => handleTogglePackageActive(pkg.id, pkg.isActive)}
-                                    className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-[13px] font-medium text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer"
-                                  >
-                                    {pkg.isActive ? (
-                                      <>
-                                        <EyeOff className="h-3.5 w-3.5 text-[#6B6B76]" />
-                                        <span>Hide from profile</span>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <Eye className="h-3.5 w-3.5 text-[#6B6B76]" />
-                                        <span>Set as active</span>
-                                      </>
-                                    )}
-                                  </button>
-
-                                  <div className="my-1 border-t border-[#ECECF0]" />
-
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setActiveMenuId(null);
-                                      setPackageToDelete(pkg);
-                                    }}
-                                    className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-[13px] font-medium text-[#C2414B] hover:bg-[#fef2f2] transition-colors cursor-pointer"
-                                  >
-                                    <Trash2 className="h-3.5 w-3.5" />
-                                    <span>Delete package</span>
-                                  </button>
-                                </div>
-                              )}
                             </div>
                           </div>
                         </td>
@@ -1160,15 +1451,23 @@ export default function DashboardMediaKitPage() {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="inline-flex items-center rounded-[5px] bg-[#f1f5f9] px-2 py-0.5 text-[11px] font-medium text-[#475569]">
-                        {pkg.platform}
-                      </span>
+                      {pkg.category && (
+                        <span className="inline-flex items-center rounded-[5px] bg-[#f1f5f9] px-2 py-0.5 text-[11px] font-medium text-[#475569]">
+                          {pkg.category}
+                        </span>
+                      )}
                       {badgeText && (
                         <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] px-2 py-0.5 text-[11px] font-semibold text-[#7A2253]">
                           ⭐ {badgeText}
                         </span>
                       )}
                     </div>
+
+                    {pkg.storyPitch && (
+                      <p className="text-xs italic text-[#475569]">
+                        &ldquo;{pkg.storyPitch}&rdquo;
+                      </p>
+                    )}
 
                     {/* Deliverables list */}
                     {pkg.deliverables && pkg.deliverables.length > 0 && (
@@ -1221,6 +1520,60 @@ export default function DashboardMediaKitPage() {
           </div>
         )}
       </SectionCard>
+
+      {/* Portal-rendered Package ⋮ Dropdown Menu (never clips when 1 package) */}
+      {typeof document !== "undefined" && activeMenuPkg && menuAnchor &&
+        createPortal(
+          <div
+            data-pkg-menu
+            onClick={(e) => e.stopPropagation()}
+            style={{ top: menuAnchor.top, right: menuAnchor.right }}
+            className="fixed w-44 rounded-[5px] border border-[#ECECF0] bg-white p-1.5 shadow-lg z-[9999] space-y-0.5 animate-in fade-in text-left"
+          >
+            <button
+              type="button"
+              onClick={() => handleShareService(activeMenuPkg)}
+              className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-[13px] font-medium text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer"
+            >
+              <Copy className="h-3.5 w-3.5 text-[#6B6B76]" />
+              <span>Share Link</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleTogglePackageActive(activeMenuPkg.id, activeMenuPkg.isActive)}
+              className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-[13px] font-medium text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer"
+            >
+              {activeMenuPkg.isActive ? (
+                <>
+                  <EyeOff className="h-3.5 w-3.5 text-[#6B6B76]" />
+                  <span>Hide from profile</span>
+                </>
+              ) : (
+                <>
+                  <Eye className="h-3.5 w-3.5 text-[#6B6B76]" />
+                  <span>Set as active</span>
+                </>
+              )}
+            </button>
+
+            <div className="my-1 border-t border-[#ECECF0]" />
+
+            <button
+              type="button"
+              onClick={() => {
+                setActiveMenuId(null);
+                setMenuAnchor(null);
+                setPackageToDelete(activeMenuPkg);
+              }}
+              className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-[13px] font-medium text-[#C2414B] hover:bg-[#fef2f2] transition-colors cursor-pointer"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              <span>Delete package</span>
+            </button>
+          </div>,
+          document.body
+        )}
 
       {/* 4.5. COLLAB REQUESTS INBOX */}
       <SectionCard
@@ -1306,24 +1659,65 @@ export default function DashboardMediaKitPage() {
       >
         <form id="service-form" onSubmit={handleSavePackage} className="flex flex-col flex-1 min-h-0">
           <ModalBody className="p-4 sm:p-5 space-y-4 text-left">
-            {/* Package title */}
-            <div className="space-y-1">
-              <label className="block text-[13px] font-medium text-[#0f172a]">
-                Package title <span className="text-[#C2414B]">*</span>
-              </label>
-              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
-                  <FileText className="h-4 w-4" />
+            {/* Package title & Category */}
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+              <div className="sm:col-span-7 space-y-1">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
+                  Package title <span className="text-[#C2414B]">*</span>
+                </label>
+                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                    <FileText className="h-4 w-4" />
+                  </div>
+                  <input
+                    type="text"
+                    value={formTitle}
+                    onChange={(e) => setFormTitle(e.target.value)}
+                    placeholder="e.g., Cafe Visit Reel, Brand Promo Reel, or Store Launch"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    required
+                  />
                 </div>
-                <input
-                  type="text"
-                  value={formTitle}
-                  onChange={(e) => setFormTitle(e.target.value)}
-                  placeholder="e.g., Cafe Visit Reel, Brand Promo Reel, or Store Launch"
-                  className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
-                  required
-                />
               </div>
+
+              <div className="sm:col-span-5 space-y-1">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
+                  Category <span className="text-[#C2414B]">*</span>
+                </label>
+                <select
+                  value={formCategory}
+                  onChange={(e) => setFormCategory(e.target.value)}
+                  required
+                  className="w-full h-10 px-3 rounded-[5px] border border-[#e2e8f0] bg-white text-xs sm:text-sm font-medium text-[#0f172a] focus:border-[#7A2253] outline-none cursor-pointer"
+                >
+                  <option value="" disabled>
+                    Select a category...
+                  </option>
+                  {MEDIAKIT_PACKAGE_CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Story Pitch (120 chars) */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
+                  The story I&apos;d tell for you <span className="text-[#64748b] font-normal">(Optional)</span>
+                </label>
+                <span className="text-[10px] font-medium text-[#64748b]">{formStoryPitch.length}/120</span>
+              </div>
+              <input
+                type="text"
+                maxLength={120}
+                value={formStoryPitch}
+                onChange={(e) => setFormStoryPitch(e.target.value.slice(0, 120))}
+                placeholder="e.g., A first-person reel weaving your product into my morning routine"
+                className="w-full h-10 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:outline-none transition-colors"
+              />
             </div>
 
             {/* Collaboration Type & Delivery Time */}
@@ -1460,15 +1854,6 @@ export default function DashboardMediaKitPage() {
                         className="rounded border-[#cbd5e1] text-[#7A2253] focus:ring-[#7A2253]"
                       />
                       <span>Starting price (&quot;From ₹...&quot;)</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-[#0f172a]">
-                      <input
-                        type="checkbox"
-                        checked={formIsPopular}
-                        onChange={(e) => setFormIsPopular(e.target.checked)}
-                        className="rounded border-[#cbd5e1] text-[#7A2253] focus:ring-[#7A2253]"
-                      />
-                      <span>Mark as &quot;Most popular&quot;</span>
                     </label>
                   </div>
                 </div>

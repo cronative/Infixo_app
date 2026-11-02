@@ -66,6 +66,15 @@ export const DEFAULT_SETTINGS: MediaKitSettings = {
   acceptingSponsors: true,
   minBudget: "",
   preferredCategories: ["Technology & AI", "Entertainment", "Lifestyle", "Gaming"],
+  intro: "",
+  nowMaking: "",
+  audienceDesc: "",
+  availability: "open",
+  replyTime: "Within 24h",
+  fitTags: [],
+  nofitTags: [],
+  promises: [],
+  signatureName: "",
 };
 
 export class MediaKitService {
