@@ -642,7 +642,8 @@ export function LivePreviewCard({
   const profile: CreatorProfile = incomingProfile || EMPTY_PROFILE_FALLBACK;
   const socials: SocialAccounts = incomingSocials || EMPTY_SOCIAL_ACCOUNTS;
   const series: Series[] = incomingSeries || [];
-  const isPremiumLayout = layoutMode === "premium" || layoutMode === "stacked";
+  const isListingPage = Boolean(seriesOnlyMode || productsOnlyMode || reviewsOnlyMode || linksOnlyMode);
+  const isPremiumLayout = !isListingPage && (layoutMode === "premium" || layoutMode === "stacked");
   const effectiveSeriesPreviewLimit = isPremiumLayout ? 3 : seriesPreviewLimit;
   const displayedSeries = typeof effectiveSeriesPreviewLimit === "number" ? series.slice(0, effectiveSeriesPreviewLimit) : series;
   const { showToast } = useToast();
@@ -1532,8 +1533,6 @@ export function LivePreviewCard({
   );
   const validLinksCount = validLinksList.length;
 
-  const isListingPage = Boolean(seriesOnlyMode || productsOnlyMode || reviewsOnlyMode || linksOnlyMode);
-
   const hasSeriesContent = !isListingPage && effectiveVisibilitySettings.showSeries !== false && series.length > 0;
   const hasLinksContent = !isListingPage && (
     (effectiveVisibilitySettings.showCustomLinks !== false && validLinksCount > 0) ||
@@ -1925,136 +1924,46 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {/* Fixed Listing Header on Dedicated Listing Pages (Series / Shop / Reviews) */}
+        {/* Divider below ProfileHeader on Standalone Listing Pages & Dashboard Previews */}
         {isListingPage && (
-          <div className="relative z-20 -mx-4 sm:-mx-5 select-none bg-(--card-bg) ">
-            {/* Divider between Total Fanbase and Title */}
+          <div className="relative z-20 mt-2.5 sm:mt-3 -mx-4 sm:-mx-5 select-none bg-(--card-bg)">
             <div style={{ backgroundColor: c.divider }} className="h-px opacity-60" aria-hidden="true" />
-
-            {/* Title & Subtitle for Series */}
-            {seriesOnlyMode && (
-              <div className="px-4 sm:px-5 pt-3 pb-2.5 text-left">
-                <div className="flex items-center justify-between gap-2 px-0.5">
-                  <div className="min-w-0">
-                    <h2
-                      style={{
-                        color: c.primaryText,
-                        fontFamily: typ.headingFontFamily,
-                        fontWeight: 700,
-                      }}
-                      className="text-[14.5px] sm:text-[15.5px] font-bold tracking-tight"
-                    >
-                      Series
-                    </h2>
-                    <p
-                      style={{ color: c.secondaryText }}
-                      className="text-[11px] sm:text-xs font-normal mt-0.5"
-                    >
-                      Watch episodes in the right order.
-                    </p>
-                  </div>
-
-                  {series.length > 1 && (
-                    <div className="relative shrink-0">
-                      <select
-                        value={seriesSortOrder}
-                        onChange={(e) => setSeriesSortOrder(e.target.value)}
-                        className="appearance-none bg-(--card-bg) border border-(--surface-border)/15 rounded-[5px] text-[11px] sm:text-xs font-medium text-(--text)  py-1 pl-2.5 pr-6 cursor-pointer focus:outline-hidden hover:border-(--surface-border)/30  transition-colors shadow-none"
-                      >
-                        <option value="latest">Latest First</option>
-                        <option value="oldest">Oldest First</option>
-                        <option value="episodes">Most Episodes</option>
-                      </select>
-                      <ChevronDown className="h-3 w-3 text-(--icon) absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Title & Subtitle for Products / Shop */}
-            {productsOnlyMode && (
-              <div className="px-4 sm:px-5 pt-2.5 pb-2 text-left">
-                <div className="flex items-center justify-between px-0.5">
-                  <div className="min-w-0">
-                    <h2
-                      style={{
-                        color: c.primaryText,
-                        fontFamily: typ.headingFontFamily,
-                        fontWeight: 700,
-                      }}
-                      className="text-[14.5px] sm:text-[15.5px] font-bold tracking-tight"
-                    >
-                      Shop
-                    </h2>
-                  </div>
-                </div>
-                <p
-                  style={{ color: c.secondaryText }}
-                  className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5"
-                >
-                  Products I use and recommend.
-                </p>
-              </div>
-            )}
-
-            {/* Title & Subtitle for Links */}
-            {linksOnlyMode && (
-              <div className="px-4 sm:px-5 pt-2.5 pb-2 text-left">
-                <h2
-                  style={{
-                    color: c.primaryText,
-                    fontFamily: typ.headingFontFamily,
-                    fontWeight: 700,
-                  }}
-                  className="text-[14.5px] sm:text-[15.5px] font-bold tracking-tight px-0.5"
-                >
-                  Links
-                </h2>
-                <p
-                  style={{ color: c.secondaryText }}
-                  className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5"
-                >
-                  Recommended links, tickets &amp; websites.
-                </p>
-              </div>
-            )}
 
             {/* Title & Subtitle for Reviews */}
             {reviewsOnlyMode && (
-              <div className="px-4 sm:px-5 pt-2.5 pb-2 text-left">
-                <div className="flex items-center justify-between px-0.5">
-                  <h2
-                    style={{
-                      color: c.primaryText,
-                      fontFamily: typ.headingFontFamily,
-                      fontWeight: 700,
-                    }}
-                    className={`flex items-center gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
-                  >
-                    <Star className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
-                    <span>Brand Endorsements &amp; Trust</span>
-                  </h2>
-                  {approvedReviews.length > 0 && (
-                    <span
-                      style={{ color: c.mutedText }}
-                      className="text-[11px] sm:text-xs font-semibold"
+              <>
+                <div className="px-4 sm:px-5 pt-2.5 pb-2 text-left">
+                  <div className="flex items-center justify-between px-0.5">
+                    <h2
+                      style={{
+                        color: c.primaryText,
+                        fontFamily: typ.headingFontFamily,
+                        fontWeight: 700,
+                      }}
+                      className={`flex items-center gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
                     >
-                      {approvedReviews.length} {approvedReviews.length === 1 ? "Review" : "Reviews"}
-                    </span>
-                  )}
+                      <Star className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
+                      <span>Brand Endorsements &amp; Trust</span>
+                    </h2>
+                    {approvedReviews.length > 0 && (
+                      <span
+                        style={{ color: c.mutedText }}
+                        className="text-[11px] sm:text-xs font-semibold"
+                      >
+                        {approvedReviews.length} {approvedReviews.length === 1 ? "Review" : "Reviews"}
+                      </span>
+                    )}
+                  </div>
+                  <p
+                    style={{ color: c.secondaryText }}
+                    className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5"
+                  >
+                    Verified feedback and testimonials from leading brands &amp; collaboration partners.
+                  </p>
                 </div>
-                <p
-                  style={{ color: c.secondaryText }}
-                  className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5"
-                >
-                  Verified feedback and testimonials from leading brands &amp; collaboration partners.
-                </p>
-              </div>
+                <div style={{ backgroundColor: c.divider }} className="h-px opacity-60" aria-hidden="true" />
+              </>
             )}
-
-            {/* Divider separating fixed listing header from scrollable list */}
-            <div style={{ backgroundColor: c.divider }} className="h-px opacity-60" aria-hidden="true" />
           </div>
         )}
       </div>
@@ -2594,15 +2503,13 @@ export function LivePreviewCard({
               if (isDashboardPreview || linksOnlyMode) {
                 return (
                   <div id="links-section" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[2] mt-4 sm:mt-5" : linksOnlyMode ? "order-[5] mt-1.5 sm:mt-2" : isTabsLayout ? "order-[5] mt-1.5 sm:mt-2" : "order-[5] mt-6 sm:mt-7"}`}>
-                    {!linksOnlyMode && (
-                      <TabSectionHeader
-                        title="Links"
-                        subtitle="Recommended links, tickets & websites."
-                        primaryTextColor={c.primaryText}
-                        secondaryTextColor={c.secondaryText}
-                        headingFontFamily={typ.headingFontFamily}
-                      />
-                    )}
+                    <TabSectionHeader
+                      title="Links"
+                      subtitle="Recommended links, tickets & websites"
+                      primaryTextColor={c.primaryText}
+                      secondaryTextColor={c.secondaryText}
+                      headingFontFamily={typ.headingFontFamily}
+                    />
                     <div className="rounded-[5px] border border-dashed border-(--surface-border) p-8 text-center my-2">
                       <div className="w-10 h-10 rounded-full bg-(--surface) flex items-center justify-center mx-auto mb-2 text-(--text-muted)">
                         <LinkIcon className="h-5 w-5" />
@@ -2684,29 +2591,27 @@ export function LivePreviewCard({
                     : "order-[5] mt-6 sm:mt-7"
                 }`}
               >
-                {!linksOnlyMode && (
-                  <TabSectionHeader
-                    title="Links"
-                    subtitle="Recommended links, tickets & websites."
-                    action={
-                      isPremiumLayout ? (
-                        <span
-                          style={{
-                            color: "var(--accent-text)",
-                            backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
-                            borderColor: "var(--surface-border)",
-                          }}
-                          className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
-                        >
-                          {validLinks.length} {validLinks.length === 1 ? "Link" : "Links"}
-                        </span>
-                      ) : undefined
-                    }
-                    primaryTextColor={c.primaryText}
-                    secondaryTextColor={c.secondaryText}
-                    headingFontFamily={typ.headingFontFamily}
-                  />
-                )}
+                <TabSectionHeader
+                  title="Links"
+                  subtitle="Recommended links, tickets & websites"
+                  action={
+                    isPremiumLayout ? (
+                      <span
+                        style={{
+                          color: "var(--accent-text)",
+                          backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
+                          borderColor: "var(--surface-border)",
+                        }}
+                        className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
+                      >
+                        {validLinks.length} {validLinks.length === 1 ? "Link" : "Links"}
+                      </span>
+                    ) : undefined
+                  }
+                  primaryTextColor={c.primaryText}
+                  secondaryTextColor={c.secondaryText}
+                  headingFontFamily={typ.headingFontFamily}
+                />
 
                 <div className="space-y-2 w-full">
                   {/* Pinned Link */}
@@ -2795,45 +2700,57 @@ export function LivePreviewCard({
         {/* 1. Series Section */}
         {(seriesOnlyMode || (!isListingPage && (isPremiumLayout || !isTabsLayout || activeNavTab === "watch" || activeNavTab === "series"))) && effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || seriesOnlyMode || isDashboardPreview) && (
           <div id="series-section" className={`relative z-10 w-full text-left ${isPremiumLayout ? "order-[1] mt-4 sm:mt-5 space-y-2.5" : seriesOnlyMode ? "order-[10] mt-1.5 sm:mt-2 pb-4" : isTabsLayout ? `order-[10] mt-1.5 sm:mt-2 ${isDashboardPreview ? "pb-2" : "pb-12"}` : `order-[10] mt-6 sm:mt-7 space-y-2.5 ${isDashboardPreview ? "pb-2" : "pb-12"}`}`}>
-            {!seriesOnlyMode && (
-              <TabSectionHeader
-                title={isPremiumLayout ? "Series & Playlists" : "Series"}
-                subtitle={landingDemo ? "Start from Episode 1." : "Watch episodes in the right order."}
-                primaryTextColor={c.primaryText}
-                secondaryTextColor={c.secondaryText}
-                headingFontFamily={typ.headingFontFamily}
-                action={
-                  showPlatformChips ? (
-                    <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                      {[
-                        { key: "all", label: "All" },
-                        { key: "youtube", label: "YouTube" },
-                        { key: "instagram", label: "Instagram" },
-                        { key: "facebook", label: "Facebook" },
-                      ]
-                        .filter((chip) => chip.key === "all" || (seriesPlatformCounts[chip.key] || 0) > 0)
-                        .map((chip) => {
-                          const isActive = seriesFilter === chip.key;
-                          return (
-                            <button
-                              key={chip.key}
-                              type="button"
-                              onClick={() => setSeriesFilter(chip.key)}
-                              className={`px-2.5 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer ${
- isActive
- ? "bg-(--accent) text-(--on-accent) shadow-xs"
-                                  : "bg-black/5  text-(--text)  hover:bg-black/10 "
-                              }`}
-                            >
-                              {chip.label}
-                            </button>
-                          );
-                        })}
-                    </div>
-                  ) : undefined
-                }
-              />
-            )}
+            <TabSectionHeader
+              title={isPremiumLayout ? "Series & Playlists" : "Series"}
+              subtitle={landingDemo ? "Start from Episode 1." : "Watch episodes in the right order."}
+              primaryTextColor={c.primaryText}
+              secondaryTextColor={c.secondaryText}
+              headingFontFamily={typ.headingFontFamily}
+              action={
+                seriesOnlyMode && series.length >= 2 ? (
+                  <div className="relative shrink-0">
+                    <select
+                      value={seriesSortOrder}
+                      onChange={(e) => setSeriesSortOrder(e.target.value)}
+                      aria-label="Sort series"
+                      className="appearance-none bg-(--card-bg) border border-(--surface-border) rounded-[5px] text-[11px] sm:text-xs font-medium text-(--text) py-1 pl-2.5 pr-6 cursor-pointer focus:outline-hidden hover:border-(--surface-border) transition-colors shadow-none"
+                    >
+                      <option value="latest">Latest First</option>
+                      <option value="oldest">Oldest First</option>
+                      <option value="episodes">Most Episodes</option>
+                    </select>
+                    <ChevronDown className="h-3 w-3 text-(--icon) absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                ) : showPlatformChips ? (
+                  <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                    {[
+                      { key: "all", label: "All" },
+                      { key: "youtube", label: "YouTube" },
+                      { key: "instagram", label: "Instagram" },
+                      { key: "facebook", label: "Facebook" },
+                    ]
+                      .filter((chip) => chip.key === "all" || (seriesPlatformCounts[chip.key] || 0) > 0)
+                      .map((chip) => {
+                        const isActive = seriesFilter === chip.key;
+                        return (
+                          <button
+                            key={chip.key}
+                            type="button"
+                            onClick={() => setSeriesFilter(chip.key)}
+                            className={`px-2.5 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer ${
+                              isActive
+                                ? "bg-(--accent) text-(--on-accent) shadow-xs"
+                                : "bg-black/5  text-(--text)  hover:bg-black/10 "
+                            }`}
+                          >
+                            {chip.label}
+                          </button>
+                        );
+                      })}
+                  </div>
+                ) : undefined
+              }
+            />
 
             {series.length === 0 ? (
               <div
@@ -2984,7 +2901,7 @@ export function LivePreviewCard({
                 Digital products
               </h3>
             )}
-            {!productsOnlyMode && !landingDemo && (
+            {!landingDemo && (
               <TabSectionHeader
                 title={isPremiumLayout ? "Products" : "Shop"}
                 subtitle="Products I use and recommend."
@@ -3068,8 +2985,8 @@ export function LivePreviewCard({
                   <ProductGridCard
                     key={product.id}
                     name={product.name}
-                    imageUrl={product.imageUrl}
-                    href={product.productUrl}
+                    imageUrl={product.imageUrl || (product as any).image || ""}
+                    href={product.productUrl || (product as any).url || ""}
                     price={formatProductPrice(product.pricePaise)}
                     note={product.note}
                     isAffiliate={product.isAffiliate !== false}

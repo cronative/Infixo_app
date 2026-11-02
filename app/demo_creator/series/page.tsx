@@ -69,7 +69,7 @@ export default function DemoCreatorSeriesPage() {
         containedScroll={false}
         seriesOnlyMode={true}
         seriesOpenMode="page"
-        pageHeader={{ pageLabel: "Shows & Series", backHref: "/demo_creator", backLabel: "Back to profile" }}
+        pageHeader={{ pageLabel: "Series", backHref: "/demo_creator", backLabel: "Back to profile" }}
         onShare={handleShare}
       />
     </CreatorPublicShell>

@@ -12,6 +12,7 @@ import { ThemeBackgroundAnim } from "@/components/theme/ThemeBackgroundAnim";
 import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
 import { FocusOverlay } from "@/components/theme/FocusOverlay";
 import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
+import { resolveProductImageSrc } from "@/components/products/ProductImage";
 import { ProductService } from "@/services/ProductService";
 import { LinkService, type LinkDto } from "@/services/LinkService";
 import { customLinksRepository } from "@/repositories/localRepository";
@@ -29,11 +30,23 @@ interface PhonePreviewProps {
 }
 
 function normalizeProduct(p: ShopProduct | CreatorProduct): CreatorProduct {
-  if ("pricePaise" in p) return p;
+  const rawImage =
+    ("imageUrl" in p && p.imageUrl)
+      ? p.imageUrl
+      : ("image" in p && p.image)
+      ? p.image
+      : "";
+  const imageUrl = resolveProductImageSrc(rawImage);
+  if ("pricePaise" in p) {
+    return {
+      ...p,
+      imageUrl,
+    };
+  }
   return {
     id: p.id,
     name: p.name,
-    imageUrl: p.image || "",
+    imageUrl,
     pricePaise: typeof p.price === "number" ? Math.round(p.price * 100) : null,
     productUrl: p.url,
     note: p.note,
@@ -101,13 +114,6 @@ export function PhonePreview({
   const handle = rawProp || "demo_creator";
   const cleanSubpath = subpath ? subpath.replace(/^\//, "").replace(/\/$/, "") : "";
 
-  const initialTab = useMemo(() => {
-    if (cleanSubpath === "series") return "watch";
-    if (cleanSubpath === "products" || cleanSubpath === "shop") return "shop";
-    if (cleanSubpath === "links") return "links";
-    return undefined;
-  }, [cleanSubpath]);
-
   // Products state (if not passed as prop)
   const [internalProducts, setInternalProducts] = useState<CreatorProduct[]>([]);
   useEffect(() => {
@@ -116,7 +122,7 @@ export function PhonePreview({
     ProductService.list()
       .then((items) => {
         if (!cancelled && Array.isArray(items)) {
-          setInternalProducts(items);
+          setInternalProducts(items.map(normalizeProduct));
         }
       })
       .catch(() => {});
@@ -165,11 +171,18 @@ export function PhonePreview({
     return internalLinks;
   }, [linksProp, internalLinks]);
 
-  const publicHref = `/${handle}`;
+  const pageTitle = useMemo(() => {
+    if (cleanSubpath === "series") return "Series";
+    if (cleanSubpath === "products" || cleanSubpath === "shop") return "Shop";
+    if (cleanSubpath === "links") return "Links";
+    return "Live Preview";
+  }, [cleanSubpath]);
+
+  const publicHref = `/${handle}${cleanSubpath ? `/${cleanSubpath}` : ""}`;
 
   const handleCopyLink = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
-    const fullUrl = `${origin}/${handle}`;
+    const fullUrl = `${origin}/${handle}${cleanSubpath ? `/${cleanSubpath}` : ""}`;
     const ok = await copyToClipboard(fullUrl);
     if (ok) {
       setCopied(true);
@@ -191,11 +204,11 @@ export function PhonePreview({
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-[5px] bg-[#F4F4F5] border border-[#E4E4E7]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#10B981] animate-pulse" />
             <span className="text-[11.5px] font-semibold text-[#18181B] truncate">
-              Live Preview
+              {pageTitle}
             </span>
           </div>
           <span className="text-[11px] text-[#A1A1AA] truncate font-mono">
-            /{handle}
+            {publicHref}
           </span>
         </div>
 
@@ -267,7 +280,7 @@ export function PhonePreview({
           <FocusOverlay overlay={meta.focusOverlay} contained={true} />
         )}
 
-        {/* Live profile card (mirrors public profile tabs & headers) */}
+        {/* Live profile card (same component & mode as standalone public page) */}
         <div className="relative z-10 flex flex-col px-4 py-4">
           <LivePreviewCard
             profile={profile}
@@ -279,7 +292,9 @@ export function PhonePreview({
             themeKey={resolvedThemeKey}
             variant="full"
             layoutMode={profile.publicProfileLayout === "premium" ? "premium" : "tabs"}
-            initialTab={initialTab}
+            seriesOnlyMode={cleanSubpath === "series"}
+            productsOnlyMode={cleanSubpath === "products" || cleanSubpath === "shop"}
+            linksOnlyMode={cleanSubpath === "links"}
             containedScroll={false}
             pageHeader={undefined}
             hideFooter={true}

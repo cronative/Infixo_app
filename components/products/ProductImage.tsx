@@ -1,17 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { ShoppingBag } from "lucide-react";
 
-// `cover` fills the box edge to edge (public Shop/Setup grid cards); default keeps the padded contain look.
+export function resolveProductImageSrc(src?: string | null): string {
+  if (!src) return "";
+  const trimmed = src.trim();
+  if (trimmed.startsWith("/uploads/")) {
+    return `/api/assets${trimmed}`;
+  }
+  return trimmed;
+}
+
+// `cover` fills the box edge to edge; default (`cover = false`) keeps the padded object-contain look on a light background.
 export function ProductImage({ src, name, className = "", cover = false }: { src: string; name: string; className?: string; cover?: boolean }) {
+  const resolvedSrc = resolveProductImageSrc(src);
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   return (
-    <div className={`relative flex shrink-0 items-center justify-center overflow-hidden ${cover ? "" : "rounded-lg"} bg-(--surface)/80 ${className}`}>
-      {src && failedSrc !== src ? (
-        <Image src={src} alt={name} fill sizes="(max-width: 640px) 110px, 160px" unoptimized className={cover ? "object-cover" : "object-contain p-1"} loading="lazy" onError={() => setFailedSrc(src)} />
-      ) : <ShoppingBag className="h-5 w-5 text-(--text-muted)" aria-label="Product image unavailable" />}
+    <div className={`relative flex shrink-0 items-center justify-center overflow-hidden ${cover ? "bg-(--surface)/80" : "bg-[#F8FAFC]"} ${className}`}>
+      {resolvedSrc && failedSrc !== resolvedSrc ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={resolvedSrc}
+          alt={name}
+          onError={() => setFailedSrc(resolvedSrc)}
+          className={`h-full w-full ${cover ? "object-cover" : "object-contain p-2"}`}
+        />
+      ) : (
+        <ShoppingBag className="h-5 w-5 text-(--text-muted)" aria-label="Product image unavailable" />
+      )}
     </div>
   );
 }

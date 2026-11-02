@@ -15,11 +15,20 @@ type ProductRow = RowDataPacket & {
   isAffiliate: number | boolean | null;
 };
 
+function normalizeProductImageUrl(url: string | null | undefined): string {
+  if (!url) return "";
+  const trimmed = url.trim();
+  if (trimmed.startsWith("/uploads/")) {
+    return `/api/assets${trimmed}`;
+  }
+  return trimmed;
+}
+
 function mapRow(row: ProductRow): CreatorProduct {
   return {
     id: row.id,
     name: row.name,
-    imageUrl: row.imageUrl,
+    imageUrl: normalizeProductImageUrl(row.imageUrl),
     pricePaise: row.pricePaise === null ? null : Number(row.pricePaise),
     productUrl: row.productUrl,
     note: row.note || null,

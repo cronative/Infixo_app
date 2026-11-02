@@ -311,7 +311,7 @@ export default function AllProductsClient() {
         variant="full"
         containedScroll={false}
         productsOnlyMode
-        pageHeader={{ pageLabel: "My Products", backHref: `/${cleanHandle}`, backLabel: "Back to profile" }}
+        pageHeader={{ pageLabel: "Shop", backHref: `/${cleanHandle}`, backLabel: "Back to profile" }}
         onShare={handleShareProductsList}
       />
     </CreatorPublicShell>

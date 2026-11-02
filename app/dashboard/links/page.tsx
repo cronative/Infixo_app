@@ -90,11 +90,12 @@ function LinkIconBox({ kind, url, iconUrl, small = false }: { kind: "link" | "gr
   if (platform.isKnownApp) {
     return <div className={`${size} rounded-[5px] flex items-center justify-center shrink-0 overflow-hidden ${platform.bgClass}`}>{platform.renderIcon(small)}</div>;
   }
-  if (iconUrl && !failed) {
+  const resolvedIconUrl = iconUrl?.startsWith("/uploads/") ? `/api/assets${iconUrl}` : iconUrl;
+  if (resolvedIconUrl && !failed) {
     return (
       <div className={`${size} rounded-[5px] flex items-center justify-center shrink-0 overflow-hidden bg-white border border-[#ECECF0]`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={iconUrl} alt="" className={small ? "h-3.5 w-3.5 object-contain" : "h-4 w-4 object-contain"} onError={() => setFailed(true)} />
+        <img src={resolvedIconUrl} alt="" className={small ? "h-3.5 w-3.5 object-contain" : "h-4 w-4 object-contain"} onError={() => setFailed(true)} />
       </div>
     );
   }

@@ -35,8 +35,10 @@ export function LinkRow({
 
   // Thumbnail fallback; otherwise the favicon saved on the server (known platforms keep their brand icon).
   const [faviconFailed, setFaviconFailed] = useState(false);
-  const thumbnail = (link as { thumbnail?: string }).thumbnail;
-  const favicon = !thumbnail && !platform.isKnownApp && !faviconFailed ? link.iconUrl : undefined;
+  const rawThumb = (link as { thumbnail?: string }).thumbnail;
+  const thumbnail = rawThumb?.startsWith("/uploads/") ? `/api/assets${rawThumb}` : rawThumb;
+  const rawIcon = link.iconUrl?.startsWith("/uploads/") ? `/api/assets${link.iconUrl}` : link.iconUrl;
+  const favicon = !thumbnail && !platform.isKnownApp && !faviconFailed ? rawIcon : undefined;
   const showGlobe = !thumbnail && !favicon && !platform.isKnownApp;
   const iconBg = thumbnail
     ? "bg-(--surface) "

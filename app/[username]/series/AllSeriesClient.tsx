@@ -343,7 +343,7 @@ export default function AllSeriesClient() {
           containedScroll={false}
           seriesOpenMode="page"
           seriesOnlyMode
-          pageHeader={{ pageLabel: "Shows & Series", backHref: `/${cleanHandle}`, backLabel: "Back to profile" }}
+          pageHeader={{ pageLabel: "Series", backHref: `/${cleanHandle}`, backLabel: "Back to profile" }}
           onShare={handleShareSeriesList}
         />
     </CreatorPublicShell>

@@ -63,6 +63,40 @@ function isFreeTrialExpired(subscription?: {
   return false;
 }
 
+function buildSocialAccounts(rows: Array<Record<string, unknown>>): SocialAccounts {
+  const accounts: SocialAccounts = { ...EMPTY_SOCIAL_ACCOUNTS };
+  rows.forEach((row) => {
+    const platform = String(row.platform || "").toLowerCase();
+    const handle = String(row.username || row.accountName || "");
+    const cleanHandle = handle.replace(/^@/, "");
+    const count = Number(row.followerCount || row.followers || 0);
+
+    if (platform === "instagram") {
+      accounts.instagram = {
+        ...accounts.instagram,
+        followers: count,
+        username: handle,
+        url: cleanHandle ? `https://instagram.com/${cleanHandle}` : "",
+      };
+    } else if (platform === "youtube") {
+      accounts.youtube = {
+        ...accounts.youtube,
+        subscribers: count,
+        username: handle,
+        url: cleanHandle ? `https://youtube.com/@${cleanHandle}` : "",
+      };
+    } else if (platform === "facebook") {
+      accounts.facebook = {
+        ...accounts.facebook,
+        followers: count,
+        username: handle,
+        url: cleanHandle ? `https://facebook.com/${cleanHandle}` : "",
+      };
+    }
+  });
+  return accounts;
+}
+
 export default function AllLinksClient() {
   const params = useParams<{ username: string }>();
   const router = useRouter();
@@ -157,6 +191,7 @@ export default function AllLinksClient() {
         setTheme(freshTheme);
         if (Array.isArray(rawSocials)) {
           setAllSocialAccounts(rawSocials);
+          setSocials(buildSocialAccounts(rawSocials));
         }
         setCustomLinks(Array.isArray(rawLinks) ? rawLinks : []);
         setNotFound(false);
@@ -187,7 +222,10 @@ export default function AllLinksClient() {
   }, [username, isPreview]);
 
   const cleanHandle = username || "creator";
-  const totalAudience = allSocialAccounts.reduce((sum, a) => sum + (Number(a.followerCount) || 0), 0);
+  const totalAudience =
+    allSocialAccounts.length > 0
+      ? allSocialAccounts.reduce((sum, a) => sum + (Number(a.followerCount || a.followers) || 0), 0)
+      : SocialService.calculateTotalAudience(socials);
 
   const handleShareLinks = async () => {
     try {

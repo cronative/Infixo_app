@@ -66,7 +66,8 @@ export function LinkGroupRow({
   const itemPlatforms = items.map((item) => {
     const platform = getPlatformFromUrl(item.url);
     // Saved favicon stands in for unknown domains, like a thumbnail.
-    const image = item.thumbnail || (!platform.isKnownApp ? item.iconUrl : undefined);
+    const rawImage = item.thumbnail || (!platform.isKnownApp ? item.iconUrl : undefined);
+    const image = rawImage?.startsWith("/uploads/") ? `/api/assets${rawImage}` : rawImage;
     return { item: { ...item, thumbnail: image }, platform };
   });
 
