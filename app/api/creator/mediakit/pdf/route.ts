@@ -349,11 +349,11 @@ export async function GET(req: Request) {
     let teamMembers: any[] = [];
     try {
       const [tRows]: any = await db.query(
-        `SELECT tm.name, tm.role
-         FROM creator_team_members tm
-         JOIN creator_teams ct ON ct.id = tm.team_id
-         WHERE tm.creator_id = ? AND ct.is_active = 1 AND tm.is_active = 1
-         ORDER BY tm.sort_order ASC
+        `SELECT tm.name, tm.role, tm.member_group
+         FROM team_members tm
+         LEFT JOIN creator_teams ct ON ct.creator_id = tm.creator_id
+         WHERE tm.creator_id = ? AND COALESCE(ct.is_active, 1) = 1 AND tm.is_active = 1
+         ORDER BY tm.sort_order ASC, tm.created_at ASC
          LIMIT 6`,
         [creatorId]
       );
@@ -687,7 +687,7 @@ export async function GET(req: Request) {
       p2.fillAndStrokeRect(40, y2, PAGE_W - 80, 38);
 
       p2.setFillRgb(122, 34, 83);
-      p2.drawText("THE TEAM BEHIND THE WORK", 54, y2 + 10, "F2", 8);
+      p2.drawText("THE PEOPLE BEHIND THE CAMERA", 54, y2 + 10, "F2", 8);
       p2.setFillRgb(28, 25, 23);
       p2.drawText(teamLine.slice(0, 85), 54, y2 + 23, "F1", 9);
       y2 += 48;

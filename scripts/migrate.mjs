@@ -351,6 +351,18 @@ async function migrateDatabase(target) {
       await addColumnIfMissing("mediakit_gigs", "category", "VARCHAR(100) DEFAULT NULL");
     }
 
+    // 018: Team v2 fields on creator_teams & team_members
+    const [teamTables] = await connection.query("SHOW TABLES LIKE 'creator_teams'");
+    if (teamTables.length) {
+      await addColumnIfMissing("creator_teams", "team_description", "TEXT DEFAULT NULL");
+    }
+    const [memberTables] = await connection.query("SHOW TABLES LIKE 'team_members'");
+    if (memberTables.length) {
+      await addColumnIfMissing("team_members", "member_group", "VARCHAR(32) NOT NULL DEFAULT 'Behind the camera'");
+      await addColumnIfMissing("team_members", "one_liner", "VARCHAR(120) DEFAULT NULL");
+      await addColumnIfMissing("team_members", "inflixo_username", "VARCHAR(100) DEFAULT NULL");
+    }
+
     console.log(`✅ ${target.name} migrated successfully.`);
   } finally {
     await connection.end();

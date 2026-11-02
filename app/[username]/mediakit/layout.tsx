@@ -142,3 +142,4 @@ export async function generateMetadata({ params }: MediaKitLayoutProps): Promise
 export default function MediaKitLayout({ children }: MediaKitLayoutProps) {
   return children;
 }
+

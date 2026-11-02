@@ -37,6 +37,7 @@ import {
 } from "@/components/shared/BrandIcons";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { SeriesPoster } from "@/components/shared/SeriesPoster";
+import { PublicTeamGroups } from "@/components/team/PublicTeamGroups";
 import { formatFans, getCreatorEra, calculateTotalFanbase } from "@/lib/creatorEra";
 import { formatCount } from "@/utils/format";
 import { copyToClipboard } from "@/lib/copyToClipboard";
@@ -51,6 +52,7 @@ export interface MediaKitV2ContentProps {
   settings?: MediaKitSettings;
   reviews?: CreatorReview[];
   team?: { team?: CreatorTeam | null; members: TeamMember[] };
+  hideTeam?: boolean;
   onEnquirePackage?: (pkg: MediaKitPackage | null) => void;
   isInformational?: boolean;
 }
@@ -125,6 +127,7 @@ export function MediaKitV2Content({
   settings,
   reviews = [],
   team,
+  hideTeam = false,
   onEnquirePackage,
   isInformational = false,
 }: MediaKitV2ContentProps) {
@@ -220,7 +223,7 @@ export function MediaKitV2Content({
   const showPackages = activePackages.length > 0;
   const showPromises = promises.length > 0;
   const showReviews = visibleReviews.length > 0;
-  const showTeam = activeTeamMembers.length > 0;
+  const showTeam = !hideTeam && activeTeamMembers.length > 0;
 
   const mediaKitPublicUrl = useMemo(() => {
     const base = process.env.NEXT_PUBLIC_SITE_URL || "https://inflixo.com";
@@ -885,7 +888,7 @@ export function MediaKitV2Content({
       )}
 
       {/* =================================================================== */}
-      {/* 8. TEAM — The People Behind The Work                                */}
+      {/* 8. TEAM — The People Behind The Camera                              */}
       {/* =================================================================== */}
       {showTeam && (
         <section
@@ -894,60 +897,26 @@ export function MediaKitV2Content({
         >
           <div className="space-y-1">
             <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-              08 · Creative Crew
+              08 · {team?.team?.teamName || "The Crew"}
             </span>
             <h3
               style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
               className="text-xl sm:text-2xl font-normal text-[#1C1917]"
             >
-              {team?.team?.teamName || "The people behind the scenes"}
+              The people behind the camera
             </h3>
+            {team?.team?.teamDescription && team.team.teamDescription.trim() && (
+              <p className="text-xs sm:text-sm text-[#57534E] leading-relaxed">
+                {team.team.teamDescription.trim()}
+              </p>
+            )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {activeTeamMembers.map((member) => (
-              <div
-                key={member.id}
-                className="flex items-center gap-3 rounded-xl border border-[#E7E0D6] bg-white p-3.5"
-              >
-                <CreatorAvatar
-                  src={member.avatarUrl || null}
-                  name={member.name}
-                  className="h-11 w-11 shrink-0 rounded-full object-cover"
-                  textClassName="text-xs font-bold text-white"
-                  style={{ backgroundColor: "#7A2253" }}
-                />
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold text-[#1C1917] truncate">{member.name}</p>
-                  <p className="text-xs text-[#78716C] truncate">{member.role || "Team member"}</p>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  {member.instagramUrl && (
-                    <a
-                      href={member.instagramUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex h-7 w-7 items-center justify-center rounded-full border border-[#E7E0D6] text-[#E1306C] hover:bg-[#FAF7F2]"
-                      aria-label={`${member.name} Instagram`}
-                    >
-                      <InstagramIcon className="h-3.5 w-3.5" />
-                    </a>
-                  )}
-                  {member.youtubeUrl && (
-                    <a
-                      href={member.youtubeUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex h-7 w-7 items-center justify-center rounded-full border border-[#E7E0D6] text-[#FF0000] hover:bg-[#FAF7F2]"
-                      aria-label={`${member.name} YouTube`}
-                    >
-                      <YoutubeIcon className="h-3.5 w-3.5" />
-                    </a>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+          <PublicTeamGroups
+            members={activeTeamMembers}
+            variant="mediakit"
+            isInformational={isInformational}
+          />
         </section>
       )}
 

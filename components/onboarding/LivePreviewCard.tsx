@@ -65,6 +65,7 @@ import { MediaKitSnapshotCard } from "@/components/collab/MediaKitSnapshotCard";
 import { BrandLogosWrap } from "@/components/collab/BrandLogosWrap";
 import { CollabEnquirySheet } from "@/components/collab/CollabEnquirySheet";
 import { MediaKitV2Content } from "@/components/mediakit/MediaKitV2Content";
+import { PublicTeamGroups } from "@/components/team/PublicTeamGroups";
 import { EmptyProfileCard } from "@/components/public/EmptyProfileCard";
 import {
   CreatorProfile,
@@ -378,6 +379,7 @@ export interface LivePreviewCardProps {
   reviewsOnlyMode?: boolean;
   linksOnlyMode?: boolean;
   mediaKitOnlyMode?: boolean;
+  teamOnlyMode?: boolean;
   /** Secondary public page (series list, reviews, products): compact creator header instead of the full profile header. */
   pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   showSettingsIcon?: boolean;
@@ -629,6 +631,7 @@ export function LivePreviewCard({
   reviewsOnlyMode = false,
   linksOnlyMode = false,
   mediaKitOnlyMode = false,
+  teamOnlyMode = false,
   pageHeader,
   showSettingsIcon: showSettingsIconProp,
   onShare,
@@ -645,7 +648,7 @@ export function LivePreviewCard({
   const profile: CreatorProfile = incomingProfile || EMPTY_PROFILE_FALLBACK;
   const socials: SocialAccounts = incomingSocials || EMPTY_SOCIAL_ACCOUNTS;
   const series: Series[] = incomingSeries || [];
-  const isListingPage = Boolean(seriesOnlyMode || productsOnlyMode || reviewsOnlyMode || linksOnlyMode || mediaKitOnlyMode);
+  const isListingPage = Boolean(seriesOnlyMode || productsOnlyMode || reviewsOnlyMode || linksOnlyMode || mediaKitOnlyMode || teamOnlyMode);
   const isPremiumLayout = !isListingPage && (layoutMode === "premium" || layoutMode === "stacked");
   const effectiveSeriesPreviewLimit = isPremiumLayout ? 3 : seriesPreviewLimit;
   const displayedSeries = typeof effectiveSeriesPreviewLimit === "number" ? series.slice(0, effectiveSeriesPreviewLimit) : series;
@@ -1041,6 +1044,15 @@ export function LivePreviewCard({
           showFanbase: false,
           showCustomLinks: false,
           showCollabGigs: true,
+          showSeries: false,
+          showReviews: false,
+        }
+      : teamOnlyMode
+        ? {
+          ...visibilitySettings,
+          showFanbase: false,
+          showCustomLinks: false,
+          showCollabGigs: false,
           showSeries: false,
           showReviews: false,
         }
@@ -3114,7 +3126,8 @@ export function LivePreviewCard({
         )}
 
         {/* 8. Creator Team */}
-        {!isListingPage && (isPremiumLayout || (!isTabsLayout ? true : activeNavTab === "about")) && activeTeamMembers.length > 0 && (
+        {(teamOnlyMode || (!isListingPage && (isPremiumLayout || (!isTabsLayout ? true : activeNavTab === "about")))) &&
+          (activeTeamMembers.length > 0 || teamOnlyMode) && (
           <div
             id="team-section"
             style={
@@ -3126,7 +3139,9 @@ export function LivePreviewCard({
                 : undefined
             }
             className={`relative z-10 ${
-              isPremiumLayout
+              teamOnlyMode
+                ? "order-[5] mt-1 sm:mt-1.5"
+                : isPremiumLayout
                 ? "order-[8] mt-5 sm:mt-6 p-3.5 sm:p-4 rounded-[5px] border shadow-xs space-y-3"
                 : isTabsLayout
                 ? "order-[25] mt-1.5 sm:mt-2"
@@ -3135,8 +3150,8 @@ export function LivePreviewCard({
           >
             {isPremiumLayout && (
               <TabSectionHeader
-                title="Creative Team"
-                subtitle="Creative production crew, editors & management team."
+                title={teamData.team?.teamName?.trim() || "The Crew"}
+                subtitle={teamData.team?.teamDescription?.trim() || "Creative production crew, editors & management team."}
                 action={
                   <span
                     style={{
@@ -3161,14 +3176,14 @@ export function LivePreviewCard({
               }}
               className="rounded-[5px] border overflow-hidden shadow-none w-full"
             >
-              {/* Compact theme-tinted header (shown in tabs layout to avoid duplicate header in premium) */}
+              {/* Compact theme-tinted header (shown in tabs layout / teamOnlyMode to avoid duplicate header in premium) */}
               {!isPremiumLayout && (
                 <div
                   style={{
                     backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
                     borderColor: "var(--surface-border)",
                   }}
-                  className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
+                  className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between gap-2"
                 >
                   <div>
                     <div className="flex items-center gap-2">
@@ -3180,14 +3195,14 @@ export function LivePreviewCard({
                         }}
                         className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
                       >
-                        {teamData.team?.teamName || "My Team"}
+                        {teamData.team?.teamName?.trim() || "The Crew"}
                       </h2>
                     </div>
                     <p
                       style={{ color: c.mutedText }}
                       className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5"
                     >
-                      Creative production crew, editors &amp; management team.
+                      {teamData.team?.teamDescription?.trim() || "Creative production crew, editors & management team."}
                     </p>
                   </div>
                   <span
@@ -3199,69 +3214,27 @@ export function LivePreviewCard({
                 </div>
               )}
 
-            {/* Single-column vertical listing with subtle dividers between rows */}
-            <div className="divide-y divide-(--surface-border) w-full">
-              {activeTeamMembers.map((member) => {
-                const memberLinks = [
-                  { url: member.instagramUrl, icon: <InstagramIcon className={`h-3.5 w-3.5 ${BRAND_TEXT.instagram}`} />, label: "Instagram" },
-                  { url: member.youtubeUrl, icon: <YoutubeIcon className={`h-3.5 w-3.5 ${BRAND_TEXT.youtube}`} />, label: "YouTube" },
-                  { url: member.facebookUrl, icon: <FacebookIcon className={`h-3.5 w-3.5 ${BRAND_TEXT.facebook}`} />, label: "Facebook" },
-                ].filter((item) => item.url);
-
-                return (
-                  <div
-                    key={member.id}
-                    className="flex items-center gap-2.5 px-3 py-2.5 sm:px-3.5 sm:py-3 w-full"
-                  >
-                    <CreatorAvatar
-                      src={member.avatarUrl || null}
-                      name={member.name || "Team"}
-                      className="h-10 w-10 shrink-0 rounded-[5px] object-cover"
-                      fallbackBgClass="bg-(--accent)"
-                      textClassName="text-xs font-black tracking-tight text-(--on-accent)"
-                      style={{ backgroundColor: c.accent }}
-                    />
-
-                    <div className="min-w-0 flex-1">
-                      <p
-                        style={{ color: c.primaryText }}
-                        className="truncate text-xs sm:text-[13px] font-bold leading-tight"
-                      >
-                        {member.name}
-                      </p>
-                      <p
-                        style={{ color: c.secondaryText }}
-                        className="mt-0.5 truncate text-[11px] font-medium"
-                      >
-                        {member.role || "Team member"}
-                      </p>
-                    </div>
-
-                    {memberLinks.length > 0 && (
-                      <div className="flex shrink-0 items-center gap-1.5">
-                        {memberLinks.map((link) => (
-                          <a
-                            key={link.label}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={`${member.name} ${link.label}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (isInformationalMode) e.preventDefault();
-                            }}
-                            style={{ borderColor: c.border, backgroundColor: c.profileBackground }}
-                            className="tap-scale flex h-8 w-8 items-center justify-center rounded-[5px] border transition-all hover:scale-105"
-                          >
-                            {link.icon}
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+              {activeTeamMembers.length > 0 ? (
+                <div className="p-3 sm:p-3.5">
+                  <PublicTeamGroups
+                    members={activeTeamMembers}
+                    variant="profile"
+                    primaryTextColor={c.primaryText}
+                    secondaryTextColor={c.secondaryText}
+                    mutedTextColor={c.mutedText}
+                    accentColor={c.accent}
+                    borderColor={c.border}
+                    cardBgColor={c.profileBackground}
+                    isInformational={isInformationalMode}
+                  />
+                </div>
+              ) : (
+                <div className="px-4 py-8 text-center">
+                  <p style={{ color: c.mutedText }} className="text-xs font-medium">
+                    No team members added yet.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -3278,6 +3251,7 @@ export function LivePreviewCard({
               settings={mediaKitSettings}
               reviews={approvedReviews}
               team={teamData}
+              hideTeam={!mediaKitOnlyMode}
               isInformational={isInformationalMode}
               onEnquirePackage={(selected) => {
                 setSelectedEnquiryPackage(selected);

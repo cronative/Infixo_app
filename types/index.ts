@@ -719,12 +719,17 @@ export interface OtherSocialAccount {
 // Creator Team & Team Members
 // ---------------------------------------------------------------------------
 
+export type TeamMemberGroup = "On camera" | "Behind the camera";
+
 export interface TeamMember {
   id: string;
   teamId: string;
   creatorId: string;
   name: string;
   role: string;
+  group?: TeamMemberGroup;
+  oneLiner?: string | null;
+  inflixoUsername?: string | null;
   avatarUrl?: string | null;
   instagramUrl?: string;
   youtubeUrl?: string;

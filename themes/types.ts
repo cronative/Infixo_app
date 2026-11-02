@@ -49,6 +49,7 @@ export interface ThemeCardProps {
   linksOnlyMode?: boolean;
   allLinksHref?: string;
   mediaKitOnlyMode?: boolean;
+  teamOnlyMode?: boolean;
   pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   onShare?: () => void;
   layoutMode?: "tabs" | "stacked" | "premium";

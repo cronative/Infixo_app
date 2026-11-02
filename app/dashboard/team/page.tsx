@@ -1,31 +1,31 @@
 "use client";
 
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
 import {
   Users,
   Plus,
   Pencil,
   Trash2,
-  ShieldCheck,
   Eye,
   EyeOff,
   Camera,
   ExternalLink,
-  Sparkles,
   ChevronDown,
   ChevronUp,
-  MoreVertical,
-  Copy,
   User,
   UserPlus,
   Briefcase,
   FileText,
   Image as ImageIcon,
   X,
+  GripVertical,
+  ArrowUpRight,
+  Sparkles,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
-import { CreatorTeam, TeamMember } from "@/types";
+import { CreatorTeam, TeamMember, TeamMemberGroup } from "@/types";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
@@ -46,8 +46,11 @@ export default function DashboardTeamPage() {
   const [loading, setLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(true);
   const [teamMenuOpen, setTeamMenuOpen] = useState(false);
-  const [activeMemberMenuId, setActiveMemberMenuId] = useState<string | null>(null);
   const teamMenuRef = useRef<HTMLDivElement>(null);
+
+  // Drag-and-drop state
+  const [draggedMemberId, setDraggedMemberId] = useState<string | null>(null);
+  const [dragOverMemberId, setDragOverMemberId] = useState<string | null>(null);
 
   // Modals state
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
@@ -57,19 +60,23 @@ export default function DashboardTeamPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Team Form State
-  const [teamName, setTeamName] = useState("");
+  const [teamName, setTeamName] = useState("The Crew");
   const [teamLogoUrl, setTeamLogoUrl] = useState<string | null>(null);
   const [teamDescription, setTeamDescription] = useState("");
 
   // Member Form State
   const [memberName, setMemberName] = useState("");
   const [memberRole, setMemberRole] = useState("");
+  const [memberGroup, setMemberGroup] = useState<TeamMemberGroup>("Behind the camera");
+  const [memberOneLiner, setMemberOneLiner] = useState("");
+  const [memberInflixoUsername, setMemberInflixoUsername] = useState("");
   const [memberAvatar, setMemberAvatar] = useState<string | null>(null);
   const [memberInstagram, setMemberInstagram] = useState("");
   const [memberYoutube, setMemberYoutube] = useState("");
   const [memberFacebook, setMemberFacebook] = useState("");
 
   const creatorLookup = profile.id || profile.email || profile.username;
+  const cleanCreatorHandle = (profile.username || "creator").replace(/^@/, "");
 
   // Close team dropdown on outside click
   useEffect(() => {
@@ -85,15 +92,6 @@ export default function DashboardTeamPage() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [teamMenuOpen]);
-
-  const handleCopyLink = () => {
-    setTeamMenuOpen(false);
-    const url = typeof window !== "undefined" ? `${window.location.origin}/${profile.username || "creator"}` : "";
-    if (url && navigator.clipboard) {
-      navigator.clipboard.writeText(url);
-      showToast("Profile link copied! 📋");
-    }
-  };
 
   // Load team data from MySQL DB and fallback to local storage
   const loadTeam = async () => {
@@ -133,9 +131,20 @@ export default function DashboardTeamPage() {
     }
   };
 
+  const handleMemberPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const dataUrl = await resizeImageToDataUrl(file, 500);
+      setMemberAvatar(dataUrl);
+    } catch {
+      showToast("Failed to process member photo", "error");
+    }
+  };
+
   // Open Edit Team Modal
   const handleOpenTeamModal = () => {
-    setTeamName(team?.teamName || `${profile.displayName || "Creator"}'s Team`);
+    setTeamName(team?.teamName || "The Crew");
     setTeamLogoUrl(team?.teamLogoUrl || null);
     setTeamDescription(team?.teamDescription || "");
     setIsTeamModalOpen(true);
@@ -159,7 +168,7 @@ export default function DashboardTeamPage() {
           email: profile.email,
           action: "save_team",
           id: team?.id,
-          teamName: teamName.trim(),
+          teamName: teamName.trim() || "The Crew",
           teamLogoUrl,
           teamDescription: teamDescription.trim(),
           isActive: team?.isActive !== false,
@@ -170,7 +179,7 @@ export default function DashboardTeamPage() {
       if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         showToast("Team saved successfully! 🎉");
         setIsTeamModalOpen(false);
-        loadTeam();
+        await loadTeam();
       } else {
         showToast(apiResponse.message || apiResponse.error || "Failed to save team", "error");
       }
@@ -181,17 +190,18 @@ export default function DashboardTeamPage() {
     }
   };
 
-  // Helpers to format and clean handles with prefilled un-editable prefixes
-  const extractHandle = (raw?: string, platform?: "instagram" | "youtube" | "facebook") => {
+  // Helpers to format and clean handles
+  const extractHandle = (raw?: string, platform?: "instagram" | "youtube" | "facebook" | "inflixo") => {
     if (!raw) return "";
     let clean = raw.trim();
     clean = clean.replace(/^https?:\/\//i, "");
+    clean = clean.replace(/^(www\.)?inflixo\.com\//i, "");
     clean = clean.replace(/^(www\.)?instagram\.com\//i, "");
     clean = clean.replace(/^(www\.)?youtube\.com\/(@|c\/|channel\/|user\/)?/i, "");
     clean = clean.replace(/^(www\.)?youtu\.be\//i, "");
     clean = clean.replace(/^(www\.)?facebook\.com\//i, "");
     clean = clean.replace(/^(www\.)?fb\.com\//i, "");
-    clean = clean.replace(/^[@\/]+/, "");
+    clean = clean.replace(/^[@/]+/, "");
     clean = clean.split(/[?#]/)[0];
     clean = clean.replace(/\/+$/, "");
     clean = clean.replace(/\s+/g, "");
@@ -213,6 +223,9 @@ export default function DashboardTeamPage() {
       setEditingMember(member);
       setMemberName(member.name);
       setMemberRole(member.role);
+      setMemberGroup(member.group === "On camera" ? "On camera" : "Behind the camera");
+      setMemberOneLiner(member.oneLiner || "");
+      setMemberInflixoUsername(extractHandle(member.inflixoUsername || "", "inflixo"));
       setMemberAvatar(member.avatarUrl || null);
       setMemberInstagram(extractHandle(member.instagramUrl, "instagram"));
       setMemberYoutube(extractHandle(member.youtubeUrl, "youtube"));
@@ -221,6 +234,9 @@ export default function DashboardTeamPage() {
       setEditingMember(null);
       setMemberName("");
       setMemberRole("");
+      setMemberGroup("Behind the camera");
+      setMemberOneLiner("");
+      setMemberInflixoUsername("");
       setMemberAvatar(null);
       setMemberInstagram("");
       setMemberYoutube("");
@@ -240,6 +256,11 @@ export default function DashboardTeamPage() {
       showToast("Member role is required", "error");
       return;
     }
+    // Photo is required for new members; existing members fall back to initials if they don't have one
+    if (!editingMember && !memberAvatar) {
+      showToast("Please upload a photo for the new member", "error");
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -255,10 +276,14 @@ export default function DashboardTeamPage() {
             id: editingMember?.id,
             name: memberName.trim(),
             role: memberRole.trim(),
+            group: memberGroup,
+            oneLiner: memberOneLiner.trim().slice(0, 80) || null,
+            inflixoUsername: extractHandle(memberInflixoUsername, "inflixo") || null,
             avatarUrl: memberAvatar,
             instagramUrl: memberInstagram.trim() ? buildSocialUrl(memberInstagram, "instagram") : undefined,
             youtubeUrl: memberYoutube.trim() ? buildSocialUrl(memberYoutube, "youtube") : undefined,
             facebookUrl: memberFacebook.trim() ? buildSocialUrl(memberFacebook, "facebook") : undefined,
+            sortOrder: editingMember ? editingMember.sortOrder : (team?.members?.length ?? 0),
             isActive: editingMember ? editingMember.isActive : true,
           },
         }),
@@ -268,14 +293,59 @@ export default function DashboardTeamPage() {
       if (httpResponse.ok && (apiResponse.status === 1 || apiResponse.success)) {
         showToast(editingMember ? "Member updated! 🎉" : "Member added! 🎉");
         setIsMemberModalOpen(false);
-        loadTeam();
+        await loadTeam();
       } else {
-        showToast(apiResponse.message || apiResponse.error || "Failed to save member", "error");
+        showToast(apiResponse.message || apiResponse.error?.message || apiResponse.error || "Failed to save member", "error");
       }
     } catch {
       showToast("An error occurred while saving member", "error");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Drag-and-drop reorder handler
+  const handleDropMember = async (targetMemberId: string) => {
+    setDragOverMemberId(null);
+    if (!team?.members || !draggedMemberId || draggedMemberId === targetMemberId) {
+      setDraggedMemberId(null);
+      return;
+    }
+
+    const currentList = [...team.members];
+    const fromIdx = currentList.findIndex((m) => m.id === draggedMemberId);
+    const toIdx = currentList.findIndex((m) => m.id === targetMemberId);
+    setDraggedMemberId(null);
+
+    if (fromIdx === -1 || toIdx === -1) return;
+
+    const [moved] = currentList.splice(fromIdx, 1);
+    currentList.splice(toIdx, 0, moved);
+
+    const reordered = currentList.map((m, idx) => ({ ...m, sortOrder: idx }));
+    const updatedTeam = { ...team, members: reordered };
+    setTeam(updatedTeam);
+    teamRepository.save(updatedTeam);
+
+    try {
+      await fetch("/api/creator/team", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          creatorId: profile.id || creatorLookup,
+          email: profile.email,
+          action: "reorder",
+          members: reordered.map((m, idx) => ({
+            id: m.id,
+            sortOrder: idx,
+            group: m.group,
+          })),
+        }),
+      });
+      showToast("Team order updated");
+    } catch {
+      showToast("Could not save new order", "error");
+      loadTeam();
     }
   };
 
@@ -385,29 +455,43 @@ export default function DashboardTeamPage() {
         <div className="rounded-[5px] border border-[#ECECF0] bg-white shadow-none overflow-hidden">
           {/* Top Team Summary Row */}
           <div className="p-4 sm:px-5 sm:py-4 flex items-center justify-between gap-3 text-left">
-            {/* Left: Avatar Squircle + Team Name & Members count */}
+            {/* Left: Avatar Squircle + Team Name, Description & Members count */}
             <div className="flex items-center gap-3 min-w-0 flex-1">
-              <div className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] font-semibold text-sm shrink-0 select-none">
-                {getInitials(team.teamName)}
-              </div>
+              {team.teamLogoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={team.teamLogoUrl}
+                  alt={team.teamName || "The Crew"}
+                  className="h-11 w-11 rounded-[5px] object-cover border border-[#ECECF0] shrink-0"
+                />
+              ) : (
+                <div className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] font-semibold text-sm shrink-0 select-none">
+                  {getInitials(team.teamName || "The Crew")}
+                </div>
+              )}
               <div className="min-w-0 flex-1 space-y-0.5">
                 <h2 className="line-clamp-2 break-words text-[16px] font-semibold text-[#18181B]">
-                  {team.teamName}
+                  {team.teamName || "The Crew"}
                 </h2>
-                <p className="line-clamp-2 break-words text-[12px] text-[#6B6B76]">
+                {team.teamDescription && team.teamDescription.trim() ? (
+                  <p className="line-clamp-2 break-words text-[12px] text-[#52525B]">
+                    {team.teamDescription}
+                  </p>
+                ) : null}
+                <p className="text-[11.5px] text-[#6B6B76]">
                   {team.members?.length || 0} team {team.members?.length === 1 ? "member" : "members"}
                 </p>
               </div>
             </div>
 
-            {/* Right: View ↗, Collapse/Expand ("Add member" lives in the page header) */}
+            {/* Right: View -> /:username/team, Collapse/Expand */}
             <div className="flex items-center gap-2 shrink-0">
               <a
-                href={`/${profile.username || "creator"}?tab=about`}
+                href={`/${cleanCreatorHandle}/team`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-[13px] font-medium text-[#18181B] transition-colors"
-                title="View public profile"
+                title="View public team page"
               >
                 <span>View</span>
                 <ExternalLink className="h-3.5 w-3.5 text-[#6B6B76]" />
@@ -428,18 +512,23 @@ export default function DashboardTeamPage() {
           {/* Expanded Members Area */}
           {isExpanded && (
             <div>
-              {/* Divider Bar: TEAM MEMBERS (3) */}
-              <div className="border-t border-b border-[#e2e8f0] bg-[#f8fafc] px-4 sm:px-5 py-2">
+              {/* Divider Bar: TEAM MEMBERS (N) */}
+              <div className="border-t border-b border-[#e2e8f0] bg-[#f8fafc] px-4 sm:px-5 py-2 flex items-center justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748b]">
                   TEAM MEMBERS ({team.members?.length || 0})
                 </span>
+                {(team.members?.length || 0) > 1 && (
+                  <span className="text-[11px] text-[#94a3b8]">
+                    Drag rows to reorder
+                  </span>
+                )}
               </div>
 
-              {(!team.members || team.members.length === 0) ? (
+              {!team.members || team.members.length === 0 ? (
                 <div className="p-6 text-center space-y-2 bg-white">
                   <p className="text-xs font-bold text-[#7A2253]">No team members added yet</p>
                   <p className="text-xs text-[#64748b] max-w-sm mx-auto">
-                    Add members to highlight directors, editors, writers, and collaborators on your public profile.
+                    Add members to highlight on-camera talent, directors, editors, writers, and collaborators on your public profile.
                   </p>
                   <button
                     type="button"
@@ -452,100 +541,168 @@ export default function DashboardTeamPage() {
                 </div>
               ) : (
                 <div className="divide-y divide-[#f1f5f9] bg-white">
-                  {team.members.map((member: TeamMember) => (
-                    <div
-                      key={member.id}
-                      className="px-4 sm:px-5 py-3 flex items-center justify-between gap-3 hover:bg-[#fafafa] transition-colors text-left"
-                    >
-                      {/* Left: Avatar Initial / Squircle + Name & Role */}
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#FFF5F7] text-[#7A2253] font-bold text-xs shrink-0 select-none">
-                          {getInitials(member.name)}
-                        </div>
+                  {team.members.map((member: TeamMember) => {
+                    const isHidden = member.isActive === false;
+                    const groupLabel = member.group === "On camera" ? "On camera" : "Behind the camera";
+                    const cleanInflixo = (member.inflixoUsername || "").trim().replace(/^@/, "");
+                    const isDragTarget = dragOverMemberId === member.id && draggedMemberId !== member.id;
 
-                        <div className="min-w-0 flex-1">
-                          <p className="line-clamp-2 break-words font-bold text-sm text-[#0f172a]">
-                            {member.name}
-                          </p>
-                          <div className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#F7EEF2] text-[#7A2253] px-2 h-6 text-[12px] font-medium mt-0.5">
-                            <span className="h-1.5 w-1.5 rounded-full bg-[#7A2253]"></span>
-                            <span>{member.role}</span>
+                    return (
+                      <div
+                        key={member.id}
+                        draggable
+                        onDragStart={() => setDraggedMemberId(member.id)}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          if (dragOverMemberId !== member.id) {
+                            setDragOverMemberId(member.id);
+                          }
+                        }}
+                        onDragLeave={() => {
+                          if (dragOverMemberId === member.id) {
+                            setDragOverMemberId(null);
+                          }
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          handleDropMember(member.id);
+                        }}
+                        onDragEnd={() => {
+                          setDraggedMemberId(null);
+                          setDragOverMemberId(null);
+                        }}
+                        className={`px-4 sm:px-5 py-3 flex items-center justify-between gap-3 hover:bg-[#fafafa] transition-all text-left ${
+                          isHidden ? "opacity-50" : ""
+                        } ${isDragTarget ? "border-t-2 border-t-[#7A2253] bg-[#FFF0F5]/30" : ""}`}
+                      >
+                        {/* Left: Drag Handle + Round Photo + Name, Role Chip, Group, One-Liner */}
+                        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                          <div
+                            className="cursor-grab active:cursor-grabbing text-[#94a3b8] hover:text-[#475569] shrink-0"
+                            title="Drag to reorder"
+                          >
+                            <GripVertical className="h-4 w-4" />
+                          </div>
+
+                          <CreatorAvatar
+                            src={member.avatarUrl || null}
+                            name={member.name}
+                            className="h-10 w-10 rounded-full object-cover shrink-0 border border-[#e2e8f0]"
+                            fallbackBgClass="bg-[#FFF5F7]"
+                            textClassName="text-xs font-bold text-[#7A2253]"
+                          />
+
+                          <div className="min-w-0 flex-1 space-y-0.5">
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <p className="font-bold text-sm text-[#0f172a] truncate">
+                                {member.name}
+                              </p>
+                              <span className="inline-flex items-center gap-1 rounded-full bg-[#F7EEF2] text-[#7A2253] px-2 py-0.5 text-[11px] font-semibold">
+                                {member.role}
+                              </span>
+                              <span className="inline-flex items-center rounded-[4px] bg-[#f1f5f9] text-[#475569] px-1.5 py-0.5 text-[10px] font-semibold">
+                                {groupLabel}
+                              </span>
+                              {isHidden && (
+                                <span className="inline-flex items-center rounded-[4px] bg-[#f1f5f9] border border-[#cbd5e1] text-[#475569] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                                  Hidden
+                                </span>
+                              )}
+                            </div>
+
+                            {member.oneLiner && member.oneLiner.trim() && (
+                              <p className="text-xs italic text-[#64748b] line-clamp-1">
+                                &ldquo;{member.oneLiner.trim()}&rdquo;
+                              </p>
+                            )}
+
+                            {cleanInflixo && (
+                              <Link
+                                href={`/${cleanInflixo}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-0.5 text-[11px] font-semibold text-[#7A2253] hover:underline"
+                              >
+                                <span>@{cleanInflixo}</span>
+                                <ArrowUpRight className="h-3 w-3" />
+                              </Link>
+                            )}
                           </div>
                         </div>
-                      </div>
 
-                      {/* Center: Social Icons */}
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        {member.instagramUrl && (
-                          <a
-                            href={member.instagramUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#E1306C] hover:scale-105 transition-transform"
-                            title="Instagram"
-                          >
-                            <InstagramIcon className="h-4 w-4" />
-                          </a>
-                        )}
-                        {member.youtubeUrl && (
-                          <a
-                            href={member.youtubeUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#FF0000] hover:scale-105 transition-transform"
-                            title="YouTube"
-                          >
-                            <YoutubeIcon className="h-4 w-4" />
-                          </a>
-                        )}
-                        {member.facebookUrl && (
-                          <a
-                            href={member.facebookUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#1877F2] hover:scale-105 transition-transform"
-                            title="Facebook"
-                          >
-                            <FacebookIcon className="h-4 w-4" />
-                          </a>
-                        )}
-                      </div>
-
-                      {/* Right: 3 Action Buttons [ 👁️ ] [ ✏️ ] [ 🗑️ ] */}
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => handleToggleMember(member)}
-                          className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-[#6B6B76] hover:text-[#18181B] transition-colors cursor-pointer"
-                          title={member.isActive ? "Hide from profile" : "Show on profile"}
-                        >
-                          {member.isActive ? (
-                            <Eye className="h-4 w-4 text-[#10b981]" />
-                          ) : (
-                            <EyeOff className="h-4 w-4 text-[#94a3b8]" />
+                        {/* Center: Social Icons */}
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          {member.instagramUrl && (
+                            <a
+                              href={member.instagramUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F7EEF2] text-[#E1306C] hover:scale-105 transition-transform"
+                              title="Instagram"
+                            >
+                              <InstagramIcon className="h-4 w-4" />
+                            </a>
                           )}
-                        </button>
+                          {member.youtubeUrl && (
+                            <a
+                              href={member.youtubeUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F7EEF2] text-[#FF0000] hover:scale-105 transition-transform"
+                              title="YouTube"
+                            >
+                              <YoutubeIcon className="h-4 w-4" />
+                            </a>
+                          )}
+                          {member.facebookUrl && (
+                            <a
+                              href={member.facebookUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F7EEF2] text-[#1877F2] hover:scale-105 transition-transform"
+                              title="Facebook"
+                            >
+                              <FacebookIcon className="h-4 w-4" />
+                            </a>
+                          )}
+                        </div>
 
-                        <button
-                          type="button"
-                          onClick={() => handleOpenMemberModal(member)}
-                          className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-[#6B6B76] hover:text-[#18181B] transition-colors cursor-pointer"
-                          title="Edit member"
-                        >
-                          <Pencil className="h-3.5 w-3.5" />
-                        </button>
+                        {/* Right: 3 Action Buttons [ 👁️ ] [ ✏️ ] [ 🗑️ ] */}
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => handleToggleMember(member)}
+                            className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-[#6B6B76] hover:text-[#18181B] transition-colors cursor-pointer"
+                            title={member.isActive ? "Hide from profile" : "Show on profile"}
+                          >
+                            {member.isActive ? (
+                              <Eye className="h-4 w-4 text-[#10b981]" />
+                            ) : (
+                              <EyeOff className="h-4 w-4 text-[#94a3b8]" />
+                            )}
+                          </button>
 
-                        <button
-                          type="button"
-                          onClick={() => setMemberToDelete(member)}
-                          className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white hover:bg-rose-50 text-[#C2414B] transition-colors cursor-pointer"
-                          title="Remove member"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenMemberModal(member)}
+                            className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-[#6B6B76] hover:text-[#18181B] transition-colors cursor-pointer"
+                            title="Edit member"
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setMemberToDelete(member)}
+                            className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white hover:bg-rose-50 text-[#C2414B] transition-colors cursor-pointer"
+                            title="Remove member"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -571,7 +728,7 @@ export default function DashboardTeamPage() {
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-bold text-[#7A2253]">What is a Creator Team?</p>
-                <p className="text-[11px] text-[#64748b] mt-0.5">Highlight your directors, editors, writers, and collaborators. Team members will be featured on your Inflixo public profile.</p>
+                <p className="text-[11px] text-[#64748b] mt-0.5">Highlight your on-camera talent, directors, editors, writers, and collaborators on your Inflixo profile.</p>
               </div>
             </div>
 
@@ -581,7 +738,7 @@ export default function DashboardTeamPage() {
                 <label className="block text-[13px] font-medium text-[#0f172a]">
                   Team Name <span className="text-[#C2414B]">*</span>
                 </label>
-                <span className="text-[11px] text-[#64748b]">Choose a name that represents your team.</span>
+                <span className="text-[11px] text-[#64748b]">Default: The Crew</span>
               </div>
               <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
@@ -592,7 +749,7 @@ export default function DashboardTeamPage() {
                   required
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
-                  placeholder="e.g. Nikunj's Team, Studio 8, The Creators"
+                  placeholder="The Crew"
                   className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
                 />
               </div>
@@ -655,7 +812,7 @@ export default function DashboardTeamPage() {
                 <label className="block text-[13px] font-medium text-[#0f172a]">
                   Team Description <span className="font-normal text-[#94a3b8]">(Optional)</span>
                 </label>
-                <span className="text-[11px] text-[#64748b]">A short description about your team.</span>
+                <span className="text-[11px] text-[#64748b]">Shown on your public team section</span>
               </div>
               <div className="flex rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
                 <div className="flex w-10 shrink-0 items-start justify-center pt-2.5 border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
@@ -697,19 +854,61 @@ export default function DashboardTeamPage() {
         onClose={() => setIsMemberModalOpen(false)}
         size="md"
         title={editingMember ? "Edit team member" : "Add team member"}
-        description="Add member information, role and social links."
+        description="Add member photo, role, group, one-liner, and social links."
         icon={<Users className="h-5 w-5" />}
       >
         <form onSubmit={handleSaveMember} className="flex flex-col flex-1 min-h-0">
-          <ModalBody className="p-4 sm:p-5 space-y-4 text-left">
-            {/* Info Banner */}
-            <div className="flex items-center gap-3 p-3.5 rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1]">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-white border border-[#FCE7F1] text-[#7A2253]">
-                <User className="h-4 w-4" />
+          <ModalBody className="p-4 sm:p-5 space-y-4 text-left max-h-[72vh] overflow-y-auto">
+            {/* Member Photo Upload (Required for new members; existing fall back to initials) */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
+                  Member Photo {!editingMember && <span className="text-[#C2414B]">*</span>}
+                </label>
+                <span className="text-[11px] text-[#64748b]">
+                  {editingMember ? "Optional (falls back to initials)" : "Required for new members"}
+                </span>
               </div>
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-[#7A2253]">Team members appear on your public profile</p>
-                <p className="text-[11px] text-[#64748b] mt-0.5">Add their details and social handles to give them proper credit for their work.</p>
+              <div className="flex items-center gap-3.5">
+                <label className="relative h-14 w-14 rounded-full border border-dashed border-[#cbd5e1] bg-[#f8fafc] hover:bg-[#f1f5f9] flex items-center justify-center overflow-hidden cursor-pointer shrink-0 group">
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handleMemberPhotoUpload}
+                    className="sr-only"
+                  />
+                  {memberAvatar ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={memberAvatar}
+                      alt="Member avatar"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <Camera className="h-5 w-5 text-[#64748b] group-hover:text-[#7A2253]" />
+                  )}
+                </label>
+                <div className="min-w-0 flex-1 space-y-1">
+                  <label className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 py-1.5 text-xs font-semibold text-[#0f172a] hover:bg-[#f8fafc] cursor-pointer">
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={handleMemberPhotoUpload}
+                      className="sr-only"
+                    />
+                    <span>{memberAvatar ? "Change photo" : "Upload photo"}</span>
+                  </label>
+                  {memberAvatar && editingMember && (
+                    <button
+                      type="button"
+                      onClick={() => setMemberAvatar(null)}
+                      className="ml-2 text-[11px] font-semibold text-[#C2414B] hover:underline cursor-pointer"
+                    >
+                      Remove
+                    </button>
+                  )}
+                  <p className="text-[11px] text-[#94a3b8]">Displayed as a round portrait on your public team cards.</p>
+                </div>
               </div>
             </div>
 
@@ -754,8 +953,69 @@ export default function DashboardTeamPage() {
               </div>
             </div>
 
+            {/* Group: On camera | Behind the camera */}
+            <div className="space-y-1">
+              <label className="block text-[13px] font-medium text-[#0f172a]">Group</label>
+              <div className="grid grid-cols-2 gap-2">
+                {(["Behind the camera", "On camera"] as TeamMemberGroup[]).map((grp) => {
+                  const selected = memberGroup === grp;
+                  return (
+                    <button
+                      key={grp}
+                      type="button"
+                      onClick={() => setMemberGroup(grp)}
+                      className={`h-10 rounded-[5px] border text-xs font-semibold transition-all cursor-pointer ${
+                        selected
+                          ? "border-[#7A2253] bg-[#FFF0F5] text-[#7A2253] ring-1 ring-[#7A2253]"
+                          : "border-[#e2e8f0] bg-white text-[#475569] hover:bg-[#f8fafc]"
+                      }`}
+                    >
+                      {grp}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* One-liner (80 chars, optional) */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <label className="block text-[13px] font-medium text-[#0f172a]">
+                  One-liner <span className="font-normal text-[#94a3b8]">(Optional)</span>
+                </label>
+                <span className="text-[11px] text-[#64748b]">{memberOneLiner.length}/80</span>
+              </div>
+              <input
+                type="text"
+                maxLength={80}
+                value={memberOneLiner}
+                onChange={(e) => setMemberOneLiner(e.target.value.slice(0, 80))}
+                placeholder="e.g. The one who always says 'one more take'"
+                className="w-full h-10 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] outline-none"
+              />
+            </div>
+
+            {/* Inflixo Username (Optional) */}
+            <div className="space-y-1">
+              <label className="block text-[13px] font-medium text-[#0f172a]">
+                Inflixo Username <span className="font-normal text-[#94a3b8]">(Optional)</span>
+              </label>
+              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex h-10 px-3 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-xs font-semibold text-[#64748b]">
+                  inflixo.com/
+                </div>
+                <input
+                  type="text"
+                  value={memberInflixoUsername}
+                  onChange={(e) => setMemberInflixoUsername(extractHandle(e.target.value, "inflixo"))}
+                  placeholder="username"
+                  className="flex-1 h-10 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/40 bg-transparent outline-none"
+                />
+              </div>
+            </div>
+
             {/* Social Profiles (Optional) */}
-            <div className="space-y-3 pt-2">
+            <div className="space-y-3 pt-1">
               <div>
                 <p className="text-xs font-bold text-[#7A2253]">Social Profiles (Optional)</p>
                 <p className="text-[11px] text-[#64748b] mt-0.5">Enter username only — we&apos;ll generate the full profile links automatically.</p>
@@ -764,10 +1024,10 @@ export default function DashboardTeamPage() {
               {/* Instagram */}
               <div className="space-y-1">
                 <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc]">
-                    <InstagramIcon className="h-5 w-5 text-[#E1306C]" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc]">
+                    <InstagramIcon className="h-4.5 w-4.5 text-[#E1306C]" />
                   </div>
-                  <div className="flex-1 px-3 py-1.5 min-w-0">
+                  <div className="flex-1 px-3 py-1 min-w-0">
                     <span className="block text-[10px] font-semibold text-[#64748b] leading-tight">Instagram Username</span>
                     <input
                       type="text"
@@ -783,10 +1043,10 @@ export default function DashboardTeamPage() {
               {/* YouTube */}
               <div className="space-y-1">
                 <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc]">
-                    <YoutubeIcon className="h-5 w-5 text-[#FF0000]" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc]">
+                    <YoutubeIcon className="h-4.5 w-4.5 text-[#FF0000]" />
                   </div>
-                  <div className="flex-1 px-3 py-1.5 min-w-0">
+                  <div className="flex-1 px-3 py-1 min-w-0">
                     <span className="block text-[10px] font-semibold text-[#64748b] leading-tight">YouTube Channel Username</span>
                     <input
                       type="text"
@@ -802,10 +1062,10 @@ export default function DashboardTeamPage() {
               {/* Facebook */}
               <div className="space-y-1">
                 <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc]">
-                    <FacebookIcon className="h-5 w-5 text-[#1877F2]" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc]">
+                    <FacebookIcon className="h-4.5 w-4.5 text-[#1877F2]" />
                   </div>
-                  <div className="flex-1 px-3 py-1.5 min-w-0">
+                  <div className="flex-1 px-3 py-1 min-w-0">
                     <span className="block text-[10px] font-semibold text-[#64748b] leading-tight">Facebook Username</span>
                     <input
                       type="text"

@@ -20,6 +20,16 @@ async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email:
   return null;
 }
 
+function cleanInflixoHandle(raw?: string | null): string | null {
+  if (!raw) return null;
+  let clean = String(raw).trim();
+  clean = clean.replace(/^https?:\/\//i, "");
+  clean = clean.replace(/^(www\.)?inflixo\.com\//i, "");
+  clean = clean.replace(/^[@/]+/, "");
+  clean = clean.split(/[/?#]/)[0].trim();
+  return clean ? clean.slice(0, 100) : null;
+}
+
 // GET /api/creator/team?creatorId=... or ?email=... or ?username=...
 export async function GET(req: Request) {
   try {
@@ -38,7 +48,7 @@ export async function GET(req: Request) {
     if (accessError) return accessError;
 
     const [teamRows]: any = await db.query(
-      `SELECT id, creator_id AS creatorId, team_name AS teamName, team_logo_url AS teamLogoUrl, is_active AS isActive, created_at AS createdAt, updated_at AS updatedAt
+      `SELECT id, creator_id AS creatorId, team_name AS teamName, team_logo_url AS teamLogoUrl, team_description AS teamDescription, is_active AS isActive, created_at AS createdAt, updated_at AS updatedAt
        FROM creator_teams
        WHERE creator_id = ? LIMIT 1`,
       [targetId]
@@ -51,7 +61,7 @@ export async function GET(req: Request) {
     const team = teamRows[0];
 
     const [memberRows]: any = await db.query(
-      `SELECT id, team_id AS teamId, creator_id AS creatorId, name, role, avatar_url AS avatarUrl, instagram_url AS instagramUrl, youtube_url AS youtubeUrl, facebook_url AS facebookUrl, sort_order AS sortOrder, is_active AS isActive, created_at AS createdAt, updated_at AS updatedAt
+      `SELECT id, team_id AS teamId, creator_id AS creatorId, name, role, member_group AS memberGroup, one_liner AS oneLiner, inflixo_username AS inflixoUsername, avatar_url AS avatarUrl, instagram_url AS instagramUrl, youtube_url AS youtubeUrl, facebook_url AS facebookUrl, sort_order AS sortOrder, is_active AS isActive, created_at AS createdAt, updated_at AS updatedAt
        FROM team_members
        WHERE team_id = ? AND creator_id = ?
        ORDER BY sort_order ASC, created_at ASC`,
@@ -64,6 +74,9 @@ export async function GET(req: Request) {
       creatorId: m.creatorId,
       name: m.name,
       role: m.role,
+      group: m.memberGroup === "On camera" ? "On camera" : "Behind the camera",
+      oneLiner: m.oneLiner ? String(m.oneLiner) : null,
+      inflixoUsername: cleanInflixoHandle(m.inflixoUsername),
       avatarUrl: m.avatarUrl || null,
       instagramUrl: sanitizeUrl(m.instagramUrl, { allowEmpty: true }) || "",
       youtubeUrl: sanitizeUrl(m.youtubeUrl, { allowEmpty: true }) || "",
@@ -77,8 +90,9 @@ export async function GET(req: Request) {
     const fullTeam = {
       id: team.id,
       creatorId: team.creatorId,
-      teamName: team.teamName,
+      teamName: team.teamName || "The Crew",
       teamLogoUrl: team.teamLogoUrl || null,
+      teamDescription: team.teamDescription ? String(team.teamDescription) : null,
       isActive: Boolean(team.isActive),
       members,
       createdAt: team.createdAt,
@@ -98,33 +112,50 @@ export async function POST(req: Request) {
     const auth = await requireCreator(req);
     if (auth.error) return auth.error;
     const body = await req.json();
-    const { action, teamName, teamLogoUrl, isActive, member, members } = body;
+    const { action, teamName, teamLogoUrl, teamDescription, isActive, member, members } = body;
 
     await ensureTeamTables();
 
-    const creator = auth.creator;
     const targetId = auth.creator.id;
 
     // 1. Action: create or update team base info
     if (action === "save_team" || (!action && teamName !== undefined)) {
-      if (!teamName || !teamName.trim()) {
-        return apiError("Team name is required", 400);
-      }
+      const resolvedTeamName = (teamName ? String(teamName).trim() : "") || "The Crew";
+      const resolvedTeamDescription =
+        typeof teamDescription === "string" && teamDescription.trim()
+          ? teamDescription.trim()
+          : null;
 
-      const finalTeamLogoUrl = await saveBase64ImageToStorage(teamLogoUrl, "team", "team_logo") || (teamLogoUrl && !teamLogoUrl.startsWith("data:") ? teamLogoUrl : null);
-      const teamId = body.id || `team_${Date.now()}`;
+      const finalTeamLogoUrl =
+        (await saveBase64ImageToStorage(teamLogoUrl, "team", "team_logo")) ||
+        (teamLogoUrl && !teamLogoUrl.startsWith("data:") ? teamLogoUrl : null);
+
+      const [existingTeamRows]: any = await db.query(
+        "SELECT id FROM creator_teams WHERE creator_id = ? LIMIT 1",
+        [targetId]
+      );
+      const teamId = existingTeamRows?.[0]?.id || body.id || `team_${Date.now()}`;
+
       await db.query(
-        `INSERT INTO creator_teams (id, creator_id, team_name, team_logo_url, is_active)
-         VALUES (?, ?, ?, ?, ?)
+        `INSERT INTO creator_teams (id, creator_id, team_name, team_logo_url, team_description, is_active)
+         VALUES (?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
            team_name = VALUES(team_name),
            team_logo_url = VALUES(team_logo_url),
+           team_description = VALUES(team_description),
            is_active = VALUES(is_active),
            updated_at = NOW()`,
-        [teamId, targetId, teamName.trim(), finalTeamLogoUrl || null, isActive !== false ? 1 : 0]
+        [
+          teamId,
+          targetId,
+          resolvedTeamName,
+          finalTeamLogoUrl || null,
+          resolvedTeamDescription,
+          isActive !== false ? 1 : 0,
+        ]
       );
 
-      return apiSuccess({}, "Team details saved");
+      return apiSuccess({ id: teamId, teamName: resolvedTeamName, teamDescription: resolvedTeamDescription }, "Team details saved");
     }
 
     // 2. Action: Add or edit single member
@@ -134,26 +165,65 @@ export async function POST(req: Request) {
         return apiError("Member name and role are required", 400);
       }
 
-      const finalAvatarUrl = await saveBase64ImageToStorage(m.avatarUrl, "team", "member") || (m.avatarUrl && !m.avatarUrl.startsWith("data:") ? m.avatarUrl : null);
-
-      // Ensure team exists first
-      const [existingTeam]: any = await db.query("SELECT id FROM creator_teams WHERE creator_id = ? LIMIT 1", [targetId]);
+      // Ensure team exists first (default name: "The Crew")
+      const [existingTeam]: any = await db.query(
+        "SELECT id FROM creator_teams WHERE creator_id = ? LIMIT 1",
+        [targetId]
+      );
       let teamId = existingTeam[0]?.id;
       if (!teamId) {
         teamId = `team_${Date.now()}`;
         await db.query(
           "INSERT INTO creator_teams (id, creator_id, team_name) VALUES (?, ?, ?)",
-          [teamId, targetId, `${creator?.email?.split("@")[0] || "Creator"}'s Team`]
+          [teamId, targetId, "The Crew"]
         );
       }
 
+      let existingMemberRow: any = null;
+      if (m.id) {
+        const [rows]: any = await db.query(
+          "SELECT id, avatar_url, sort_order FROM team_members WHERE id = ? AND creator_id = ? LIMIT 1",
+          [m.id, targetId]
+        );
+        existingMemberRow = rows?.[0] || null;
+      }
+
+      const uploadedAvatar = await saveBase64ImageToStorage(m.avatarUrl, "team", "member");
+      const finalAvatarUrl =
+        uploadedAvatar ||
+        (m.avatarUrl && !String(m.avatarUrl).startsWith("data:") ? String(m.avatarUrl) : null) ||
+        (m.avatarUrl === undefined && existingMemberRow ? existingMemberRow.avatar_url : null);
+
+      if (!existingMemberRow && !finalAvatarUrl) {
+        return apiError("Member photo is required for new members", 400);
+      }
+
+      let sortOrder = Number(m.sortOrder ?? existingMemberRow?.sort_order ?? NaN);
+      if (Number.isNaN(sortOrder)) {
+        const [countRows]: any = await db.query(
+          "SELECT COALESCE(MAX(sort_order), -1) + 1 AS nextOrder FROM team_members WHERE creator_id = ?",
+          [targetId]
+        );
+        sortOrder = Number(countRows?.[0]?.nextOrder || 0);
+      }
+
+      const resolvedGroup = m.group === "On camera" ? "On camera" : "Behind the camera";
+      const resolvedOneLiner =
+        typeof m.oneLiner === "string" && m.oneLiner.trim()
+          ? m.oneLiner.trim().slice(0, 80)
+          : null;
+      const resolvedInflixoUsername = cleanInflixoHandle(m.inflixoUsername);
+
       const memberId = m.id || `tm_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
       await db.query(
-        `INSERT INTO team_members (id, team_id, creator_id, name, role, avatar_url, instagram_url, youtube_url, facebook_url, sort_order, is_active)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `INSERT INTO team_members (id, team_id, creator_id, name, role, member_group, one_liner, inflixo_username, avatar_url, instagram_url, youtube_url, facebook_url, sort_order, is_active)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
            name = VALUES(name),
            role = VALUES(role),
+           member_group = VALUES(member_group),
+           one_liner = VALUES(one_liner),
+           inflixo_username = VALUES(inflixo_username),
            avatar_url = VALUES(avatar_url),
            instagram_url = VALUES(instagram_url),
            youtube_url = VALUES(youtube_url),
@@ -167,11 +237,14 @@ export async function POST(req: Request) {
           targetId,
           m.name.trim(),
           m.role.trim(),
+          resolvedGroup,
+          resolvedOneLiner,
+          resolvedInflixoUsername,
           finalAvatarUrl || null,
           sanitizeUrl(m.instagramUrl) || null,
           sanitizeUrl(m.youtubeUrl) || null,
           sanitizeUrl(m.facebookUrl) || null,
-          Number(m.sortOrder || 0),
+          sortOrder,
           m.isActive !== false ? 1 : 0,
         ]
       );
@@ -183,11 +256,20 @@ export async function POST(req: Request) {
     if (action === "reorder" && Array.isArray(members)) {
       for (let i = 0; i < members.length; i++) {
         const item = members[i];
-        if (item.id) {
-          await db.query(
-            "UPDATE team_members SET sort_order = ? WHERE id = ? AND creator_id = ?",
-            [i, item.id, targetId]
-          );
+        const id = typeof item === "string" ? item : item?.id;
+        const order = typeof item?.sortOrder === "number" ? item.sortOrder : i;
+        if (id) {
+          if (item?.group === "On camera" || item?.group === "Behind the camera") {
+            await db.query(
+              "UPDATE team_members SET sort_order = ?, member_group = ? WHERE id = ? AND creator_id = ?",
+              [order, item.group, id, targetId]
+            );
+          } else {
+            await db.query(
+              "UPDATE team_members SET sort_order = ? WHERE id = ? AND creator_id = ?",
+              [order, id, targetId]
+            );
+          }
         }
       }
       return apiSuccess({ members }, "Members reordered");
