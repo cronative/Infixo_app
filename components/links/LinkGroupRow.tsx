@@ -1,15 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { Folder, ChevronDown } from "lucide-react";
+import { Folder, ChevronDown, Globe } from "lucide-react";
 import { CustomLink, CustomLinkItem } from "@/types";
-import { extractBareDomain, getPlatformFromUrl } from "@/lib/linkIcons";
+import { getPlatformFromUrl } from "@/lib/linkIcons";
 import { LinkRow } from "./LinkRow";
 
-/** Same letter fallback as the dashboard: maroon first letter of the title on a pink tile. */
-function letterIcon(title: string, url: string) {
-  const letter = (title.trim()[0] || extractBareDomain(url)[0] || "L").toUpperCase();
-  return <span className="text-[9px] font-bold uppercase text-(--accent-text)">{letter}</span>;
+/** Website globe fallback when a link is not a known app and has no custom favicon. */
+function letterIcon(_title: string, _url: string) {
+  return <Globe className="h-3 w-3 text-(--accent-text)" />;
 }
 
 export interface LinkGroupRowProps {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, Copy, ExternalLink } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -13,7 +13,7 @@ import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
 import { FocusOverlay } from "@/components/theme/FocusOverlay";
 import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
 import { ProductService } from "@/services/ProductService";
-import { type LinkDto } from "@/services/LinkService";
+import { LinkService, type LinkDto } from "@/services/LinkService";
 import { customLinksRepository } from "@/repositories/localRepository";
 import type { CreatorProduct, CustomLink, Series, ShopProduct, ThemeKey } from "@/types";
 
@@ -87,18 +87,6 @@ export function PhonePreview({
   const { showToast } = useToast();
 
   const [copied, setCopied] = useState(false);
-  const [panelHeight, setPanelHeight] = useState<number | null>(null);
-
-  // Full-screen sticky height matching Themes page
-  useLayoutEffect(() => {
-    const measure = () => {
-      const vh = typeof window !== "undefined" ? window.innerHeight : 800;
-      setPanelHeight(Math.max(820, vh - 32));
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, []);
 
   // Theme resolution
   const resolvedThemeKey = useMemo(() => {
@@ -113,10 +101,17 @@ export function PhonePreview({
   const handle = rawProp || "demo_creator";
   const cleanSubpath = subpath ? subpath.replace(/^\//, "").replace(/\/$/, "") : "";
 
+  const initialTab = useMemo(() => {
+    if (cleanSubpath === "series") return "watch";
+    if (cleanSubpath === "products" || cleanSubpath === "shop") return "shop";
+    if (cleanSubpath === "links") return "links";
+    return undefined;
+  }, [cleanSubpath]);
+
   // Products state (if not passed as prop)
   const [internalProducts, setInternalProducts] = useState<CreatorProduct[]>([]);
   useEffect(() => {
-    if (productsProp && productsProp.length > 0) return;
+    if (productsProp !== undefined) return;
     let cancelled = false;
     ProductService.list()
       .then((items) => {
@@ -133,44 +128,48 @@ export function PhonePreview({
   // Links state (if not passed as prop)
   const [internalLinks, setInternalLinks] = useState<CustomLink[]>([]);
   useEffect(() => {
-    if (linksProp && linksProp.length > 0) return;
+    if (linksProp !== undefined) return;
+    let cancelled = false;
     try {
-      const items = customLinksRepository.get();
-      if (Array.isArray(items)) {
-        setInternalLinks(items);
+      const cached = customLinksRepository.get();
+      if (Array.isArray(cached) && cached.length > 0) {
+        setInternalLinks(cached);
       }
     } catch {}
+    LinkService.list()
+      .then((data) => {
+        if (!cancelled && Array.isArray(data.items)) {
+          setInternalLinks(data.items.map(normalizeLink));
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, [linksProp, refreshTrigger]);
 
   const seriesData = useMemo(() => {
-    if (seriesProp) return seriesProp;
+    if (seriesProp !== undefined) return seriesProp;
     return creatorSeries || [];
   }, [seriesProp, creatorSeries]);
 
   const productsData = useMemo(() => {
-    if (productsProp && productsProp.length > 0) {
+    if (productsProp !== undefined) {
       return productsProp.map(normalizeProduct);
     }
     return internalProducts;
   }, [productsProp, internalProducts]);
 
   const linksData = useMemo(() => {
-    if (linksProp && linksProp.length > 0) return linksProp.map(normalizeLink);
+    if (linksProp !== undefined) return linksProp.map(normalizeLink);
     return internalLinks;
   }, [linksProp, internalLinks]);
 
-  const pageTitle = useMemo(() => {
-    if (cleanSubpath === "series") return "Shows & Series";
-    if (cleanSubpath === "products" || cleanSubpath === "shop") return "Shop & Products";
-    if (cleanSubpath === "links") return "Links & Socials";
-    return "Live Preview";
-  }, [cleanSubpath]);
-
-  const publicHref = `/${handle}${cleanSubpath ? `/${cleanSubpath}` : ""}`;
+  const publicHref = `/${handle}`;
 
   const handleCopyLink = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://inflixo.com";
-    const fullUrl = `${origin}/${handle}${cleanSubpath ? `/${cleanSubpath}` : ""}`;
+    const fullUrl = `${origin}/${handle}`;
     const ok = await copyToClipboard(fullUrl);
     if (ok) {
       setCopied(true);
@@ -184,23 +183,20 @@ export function PhonePreview({
   return (
     <aside
       aria-label="Profile preview"
-      style={{ height: panelHeight ? `${panelHeight}px` : "calc(100dvh - 2rem)" }}
-      className={`hidden lg:flex flex-col gap-2 w-[380px] xl:w-[440px] shrink-0 sticky top-6 min-h-[820px] max-h-[1080px] ${className}`}
+      className={`hidden lg:flex flex-col gap-2 w-[380px] xl:w-[440px] shrink-0 sticky top-6 h-fit max-h-[calc(100dvh-3rem)] ${className}`}
     >
       {/* Top Header Bar: Page title badge, copy link button & open in new tab */}
-      <div className="w-full flex items-center justify-between gap-2 px-1">
+      <div className="w-full flex items-center justify-between gap-2 px-1 shrink-0">
         <div className="flex items-center gap-2 min-w-0">
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-[5px] bg-[#F4F4F5] border border-[#E4E4E7]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#10B981] animate-pulse" />
             <span className="text-[11.5px] font-semibold text-[#18181B] truncate">
-              {pageTitle}
+              Live Preview
             </span>
           </div>
-          {cleanSubpath && (
-            <span className="text-[11px] text-[#A1A1AA] truncate font-mono">
-              /{cleanSubpath}
-            </span>
-          )}
+          <span className="text-[11px] text-[#A1A1AA] truncate font-mono">
+            /{handle}
+          </span>
         </div>
 
         <div className="flex items-center gap-1.5 shrink-0">
@@ -235,14 +231,14 @@ export function PhonePreview({
         </div>
       </div>
 
-      {/* Preview Box: Edge-to-edge Theme background without mobile bezel/frames */}
+      {/* Preview Box: Edge-to-edge Theme background, sized to content with scroll on overflow */}
       <div
         style={{
           ...themeTokenStyle(resolvedThemeKey),
           background: "var(--page-bg)",
           transform: "translateZ(0)",
         }}
-        className="relative flex-1 w-full min-h-0 overflow-hidden rounded-[5px] border border-[#E4E4E7] transition-colors duration-300"
+        className="relative w-full max-h-[calc(100dvh-5.5rem)] overflow-y-auto overflow-x-hidden scrollbar-none rounded-[5px] border border-[#E4E4E7] transition-colors duration-300"
       >
         <div
           aria-hidden="true"
@@ -271,8 +267,8 @@ export function PhonePreview({
           <FocusOverlay overlay={meta.focusOverlay} contained={true} />
         )}
 
-        {/* Live profile card (without back button inside dashboard preview) */}
-        <div className="relative z-10 h-full flex flex-col px-4 py-4 min-h-0">
+        {/* Live profile card (mirrors public profile tabs & headers) */}
+        <div className="relative z-10 flex flex-col px-4 py-4">
           <LivePreviewCard
             profile={profile}
             socials={socials}
@@ -283,9 +279,8 @@ export function PhonePreview({
             themeKey={resolvedThemeKey}
             variant="full"
             layoutMode={profile.publicProfileLayout === "premium" ? "premium" : "tabs"}
-            seriesOnlyMode={cleanSubpath === "series"}
-            productsOnlyMode={cleanSubpath === "products" || cleanSubpath === "shop"}
-            linksOnlyMode={cleanSubpath === "links"}
+            initialTab={initialTab}
+            containedScroll={false}
             pageHeader={undefined}
             hideFooter={true}
             isInformational={true}

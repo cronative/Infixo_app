@@ -1548,11 +1548,11 @@ export function LivePreviewCard({
   const hasReviewsContent = !isListingPage && effectiveVisibilitySettings.showReviews !== false && approvedReviews.length > 0;
 
   const hasFanbaseTab = !isListingPage && effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || fanbaseSocialCards.length > 0);
-  const hasAboutTab = !isListingPage && (Boolean(profile.bio?.trim()) || hasFanbaseTab || hasSetupContent || activeTeamMembers.length > 0);
-  const hasWatchTab = hasSeriesContent;
-  const hasLinksTab = hasLinksContent;
-  const hasShopTab = hasShopContent;
-  const hasWorkTab = hasWorkCollab || hasReviewsContent;
+  const hasAboutTab = !isListingPage && (Boolean(profile.bio?.trim()) || hasFanbaseTab || hasSetupContent || activeTeamMembers.length > 0 || (isDashboardPreview && initialTab === "about"));
+  const hasWatchTab = hasSeriesContent || (!isListingPage && isDashboardPreview && initialTab === "watch");
+  const hasLinksTab = hasLinksContent || (!isListingPage && isDashboardPreview && initialTab === "links");
+  const hasShopTab = hasShopContent || (!isListingPage && isDashboardPreview && initialTab === "shop");
+  const hasWorkTab = hasWorkCollab || hasReviewsContent || (!isListingPage && isDashboardPreview && initialTab === "collab");
 
   const aboutTabObj = { id: "about" as CreatorNavTabId, label: "About", icon: User };
   const watchTabObj = { id: "watch" as CreatorNavTabId, label: "Watch", icon: Film };
@@ -1936,39 +1936,38 @@ export function LivePreviewCard({
               <div className="px-4 sm:px-5 pt-3 pb-2.5 text-left">
                 <div className="flex items-center justify-between gap-2 px-0.5">
                   <div className="min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <Clapperboard className="h-4.5 w-4.5 text-(--accent-text) shrink-0" />
-                      <h2
-                        style={{
-                          color: c.primaryText,
-                          fontFamily: typ.headingFontFamily,
-                          fontWeight: 700,
-                        }}
-                        className="text-[14.5px] sm:text-[15.5px] font-bold tracking-tight truncate"
-                      >
-                        My Series &amp; Shows
-                      </h2>
-                    </div>
+                    <h2
+                      style={{
+                        color: c.primaryText,
+                        fontFamily: typ.headingFontFamily,
+                        fontWeight: 700,
+                      }}
+                      className="text-[14.5px] sm:text-[15.5px] font-bold tracking-tight"
+                    >
+                      Series
+                    </h2>
                     <p
                       style={{ color: c.secondaryText }}
-                      className="text-[11px] sm:text-xs font-normal mt-0.5 truncate"
+                      className="text-[11px] sm:text-xs font-normal mt-0.5"
                     >
-                      Binge-worthy multi-part series, masterclasses &amp; playlists in one place.
+                      Watch episodes in the right order.
                     </p>
                   </div>
 
-                  <div className="relative shrink-0">
-                    <select
-                      value={seriesSortOrder}
-                      onChange={(e) => setSeriesSortOrder(e.target.value)}
-                      className="appearance-none bg-(--card-bg) border border-(--surface-border)/15 rounded-[5px] text-[11px] sm:text-xs font-medium text-(--text)  py-1 pl-2.5 pr-6 cursor-pointer focus:outline-hidden hover:border-(--surface-border)/30  transition-colors shadow-none"
-                    >
-                      <option value="latest">Latest First</option>
-                      <option value="oldest">Oldest First</option>
-                      <option value="episodes">Most Episodes</option>
-                    </select>
-                    <ChevronDown className="h-3 w-3 text-(--icon) absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  </div>
+                  {series.length > 1 && (
+                    <div className="relative shrink-0">
+                      <select
+                        value={seriesSortOrder}
+                        onChange={(e) => setSeriesSortOrder(e.target.value)}
+                        className="appearance-none bg-(--card-bg) border border-(--surface-border)/15 rounded-[5px] text-[11px] sm:text-xs font-medium text-(--text)  py-1 pl-2.5 pr-6 cursor-pointer focus:outline-hidden hover:border-(--surface-border)/30  transition-colors shadow-none"
+                      >
+                        <option value="latest">Latest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="episodes">Most Episodes</option>
+                      </select>
+                      <ChevronDown className="h-3 w-3 text-(--icon) absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -1984,26 +1983,39 @@ export function LivePreviewCard({
                         fontFamily: typ.headingFontFamily,
                         fontWeight: 700,
                       }}
-                      className={`flex items-center gap-1.5 ${PUBLIC_TYPE.sectionTitle}`}
+                      className="text-[14.5px] sm:text-[15.5px] font-bold tracking-tight"
                     >
-                      <ShoppingBag className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
-                      <span>My Products</span>
+                      Shop
                     </h2>
                   </div>
-                  {products && products.length > 0 && (
-                    <span
-                      style={{ color: c.mutedText }}
-                      className="shrink-0 text-[11px] sm:text-xs font-semibold"
-                    >
-                      {products.length} {products.length === 1 ? "Product" : "Products"}
-                    </span>
-                  )}
                 </div>
                 <p
                   style={{ color: c.secondaryText }}
                   className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5"
                 >
-                  Check out my products.
+                  Products I use and recommend.
+                </p>
+              </div>
+            )}
+
+            {/* Title & Subtitle for Links */}
+            {linksOnlyMode && (
+              <div className="px-4 sm:px-5 pt-2.5 pb-2 text-left">
+                <h2
+                  style={{
+                    color: c.primaryText,
+                    fontFamily: typ.headingFontFamily,
+                    fontWeight: 700,
+                  }}
+                  className="text-[14.5px] sm:text-[15.5px] font-bold tracking-tight px-0.5"
+                >
+                  Links
+                </h2>
+                <p
+                  style={{ color: c.secondaryText }}
+                  className="text-[11px] sm:text-xs font-normal px-0.5 mt-0.5"
+                >
+                  Recommended links, tickets &amp; websites.
                 </p>
               </div>
             )}
@@ -2782,7 +2794,7 @@ export function LivePreviewCard({
 
         {/* 1. Series Section */}
         {(seriesOnlyMode || (!isListingPage && (isPremiumLayout || !isTabsLayout || activeNavTab === "watch" || activeNavTab === "series"))) && effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || seriesOnlyMode || isDashboardPreview) && (
-          <div id="series-section" className={`relative z-10 w-full text-left ${isPremiumLayout ? "order-[1] mt-4 sm:mt-5 space-y-2.5" : seriesOnlyMode ? "order-[10] mt-1.5 sm:mt-2 pb-12" : isTabsLayout ? "order-[10] mt-1.5 sm:mt-2 pb-12" : "order-[10] mt-6 sm:mt-7 space-y-2.5 pb-12"}`}>
+          <div id="series-section" className={`relative z-10 w-full text-left ${isPremiumLayout ? "order-[1] mt-4 sm:mt-5 space-y-2.5" : seriesOnlyMode ? "order-[10] mt-1.5 sm:mt-2 pb-4" : isTabsLayout ? `order-[10] mt-1.5 sm:mt-2 ${isDashboardPreview ? "pb-2" : "pb-12"}` : `order-[10] mt-6 sm:mt-7 space-y-2.5 ${isDashboardPreview ? "pb-2" : "pb-12"}`}`}>
             {!seriesOnlyMode && (
               <TabSectionHeader
                 title={isPremiumLayout ? "Series & Playlists" : "Series"}

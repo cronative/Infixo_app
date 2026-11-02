@@ -4,11 +4,20 @@ import React from "react";
 import { ArrowUpRight } from "lucide-react";
 import { ProductImage } from "@/components/products/ProductImage";
 
-/** Grid wrapper shared by Shop and My Setup: max 3 per row with compact gap. */
+/** Grid wrapper shared by Shop and My Setup: adapts column count to item count so 1 item isn't stuck at half width. */
 export function ProductGrid({ children }: { children: React.ReactNode }) {
+  const items = React.Children.toArray(children).filter(Boolean);
+  const count = items.length;
+  const gridColsClass =
+    count === 1
+      ? "grid-cols-1"
+      : count === 2
+      ? "grid-cols-2"
+      : "grid-cols-2 @min-[440px]:grid-cols-3 sm:grid-cols-3";
+
   return (
     <div className="@container w-full">
-      <div className="grid grid-cols-2 @min-[380px]:grid-cols-3 sm:grid-cols-3 gap-2 sm:gap-2.5">{children}</div>
+      <div className={`grid ${gridColsClass} gap-2 sm:gap-2.5`}>{children}</div>
     </div>
   );
 }
@@ -27,15 +36,15 @@ interface ProductGridCardProps {
 export function ProductGridCard({ name, imageUrl, href, price, note, isAffiliate = false, onClick }: ProductGridCardProps) {
   const body = (
     <>
-      <ProductImage src={imageUrl || ""} name={name} cover className="aspect-[4/3] w-full border-b border-(--surface-border)" />
+      <ProductImage src={imageUrl || ""} name={name} cover className="aspect-[4/3] max-h-48 w-full border-b border-(--surface-border)" />
 
-      <div className="flex flex-1 flex-col p-2 sm:p-2.5 gap-0.5">
-        <h3 className="text-[13px] font-medium text-(--text) line-clamp-1 truncate leading-[18px] break-words" title={name}>
+      <div className="flex flex-1 flex-col p-2.5 sm:p-3 gap-0.5">
+        <h3 className="text-[13px] font-medium text-(--text) line-clamp-2 leading-[18px] break-words" title={name}>
           {name}
         </h3>
         {price && <p className="text-[13px] sm:text-[14px] font-semibold text-(--text) tabular-nums leading-tight">{price}</p>}
         {note && (
-          <p className="text-xs text-(--text-muted) font-normal line-clamp-1 truncate leading-[17px]" title={note}>
+          <p className="text-xs text-(--text-muted) font-normal line-clamp-2 leading-[17px] break-words" title={note}>
             {note}
           </p>
         )}

@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { ArrowUpRight, Pin } from "lucide-react";
+import React, { useState } from "react";
+import { ArrowUpRight, Globe } from "lucide-react";
 import { CustomLink, CustomLinkItem } from "@/types";
 import { getPlatformFromUrl, extractBareDomain } from "@/lib/linkIcons";
 
@@ -34,16 +34,15 @@ export function LinkRow({
   const title = link.title || "";
 
   // Thumbnail fallback; otherwise the favicon saved on the server (known platforms keep their brand icon).
+  const [faviconFailed, setFaviconFailed] = useState(false);
   const thumbnail = (link as { thumbnail?: string }).thumbnail;
-  const favicon = !thumbnail && !platform.isKnownApp ? link.iconUrl : undefined;
-  const letter = !thumbnail && !favicon && !platform.isKnownApp
-    ? (title.trim()[0] || bareDomain[0] || "L").toUpperCase()
-    : null;
+  const favicon = !thumbnail && !platform.isKnownApp && !faviconFailed ? link.iconUrl : undefined;
+  const showGlobe = !thumbnail && !favicon && !platform.isKnownApp;
   const iconBg = thumbnail
     ? "bg-(--surface) "
     : favicon
       ? "bg-transparent border border-(--surface-border) "
-      : letter
+      : showGlobe
         ? "bg-(--accent-soft) border border-(--surface-border)"
         : platform.bgClass;
 
@@ -70,9 +69,9 @@ export function LinkRow({
                 loading="lazy"
               />
             ) : favicon ? (
-              <img src={favicon} alt="" className="w-4 h-4 object-contain" loading="lazy" />
-            ) : letter ? (
-              <span className="text-[11px] font-medium uppercase text-(--accent-text)">{letter}</span>
+              <img src={favicon} alt="" className="w-4 h-4 object-contain" loading="lazy" onError={() => setFaviconFailed(true)} />
+            ) : showGlobe ? (
+              <Globe className="h-3.5 w-3.5 text-(--accent-text)" />
             ) : (
               platform.renderIcon(true)
             )}
@@ -118,9 +117,9 @@ export function LinkRow({
               loading="lazy"
             />
           ) : favicon ? (
-            <img src={favicon} alt="" className="w-5 h-5 object-contain" loading="lazy" />
-          ) : letter ? (
-            <span className="text-xs font-medium uppercase text-(--accent-text)">{letter}</span>
+            <img src={favicon} alt="" className="w-5 h-5 object-contain" loading="lazy" onError={() => setFaviconFailed(true)} />
+          ) : showGlobe ? (
+            <Globe className="h-4 w-4 text-(--accent-text)" />
           ) : (
             platform.renderIcon(false)
           )}
@@ -136,9 +135,6 @@ export function LinkRow({
           </span>
         </div>
       </div>
-
-      {/* Pin marker sits just left of the ↗ icon */}
-      {isPinned && <Pin aria-label="Pinned" className="h-3.5 w-3.5 text-(--icon) shrink-0 -mr-1.5" />}
 
       {/* Small ↗ Icon */}
       <ArrowUpRight className="h-4 w-4 text-(--icon) shrink-0 group-hover:text-(--icon-active) group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />

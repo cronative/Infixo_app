@@ -8,6 +8,7 @@ import {
   ExternalLink,
   Folder,
   FolderOpen,
+  Globe,
   GripVertical,
   Link as LinkIcon,
   Loader2,
@@ -75,7 +76,8 @@ function cacheLinks(items: LinkDto[]) {
   try { customLinksRepository.save(legacy); } catch {}
 }
 
-function LinkIconBox({ kind, url, iconUrl, title, small = false }: { kind: "link" | "group"; url: string; iconUrl: string | null; title: string; small?: boolean }) {
+function LinkIconBox({ kind, url, iconUrl, small = false }: { kind: "link" | "group"; url: string; iconUrl: string | null; title?: string; small?: boolean }) {
+  const [failed, setFailed] = useState(false);
   const size = small ? "h-6 w-6" : "h-8 w-8";
   if (kind === "group") {
     return (
@@ -88,17 +90,17 @@ function LinkIconBox({ kind, url, iconUrl, title, small = false }: { kind: "link
   if (platform.isKnownApp) {
     return <div className={`${size} rounded-[5px] flex items-center justify-center shrink-0 overflow-hidden ${platform.bgClass}`}>{platform.renderIcon(small)}</div>;
   }
-  if (iconUrl) {
+  if (iconUrl && !failed) {
     return (
       <div className={`${size} rounded-[5px] flex items-center justify-center shrink-0 overflow-hidden bg-white border border-[#ECECF0]`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={iconUrl} alt="" className={small ? "h-3.5 w-3.5 object-contain" : "h-4 w-4 object-contain"} />
+        <img src={iconUrl} alt="" className={small ? "h-3.5 w-3.5 object-contain" : "h-4 w-4 object-contain"} onError={() => setFailed(true)} />
       </div>
     );
   }
   return (
-    <div className={`${size} rounded-[5px] flex items-center justify-center shrink-0 bg-[#F7EEF2]`}>
-      <span className="text-[12px] font-semibold uppercase text-[#7A2253]">{(title.trim()[0] || extractBareDomain(url)[0] || "L").toUpperCase()}</span>
+    <div className={`${size} rounded-[5px] flex items-center justify-center shrink-0 bg-[#F7EEF2] text-[#7A2253]`}>
+      <Globe className={small ? "h-3.5 w-3.5" : "h-4 w-4"} />
     </div>
   );
 }

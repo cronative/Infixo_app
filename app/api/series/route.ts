@@ -6,7 +6,7 @@ import { requireCreator } from "@/lib/creatorAuth";
 import { requireSession, ownsResource, getSessionFromRequest } from "@/lib/session";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
-import { validateVideoUrl, validateUrlForSeriesPlatform } from "@/lib/videoUrl";
+import { extractVideoThumbnail, validateVideoUrl, validateUrlForSeriesPlatform } from "@/lib/videoUrl";
 import { resolveThemeKey } from "@/lib/themeKeys";
 
 // GET /api/series
@@ -79,7 +79,7 @@ export async function GET(req: Request) {
               id: ep.id,
               episodeNumber: ep.episode_number,
               title: ep.title,
-              thumbnailDataUrl: null,
+              thumbnailDataUrl: extractVideoThumbnail(ep.external_url, ep.platform),
               platform: ep.platform,
               externalUrl: ep.external_url,
               description: "",
@@ -173,7 +173,7 @@ export async function GET(req: Request) {
               id: ep.id,
               episodeNumber: ep.episode_number,
               title: ep.title,
-              thumbnailDataUrl: null,
+              thumbnailDataUrl: extractVideoThumbnail(ep.external_url, ep.platform),
               platform: ep.platform,
               externalUrl: ep.external_url,
               description: "",
