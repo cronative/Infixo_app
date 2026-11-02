@@ -200,6 +200,19 @@ export default function MySeriesPage() {
     setUpsertModalOpen(true);
   };
 
+  // Deep-link handler: ?edit={id} or ?new=true
+  useEffect(() => {
+    if (typeof window === "undefined" || loading || !seriesList.length) return;
+    const sp = new URLSearchParams(window.location.search);
+    const editId = sp.get("edit");
+    if (editId) {
+      const found = seriesList.find((s) => s.id === editId);
+      if (found) handleOpenEditSeries(found);
+    } else if (sp.get("new") === "true") {
+      handleOpenCreateSeries();
+    }
+  }, [loading, seriesList]);
+
   const handleToggleExpand = (id: string) => {
     setExpandedSeriesIds((prev) => {
       const next = new Set(prev);

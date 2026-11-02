@@ -254,6 +254,19 @@ export default function DashboardLinksPage() {
     setOpen(true);
   }
 
+  // Deep-link handler: ?edit={id} or ?new=true
+  useEffect(() => {
+    if (typeof window === "undefined" || loading || !links.length) return;
+    const sp = new URLSearchParams(window.location.search);
+    const editId = sp.get("edit");
+    if (editId) {
+      const found = links.find((l) => l.id === editId);
+      if (found) openEdit(found);
+    } else if (sp.get("new") === "true") {
+      openCreate();
+    }
+  }, [loading, links]);
+
   function urlBlurred(event?: React.FocusEvent<HTMLInputElement>) {
     const next = withHttps(url);
     setUrl(next);

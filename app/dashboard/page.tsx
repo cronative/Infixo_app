@@ -9,15 +9,18 @@ import {
   ExternalLink,
   Eye,
   Film,
+  Folder,
+  Inbox,
   Laptop,
   Link2,
   MousePointerClick,
+  Plus,
   Share2,
   ShoppingBag,
   Sparkles,
-  Star,
   Users,
   MessageCircle,
+  MessageSquare,
   QrCode,
   Heart,
   ArrowRight,
@@ -42,11 +45,11 @@ import {
 } from "@/repositories/localRepository";
 import { MediaKitService } from "@/services/MediaKitService";
 import { ProductService } from "@/services/ProductService";
+import { LinkService } from "@/services/LinkService";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PAGE_COPY } from "@/components/dashboard/pageCopy";
-import { SectionCard } from "@/components/dashboard/SectionCard";
-import { StatGrid, StatTile } from "@/components/dashboard/StatTile";
+import { StatTile } from "@/components/dashboard/StatTile";
 import type {
   SocialAccounts,
   CustomLink,
@@ -56,7 +59,6 @@ import type {
   CreatorProduct,
 } from "@/types";
 import { getCreatorEra, formatFans } from "@/lib/creatorEra";
-import { CreatorEraProgressCard } from "@/components/shared/CreatorEraProgressCard";
 import { CreatorEraCelebrationModal } from "@/components/shared/CreatorEraCelebrationModal";
 import { SetupChecklist } from "@/components/dashboard/SetupChecklist";
 
@@ -143,6 +145,7 @@ export default function DashboardOverviewPage() {
   const [reviews, setReviews] = useState<CreatorReview[]>([]);
   const [packages, setPackages] = useState<MediaKitPackage[]>([]);
   const [setupItems, setSetupItems] = useState<CreatorSetupItem[]>([]);
+  const [unreadRequestsCount, setUnreadRequestsCount] = useState<number>(0);
   const [latestFanNudge, setLatestFanNudge] = useState<any | null>(null);
 
   const displayName = profile.displayName || "Creator";
@@ -166,23 +169,27 @@ export default function DashboardOverviewPage() {
   // Fetch real count data on mount from exact pages' storage / repositories
   useEffect(() => {
     try {
-      // 1. Links
-      const storedLinks = customLinksRepository.get();
-      setCustomLinks(Array.isArray(storedLinks) ? storedLinks : []);
+      // 1. Links (fetch from API with local repository fallback)
+      LinkService.list()
+        .then((data) => {
+          if (data && Array.isArray(data.items)) {
+            setCustomLinks(data.items as any);
+          }
+        })
+        .catch(() => {
+          const storedLinks = customLinksRepository.get();
+          setCustomLinks(Array.isArray(storedLinks) ? storedLinks : []);
+        });
 
       // 2. Reviews
       const storedReviews = reviewsRepository.getAll();
       setReviews(Array.isArray(storedReviews) ? storedReviews : []);
 
-      // 3. Collab packages
-      const storedPkgs = MediaKitService.getPackages();
-      setPackages(Array.isArray(storedPkgs) ? storedPkgs : []);
-
-      // 4. Setup gear items
+      // 3. Setup gear items
       const storedSetup = creatorSetupRepository.getAll();
       setSetupItems(Array.isArray(storedSetup) ? storedSetup : []);
 
-      // 5. Products / Shop items
+      // 4. Products / Shop items
       ProductService.list()
         .then((items) => setProducts(Array.isArray(items) ? items : []))
         .catch(() => setProducts([]));
@@ -190,6 +197,35 @@ export default function DashboardOverviewPage() {
       console.warn("Failed to read local repositories:", e);
     }
   }, []);
+
+  // Collab packages & requests: use the exact same source as Media Kit / Requests pages
+  useEffect(() => {
+    const creatorLookup = profile.id || profile.email || profile.username;
+    if (!creatorLookup) return;
+
+    MediaKitService.fetchFromDb(profile.email || profile.username || creatorLookup, profile.id)
+      .then(({ packages: dbPackages }) => {
+        if (Array.isArray(dbPackages)) {
+          setPackages(dbPackages);
+        }
+      })
+      .catch(() => {});
+
+    const fetchRequests = () => {
+      fetch(`/api/creator/requests?creatorId=${encodeURIComponent(creatorLookup)}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          const reqList = data?.data?.requests || data?.requests;
+          const unread = data?.data?.unreadCount ?? data?.unreadCount ?? (Array.isArray(reqList) ? reqList.filter((r: any) => r.status === "NEW").length : 0);
+          setUnreadRequestsCount(Number(unread) || 0);
+        })
+        .catch(() => {});
+    };
+
+    fetchRequests();
+    window.addEventListener("collab-requests-updated", fetchRequests);
+    return () => window.removeEventListener("collab-requests-updated", fetchRequests);
+  }, [profile.id, profile.email, profile.username]);
 
   // 7-day counts & top items from GET /api/analytics?period=7d
   useEffect(() => {
@@ -258,82 +294,40 @@ export default function DashboardOverviewPage() {
   const effectiveSocials: SocialAccounts = socials;
   const effectiveTotalAudience =
     totalAudience > 0 ? totalAudience : SocialService.calculateTotalAudience(effectiveSocials);
+  const currentEra = getCreatorEra(effectiveTotalAudience);
 
   // Content Counts
   const seriesCount = series.length;
-  const episodesCount = series.reduce((total, s) => total + getSeriesEpisodes(s).length, 0);
   const linksCount = customLinks.length;
-  const shopCount = products.length;
-  const reviewsCount = reviews.length;
-  const packagesCount = packages.length;
-  const gearCount = setupItems.length;
 
-  // 1. Content Tiles Config (Tiles 3 per row on desktop, 2 on mobile)
-  const contentTiles = [
-    {
-      id: "series",
-      label: episodesCount > 0 ? `Series | ${episodesCount} episode${episodesCount === 1 ? "" : "s"}` : "Series",
-      count: seriesCount,
-      href: "/dashboard/series",
-      icon: Film,
-    },
-    {
-      id: "links",
-      label: "Links",
-      count: linksCount,
-      subline: null,
-      href: "/dashboard/links",
-      icon: Link2,
-    },
-    {
-      id: "shop",
-      label: "Shop",
-      count: shopCount,
-      subline: null,
-      href: "/dashboard/products",
-      icon: ShoppingBag,
-    },
-    {
-      id: "gear",
-      label: "My Setup",
-      count: gearCount,
-      subline: null,
-      href: "/dashboard/setup",
-      icon: Laptop,
-    },
-    {
-      id: "reviews",
-      label: "Brand reviews",
-      count: reviewsCount,
-      subline: null,
-      href: "/dashboard/reviews",
-      icon: Star,
-    },
-    {
-      id: "mediakit",
-      label: "Collab packages",
-      count: packagesCount,
-      subline: null,
-      href: "/dashboard/mediakit",
-      icon: Briefcase,
-    },
-  ];
+  // Sorted items matching public order (position / pin / sort_order)
+  const sortedSeries = useMemo(() => {
+    return [...series].sort((a: any, b: any) => (a.position ?? 0) - (b.position ?? 0));
+  }, [series]);
 
-  // 2. Top this week columns (Max 3 rows per column)
-  const topSeries = useMemo(() => {
-    const list = analyticsItems?.series || [];
-    return list.filter((s) => (s.opens || 0) + (s.episodeClicks || 0) > 0).slice(0, 3);
-  }, [analyticsItems]);
+  const sortedProducts = useMemo(() => {
+    return [...products].sort((a: any, b: any) => {
+      const aTop = Boolean(a.is_top_pick ?? a.isTopPick);
+      const bTop = Boolean(b.is_top_pick ?? b.isTopPick);
+      if (aTop && !bTop) return -1;
+      if (!aTop && bTop) return 1;
+      const aOrder = Number(a.sort_order ?? a.sortOrder ?? 0);
+      const bOrder = Number(b.sort_order ?? b.sortOrder ?? 0);
+      return aOrder - bOrder;
+    });
+  }, [products]);
 
-  const topProducts = useMemo(() => {
-    const list = analyticsItems?.products || [];
-    return list.filter((p) => (p.clicks || 0) > 0).slice(0, 3);
-  }, [analyticsItems]);
-
-  const topLinks = useMemo(() => {
-    const list = analyticsItems?.links || [];
-    return list.filter((l) => (l.clicks || 0) > 0).slice(0, 3);
-  }, [analyticsItems]);
+  const sortedLinks = useMemo(() => {
+    return [...customLinks].sort((a: any, b: any) => {
+      const aPin = Boolean(a.pinned ?? a.isPinned);
+      const bPin = Boolean(b.pinned ?? b.isPinned);
+      if (aPin && !bPin) return -1;
+      if (!aPin && bPin) return 1;
+      const aPos = Number(a.position ?? 0);
+      const bPos = Number(b.position ?? 0);
+      return aPos - bPos;
+    });
+  }, [customLinks]);
 
   // 3. Next steps onboarding sequence:
   // Connect social accounts → Create your first series → Add your links → Add a product → Add a collab package → Pick a theme
@@ -464,7 +458,7 @@ export default function DashboardOverviewPage() {
       />
 
       {/* 2. SECTION: THIS WEEK */}
-      <section className="space-y-3.5">
+      <section className="space-y-3">
         <SectionHeader
           title="This week"
           subtitle="Overview of your reach and engagement across Inflixo"
@@ -480,18 +474,29 @@ export default function DashboardOverviewPage() {
           }
         />
 
-        <CreatorEraProgressCard
-          fanbase={effectiveTotalAudience}
-          peakFanbase={profile.peakFanbase}
-          showShareButton
-          onShareClick={() => setCelebrationOpen(true)}
-        />
-
-        <StatGrid className="lg:grid-cols-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-3">
           <StatTile
             icon={<Users className="h-[30px] w-[30px]" strokeWidth={2.25} />}
-            value={formatFans(effectiveTotalAudience)}
+            value={
+              <div className="flex items-center gap-2 flex-wrap">
+                <span>{formatFans(effectiveTotalAudience)}</span>
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded-[5px] text-[11px] font-semibold bg-[#F7EEF2] text-[#7A2253] border border-[#7A2253]/20">
+                  {currentEra?.badge || "Rising Bronze"}
+                </span>
+              </div>
+            }
             label="Total fans"
+            action={
+              <button
+                type="button"
+                onClick={() => setCelebrationOpen(true)}
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[5px] text-[11px] font-semibold text-[#7A2253] bg-[#F7EEF2] hover:bg-[#F2DFE8] transition-colors border border-[#7A2253]/20 cursor-pointer"
+                title="Share your Creator Era badge"
+              >
+                <Sparkles className="h-3 w-3" />
+                <span>Share Era</span>
+              </button>
+            }
           />
           <StatTile
             icon={<Eye className="h-[30px] w-[30px]" strokeWidth={2.25} />}
@@ -499,147 +504,296 @@ export default function DashboardOverviewPage() {
             label="Profile opens"
           />
           <StatTile
-            icon={<Film className="h-[30px] w-[30px]" strokeWidth={2.25} />}
-            value={loading ? "..." : formatCount(weekStats?.seriesOpens ?? 0)}
-            label="Series opens"
-          />
-          <StatTile
             icon={<MousePointerClick className="h-[30px] w-[30px]" strokeWidth={2.25} />}
             value={loading ? "..." : formatCount(weekStats?.clicks ?? 0)}
             label="Clicks"
           />
-        </StatGrid>
+        </div>
       </section>
 
-      {/* 3. SECTION: YOUR CONTENT */}
-      <section>
-        <SectionHeader
-          title="Your content"
-          subtitle="Manage your portfolio, storefront, and audience assets"
-          icon={<Film className="h-4 w-4 text-[#7A2253]" />}
-        />
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5">
-          {loading || profileLoading ? (
-            Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="flex items-stretch bg-white border border-[#ECECF0] rounded-[5px] min-h-[64px] sm:min-h-[68px] overflow-hidden animate-pulse"
+      {/* 3. SECTION: CONTENT & STOREFRONT */}
+      <section className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {/* Card 1: Series */}
+          <div className="rounded-[5px] border border-[#ECECF0] bg-white flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-[#ECECF0] bg-[#FAFAFB]">
+              <h3 className="text-[13.5px] font-semibold text-[#18181B]">
+                Series ({series.length})
+              </h3>
+              <Link
+                href="/dashboard/series?new=true"
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-[5px] bg-[#7A2253] text-white text-[11.5px] font-semibold hover:bg-[#681c46] transition-colors cursor-pointer"
               >
-                <div className="w-[64px] sm:w-[68px] shrink-0 bg-[#F4F4F5] border-r border-[#ECECF0]" />
-                <div className="p-2 sm:p-2.5 flex-1 min-w-0 flex flex-col justify-center space-y-1">
-                  <div className="h-4 w-12 rounded bg-[#F4F4F5]" />
-                  <div className="h-2.5 w-16 rounded bg-[#F4F4F5]" />
+                <Plus className="h-3 w-3" />
+                <span>Add</span>
+              </Link>
+            </div>
+
+            <div className="flex-1 max-h-[280px] overflow-y-auto divide-y divide-[#F4F4F5]">
+              {sortedSeries.length === 0 ? (
+                <div className="py-8 px-4 text-center flex flex-col items-center justify-center">
+                  <p className="text-[13px] font-medium text-[#18181B]">No series yet</p>
+                  <Link
+                    href="/dashboard/series?new=true"
+                    className="mt-2.5 inline-flex items-center gap-1 px-3 py-1.5 rounded-[5px] bg-[#7A2253] text-white text-[12px] font-semibold hover:bg-[#681c46] transition-colors cursor-pointer"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>Add series</span>
+                  </Link>
                 </div>
-              </div>
-            ))
-          ) : (
-            contentTiles.map((tile) => {
-              const Icon = tile.icon;
-              return (
-                <Link
-                  key={tile.id}
-                  href={tile.href}
-                  className="flex items-stretch rounded-[5px] border border-[#ECECF0] hover:border-[#CBD5E1] bg-white overflow-hidden transition-colors group cursor-pointer min-h-[64px] sm:min-h-[68px]"
-                >
-                  <div className="flex w-[64px] sm:w-[68px] shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#7A2253] group-hover:bg-[#F7EEF2] transition-colors [&>svg]:h-[30px] [&>svg]:w-[30px] [&>svg]:stroke-[2.25]">
-                    <Icon className="h-[30px] w-[30px]" strokeWidth={2.25} />
-                  </div>
-                  <div className="min-w-0 flex-1 p-3 sm:p-3.5 flex flex-col justify-center">
-                    <div className="text-[18px] sm:text-[20px] font-semibold leading-tight text-[#18181B] whitespace-nowrap tabular-nums">
-                      {tile.count}
-                    </div>
-                    <div className="mt-0.5 text-[12px] font-normal leading-normal text-[#6B6B76] truncate">
-                      {tile.label}
-                    </div>
-                  </div>
-                </Link>
-              );
-            })
-          )}
+              ) : (
+                sortedSeries.map((item) => {
+                  const cover = (item as any).coverUrl || (item as any).thumbnailUrl || item.posterDataUrl || (item as any).cover;
+                  const epCount = getSeriesEpisodes(item).length;
+                  return (
+                    <Link
+                      key={item.id}
+                      href={`/dashboard/series?edit=${encodeURIComponent(item.id)}`}
+                      className="flex items-center gap-3 p-2.5 hover:bg-[#FAFAFB] transition-colors group cursor-pointer"
+                    >
+                      {cover ? (
+                        <img
+                          src={cover}
+                          alt=""
+                          className="h-10 w-10 rounded-[4px] object-cover shrink-0 bg-[#F4F4F5] border border-[#ECECF0]"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                      ) : (
+                        <div className="h-10 w-10 rounded-[4px] bg-[#F7EEF2] text-[#7A2253] flex items-center justify-center shrink-0 border border-[#7A2253]/10">
+                          <Film className="h-4 w-4" />
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-[13px] font-medium text-[#18181B] group-hover:text-[#7A2253] transition-colors">
+                          {item.title}
+                        </p>
+                        <p className="text-[11.5px] text-[#6B6B76] mt-0.5">
+                          {epCount} episode{epCount === 1 ? "" : "s"}
+                        </p>
+                      </div>
+                    </Link>
+                  );
+                })
+              )}
+            </div>
+
+            <div className="p-2 border-t border-[#ECECF0] bg-white text-center mt-auto">
+              <Link
+                href="/dashboard/series"
+                className="inline-flex items-center justify-center gap-1 text-[12px] font-semibold text-[#7A2253] hover:text-[#681c46] transition-colors"
+              >
+                <span>Manage →</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 2: Shop */}
+          <div className="rounded-[5px] border border-[#ECECF0] bg-white flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-[#ECECF0] bg-[#FAFAFB]">
+              <h3 className="text-[13.5px] font-semibold text-[#18181B]">
+                Shop ({products.length})
+              </h3>
+              <Link
+                href="/dashboard/products?new=true"
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-[5px] bg-[#7A2253] text-white text-[11.5px] font-semibold hover:bg-[#681c46] transition-colors cursor-pointer"
+              >
+                <Plus className="h-3 w-3" />
+                <span>Add</span>
+              </Link>
+            </div>
+
+            <div className="flex-1 max-h-[280px] overflow-y-auto divide-y divide-[#F4F4F5]">
+              {sortedProducts.length === 0 ? (
+                <div className="py-8 px-4 text-center flex flex-col items-center justify-center">
+                  <p className="text-[13px] font-medium text-[#18181B]">No products yet</p>
+                  <Link
+                    href="/dashboard/products?new=true"
+                    className="mt-2.5 inline-flex items-center gap-1 px-3 py-1.5 rounded-[5px] bg-[#7A2253] text-white text-[12px] font-semibold hover:bg-[#681c46] transition-colors cursor-pointer"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>Add product</span>
+                  </Link>
+                </div>
+              ) : (
+                sortedProducts.map((item: any) => {
+                  const img = item.image_url || item.imageUrl || item.image;
+                  const priceText = item.price ? `₹${Number(item.price).toLocaleString("en-IN")}` : "Free";
+                  return (
+                    <Link
+                      key={item.id}
+                      href={`/dashboard/products?edit=${encodeURIComponent(item.id)}`}
+                      className="flex items-center gap-3 p-2.5 hover:bg-[#FAFAFB] transition-colors group cursor-pointer"
+                    >
+                      {img ? (
+                        <img
+                          src={img}
+                          alt=""
+                          className="h-10 w-10 rounded-[4px] object-cover shrink-0 bg-[#F4F4F5] border border-[#ECECF0]"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                      ) : (
+                        <div className="h-10 w-10 rounded-[4px] bg-[#F7EEF2] text-[#7A2253] flex items-center justify-center shrink-0 border border-[#7A2253]/10">
+                          <ShoppingBag className="h-4 w-4" />
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-[13px] font-medium text-[#18181B] group-hover:text-[#7A2253] transition-colors">
+                          {item.name}
+                        </p>
+                        <p className="text-[11.5px] font-semibold text-[#18181B] mt-0.5">
+                          {priceText}
+                        </p>
+                      </div>
+                    </Link>
+                  );
+                })
+              )}
+            </div>
+
+            <div className="p-2 border-t border-[#ECECF0] bg-white text-center mt-auto">
+              <Link
+                href="/dashboard/products"
+                className="inline-flex items-center justify-center gap-1 text-[12px] font-semibold text-[#7A2253] hover:text-[#681c46] transition-colors"
+              >
+                <span>Manage →</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 3: Links */}
+          <div className="rounded-[5px] border border-[#ECECF0] bg-white flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-[#ECECF0] bg-[#FAFAFB]">
+              <h3 className="text-[13.5px] font-semibold text-[#18181B]">
+                Links ({customLinks.length})
+              </h3>
+              <Link
+                href="/dashboard/links?new=true"
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-[5px] bg-[#7A2253] text-white text-[11.5px] font-semibold hover:bg-[#681c46] transition-colors cursor-pointer"
+              >
+                <Plus className="h-3 w-3" />
+                <span>Add</span>
+              </Link>
+            </div>
+
+            <div className="flex-1 max-h-[280px] overflow-y-auto divide-y divide-[#F4F4F5]">
+              {sortedLinks.length === 0 ? (
+                <div className="py-8 px-4 text-center flex flex-col items-center justify-center">
+                  <p className="text-[13px] font-medium text-[#18181B]">No links yet</p>
+                  <Link
+                    href="/dashboard/links?new=true"
+                    className="mt-2.5 inline-flex items-center gap-1 px-3 py-1.5 rounded-[5px] bg-[#7A2253] text-white text-[12px] font-semibold hover:bg-[#681c46] transition-colors cursor-pointer"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>Add link</span>
+                  </Link>
+                </div>
+              ) : (
+                sortedLinks.map((item: any) => {
+                  const isGroup = item.kind === "group" || item.kind === "collection";
+                  const childCount = item.children?.length ?? item.items?.length ?? 0;
+                  const titleDisplay = isGroup ? `${item.title} · ${childCount} links` : item.title;
+
+                  let favUrl: string | null = item.iconUrl || null;
+                  if (!favUrl && !isGroup && item.url) {
+                    try {
+                      const domain = new URL(item.url).hostname;
+                      if (domain) {
+                        favUrl = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
+                      }
+                    } catch {}
+                  }
+
+                  return (
+                    <Link
+                      key={item.id}
+                      href={`/dashboard/links?edit=${encodeURIComponent(item.id)}`}
+                      className="flex items-center gap-3 p-2.5 hover:bg-[#FAFAFB] transition-colors group cursor-pointer"
+                    >
+                      <div className="h-10 w-10 rounded-[4px] bg-[#FAFAFB] border border-[#ECECF0] flex items-center justify-center shrink-0 overflow-hidden">
+                        {isGroup ? (
+                          <Folder className="h-4 w-4 text-[#7A2253]" />
+                        ) : favUrl ? (
+                          <img
+                            src={favUrl}
+                            alt=""
+                            className="h-4 w-4 object-contain"
+                            onError={(e) => {
+                              e.currentTarget.style.display = "none";
+                            }}
+                          />
+                        ) : (
+                          <Link2 className="h-4 w-4 text-[#7A2253]" />
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-[13px] font-medium text-[#18181B] group-hover:text-[#7A2253] transition-colors">
+                          {titleDisplay}
+                        </p>
+                        <p className="truncate text-[11.5px] text-[#6B6B76] mt-0.5">
+                          {isGroup ? "Link group" : item.url}
+                        </p>
+                      </div>
+                    </Link>
+                  );
+                })
+              )}
+            </div>
+
+            <div className="p-2 border-t border-[#ECECF0] bg-white text-center mt-auto">
+              <Link
+                href="/dashboard/links"
+                className="inline-flex items-center justify-center gap-1 text-[12px] font-semibold text-[#7A2253] hover:text-[#681c46] transition-colors"
+              >
+                <span>Manage →</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Compact Chip Row */}
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <Link
+            href="/dashboard/reviews"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] border border-[#ECECF0] bg-white hover:border-[#CBD5E1] hover:bg-[#FAFAFB] text-[12px] font-medium text-[#18181B] transition-colors"
+          >
+            <MessageSquare className="h-3.5 w-3.5 text-[#7A2253]" />
+            <span>Brand reviews ({reviews.length})</span>
+          </Link>
+
+          <Link
+            href="/dashboard/requests"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] border border-[#ECECF0] bg-white hover:border-[#CBD5E1] hover:bg-[#FAFAFB] text-[12px] font-medium text-[#18181B] transition-colors"
+          >
+            <Inbox className="h-3.5 w-3.5 text-[#7A2253]" />
+            <span>Collab requests</span>
+            {unreadRequestsCount > 0 && (
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded-[4px] text-[10px] font-bold bg-[#EAF7F0] text-[#17845B] border border-[#17845B]/20">
+                {unreadRequestsCount} new
+              </span>
+            )}
+          </Link>
+
+          <Link
+            href="/dashboard/mediakit"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] border border-[#ECECF0] bg-white hover:border-[#CBD5E1] hover:bg-[#FAFAFB] text-[12px] font-medium text-[#18181B] transition-colors"
+          >
+            <Briefcase className="h-3.5 w-3.5 text-[#7A2253]" />
+            <span>Media kit</span>
+          </Link>
+
+          <Link
+            href="/dashboard/setup"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] border border-[#ECECF0] bg-white hover:border-[#CBD5E1] hover:bg-[#FAFAFB] text-[12px] font-medium text-[#18181B] transition-colors"
+          >
+            <Laptop className="h-3.5 w-3.5 text-[#7A2253]" />
+            <span>My Setup ({setupItems.length})</span>
+          </Link>
         </div>
       </section>
-
-      {/* 4. SECTION: TOP THIS WEEK */}
-      <SectionCard
-        title="Top this week"
-        subtitle="Most opened and clicked in the last 7 days"
-        icon={<Star className="h-4 w-4 text-[#7A2253]" />}
-      >
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-            <div className="space-y-2">
-              <h3 className="text-[14px] font-semibold text-[#18181B]">Top series</h3>
-              {topSeries.length === 0 ? (
-                <p className="py-2 text-[12px] text-[#6B6B76]">No activity yet</p>
-              ) : (
-                <div className="space-y-1.5">
-                  {topSeries.map((item) => (
-                    <Link
-                      key={item.id}
-                      href="/dashboard/analytics#series"
-                      className="group flex items-center justify-between gap-2 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] p-2.5 transition-colors hover:bg-white cursor-pointer"
-                    >
-                      <span className="truncate text-[13px] font-medium text-[#18181B] transition-colors group-hover:text-[#7A2253]" title={item.title}>
-                        {item.title}
-                      </span>
-                      <span className="inline-flex shrink-0 items-center h-6 rounded-[5px] bg-white border border-[#ECECF0] px-2 text-[12px] font-medium text-[#6B6B76]">
-                        {item.opens > 0
-                          ? `${item.opens} opens`
-                          : `${item.episodeClicks} clicks`}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-[14px] font-semibold text-[#18181B]">Top products</h3>
-              {topProducts.length === 0 ? (
-                <p className="py-2 text-[12px] text-[#6B6B76]">No activity yet</p>
-              ) : (
-                <div className="space-y-1.5">
-                  {topProducts.map((item) => (
-                    <Link
-                      key={item.id}
-                      href="/dashboard/analytics#products"
-                      className="group flex items-center justify-between gap-2 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] p-2.5 transition-colors hover:bg-white cursor-pointer"
-                    >
-                      <span className="truncate text-[13px] font-medium text-[#18181B] transition-colors group-hover:text-[#7A2253]" title={item.name}>
-                        {item.name}
-                      </span>
-                      <span className="inline-flex shrink-0 items-center h-6 rounded-[5px] bg-white border border-[#ECECF0] px-2 text-[12px] font-medium text-[#6B6B76]">
-                        {item.clicks} clicks
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-[14px] font-semibold text-[#18181B]">Top links</h3>
-              {topLinks.length === 0 ? (
-                <p className="py-2 text-[12px] text-[#6B6B76]">No activity yet</p>
-              ) : (
-                <div className="space-y-1.5">
-                  {topLinks.map((item) => (
-                    <Link
-                      key={item.id}
-                      href="/dashboard/analytics#links"
-                      className="group flex items-center justify-between gap-2 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] p-2.5 transition-colors hover:bg-white cursor-pointer"
-                    >
-                      <span className="truncate text-[13px] font-medium text-[#18181B] transition-colors group-hover:text-[#7A2253]" title={item.title}>
-                        {item.title}
-                      </span>
-                      <span className="inline-flex shrink-0 items-center h-6 rounded-[5px] bg-white border border-[#ECECF0] px-2 text-[12px] font-medium text-[#6B6B76]">
-                        {item.clicks} clicks
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-        </div>
-      </SectionCard>
 
       {/* Share Modal */}
       <Modal

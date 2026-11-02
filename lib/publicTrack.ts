@@ -52,9 +52,15 @@ export function getVisitorId(): string {
 /** True when the signed-in creator is looking at their own public page. */
 function isOwner(username: string) {
   try {
-    const stored = JSON.parse(readStorage("inflixo_creator_profile") || "null");
-    const handle = String(stored?.username || "").replace(/^@/, "").toLowerCase();
-    return Boolean(handle) && handle === username.replace(/^@/, "").toLowerCase();
+    const cleanUsername = username.replace(/^@/, "").toLowerCase();
+    for (const key of ["inflixo:profile", "inflixo_creator_profile", "inflixo:auth"]) {
+      const raw = readStorage(key);
+      if (!raw) continue;
+      const stored = JSON.parse(raw);
+      const handle = String(stored?.username || stored?.user?.username || "").replace(/^@/, "").toLowerCase();
+      if (handle && handle === cleanUsername) return true;
+    }
+    return false;
   } catch {
     return false;
   }

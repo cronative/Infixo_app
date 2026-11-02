@@ -159,6 +159,19 @@ export default function ProductsPage() {
     setError(""); setImageBusy(false); setPreviewState("idle"); setFetchBlocked(false); setOpen(true);
   }
 
+  // Deep-link handler: ?edit={id} or ?new=true
+  useEffect(() => {
+    if (typeof window === "undefined" || loading || !products.length) return;
+    const sp = new URLSearchParams(window.location.search);
+    const editId = sp.get("edit");
+    if (editId) {
+      const found = products.find((p) => p.id === editId);
+      if (found) edit(found);
+    } else if (sp.get("new") === "true") {
+      edit();
+    }
+  }, [loading, products]);
+
   async function fetchPreview(rawUrl: string) {
     const url = rawUrl.trim();
     if (!looksLikeUrl(url) || url === previewedUrl.current) return;

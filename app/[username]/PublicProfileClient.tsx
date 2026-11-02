@@ -110,12 +110,15 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
   useEffect(() => {
     try {
       const rawUser = decodeURIComponent(params.username ?? "").trim().replace(/^@/, "").toLowerCase();
-      const storedUser = localStorage.getItem("inflixo_creator_profile");
-      if (storedUser) {
-        const parsed = JSON.parse(storedUser);
-        const parsedHandle = (parsed?.username || "").replace(/^@/, "").toLowerCase();
-        if (parsedHandle && rawUser && parsedHandle === rawUser) {
-          setViewerIsOwner(true);
+      for (const key of ["inflixo:profile", "inflixo_creator_profile", "inflixo:auth"]) {
+        const storedUser = localStorage.getItem(key);
+        if (storedUser) {
+          const parsed = JSON.parse(storedUser);
+          const parsedHandle = (parsed?.username || parsed?.user?.username || "").replace(/^@/, "").toLowerCase();
+          if (parsedHandle && rawUser && parsedHandle === rawUser) {
+            setViewerIsOwner(true);
+            break;
+          }
         }
       }
     } catch {}

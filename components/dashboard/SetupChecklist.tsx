@@ -25,7 +25,7 @@ export interface ChecklistItem {
   onAction?: () => void;
 }
 
-const STORAGE_KEY_MINIMIZED = "inflixo_setup_checklist_minimized";
+const STORAGE_KEY_DISMISSED = "inflixo_setup_checklist_dismissed";
 const STORAGE_KEY_SHARED = "inflixo_profile_shared_once";
 
 export function SetupChecklist({
@@ -37,9 +37,9 @@ export function SetupChecklist({
   onShare,
   onCopyLink,
 }: SetupChecklistProps) {
-  const [isMinimized, setIsMinimized] = useState<boolean>(() => {
+  const [isDismissed, setIsDismissed] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
-    return localStorage.getItem(STORAGE_KEY_MINIMIZED) === "true";
+    return localStorage.getItem(STORAGE_KEY_DISMISSED) === "true";
   });
 
   const [hasSharedProfile, setHasSharedProfile] = useState<boolean>(() => {
@@ -160,17 +160,10 @@ export function SetupChecklist({
     setExpandedId((prev) => (prev === id ? null : id));
   };
 
-  const handleMinimize = () => {
-    setIsMinimized(true);
+  const handleDismiss = () => {
+    setIsDismissed(true);
     if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEY_MINIMIZED, "true");
-    }
-  };
-
-  const handleRestore = () => {
-    setIsMinimized(false);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEY_MINIMIZED, "false");
+      localStorage.setItem(STORAGE_KEY_DISMISSED, "true");
     }
   };
 
@@ -188,41 +181,14 @@ export function SetupChecklist({
     return "Complete these essential steps to make your link in bio feel verified, trusted, and ready for fans.";
   }, [completedCount, totalCount]);
 
-  // If minimized, render a sleek compact badge/pill
-  if (isMinimized) {
-    return (
-      <div className="flex items-center justify-between gap-3 p-3 bg-white border border-[#ECECF0] rounded-[5px] text-left transition-all">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="flex h-7 w-7 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] shrink-0">
-            <Sparkles className="h-3.5 w-3.5" />
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="text-[13px] font-semibold text-[#18181B]">Setup checklist</span>
-              <span className="inline-flex items-center px-1.5 py-0.5 rounded-[5px] text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                {completedCount}/{totalCount}
-              </span>
-            </div>
-            <p className="text-[11.5px] text-[#6B6B76] truncate mt-0.5">
-              {progressPercent}% completed • {emotionalSubtitle}
-            </p>
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={handleRestore}
-          className="inline-flex h-7 items-center justify-center px-2.5 rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-[#18181B] text-[12px] font-medium transition-colors shrink-0 cursor-pointer"
-        >
-          <span>Continue setup</span>
-          <ArrowRight className="h-3 w-3 ml-1 text-[#71717A]" />
-        </button>
-      </div>
-    );
+  // Auto-hide when 6/6 (all completed) or if the user dismissed it via the X button
+  if (completedCount === totalCount || isDismissed) {
+    return null;
   }
 
   return (
     <div className="p-4 sm:p-5 bg-white border border-[#ECECF0] rounded-[5px] text-left transition-all">
-      {/* 1. Header with title, badge and close button */}
+      {/* 1. Header with title, badge and dismiss button */}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -240,10 +206,10 @@ export function SetupChecklist({
 
         <button
           type="button"
-          onClick={handleMinimize}
+          onClick={handleDismiss}
           className="h-7 w-7 rounded-[5px] flex items-center justify-center text-[#8E8E93] hover:text-[#18181B] hover:bg-[#F4F4F5] transition-colors shrink-0 cursor-pointer"
-          title="Minimize checklist"
-          aria-label="Minimize checklist"
+          title="Dismiss checklist"
+          aria-label="Dismiss checklist"
         >
           <X className="h-4 w-4" />
         </button>
