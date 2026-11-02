@@ -196,7 +196,7 @@ export function PhonePreview({
   return (
     <aside
       aria-label="Profile preview"
-      className={`hidden lg:flex flex-col gap-2 w-[380px] xl:w-[440px] shrink-0 sticky top-6 h-fit max-h-[calc(100dvh-3rem)] ${className}`}
+      className={`hidden lg:flex flex-col gap-2 w-[380px] xl:w-[440px] shrink-0 sticky top-6 h-[calc(100vh-7rem)] ${className}`}
     >
       {/* Top Header Bar: Page title badge, copy link button & open in new tab */}
       <div className="w-full flex items-center justify-between gap-2 px-1 shrink-0">
@@ -244,14 +244,14 @@ export function PhonePreview({
         </div>
       </div>
 
-      {/* Preview Box: Edge-to-edge Theme background, sized to content with scroll on overflow */}
+      {/* Preview Box: Full-height phone frame with internal scrolling inside the inner card */}
       <div
         style={{
           ...themeTokenStyle(resolvedThemeKey),
           background: "var(--page-bg)",
           transform: "translateZ(0)",
         }}
-        className="relative w-full max-h-[calc(100dvh-5.5rem)] overflow-y-auto overflow-x-hidden scrollbar-none rounded-[5px] border border-[#E4E4E7] transition-colors duration-300"
+        className="relative flex-1 h-full min-h-0 w-full overflow-hidden rounded-[5px] border border-[#E4E4E7] transition-colors duration-300"
       >
         <div
           aria-hidden="true"
@@ -280,8 +280,8 @@ export function PhonePreview({
           <FocusOverlay overlay={meta.focusOverlay} contained={true} />
         )}
 
-        {/* Live profile card (same component & mode as standalone public page) */}
-        <div className="relative z-10 flex flex-col px-4 py-4">
+        {/* Live profile card (full height, internal scroll, footer at bottom) */}
+        <div className="relative z-10 h-full min-h-0 flex flex-col px-4 py-4">
           <LivePreviewCard
             profile={profile}
             socials={socials}
@@ -295,9 +295,9 @@ export function PhonePreview({
             seriesOnlyMode={cleanSubpath === "series"}
             productsOnlyMode={cleanSubpath === "products" || cleanSubpath === "shop"}
             linksOnlyMode={cleanSubpath === "links"}
-            containedScroll={false}
+            containedScroll={true}
             pageHeader={undefined}
-            hideFooter={true}
+            hideFooter={false}
             isInformational={true}
           />
         </div>
