@@ -32,6 +32,7 @@ interface CreatorReviewRow extends RowDataPacket {
   comment?: string | null;
   status: string;
   invitation_status?: string | null;
+  is_visible?: number | boolean | null;
   created_at: string | Date;
   updated_at: string | Date;
 }
@@ -49,6 +50,7 @@ interface ReviewRequestBody {
 interface ReviewStatusBody {
   id?: string;
   status?: string;
+  isVisible?: boolean;
 }
 
 function getErrorMessage(error: unknown) {
@@ -100,7 +102,7 @@ export async function GET(req: Request) {
     const queryParams: string[] = [creatorId, creatorEmail || creatorId];
 
     if (isPublicRequest) {
-      sql += " AND status = 'approved'";
+      sql += " AND status IN ('approved', 'pending_approval') AND (is_visible = 1 OR is_visible IS NULL)";
     } else if (status) {
       sql += " AND status = ?";
       queryParams.push(status);
@@ -114,6 +116,10 @@ export async function GET(req: Request) {
       const invitationStatus =
         r.invitation_status ||
         (r.status === "pending_invite" ? "pending" : "submitted");
+      const isVisible =
+        r.is_visible !== undefined && r.is_visible !== null
+          ? Boolean(r.is_visible) && r.status !== "rejected"
+          : r.status !== "rejected";
       return {
         id: r.id,
         creatorId: r.creator_id,
@@ -130,6 +136,7 @@ export async function GET(req: Request) {
         comment: r.comment || "",
         status: r.status,
         invitationStatus,
+        isVisible,
         isVerified: true,
         createdAt: r.created_at,
         updatedAt: r.updated_at,
@@ -279,7 +286,7 @@ export async function POST(req: Request) {
   }
 }
 
-// PATCH /api/creator/reviews — Approve or reject review
+// PATCH /api/creator/reviews — Toggle visibility (Visible on profile / Hidden)
 export async function PATCH(req: Request) {
   try {
     const auth = await requireCreator(req);
@@ -288,19 +295,33 @@ export async function PATCH(req: Request) {
     await ensureReviewsTable();
 
     const body = (await req.json()) as ReviewStatusBody;
-    const { id, status } = body;
+    const { id, status, isVisible } = body;
 
-    if (!id || !status) {
-      return apiError("id and status are required", 400);
+    if (!id) {
+      return apiError("id is required", 400);
     }
 
-    if (!["approved", "rejected", "pending_approval", "pending_invite"].includes(status)) {
-      return apiError("Invalid status value", 400);
+    let nextStatus = status;
+    let nextVisible = 1;
+
+    if (typeof isVisible === "boolean") {
+      nextVisible = isVisible ? 1 : 0;
+      nextStatus = isVisible ? "approved" : "rejected";
+    } else if (status) {
+      if (!["approved", "rejected", "pending_approval", "pending_invite"].includes(status)) {
+        return apiError("Invalid status value", 400);
+      }
+      nextVisible = status === "rejected" ? 0 : 1;
+    } else {
+      return apiError("status or isVisible is required", 400);
     }
 
-    await db.query("UPDATE creator_reviews SET status = ? WHERE id = ? AND creator_id = ?", [status, id, auth.creator.id]);
+    await db.query(
+      "UPDATE creator_reviews SET status = ?, is_visible = ? WHERE id = ? AND (creator_id = ? OR creator_id = ?)",
+      [nextStatus, nextVisible, id, auth.creator.id, auth.creator.email || auth.creator.id]
+    );
 
-    return apiSuccess({}, `Review status updated to ${status}`);
+    return apiSuccess({ id, status: nextStatus, isVisible: Boolean(nextVisible) }, `Review visibility updated`);
   } catch (error: unknown) {
     console.error("PATCH /api/creator/reviews error:", error);
     return apiError(getErrorMessage(error), 500);

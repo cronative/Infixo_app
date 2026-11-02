@@ -124,7 +124,7 @@ export async function POST(req: Request) {
       `UPDATE creator_reviews
        SET rating = ?, rating_content_quality = ?, rating_professionalism = ?,
            rating_timely_delivery = ?, comment = ?, client_name = ?,
-           client_designation = ?, status = 'pending_approval', invitation_status = 'submitted'
+           client_designation = ?, status = 'approved', is_visible = 1, invitation_status = 'submitted'
        WHERE token = ? AND status = 'pending_invite'`,
       [rOverall, rCQ, rProf, rTD, finalComment, finalClientName, finalDesignation, token]
     );
@@ -132,12 +132,13 @@ export async function POST(req: Request) {
       return apiError("This review link has already been used", 409, { isAlreadySubmitted: true });
     }
 
-    console.log("[POST /api/review] Brand review submitted:", {
+    console.log("[POST /api/review] Brand review submitted & published:", {
       reviewId: review.id,
       invitationId: review.id,
       creatorId: review.creator_id,
       invitationStatus: "submitted",
-      reviewStatus: "pending_approval",
+      reviewStatus: "approved",
+      isVisible: true,
       rating: rOverall,
     });
 

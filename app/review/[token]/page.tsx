@@ -522,7 +522,7 @@ export default function PublicReviewSubmissionPage() {
                 Thank You for Your Feedback!
               </h3>
               <p className="text-xs text-[#54514D] font-medium max-w-sm mx-auto leading-relaxed">
-                Your review for <strong className="text-[#181716]">&quot;{reviewData.projectTitle}&quot;</strong> has been submitted to {creatorData?.displayName || "the creator"} for approval.
+                Your review for <strong className="text-[#181716]">&quot;{reviewData.projectTitle}&quot;</strong> is now live on {creatorData?.displayName || "the creator"}&apos;s profile.
               </p>
             </div>
 
