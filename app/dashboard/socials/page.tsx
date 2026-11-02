@@ -1,20 +1,16 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import Link from "next/link";
 import {
   ExternalLink,
   MoreVertical,
-  Trash2,
   RefreshCw,
   Plus,
   Share2,
-  Calendar,
-  Sparkles,
-  ShieldCheck,
-  BarChart2,
   Users,
-  X,
+  EyeOff,
+  Eye,
+  Loader2,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -26,12 +22,10 @@ import {
 import { InstagramFetcher } from "@/components/socials/InstagramFetcher";
 import { YoutubeFetcher } from "@/components/socials/YoutubeFetcher";
 import { FacebookFetcher } from "@/components/socials/FacebookFetcher";
-import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PAGE_COPY } from "@/components/dashboard/pageCopy";
-import { SectionCard } from "@/components/dashboard/SectionCard";
 import { getCreatorEra, getEraProgress, formatFans } from "@/lib/creatorEra";
 import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
 import { CreatorEraCelebrationModal } from "@/components/shared/CreatorEraCelebrationModal";
@@ -46,26 +40,8 @@ interface SocialAccountRow {
   mediaCount?: number;
   isVerified?: boolean;
   isPrimary: boolean;
+  isHidden?: boolean;
   updatedAt?: string;
-}
-
-function formatRelativeUpdate(dateStr?: string | null): string {
-  if (!dateStr) return "Updated recently";
-  try {
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return "Updated recently";
-    const now = new Date();
-    const diffMs = now.getTime() - d.getTime();
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    if (diffHours < 1) return "Updated just now";
-    if (diffHours < 24) return `Updated ${diffHours}h ago`;
-    const diffDays = Math.floor(diffHours / 24);
-    if (diffDays === 1) return "Updated yesterday";
-    if (diffDays < 30) return `Updated ${diffDays} days ago`;
-    return `Updated ${d.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
-  } catch {
-    return "Updated recently";
-  }
 }
 
 function buildAccountProfileUrl(platform: string, username: string): string {
@@ -83,6 +59,8 @@ export default function DashboardSocialsPage() {
   const [accounts, setAccounts] = useState<SocialAccountRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshingId, setRefreshingId] = useState<number | null>(null);
+  const [togglingHideId, setTogglingHideId] = useState<number | null>(null);
+  const [addingSecondary, setAddingSecondary] = useState(false);
 
   // Modals
   const [celebrationOpen, setCelebrationOpen] = useState(false);
@@ -90,21 +68,13 @@ export default function DashboardSocialsPage() {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [addPlatform, setAddPlatform] = useState<"instagram" | "youtube" | "facebook">("instagram");
 
-  // Account removal
-  const [accountToRemove, setAccountToRemove] = useState<SocialAccountRow | null>(null);
-  const [submittingRemove, setSubmittingRemove] = useState(false);
-
   // Draft handles for add modal
   const [draftInsta, setDraftInsta] = useState("");
   const [draftYt, setDraftYt] = useState("");
   const [draftFb, setDraftFb] = useState("");
 
   const rawPlanKey = (subscription?.planKey || "trial") as string;
-  const isTrial =
-    rawPlanKey === "trial" ||
-    rawPlanKey === "early_access" ||
-    rawPlanKey === "free" ||
-    subscription?.status === "trial";
+  const canHideFromProfile = rawPlanKey === "pro" || rawPlanKey === "vip";
 
   const maxPerPlatform =
     (PLANS as any)[rawPlanKey]?.limits?.socialAccountsPerPlatform ?? 5;
@@ -128,17 +98,13 @@ export default function DashboardSocialsPage() {
     fetchAccounts();
   }, [fetchAccounts]);
 
-  // Primary accounts & Total Fans Calculation
+  // Primary accounts & Total Fans Calculation (Primary accounts only; recalculates dynamically)
   const primaryAccounts = useMemo(() => accounts.filter((a) => a.isPrimary), [accounts]);
   const primaryTotal = useMemo(
     () => primaryAccounts.reduce((sum, a) => sum + (Number(a.followerCount) || 0), 0),
     [primaryAccounts]
   );
-  const effectiveFanbase = useMemo(() => {
-    return typeof profile.peakFanbase === "number" && profile.peakFanbase >= primaryTotal
-      ? profile.peakFanbase
-      : primaryTotal;
-  }, [profile.peakFanbase, primaryTotal]);
+  const effectiveFanbase = primaryTotal;
 
   const creatorEra = useMemo(() => getCreatorEra(effectiveFanbase), [effectiveFanbase]);
   const eraProgress = useMemo(() => getEraProgress(effectiveFanbase), [effectiveFanbase]);
@@ -148,8 +114,9 @@ export default function DashboardSocialsPage() {
   const youtubeAccounts = useMemo(() => accounts.filter((a) => a.platform === "youtube"), [accounts]);
   const facebookAccounts = useMemo(() => accounts.filter((a) => a.platform === "facebook"), [accounts]);
 
-  // Refresh single account count
+  // Refresh primary account count
   const handleRefreshCount = async (account: SocialAccountRow) => {
+    if (!account.isPrimary) return;
     setRefreshingId(account.id);
     try {
       let followerCount = account.followerCount;
@@ -196,13 +163,10 @@ export default function DashboardSocialsPage() {
         }
       }
 
-      await fetch("/api/creator/socials", {
-        method: "POST",
+      await fetch(`/api/creator/socials/${account.id}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          platform: account.platform,
-          username: account.username,
-          accountName: account.accountName,
           followerCount,
           mediaCount,
           isVerified,
@@ -220,36 +184,75 @@ export default function DashboardSocialsPage() {
     }
   };
 
-  // Remove account handler
-  const handleExecuteRemove = async () => {
-    if (!accountToRemove) return;
-    setSubmittingRemove(true);
+  // Toggle hide/show on public profile (Pro/VIP only)
+  const handleToggleHide = async (account: SocialAccountRow) => {
+    if (!canHideFromProfile) return;
+    setTogglingHideId(account.id);
+    const nextHidden = !Boolean(account.isHidden);
     try {
-      const res = await fetch(`/api/creator/socials/${accountToRemove.id}`, {
-        method: "DELETE",
+      const res = await fetch(`/api/creator/socials/${account.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isHidden: nextHidden }),
       });
-      const data = await res.json().catch(() => null);
-
+      const json = await res.json().catch(() => null);
       if (!res.ok) {
-        if (data?.error === "REMOVE_NOT_ALLOWED_IN_TRIAL") {
-          showToast("Account removal is not allowed on trial plans", "error");
-        } else if (data?.error === "HAS_EXTRA_ACCOUNTS") {
-          showToast("Cannot remove primary account while extra accounts exist", "error");
-        } else {
-          showToast(data?.message || "Failed to remove account", "error");
-        }
+        showToast(json?.message || "Failed to update visibility", "error");
         return;
       }
-
-      showToast(`@${accountToRemove.username} removed successfully`);
-      setAccountToRemove(null);
+      showToast(
+        nextHidden
+          ? `@${account.username} hidden from public profile`
+          : `@${account.username} is now visible on your profile`
+      );
       await fetchAccounts();
       refresh();
     } catch (err) {
-      console.error("Failed to remove account:", err);
-      showToast("Could not remove account. Please try again.", "error");
+      console.error("Failed to toggle visibility:", err);
+      showToast("Could not update account visibility", "error");
     } finally {
-      setSubmittingRemove(false);
+      setTogglingHideId(null);
+    }
+  };
+
+  // Add secondary account directly (username only, no count fetch)
+  const handleAddSecondaryAccount = async () => {
+    const rawDraft =
+      addPlatform === "instagram"
+        ? draftInsta
+        : addPlatform === "youtube"
+        ? draftYt
+        : draftFb;
+    const cleanUsername = rawDraft.trim().replace(/^@/, "");
+    if (!cleanUsername) {
+      showToast("Please enter a username", "error");
+      return;
+    }
+
+    setAddingSecondary(true);
+    try {
+      const res = await fetch("/api/creator/socials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          platform: addPlatform,
+          username: cleanUsername,
+          accountName: cleanUsername,
+          followerCount: 0,
+        }),
+      });
+      const json = await res.json().catch(() => null);
+      if (!res.ok) {
+        showToast(json?.message || "Failed to add account", "error");
+        return;
+      }
+      showToast(`Added @${cleanUsername} as a secondary account`);
+      handleConfirmedAdd();
+    } catch (err) {
+      console.error("Failed to add secondary account:", err);
+      showToast("Could not add account. Please try again.", "error");
+    } finally {
+      setAddingSecondary(false);
     }
   };
 
@@ -267,6 +270,49 @@ export default function DashboardSocialsPage() {
     refresh();
   };
 
+  const existingPrimaryForAddPlatform = useMemo(
+    () => accounts.find((a) => a.platform === addPlatform && a.isPrimary) || null,
+    [accounts, addPlatform]
+  );
+
+  const currentDraftValue =
+    addPlatform === "instagram"
+      ? draftInsta
+      : addPlatform === "youtube"
+      ? draftYt
+      : draftFb;
+
+  const setCurrentDraftValue = (val: string) => {
+    const cleaned = val.trim().replace(/^@/, "");
+    if (addPlatform === "instagram") setDraftInsta(cleaned);
+    else if (addPlatform === "youtube") setDraftYt(cleaned);
+    else setDraftFb(cleaned);
+  };
+
+  const platformRows = [
+    {
+      title: "Instagram",
+      platform: "instagram" as const,
+      icon: <InstagramIcon className="h-4 w-4 fill-white" />,
+      iconBg: "bg-gradient-to-tr from-[#fd5949] via-[#d6249f] to-[#285AEB]",
+      accounts: instagramAccounts,
+    },
+    {
+      title: "YouTube",
+      platform: "youtube" as const,
+      icon: <YoutubeIcon className="h-4 w-4 fill-white" />,
+      iconBg: "bg-[#FF0000]",
+      accounts: youtubeAccounts,
+    },
+    {
+      title: "Facebook",
+      platform: "facebook" as const,
+      icon: <FacebookIcon className="h-4 w-4 fill-white" />,
+      iconBg: "bg-[#1877F2]",
+      accounts: facebookAccounts,
+    },
+  ];
+
   return (
     <PageContainer className="text-left">
       {/* 1. PAGE HEADER */}
@@ -280,106 +326,109 @@ export default function DashboardSocialsPage() {
         }
       />
 
-      {/* 2. HERO CARD (Requirement D) */}
-      <SectionCard
-        title="Total fans"
-        subtitle="Across your primary accounts"
-        icon={<Users className="h-4 w-4" />}
-        action={
-          <button type="button" onClick={() => setCelebrationOpen(true)} className="dash-btn-sm bg-[#7A2253] text-white">
-            <Share2 className="h-3.5 w-3.5" />
-            <span>Share era</span>
-          </button>
-        }
-      >
-        <div className="space-y-1.5 min-w-0">
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <span className="text-[28px] font-semibold text-(--text) tabular-nums leading-[1.25] whitespace-nowrap">
+      {/* 2. COMPACT TOTAL FANS BAR (~72px max height, single row) */}
+      <div className="space-y-1.5">
+        <div className="rounded-[5px] border border-[#ECECF0] bg-white px-4 py-2.5 min-h-[56px] max-h-[72px] flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-wrap">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
+              <Users className="h-4 w-4" />
+            </div>
+            <span className="text-xl sm:text-2xl font-bold text-[#18181B] tabular-nums leading-none whitespace-nowrap">
               {formatFans(effectiveFanbase)}
             </span>
             {creatorEra && <CreatorEraBadge badge={creatorEra.badge} />}
+            {eraProgress.nextBadge && eraProgress.fansNeeded > 0 && (
+              <span className="text-xs text-[#6B6B76] font-medium truncate hidden sm:inline">
+                {formatFans(eraProgress.fansNeeded)} more to{" "}
+                {eraProgress.nextBadge.replace(/ Creator$/, "")}
+              </span>
+            )}
           </div>
-          <p className="text-[13px] text-(--muted)">fans across your primary accounts</p>
-          {eraProgress.nextBadge && eraProgress.fansNeeded > 0 && (
-            <p className="text-xs font-medium text-(--primary)">
-              {formatFans(eraProgress.fansNeeded)} more fans to{" "}
-              {eraProgress.nextBadge.replace(/ Creator$/, "")} 🌟
-            </p>
-          )}
+
+          <button
+            type="button"
+            onClick={() => setCelebrationOpen(true)}
+            className="dash-btn-sm bg-[#7A2253] text-white shrink-0"
+          >
+            <Share2 className="h-3.5 w-3.5" />
+            <span>Share era</span>
+          </button>
         </div>
-      </SectionCard>
 
-      {/* 3. GROUP BY PLATFORM (Instagram / YouTube / Facebook) */}
-      <div className="space-y-5">
-        {/* INSTAGRAM SECTION */}
-        <PlatformSection
-          title="Instagram"
-          platform="instagram"
-          icon={<InstagramIcon className="h-4 w-4 fill-white" />}
-          iconBg="bg-gradient-to-tr from-[#fd5949] via-[#d6249f] to-[#285AEB]"
-          accounts={instagramAccounts}
-          countLabel="Followers"
-          maxAllowed={maxPerPlatform}
-          isTrial={isTrial}
-          refreshingId={refreshingId}
-          onRefresh={handleRefreshCount}
-          onRemove={(acc) => {
-            if (acc.isPrimary && instagramAccounts.length > 1) {
-              showToast("Primary account cannot be removed while extra accounts exist", "error");
-              return;
-            }
-            setAccountToRemove(acc);
-          }}
-          onAdd={() => openAddAccount("instagram")}
-        />
+        <p className="text-xs text-[#6B6B76] px-0.5">
+          Your first account on each platform is your primary account. Only primary accounts count toward your fans.
+        </p>
+      </div>
 
-        {/* YOUTUBE SECTION */}
-        <PlatformSection
-          title="YouTube"
-          platform="youtube"
-          icon={<YoutubeIcon className="h-4 w-4 fill-white" />}
-          iconBg="bg-[#FF0000]"
-          accounts={youtubeAccounts}
-          countLabel="Subscribers"
-          maxAllowed={maxPerPlatform}
-          isTrial={isTrial}
-          refreshingId={refreshingId}
-          onRefresh={handleRefreshCount}
-          onRemove={(acc) => {
-            if (acc.isPrimary && youtubeAccounts.length > 1) {
-              showToast("Primary account cannot be removed while extra accounts exist", "error");
-              return;
-            }
-            setAccountToRemove(acc);
-          }}
-          onAdd={() => openAddAccount("youtube")}
-        />
+      {/* 3. SINGLE CARD LIST FOR ALL 3 PLATFORMS */}
+      <div className="rounded-[5px] border border-[#ECECF0] bg-white divide-y divide-[#ECECF0]">
+        {platformRows.map((row) => {
+          const primaryAcc = row.accounts.find((a) => a.isPrimary);
+          const secondaryAccs = row.accounts.filter((a) => !a.isPrimary);
+          const orderedAccounts = primaryAcc ? [primaryAcc, ...secondaryAccs] : secondaryAccs;
+          const canAddMore = row.accounts.length < maxPerPlatform;
 
-        {/* FACEBOOK SECTION */}
-        <PlatformSection
-          title="Facebook"
-          platform="facebook"
-          icon={<FacebookIcon className="h-4 w-4 fill-white" />}
-          iconBg="bg-[#1877F2]"
-          accounts={facebookAccounts}
-          countLabel="Followers"
-          maxAllowed={maxPerPlatform}
-          isTrial={isTrial}
-          refreshingId={refreshingId}
-          onRefresh={handleRefreshCount}
-          onRemove={(acc) => {
-            if (acc.isPrimary && facebookAccounts.length > 1) {
-              showToast("Primary account cannot be removed while extra accounts exist", "error");
-              return;
-            }
-            setAccountToRemove(acc);
-          }}
-          onAdd={() => openAddAccount("facebook")}
-        />
+          return (
+            <div
+              key={row.platform}
+              className="min-h-[56px] sm:min-h-[60px] px-3.5 sm:px-4 py-2.5 flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap"
+            >
+              {/* Left: Platform Icon + Name (count/max) */}
+              <div className="flex items-center gap-2.5 shrink-0 min-w-[140px]">
+                <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-[5px] ${row.iconBg}`}>
+                  {row.icon}
+                </div>
+                <span className="text-[14px] font-semibold text-[#18181B]">
+                  {row.title}
+                </span>
+                <span className="text-xs text-[#6B6B76] tabular-nums">
+                  ({row.accounts.length}/{maxPerPlatform})
+                </span>
+              </div>
+
+              {/* Middle: Account chips or "Not connected" */}
+              <div className="flex-1 flex items-center gap-2 flex-wrap min-w-0">
+                {loading ? (
+                  <span className="text-xs text-[#6B6B76]">Loading...</span>
+                ) : orderedAccounts.length === 0 ? (
+                  <span className="text-xs text-[#94A3B8]">Not connected</span>
+                ) : (
+                  orderedAccounts.map((acc) => (
+                    <AccountChip
+                      key={acc.id}
+                      account={acc}
+                      canHideFromProfile={canHideFromProfile}
+                      isRefreshing={refreshingId === acc.id}
+                      isTogglingHide={togglingHideId === acc.id}
+                      onRefresh={() => handleRefreshCount(acc)}
+                      onToggleHide={() => handleToggleHide(acc)}
+                    />
+                  ))
+                )}
+              </div>
+
+              {/* Right: Small [+ Add] button */}
+              <div className="shrink-0">
+                {canAddMore ? (
+                  <button
+                    type="button"
+                    onClick={() => openAddAccount(row.platform)}
+                    className="inline-flex items-center gap-1 h-7 px-2.5 rounded-[5px] border border-[#E2E8F0] bg-[#FAFAFB] hover:bg-[#F7EEF2] hover:border-[#7A2253]/30 text-xs font-semibold text-[#18181B] hover:text-[#7A2253] transition-colors cursor-pointer"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>Add</span>
+                  </button>
+                ) : (
+                  <span className="text-[11px] font-medium text-[#94A3B8]">Max reached</span>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* 4. FOOTER: HOW WE COUNT TEXT LINK */}
-      <div className="pt-2 pb-6 flex justify-center text-center">
+      <div className="pt-1 pb-4 flex justify-start">
         <button
           type="button"
           onClick={() => setIsInfoModalOpen(true)}
@@ -396,7 +445,7 @@ export default function DashboardSocialsPage() {
         isOpen={addModalOpen}
         onClose={() => setAddModalOpen(false)}
         title="Add Social Account"
-        description="Connect your social media account to count your fanbase and showcase your verified reach."
+        description="Connect your social media account to count your fanbase and showcase your public reach."
         icon={<Share2 className="h-5 w-5" />}
         size="md"
       >
@@ -445,59 +494,119 @@ export default function DashboardSocialsPage() {
               })}
             </div>
 
-            {/* Form based on platform */}
-            {addPlatform === "instagram" && (
-              <div className="space-y-3 pt-1">
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#E1306C]">
-                    <InstagramIcon className="h-4 w-4" />
-                  </span>
-                  <input
-                    type="text"
-                    value={draftInsta}
-                    onChange={(e) => setDraftInsta(e.target.value.trim().replace(/^@/, ""))}
-                    placeholder="Instagram username"
-                    className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
-                  />
-                </div>
-                <InstagramFetcher username={draftInsta} onConfirmSync={handleConfirmedAdd} />
+            {/* Primary vs Secondary Note */}
+            {existingPrimaryForAddPlatform ? (
+              <div className="rounded-[5px] border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-2 text-xs text-[#475569] leading-relaxed">
+                Primary already linked (
+                <span className="font-semibold text-[#0f172a]">
+                  @{existingPrimaryForAddPlatform.username.replace(/^@/, "")}
+                </span>
+                ). This will be added as a secondary account — username only, no follower count.
+              </div>
+            ) : (
+              <div className="rounded-[5px] border border-[#FCE7F3] bg-[#F7EEF2]/60 px-3 py-2 text-xs text-[#7A2253] leading-relaxed">
+                This will be your primary account. We fetch followers/subscribers from this account only.
               </div>
             )}
 
-            {addPlatform === "youtube" && (
+            {/* If Primary already exists: username input + Add button (no fetch step) */}
+            {existingPrimaryForAddPlatform ? (
               <div className="space-y-3 pt-1">
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#FF0000]">
-                    <YoutubeIcon className="h-4 w-4" />
-                  </span>
-                  <input
-                    type="text"
-                    value={draftYt}
-                    onChange={(e) => setDraftYt(e.target.value.trim().replace(/^@/, ""))}
-                    placeholder="YouTube channel handle"
-                    className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
-                  />
+                <div className="flex items-center gap-2">
+                  <div className="flex flex-1 items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc]">
+                      {addPlatform === "instagram" && <InstagramIcon className="h-4 w-4 text-[#E1306C]" />}
+                      {addPlatform === "youtube" && <YoutubeIcon className="h-4 w-4 text-[#FF0000]" />}
+                      {addPlatform === "facebook" && <FacebookIcon className="h-4 w-4 text-[#1877F2]" />}
+                    </span>
+                    <input
+                      type="text"
+                      value={currentDraftValue}
+                      onChange={(e) => setCurrentDraftValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && currentDraftValue.trim() && !addingSecondary) {
+                          e.preventDefault();
+                          handleAddSecondaryAccount();
+                        }
+                      }}
+                      placeholder={
+                        addPlatform === "instagram"
+                          ? "Instagram username"
+                          : addPlatform === "youtube"
+                          ? "YouTube channel handle"
+                          : "Facebook page username"
+                      }
+                      className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    disabled={!currentDraftValue.trim() || addingSecondary}
+                    onClick={handleAddSecondaryAccount}
+                    className="h-9 px-4 rounded-[5px] bg-[#7A2253] hover:bg-[#621b42] text-white text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5 shrink-0"
+                  >
+                    {addingSecondary ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+                    <span>{addingSecondary ? "Adding..." : "Add"}</span>
+                  </button>
                 </div>
-                <YoutubeFetcher handle={draftYt} onConfirmSync={handleConfirmedAdd} />
               </div>
-            )}
+            ) : (
+              <>
+                {/* Primary flow: handle -> Fetch -> Confirm & Link */}
+                {addPlatform === "instagram" && (
+                  <div className="space-y-3 pt-1">
+                    <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#E1306C]">
+                        <InstagramIcon className="h-4 w-4" />
+                      </span>
+                      <input
+                        type="text"
+                        value={draftInsta}
+                        onChange={(e) => setDraftInsta(e.target.value.trim().replace(/^@/, ""))}
+                        placeholder="Instagram username"
+                        className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
+                      />
+                    </div>
+                    <InstagramFetcher username={draftInsta} onConfirmSync={handleConfirmedAdd} />
+                  </div>
+                )}
 
-            {addPlatform === "facebook" && (
-              <div className="space-y-3 pt-1">
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#1877F2]">
-                    <FacebookIcon className="h-4 w-4" />
-                  </span>
-                  <input
-                    type="text"
-                    value={draftFb}
-                    onChange={(e) => setDraftFb(e.target.value.trim().replace(/^@/, ""))}
-                    placeholder="Facebook page username"
-                    className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
-                  />
-                </div>
-                <FacebookFetcher username={draftFb} onConfirmSync={handleConfirmedAdd} />
-              </div>
+                {addPlatform === "youtube" && (
+                  <div className="space-y-3 pt-1">
+                    <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#FF0000]">
+                        <YoutubeIcon className="h-4 w-4" />
+                      </span>
+                      <input
+                        type="text"
+                        value={draftYt}
+                        onChange={(e) => setDraftYt(e.target.value.trim().replace(/^@/, ""))}
+                        placeholder="YouTube channel handle"
+                        className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
+                      />
+                    </div>
+                    <YoutubeFetcher handle={draftYt} onConfirmSync={handleConfirmedAdd} />
+                  </div>
+                )}
+
+                {addPlatform === "facebook" && (
+                  <div className="space-y-3 pt-1">
+                    <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#1877F2]">
+                        <FacebookIcon className="h-4 w-4" />
+                      </span>
+                      <input
+                        type="text"
+                        value={draftFb}
+                        onChange={(e) => setDraftFb(e.target.value.trim().replace(/^@/, ""))}
+                        placeholder="Facebook page username"
+                        className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
+                      />
+                    </div>
+                    <FacebookFetcher username={draftFb} onConfirmSync={handleConfirmedAdd} />
+                  </div>
+                )}
+              </>
             )}
           </ModalBody>
 
@@ -505,7 +614,7 @@ export default function DashboardSocialsPage() {
             <button
               type="button"
               onClick={() => setAddModalOpen(false)}
-              className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
+              className="h-9 px-4 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -514,31 +623,13 @@ export default function DashboardSocialsPage() {
       </Modal>
 
       {/* ==================================================================== */}
-      {/* REMOVE CONFIRMATION MODAL (Red Button)                               */}
-      {/* ==================================================================== */}
-      <ConfirmModal
-        isOpen={Boolean(accountToRemove)}
-        onClose={() => setAccountToRemove(null)}
-        onConfirm={handleExecuteRemove}
-        loading={submittingRemove}
-        title={`Remove ${accountToRemove?.platform === "youtube" ? "YouTube Channel" : accountToRemove?.platform === "instagram" ? "Instagram Profile" : "Facebook Page"}?`}
-        description={`@${accountToRemove?.username} will be removed from your profile.${
-          accountToRemove?.isPrimary
-            ? " As your primary account, its followers will no longer be counted toward your Total Fanbase."
-            : ""
-        }`}
-        confirmText="Remove Account"
-        cancelText="Cancel"
-      />
-
-      {/* ==================================================================== */}
       {/* HOW WE COUNT INFO MODAL                                              */}
       {/* ==================================================================== */}
       <Modal
         isOpen={isInfoModalOpen}
         onClose={() => setIsInfoModalOpen(false)}
         title="How We Count Fans & Creator Eras"
-        description="Inflixo combines verified follower & subscriber counts from your public primary accounts."
+        description="Inflixo combines public follower & subscriber counts from your primary accounts."
         size="lg"
       >
         <ModalBody className="p-5 sm:p-6 text-left space-y-4 text-xs sm:text-sm text-[#475569] leading-relaxed">
@@ -546,21 +637,21 @@ export default function DashboardSocialsPage() {
             <div className="p-3 rounded-[5px] bg-[#F8FAFC] border border-[#E2E8F0] space-y-1">
               <h4 className="font-bold text-[#0f172a]">Primary accounts count</h4>
               <p className="text-xs text-[#64748b]">
-                Only primary accounts (one per platform) are added to your Total Fanbase and Creator Era. Extra accounts are showcased on your profile and About tab without inflating your total fans.
+                Your first account on each platform is your primary account. Only primary accounts (one per platform) are added to your Total Fans and Creator Era. Secondary accounts display your username and profile link without fetching follower counts.
               </p>
             </div>
 
             <div className="p-3 rounded-[5px] bg-[#F8FAFC] border border-[#E2E8F0] space-y-1">
               <h4 className="font-bold text-[#0f172a]">Public data only</h4>
               <p className="text-xs text-[#64748b]">
-                We fetch public follower and subscriber counts directly. No passwords or account permissions are ever requested or stored.
+                We fetch public follower and subscriber counts directly for your primary accounts. No passwords or account permissions are ever requested or stored.
               </p>
             </div>
 
             <div className="p-3 rounded-[5px] bg-[#F8FAFC] border border-[#E2E8F0] space-y-1">
-              <h4 className="font-bold text-[#0f172a]">Your era never goes down</h4>
+              <h4 className="font-bold text-[#0f172a]">Creator Era calculation</h4>
               <p className="text-xs text-[#64748b]">
-                Once you reach a Creator Era milestone, that achievement is preserved even if subscriber counts fluctuate over time.
+                Your Creator Era updates based on the combined public counts of your connected primary accounts.
               </p>
             </div>
           </div>
@@ -580,141 +671,25 @@ export default function DashboardSocialsPage() {
 }
 
 /* ==========================================================================
-   PLATFORM SECTION COMPONENT
+   ACCOUNT CHIP COMPONENT
    ========================================================================== */
-interface PlatformSectionProps {
-  title: string;
-  platform: "instagram" | "youtube" | "facebook";
-  icon: React.ReactNode;
-  iconBg: string;
-  accounts: SocialAccountRow[];
-  countLabel: string;
-  maxAllowed: number;
-  isTrial: boolean;
-  refreshingId: number | null;
-  onRefresh: (acc: SocialAccountRow) => void;
-  onRemove: (acc: SocialAccountRow) => void;
-  onAdd: () => void;
-}
-
-function PlatformSection({
-  title,
-  platform,
-  icon,
-  iconBg,
-  accounts,
-  countLabel,
-  maxAllowed,
-  isTrial,
-  refreshingId,
-  onRefresh,
-  onRemove,
-  onAdd,
-}: PlatformSectionProps) {
-  // Primary card first, then extras
-  const primaryCard = accounts.find((a) => a.isPrimary);
-  const extraCards = accounts.filter((a) => !a.isPrimary);
-  const canAddMore = accounts.length < maxAllowed;
-
-  return (
-    <div className="space-y-3 text-left">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className={`flex h-8 w-8 items-center justify-center rounded-[5px] ${iconBg}`}>
-            {icon}
-          </div>
-          <h3 className="text-[16px] font-semibold text-[#18181B]">{title}</h3>
-          <span className="text-[12px] text-[#6B6B76] font-normal">
-            ({accounts.length}/{maxAllowed})
-          </span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 items-stretch">
-        {/* Primary Account Card */}
-        {primaryCard && (
-          <SocialAccountCard
-            account={primaryCard}
-            platformTitle={title}
-            icon={icon}
-            iconBg={iconBg}
-            countLabel={countLabel}
-            isPrimary={true}
-            isTrial={isTrial}
-            isRefreshing={refreshingId === primaryCard.id}
-            onRefresh={() => onRefresh(primaryCard)}
-            onRemove={() => onRemove(primaryCard)}
-          />
-        )}
-
-        {/* Extra Account Cards */}
-        {extraCards.map((extra) => (
-          <SocialAccountCard
-            key={extra.id}
-            account={extra}
-            platformTitle={title}
-            icon={icon}
-            iconBg={iconBg}
-            countLabel={countLabel}
-            isPrimary={false}
-            isTrial={isTrial}
-            isRefreshing={refreshingId === extra.id}
-            onRefresh={() => onRefresh(extra)}
-            onRemove={() => onRemove(extra)}
-          />
-        ))}
-
-        {/* Dashed Add Another Card */}
-        {canAddMore && (
-          <button
-            type="button"
-            onClick={onAdd}
-            className="rounded-[5px] border-2 border-dashed border-[#ECECF0] hover:border-[#7A2253]/50 bg-[#FAFAFB] hover:bg-[#FFF0F5]/30 p-5 flex flex-col items-center justify-center gap-2 text-center transition-all cursor-pointer h-full min-h-[148px] group"
-          >
-            <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] transition-colors">
-              <Plus className="h-4 w-4" />
-            </div>
-            <span className="text-[13px] font-medium text-[#18181B] group-hover:text-[#7A2253] transition-colors">
-              {accounts.length === 0 ? `+ Add ${title}` : `+ Add another ${title}`}
-            </span>
-            <span className="text-[12px] text-[#6B6B76]">
-              {accounts.length === 0 ? "Connect your primary account" : "Connect secondary profile"}
-            </span>
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ==========================================================================
-   INDIVIDUAL SOCIAL ACCOUNT CARD (Requirement D)
-   ========================================================================== */
-interface SocialAccountCardProps {
+interface AccountChipProps {
   account: SocialAccountRow;
-  platformTitle: string;
-  icon: React.ReactNode;
-  iconBg: string;
-  countLabel: string;
-  isPrimary: boolean;
-  isTrial: boolean;
+  canHideFromProfile: boolean;
   isRefreshing: boolean;
+  isTogglingHide: boolean;
   onRefresh: () => void;
-  onRemove: () => void;
+  onToggleHide: () => void;
 }
 
-function SocialAccountCard({
+function AccountChip({
   account,
-  platformTitle,
-  icon,
-  iconBg,
-  countLabel,
-  isPrimary,
-  isTrial,
+  canHideFromProfile,
   isRefreshing,
+  isTogglingHide,
   onRefresh,
-  onRemove,
-}: SocialAccountCardProps) {
+  onToggleHide,
+}: AccountChipProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -730,115 +705,114 @@ function SocialAccountCard({
 
   const cleanHandle = (account.username || "").replace(/^@/, "");
   const profileUrl = buildAccountProfileUrl(account.platform, cleanHandle);
-  const relativeUpdate = formatRelativeUpdate(account.updatedAt);
+  const hasMenuActions = account.isPrimary || canHideFromProfile;
 
   return (
-    <div className="rounded-[5px] border border-[#ECECF0] bg-white p-4 transition-all duration-200 hover:border-[#cbd5e1] text-left flex flex-col justify-between space-y-3 min-h-[148px]">
-      {/* Top: Icon + Handle + Primary Badge + ⋮ Menu */}
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] ${iconBg}`}>
-            {icon}
-          </div>
+    <div
+      className={`inline-flex items-center gap-1.5 rounded-[5px] border px-2.5 py-1 text-xs transition-colors ${
+        account.isHidden
+          ? "border-[#E2E8F0] bg-[#F8FAFC] opacity-75"
+          : "border-[#ECECF0] bg-[#FAFAFB] hover:border-[#cbd5e1]"
+      }`}
+    >
+      {/* Handle + External Link */}
+      <a
+        href={profileUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1 font-semibold text-[#18181B] hover:text-[#7A2253] hover:underline truncate max-w-[160px]"
+        title={`Open @${cleanHandle}`}
+      >
+        <span className="truncate">@{cleanHandle}</span>
+        {!account.isPrimary && <ExternalLink className="h-3 w-3 shrink-0 text-[#6B6B76]" />}
+      </a>
 
-          <div className="min-w-0">
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <a
-                href={profileUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[13px] font-semibold text-[#18181B] hover:text-[#7A2253] line-clamp-1 break-words hover:underline"
-              >
-                @{cleanHandle}
-              </a>
-              {isPrimary && (
-                <span className="inline-flex items-center h-6 rounded-[5px] bg-[#F7EEF2] border border-[#FCE7F3] px-2 text-[12px] font-medium text-[#7A2253]">
-                  Primary
-                </span>
-              )}
-            </div>
-            {!isPrimary && (
-              <p className="text-[12px] text-[#6B6B76] font-normal leading-tight">
-                Not counted in total fans
-              </p>
-            )}
-          </div>
-        </div>
+      {/* Count (Primary only) */}
+      {account.isPrimary && (
+        <span className="font-bold text-[#18181B] tabular-nums">
+          {formatFans(account.followerCount)}
+        </span>
+      )}
 
-        {/* Three dots menu */}
+      {/* Primary / Secondary Tag */}
+      {account.isPrimary ? (
+        <span className="inline-flex items-center rounded-[4px] bg-[#F7EEF2] border border-[#FCE7F3] px-1.5 py-0.5 text-[10px] font-semibold text-[#7A2253]">
+          Primary
+        </span>
+      ) : (
+        <span className="inline-flex items-center rounded-[4px] bg-[#F1F5F9] border border-[#E2E8F0] px-1.5 py-0.5 text-[10px] font-medium text-[#64748B]">
+          Secondary
+        </span>
+      )}
+
+      {/* Hidden Tag */}
+      {account.isHidden && (
+        <span className="inline-flex items-center gap-0.5 rounded-[4px] bg-slate-200/70 px-1.5 py-0.5 text-[10px] font-medium text-[#475569]">
+          <EyeOff className="h-2.5 w-2.5" />
+          <span>Hidden</span>
+        </span>
+      )}
+
+      {/* ⋮ Menu (Refresh count on Primary; Hide/Show on Pro/VIP) */}
+      {hasMenuActions && (
         <div className="relative shrink-0" ref={menuRef}>
           <button
             type="button"
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#6B6B76] hover:text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            className="flex h-5 w-5 items-center justify-center rounded-[4px] text-[#6B6B76] hover:text-[#18181B] hover:bg-[#ECECF0]/60 transition-colors cursor-pointer"
             aria-label="Account actions"
           >
-            <MoreVertical className="h-4 w-4" />
+            <MoreVertical className="h-3.5 w-3.5" />
           </button>
 
           {menuOpen && (
-            <div className="absolute right-0 top-full mt-1 w-36 rounded-[5px] border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in duration-150">
-              <button
-                type="button"
-                disabled={isRefreshing}
-                onClick={() => {
-                  setMenuOpen(false);
-                  onRefresh();
-                }}
-                className="flex w-full items-center gap-2 rounded-[4px] px-2.5 py-1.5 text-xs font-semibold text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-50"
-              >
-                <RefreshCw className={`h-3.5 w-3.5 text-[#64748b] ${isRefreshing ? "animate-spin text-[#7A2253]" : ""}`} />
-                <span>{isRefreshing ? "Refreshing..." : "Refresh count"}</span>
-              </button>
+            <div className="absolute right-0 top-full mt-1 w-40 rounded-[5px] border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in duration-150">
+              {account.isPrimary && (
+                <button
+                  type="button"
+                  disabled={isRefreshing}
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onRefresh();
+                  }}
+                  className="flex w-full items-center gap-2 rounded-[4px] px-2.5 py-1.5 text-xs font-semibold text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <RefreshCw
+                    className={`h-3.5 w-3.5 text-[#64748b] ${
+                      isRefreshing ? "animate-spin text-[#7A2253]" : ""
+                    }`}
+                  />
+                  <span>{isRefreshing ? "Refreshing..." : "Refresh count"}</span>
+                </button>
+              )}
 
-              {/* Remove option: hidden on trial per Requirement C */}
-              {!isTrial && (
-                <>
-                  <div className="my-0.5 border-t border-[#f1f5f9]" />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMenuOpen(false);
-                      onRemove();
-                    }}
-                    className="flex w-full items-center gap-2 rounded-[4px] px-2.5 py-1.5 text-xs font-semibold text-[#ef4444] hover:bg-red-50 transition-colors cursor-pointer"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                    <span>Remove</span>
-                  </button>
-                </>
+              {canHideFromProfile && (
+                <button
+                  type="button"
+                  disabled={isTogglingHide}
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onToggleHide();
+                  }}
+                  className="flex w-full items-center gap-2 rounded-[4px] px-2.5 py-1.5 text-xs font-semibold text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {account.isHidden ? (
+                    <>
+                      <Eye className="h-3.5 w-3.5 text-[#64748b]" />
+                      <span>Show on profile</span>
+                    </>
+                  ) : (
+                    <>
+                      <EyeOff className="h-3.5 w-3.5 text-[#64748b]" />
+                      <span>Hide from profile</span>
+                    </>
+                  )}
+                </button>
               )}
             </div>
           )}
         </div>
-      </div>
-
-      {/* Middle: Count & Label */}
-      <div className="pt-1 flex items-baseline justify-between">
-        <div>
-          <span className="text-xl sm:text-2xl font-black text-[#0f172a] tabular-nums tracking-tight">
-            {formatFans(account.followerCount || 0)}
-          </span>
-          <span className="ml-1.5 text-xs text-[#64748b] font-medium">{countLabel}</span>
-        </div>
-      </div>
-
-      {/* Bottom: Relative updated time + View profile */}
-      <div className="pt-2 border-t border-[#f1f5f9] flex items-center justify-between text-[11px] text-[#94a3b8]">
-        <span className="flex items-center gap-1 font-medium">
-          <Calendar className="h-3 w-3" />
-          <span>{relativeUpdate}</span>
-        </span>
-        <a
-          href={profileUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[#7A2253] font-bold hover:underline inline-flex items-center gap-0.5"
-        >
-          <span>View</span>
-          <ExternalLink className="h-3 w-3" />
-        </a>
-      </div>
+      )}
     </div>
   );
 }

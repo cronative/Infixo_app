@@ -1145,9 +1145,7 @@ export function LivePreviewCard({
 
   const totalAudience = passedTotalAudience !== undefined ? passedTotalAudience : calculatedTotal;
   const totalFanbase = useMemo(() => calculateTotalFanbase(socials || safeSocials), [socials, safeSocials]);
-  const effectiveFanbase = typeof profile.peakFanbase === "number" && profile.peakFanbase >= (totalFanbase ?? 0)
-    ? profile.peakFanbase
-    : totalFanbase;
+  const effectiveFanbase = totalFanbase !== null ? totalFanbase : (typeof profile.peakFanbase === "number" ? profile.peakFanbase : null);
   const creatorEra = useMemo(() => getCreatorEra(effectiveFanbase), [effectiveFanbase]);
   const [bentoEraSheetOpen, setBentoEraSheetOpen] = useState(false);
 
@@ -1335,7 +1333,7 @@ export function LivePreviewCard({
 
     if (rawList && rawList.length > 0) {
       return rawList
-        .filter((acc) => acc.username || (acc.followerCount && acc.followerCount > 0))
+        .filter((acc) => !Boolean(acc.isHidden || acc.is_hidden) && (acc.username || (acc.followerCount && acc.followerCount > 0)))
         .map((acc: any) => {
           const platform = (acc.platform || "").toLowerCase();
           const rawHandle = (acc.username || "").replace(/^@/, "");
@@ -2454,7 +2452,7 @@ export function LivePreviewCard({
                                   <span style={{ color: c.primaryText }} className="text-[13px] font-medium leading-[18px] truncate group-hover:text-(--accent-text) transition-colors text-(--text)">
                                     {displayHandle}
                                   </span>
-                                  {isPrimaryAccount && (
+                                  {isPrimaryAccount ? (
                                     <span
                                       style={{
                                         backgroundColor: "color-mix(in srgb, var(--accent) 12%, transparent)",
@@ -2465,7 +2463,18 @@ export function LivePreviewCard({
                                     >
                                       Primary
                                     </span>
-                                  )}
+                                  ) : (isYoutube || isInstagram || isFacebook) ? (
+                                    <span
+                                      style={{
+                                        backgroundColor: "var(--surface)",
+                                        color: c.mutedText,
+                                        borderColor: "var(--surface-border)",
+                                      }}
+                                      className="text-[9px] font-semibold px-1.5 py-0.5 border rounded-[3px] shrink-0 uppercase tracking-wider"
+                                    >
+                                      Secondary
+                                    </span>
+                                  ) : null}
                                 </div>
                                 <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[17px] text-(--text-muted) mt-0.5 truncate">
                                   {item.platformLabel || item.label}

@@ -16,6 +16,17 @@ export async function ensureSocialAccountsColumns(): Promise<void> {
   }
 
   try {
+    await db.query(`
+      ALTER TABLE social_accounts
+      ADD COLUMN IF NOT EXISTS is_hidden BOOLEAN NOT NULL DEFAULT FALSE
+    `);
+  } catch {
+    try {
+      await db.query(`ALTER TABLE social_accounts ADD COLUMN is_hidden BOOLEAN NOT NULL DEFAULT FALSE`);
+    } catch {}
+  }
+
+  try {
     // Set is_primary = TRUE for the oldest account of each platform per creator
     await db.query(`
       UPDATE social_accounts sa

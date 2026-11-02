@@ -275,13 +275,13 @@ export function CreatorEraBottomSheet({
           {howWeCountOpen && (
             <div className="text-[11px] text-[#64748b] space-y-1.5 px-2 pb-1 pt-2 animate-in fade-in duration-150 leading-relaxed">
               <p>
-                • <strong className="text-[#0f172a]">Hard Work Never Resets:</strong> Once you achieve a milestone, it is yours forever. On Inflixo, your Creator Era is never downgraded.
+                • <strong className="text-[#0f172a]">Primary Accounts Count:</strong> Only your primary account on each platform counts toward your Total Fans and Creator Era.
               </p>
               <p>
                 • <strong className="text-[#0f172a]">One Unified Community:</strong> YouTube subscribers, Instagram followers, and Facebook supporters — all united into your real digital footprint.
               </p>
               <p>
-                • <strong className="text-[#0f172a]">Verified &amp; Authentic:</strong> Counted directly from public profiles across connected platforms, with zero passwords or logins required.
+                • <strong className="text-[#0f172a]">Public &amp; Authentic:</strong> Counted directly from public profiles across connected platforms, with zero passwords or logins required.
               </p>
             </div>
           )}

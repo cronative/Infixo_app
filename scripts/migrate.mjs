@@ -222,6 +222,7 @@ async function migrateDatabase(target) {
     const [socialTables] = await connection.query("SHOW TABLES LIKE 'social_accounts'");
     if (socialTables.length) {
       await addColumnIfMissing("social_accounts", "is_primary", "TINYINT(1) NOT NULL DEFAULT 0");
+      await addColumnIfMissing("social_accounts", "is_hidden", "TINYINT(1) NOT NULL DEFAULT 0");
 
       await connection.query(`UPDATE social_accounts sa
         JOIN (

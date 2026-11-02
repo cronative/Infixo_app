@@ -32,8 +32,8 @@ export async function ensureCreatorEraColumns(): Promise<void> {
 }
 
 /**
- * On every fanbase sync, peak = max(peak, current).
- * Badge uses peak (never downgrades).
+ * Until account ownership verification exists, recalculate peak_fanbase = currentFanbase
+ * when accounts are added, refreshed, or removed.
  * If peak crosses into a new sub-level on sync, set era_unlocked_pending = true.
  */
 export async function syncCreatorPeakFanbase(
@@ -42,6 +42,10 @@ export async function syncCreatorPeakFanbase(
 ): Promise<{ peakFanbase: number | null; isUnlock: boolean }> {
   await ensureCreatorEraColumns();
   if (currentFanbase === null || isNaN(currentFanbase)) {
+    await db.query(
+      "UPDATE creators SET peak_fanbase = NULL, era_unlocked_pending = 0 WHERE id = ?",
+      [creatorId]
+    );
     return { peakFanbase: null, isUnlock: false };
   }
 
@@ -52,7 +56,8 @@ export async function syncCreatorPeakFanbase(
 
   const rawOldPeak = rows[0]?.peak_fanbase;
   const oldPeak = rawOldPeak !== null && rawOldPeak !== undefined ? Number(rawOldPeak) : null;
-  const newPeak = oldPeak === null ? currentFanbase : Math.max(oldPeak, currentFanbase);
+  // Recalculate era based on current connected primary accounts until ownership verification is added
+  const newPeak = currentFanbase;
 
   const oldEra = getCreatorEra(oldPeak);
   const newEra = getCreatorEra(newPeak);

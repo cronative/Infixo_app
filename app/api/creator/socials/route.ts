@@ -89,6 +89,10 @@ export async function GET(req: Request) {
       [creatorId]
     );
 
+    const visibleRows = username
+      ? (rows || []).filter((r: any) => !Boolean(r.is_hidden))
+      : rows || [];
+
     let customLinks: any[] = [];
     try {
       const [linkRows]: any = await db.query(
@@ -102,16 +106,17 @@ export async function GET(req: Request) {
     } catch {}
 
     return apiSuccess({
-      socials: rows.map((r: any) => ({
+      socials: visibleRows.map((r: any) => ({
         id: r.id,
         platform: r.platform,
         accountName: r.username,
         username: r.username,
-        followerCount: Number(r.follower_count) || 0,
-        mediaCount: Number(r.media_count) || 0,
-        audienceCount: Number(r.audience_count) || 0,
+        followerCount: Boolean(r.is_primary) ? Number(r.follower_count) || 0 : 0,
+        mediaCount: Boolean(r.is_primary) ? Number(r.media_count) || 0 : 0,
+        audienceCount: Boolean(r.is_primary) ? Number(r.audience_count) || 0 : 0,
         isVerified: Boolean(r.is_verified),
         isPrimary: Boolean(r.is_primary),
+        isHidden: Boolean(r.is_hidden),
         lastSyncedAt: r.last_synced_at,
       })),
       customLinks,
@@ -145,13 +150,63 @@ export async function POST(req: Request) {
       return apiError("Invalid username", 400);
     }
 
-    // 1. Guard against duplicate username per platform for this creator
+    // 1. Guard against duplicate username per platform for this creator (or refresh primary if requested)
     const [existingRows]: any = await db.query(
-      "SELECT id, is_primary FROM social_accounts WHERE creator_id = ? AND platform = ? AND LOWER(username) = LOWER(?)",
+      "SELECT id, is_primary, is_hidden FROM social_accounts WHERE creator_id = ? AND platform = ? AND LOWER(username) = LOWER(?)",
       [creatorId, cleanPlatform, cleanUsername]
     );
 
     if (existingRows && existingRows.length > 0) {
+      const existing = existingRows[0];
+      if (body.isRefresh && Boolean(existing.is_primary)) {
+        const rawFollowers =
+          body.followerCount ??
+          body.followers ??
+          body.subscribers ??
+          body.count ??
+          0;
+        const refreshedFollowers = Math.max(0, Number(rawFollowers) || 0);
+        const rawMedia = body.mediaCount ?? body.posts ?? body.videos ?? 0;
+        const refreshedMedia = Math.max(0, Number(rawMedia) || 0);
+        const refreshedVerified = Boolean(body.isVerified) ? 1 : 0;
+
+        await db.query(
+          `UPDATE social_accounts
+           SET follower_count = ?, media_count = ?, audience_count = ?, is_verified = ?, last_synced_at = NOW()
+           WHERE id = ? AND creator_id = ?`,
+          [refreshedFollowers, refreshedMedia, refreshedFollowers, refreshedVerified, existing.id, creatorId]
+        );
+
+        try {
+          const [allSocials]: any = await db.query(
+            "SELECT platform, username, account_name, follower_count, audience_count, is_primary FROM social_accounts WHERE creator_id = ?",
+            [creatorId]
+          );
+          const currentFanbase = calculateTotalFanbase(allSocials);
+          await syncCreatorPeakFanbase(creatorId, currentFanbase);
+        } catch (e) {
+          console.error("Failed to sync creator peak fanbase on refresh:", e);
+        }
+
+        return apiSuccess(
+          {
+            id: existing.id,
+            creatorId,
+            platform: cleanPlatform,
+            accountName: cleanUsername,
+            username: cleanUsername,
+            followerCount: refreshedFollowers,
+            mediaCount: refreshedMedia,
+            audienceCount: refreshedFollowers,
+            isVerified: Boolean(refreshedVerified),
+            isPrimary: true,
+            isHidden: Boolean(existing.is_hidden),
+            lastSyncedAt: new Date().toISOString(),
+          },
+          `Updated @${cleanUsername} count`
+        );
+      }
+
       return apiError(
         `@${cleanUsername} is already linked on ${cleanPlatform.charAt(0).toUpperCase() + cleanPlatform.slice(1)}`,
         409,
@@ -174,7 +229,7 @@ export async function POST(req: Request) {
       return limitReachedError("socialAccountsPerPlatform", planKey);
     }
 
-    // 3. First account on this platform is primary; extras are secondary
+    // 3. First account on this platform is primary; extras are secondary (username only, no count)
     const isPrimary = platformAccountCount === 0;
 
     const rawFollowers =
@@ -183,21 +238,22 @@ export async function POST(req: Request) {
       body.subscribers ??
       body.count ??
       0;
-    const followerCount = Math.max(0, Number(rawFollowers) || 0);
+    const followerCount = isPrimary ? Math.max(0, Number(rawFollowers) || 0) : 0;
 
     const rawMedia =
       body.mediaCount ??
       body.posts ??
       body.videos ??
       0;
-    const mediaCount = Math.max(0, Number(rawMedia) || 0);
+    const mediaCount = isPrimary ? Math.max(0, Number(rawMedia) || 0) : 0;
 
-    const audienceCount =
-      body.audienceCount !== undefined
+    const audienceCount = isPrimary
+      ? body.audienceCount !== undefined
         ? Math.max(0, Number(body.audienceCount) || 0)
-        : followerCount;
+        : followerCount
+      : 0;
 
-    const isVerified = Boolean(body.isVerified) ? 1 : 0;
+    const isVerified = isPrimary && Boolean(body.isVerified) ? 1 : 0;
     const displayName = cleanUsername;
 
     // 4. Insert row
