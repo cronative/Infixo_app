@@ -44,7 +44,7 @@ interface SeriesUpsertModalProps {
   defaultLanguage?: string;
   defaultCategories?: string;
   maxEpisodes?: number;
-  onSuccess: (newOrUpdatedSeriesId: string, isNew: boolean, seriesTitle: string) => void;
+  onSuccess: (newOrUpdatedSeriesId: string, isNew: boolean, seriesTitle: string, createdSeries?: Series) => void;
 }
 
 export function SeriesUpsertModal({
@@ -408,7 +408,7 @@ export function SeriesUpsertModal({
           6000
         );
 
-        onSuccess(result.seriesId, true, cleanTitle);
+        onSuccess(result.seriesId, true, cleanTitle, result.series);
         onClose();
       }
     } catch (err: any) {
@@ -592,10 +592,15 @@ export function SeriesUpsertModal({
                       </button>
                     </div>
 
-                    {/* Auto-fetched title (small muted text, editable on click) */}
-                    {row.url.trim() && !validation.urlError && (
-                      <div className="pl-18 flex items-center gap-1.5 text-xs text-[#64748b]">
-                        {row.loadingTitle ? (
+                    {/* Fixed-height status/title/error row to prevent vertical layout shift when titles load */}
+                    <div className="pl-18 min-h-[22px] flex items-center text-xs text-[#64748b]">
+                      {validation.numberError || validation.urlError ? (
+                        <p className="text-[11px] font-medium text-rose-600 flex items-center gap-1 truncate">
+                          <AlertCircle className="h-3 w-3 shrink-0" />
+                          <span className="truncate">{validation.numberError || validation.urlError}</span>
+                        </p>
+                      ) : row.url.trim() ? (
+                        row.loadingTitle ? (
                           <span className="flex items-center gap-1 text-[11px] text-slate-400 italic">
                             <Loader2 className="h-3 w-3 animate-spin text-[#7A2253]" />
                             <span>Fetching video title...</span>
@@ -656,32 +661,18 @@ export function SeriesUpsertModal({
                             className="truncate cursor-pointer hover:text-[#7A2253] hover:underline flex items-center gap-1 text-[11px]"
                             title="Click to edit title"
                           >
-                            <span className="font-semibold text-slate-700">
+                            <span className="font-semibold text-slate-700 truncate">
                               {row.title || `Episode ${row.number}`}
                             </span>
                             <Pencil className="h-2.5 w-2.5 opacity-60 shrink-0" />
                           </span>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Inline Validation Errors */}
-                    {(validation.urlError || validation.numberError) && (
-                      <div className="pl-18 space-y-0.5">
-                        {validation.numberError && (
-                          <p className="text-[11px] font-medium text-rose-600 flex items-center gap-1">
-                            <AlertCircle className="h-3 w-3 shrink-0" />
-                            <span>{validation.numberError}</span>
-                          </p>
-                        )}
-                        {validation.urlError && (
-                          <p className="text-[11px] font-medium text-rose-600 flex items-center gap-1">
-                            <AlertCircle className="h-3 w-3 shrink-0" />
-                            <span>{validation.urlError}</span>
-                          </p>
-                        )}
-                      </div>
-                    )}
+                        )
+                      ) : (
+                        <span className="text-[11px] text-slate-400 select-none">
+                          Title loads automatically when you paste a link
+                        </span>
+                      )}
+                    </div>
                   </div>
                 );
               })}

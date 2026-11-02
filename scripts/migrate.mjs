@@ -297,6 +297,15 @@ async function migrateDatabase(target) {
       INDEX idx_notif_created_at (created_at)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`);
 
+    // 014: heal creator_onboarding_steps rows that were overwritten by dashboard edits after completion
+    await connection.query(`UPDATE creator_onboarding_steps cos
+      LEFT JOIN subscriptions s ON s.creator_id = cos.creator_id
+      SET cos.step_name = 'finish',
+          cos.is_completed = 1,
+          cos.completed_at = COALESCE(cos.completed_at, NOW())
+      WHERE cos.step_name != 'finish'
+        AND (cos.is_completed = 1 OR cos.completed_at IS NOT NULL OR s.id IS NOT NULL)`);
+
     console.log(`✅ ${target.name} migrated successfully.`);
   } finally {
     await connection.end();

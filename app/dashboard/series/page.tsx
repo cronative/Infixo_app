@@ -210,18 +210,40 @@ export default function MySeriesPage() {
   };
 
   // Optimistic series creation / edit callback
-  const handleSeriesUpsertSuccess = (seriesId: string, isNew: boolean, seriesTitle: string) => {
-    // Re-fetch or update list optimistically
-    SeriesService.fetchFromDb().then((res) => {
-      setSeriesList(res.series);
-      setPlanData((prev) => ({
-        ...prev,
-        used: { ...prev.used, series: res.series.length },
-      }));
-      if (isNew) {
-        setExpandedSeriesIds((prev) => new Set([seriesId, ...Array.from(prev)]));
-      }
-    });
+  const handleSeriesUpsertSuccess = (
+    seriesId: string,
+    isNew: boolean,
+    seriesTitle: string,
+    createdSeries?: Series
+  ) => {
+    if (isNew && createdSeries) {
+      setSeriesList((prev) => {
+        const next = [createdSeries, ...prev.filter((s) => s.id !== createdSeries.id)];
+        setPlanData((p) => ({
+          ...p,
+          used: { ...p.used, series: next.length },
+        }));
+        return next;
+      });
+      setExpandedSeriesIds((prev) => new Set([seriesId, ...Array.from(prev)]));
+    }
+
+    // Re-fetch authoritative state from DB
+    SeriesService.fetchFromDb()
+      .then((res) => {
+        setSeriesList(res.series);
+        setPlanData((prev) => ({
+          ...prev,
+          plan: res.plan || prev.plan,
+          planKey: res.planKey || prev.planKey,
+          limits: res.limits || prev.limits,
+          used: res.used || { ...prev.used, series: res.series.length },
+        }));
+        if (isNew) {
+          setExpandedSeriesIds((prev) => new Set([seriesId, ...Array.from(prev)]));
+        }
+      })
+      .catch(() => {});
   };
 
   // Delete Series

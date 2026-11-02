@@ -8,7 +8,7 @@
  */
 
 import { db } from "@/lib/db";
-import { getSessionFromRequest } from "@/lib/session";
+import { getSessionFromRequest, createSessionToken, setSessionCookie } from "@/lib/session";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 import { resolveThemeKey } from "@/lib/themeKeys";
 import { getPlan } from "@/config/plans";
@@ -88,11 +88,25 @@ export async function GET(req: Request) {
     let onboardingStep = "profile";
     try {
       const [stepRows]: any = await db.query(
-        "SELECT step_name, is_completed FROM creator_onboarding_steps WHERE email = ? ORDER BY id DESC LIMIT 1",
+        "SELECT step_name, is_completed, completed_at FROM creator_onboarding_steps WHERE email = ? ORDER BY id DESC LIMIT 1",
         [email]
       );
       if (stepRows?.[0]?.step_name) {
         onboardingStep = stepRows[0].step_name.trim().toLowerCase();
+      }
+      // Self-heal: if onboarding was previously completed (is_completed=1, completed_at set, or subscription row exists),
+      // keep onboardingStep at 'finish' and repair the DB row if it was overwritten by a dashboard save.
+      if (
+        onboardingStep !== "finish" &&
+        (stepRows?.[0]?.is_completed || stepRows?.[0]?.completed_at || c.sub_id)
+      ) {
+        onboardingStep = "finish";
+        await db
+          .query(
+            "UPDATE creator_onboarding_steps SET step_name = 'finish', is_completed = 1, completed_at = COALESCE(completed_at, NOW()) WHERE email = ?",
+            [email]
+          )
+          .catch(() => {});
       }
     } catch {}
 
@@ -172,8 +186,8 @@ export async function GET(req: Request) {
       }
     }
 
-    // Auto-create missing subscription in MySQL
-    if (!c.sub_id && c.id) {
+    // Auto-create missing subscription in MySQL only once onboarding has finished
+    if (!c.sub_id && c.id && onboardingStep === "finish") {
       try {
         await db.query(
           `INSERT INTO subscriptions (
@@ -231,7 +245,7 @@ export async function GET(req: Request) {
       hasUsedTrial: Boolean(trialStartedAt || c.has_used_trial),
     };
 
-    return apiSuccess({
+    const response = apiSuccess({
       authenticated: true,
       email,
       creatorId: c.id,
@@ -244,6 +258,12 @@ export async function GET(req: Request) {
     }, "Session active.", {
       headers: { "Cache-Control": "private, no-store, no-cache, max-age=0, must-revalidate" },
     });
+
+    if (session.creatorId !== c.id) {
+      return setSessionCookie(response, createSessionToken(email, c.id), req);
+    }
+
+    return response;
   } catch (error: any) {
     console.error("GET /api/me error:", error);
     return apiError(error.message || "Failed to retrieve session", 500, {}, {

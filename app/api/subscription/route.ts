@@ -1,6 +1,7 @@
 import Razorpay from "razorpay";
 import { db } from "@/lib/db";
 import { requireCreator } from "@/lib/creatorAuth";
+import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 import { toMysqlDate } from "@/lib/billing";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 import { getPlan } from "@/config/plans";
@@ -96,6 +97,7 @@ export async function POST(req: Request) {
            payment_mode = 'free_trial', auto_renew = 0`,
         [auth.creator.id, planKey, planName, toMysqlDate(now), toMysqlDate(now), toMysqlDate(trialEnd), toMysqlDate(now), toMysqlDate(trialEnd), toMysqlDate(trialEnd)]
       );
+      await recordOnboardingStep(auth.creator.email, "finish", auth.creator.id);
       return apiSuccess({ planKey, status: "trial" }, "Subscription plan activated");
     }
 

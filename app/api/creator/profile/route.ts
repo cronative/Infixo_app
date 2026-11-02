@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 import { ensureCreatorSettingsTable } from "@/lib/settingsDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
-import { requireSession, ownsResource, getSessionFromRequest } from "@/lib/session";
+import { requireSession, ownsResource, getSessionFromRequest, createSessionToken, setSessionCookie } from "@/lib/session";
 import { isCreatorPublic } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 import { isReservedUsername } from "@/lib/constants";
@@ -347,7 +347,7 @@ export async function POST(req: Request) {
       parsedVisibility.publicProfileLayout = publicProfileLayout;
     }
 
-    return apiSuccess({
+    const response = apiSuccess({
       profile: {
         id: updated.id,
         email: updated.email,
@@ -368,6 +368,12 @@ export async function POST(req: Request) {
         updatedAt: updated.updated_at,
       },
     }, "Profile saved successfully");
+
+    if (creatorId && session.creatorId !== creatorId) {
+      return setSessionCookie(response, createSessionToken(email, creatorId), req);
+    }
+
+    return response;
   } catch (err: any) {
     console.error("POST Creator Profile Error:", err);
     return apiError(err.message || "Failed to save profile", 500);

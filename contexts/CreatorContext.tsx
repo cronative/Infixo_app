@@ -84,8 +84,8 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
     if (dbSocials) {
       setSocials(dbSocials);
     }
-    if (dbSeries && Array.isArray(dbSeries)) {
-      setSeries(dbSeries);
+    if (dbSeries?.series && Array.isArray(dbSeries.series)) {
+      setSeries(dbSeries.series);
     }
   }, []);
 

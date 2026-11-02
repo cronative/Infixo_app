@@ -179,9 +179,12 @@ export default function OnboardingPage() {
       "";
     if (pending) setEmail(pending);
 
-    // Only redirect to dashboard if onboarding was fully completed and user is not currently viewing the success card
-    const isCompleted = typeof window !== "undefined" && localStorage.getItem("inflixo_onboarding_completed") === "true";
-    if (!creatorLoading && profile.username && profile.displayName && onboardingStep === "finish" && isCompleted) {
+    // Redirect to dashboard if onboarding is already completed on the server (unless currently viewing Step 5 celebration card)
+    if (!creatorLoading && profile.username && profile.displayName && onboardingStep === "finish" && step !== 5) {
+      try {
+        localStorage.removeItem(ONBOARDING_STORAGE_KEY);
+        localStorage.setItem("inflixo_onboarding_completed", "true");
+      } catch {}
       router.replace("/dashboard");
       return;
     }
@@ -231,7 +234,7 @@ export default function OnboardingPage() {
         }
       }
     } catch {}
-  }, [creatorLoading, profile.username, profile.displayName, router]);
+  }, [creatorLoading, profile.username, profile.displayName, onboardingStep, step, router]);
 
   // Restore category from loaded profile if not yet in state
   useEffect(() => {

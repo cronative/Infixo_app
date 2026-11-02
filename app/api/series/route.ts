@@ -105,17 +105,11 @@ export async function GET(req: Request) {
       }
     }
 
-    // Authenticated user session
+    // Authenticated user session: always resolve canonical creator.id via requireCreator
     if (!creatorId) {
-      const session = getSessionFromRequest(req);
-      if (session?.creatorId) {
-        creatorId = session.creatorId;
-      } else if (session?.email) {
-        const [creatorsByEmail]: any = await db.query("SELECT id FROM creators WHERE email = ?", [session.email]);
-        if (creatorsByEmail.length > 0) {
-          creatorId = creatorsByEmail[0].id;
-        }
-      }
+      const auth = await requireCreator(req);
+      if (auth.error) return auth.error;
+      creatorId = auth.creator.id;
     }
 
     if (!creatorId) {
@@ -129,7 +123,7 @@ export async function GET(req: Request) {
 
     // Fetch subscription plan for limits & usage strip
     const [subRows]: any = await db.query(
-      "SELECT plan_key FROM subscriptions WHERE creator_id = ? AND status = 'active' ORDER BY updated_at DESC LIMIT 1",
+      "SELECT plan_key FROM subscriptions WHERE creator_id = ? AND status IN ('active', 'trial') ORDER BY updated_at DESC LIMIT 1",
       [creatorId]
     );
     const planKey = subRows[0]?.plan_key || "early_access";
@@ -212,7 +206,10 @@ export async function GET(req: Request) {
           episodes: totalEpisodesCount,
         },
       },
-      "Series list retrieved successfully"
+      "Series list retrieved successfully",
+      {
+        headers: { "Cache-Control": "private, no-store, no-cache, max-age=0, must-revalidate" },
+      }
     );
   } catch (err: any) {
     console.error("❌ GET Series Error:", err);
@@ -238,7 +235,7 @@ export async function POST(req: Request) {
 
     // Check plan limits
     const [subRows]: any = await db.query(
-      "SELECT plan_key FROM subscriptions WHERE creator_id = ? AND status = 'active' ORDER BY updated_at DESC LIMIT 1",
+      "SELECT plan_key FROM subscriptions WHERE creator_id = ? AND status IN ('active', 'trial') ORDER BY updated_at DESC LIMIT 1",
       [creatorId]
     );
     const activePlanKey = subRows[0]?.plan_key || "early_access";
@@ -323,6 +320,7 @@ export async function POST(req: Request) {
     );
 
     // Insert episodes
+    const insertedEpisodes: any[] = [];
     for (let i = 0; i < validEpisodes.length; i++) {
       const ep = validEpisodes[i];
       const epId = `ep_${Date.now()}_${i}_${Math.random().toString(36).substring(2, 6)}`;
@@ -331,13 +329,41 @@ export async function POST(req: Request) {
          VALUES (?, ?, ?, ?, ?, ?)`,
         [epId, seriesId, i + 1, ep.title, ep.url, ep.platform]
       );
+      insertedEpisodes.push({
+        id: epId,
+        episodeNumber: i + 1,
+        title: ep.title,
+        thumbnailDataUrl: null,
+        platform: ep.platform,
+        externalUrl: ep.url,
+        description: "",
+      });
     }
 
     if (email) {
       await recordOnboardingStep(email, "series", creatorId);
     }
 
-    return apiSuccess({ seriesId }, "Series created successfully");
+    const createdSeries = {
+      id: seriesId,
+      title: cleanTitle,
+      posterDataUrl: finalPosterUrl,
+      description: description || "",
+      genre: genre || "",
+      language: language || "Hindi",
+      platform: seriesPlatform,
+      createdAt: new Date().toISOString(),
+      seasons: [
+        {
+          id: `sn_1_${seriesId}`,
+          title: "Season 1",
+          seasonNumber: 1,
+          episodes: insertedEpisodes,
+        },
+      ],
+    };
+
+    return apiSuccess({ seriesId, series: createdSeries }, "Series created successfully");
   } catch (err: any) {
     console.error("POST /api/series error:", err);
     return apiError(err.message || "Failed to create series", 500);

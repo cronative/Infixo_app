@@ -59,15 +59,17 @@ export async function recordOnboardingStep(
 
     const isFinished = stepName === "finish";
 
-    // Atomic upsert with ON DUPLICATE KEY UPDATE to guarantee 1 row per email without race conditions
+    // Atomic upsert with ON DUPLICATE KEY UPDATE to guarantee 1 row per email without race conditions.
+    // Once onboarding has reached 'finish' (is_completed = 1 or completed_at IS NOT NULL), never downgrade
+    // step_name back to an earlier step when dashboard APIs (profile, socials, series) are called later.
     await db.query(
       `INSERT INTO creator_onboarding_steps (email, creator_id, step_name, is_completed, completed_at)
        VALUES (?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
          creator_id = COALESCE(VALUES(creator_id), creator_id),
-         step_name = VALUES(step_name),
-         is_completed = VALUES(is_completed),
-         completed_at = VALUES(completed_at)`,
+         step_name = IF(is_completed = 1 OR step_name = 'finish' OR completed_at IS NOT NULL, 'finish', VALUES(step_name)),
+         is_completed = IF(is_completed = 1 OR step_name = 'finish' OR completed_at IS NOT NULL, 1, VALUES(is_completed)),
+         completed_at = IF(is_completed = 1 OR step_name = 'finish' OR completed_at IS NOT NULL, COALESCE(completed_at, NOW()), VALUES(completed_at))`,
       [cleanEmail, actualCreatorId, stepName, isFinished, isFinished ? new Date() : null]
     );
 

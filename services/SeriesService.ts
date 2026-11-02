@@ -24,6 +24,7 @@ export const SeriesService = {
 
   async fetchFromDb(): Promise<SeriesApiResponse> {
     const res = await fetch("/api/series", {
+      cache: "no-store",
       headers: { Accept: "application/json" },
     });
 
@@ -71,7 +72,7 @@ export const SeriesService = {
     language?: string;
     platform?: EpisodePlatform;
     episodes?: Array<{ url: string; title?: string }>;
-  }): Promise<{ seriesId: string }> {
+  }): Promise<{ seriesId: string; series?: Series }> {
     const res = await fetch("/api/series", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -93,7 +94,12 @@ export const SeriesService = {
     }
 
     const seriesId = data.data?.seriesId || data.seriesId;
-    return { seriesId };
+    const createdSeries: Series | undefined = data.data?.series || data.series;
+    if (createdSeries) {
+      const current = seriesRepository.getAll().filter((s) => s.id !== createdSeries.id);
+      seriesRepository.saveAll([createdSeries, ...current]);
+    }
+    return { seriesId, series: createdSeries };
   },
 
   async update(

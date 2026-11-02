@@ -113,16 +113,30 @@ export async function POST(req: Request) {
 
       try {
         const [stepRows]: any = await db.query(
-          "SELECT step_name, is_completed FROM creator_onboarding_steps WHERE email = ? ORDER BY id DESC LIMIT 1",
+          "SELECT step_name, is_completed, completed_at FROM creator_onboarding_steps WHERE email = ? ORDER BY id DESC LIMIT 1",
           [email]
         );
         const dbStep = (stepRows?.[0]?.step_name || "").trim().toLowerCase();
+        const wasCompleted = Boolean(
+          dbStep === "finish" ||
+          stepRows?.[0]?.is_completed ||
+          stepRows?.[0]?.completed_at ||
+          creator.plan_key
+        );
         debugLog("VERIFY_OTP", `Onboarding step in DB for ${email}:`, dbStep);
 
-        // Only route to dashboard if onboarding has explicitly reached "finish"
-        if (dbStep === "finish") {
+        // Route to dashboard if onboarding has reached "finish" or subscription is already active
+        if (wasCompleted) {
           currentStep = "finish";
           isExistingProfile = true;
+          if (dbStep !== "finish") {
+            await db
+              .query(
+                "UPDATE creator_onboarding_steps SET step_name = 'finish', is_completed = 1, completed_at = COALESCE(completed_at, NOW()) WHERE email = ?",
+                [email]
+              )
+              .catch(() => {});
+          }
           debugLog("VERIFY_OTP", `Creator has finished onboarding -> Routing to /dashboard`);
         } else {
           currentStep = dbStep || "profile";

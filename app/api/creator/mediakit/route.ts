@@ -110,10 +110,10 @@ export async function GET(req: Request) {
     let lookupVal = resolvedCreatorIdParam || resolvedEmailParam || resolvedUsernameParam;
     if (!lookupVal) {
       const session = getSessionFromRequest(req);
-      if (session?.creatorId) {
-        lookupVal = session.creatorId;
-      } else if (session?.email) {
+      if (session?.email) {
         lookupVal = session.email;
+      } else if (session?.creatorId && !session.creatorId.startsWith("new_")) {
+        lookupVal = session.creatorId;
       }
     }
 
