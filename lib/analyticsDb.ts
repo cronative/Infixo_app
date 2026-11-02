@@ -58,7 +58,7 @@ export const PUBLIC_EVENT_TYPES = [
   "collab_package_view",
 ] as const;
 
-export const SERVER_EVENT_TYPES = ["collab_request_submit"] as const;
+export const SERVER_EVENT_TYPES = ["collab_request_submit", "fan_nudge"] as const;
 
 const BOT_UA = /bot|crawl|spider|slurp|preview|facebookexternalhit|headless|lighthouse|pingdom|curl|wget|python-requests|axios|node-fetch/i;
 

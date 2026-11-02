@@ -114,7 +114,7 @@ export async function getPublicSeriesData(
             bio: EXPERT_DEMO_PROFILE.bio,
             category: EXPERT_DEMO_PROFILE.category,
             themeKey: DEFAULT_THEME_KEY,
-            totalFanbase: 1345000,
+            totalFanbase: 6480000,
           },
         };
       }

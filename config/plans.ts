@@ -173,8 +173,7 @@ export function planFeatureLines(key: PlanKey): string[] {
   return lines.slice(0, 7);
 }
 
-/** Whether a creator can activate the Premium Look single-vertical layout on their live public profile (Pro & VIP only). */
-export function canUsePremiumLayout(key: string | null | undefined): boolean {
-  const norm = normalizePlanKey(key);
-  return norm === "pro" || norm === "vip";
+/** Both layouts (Tabular Layout & Premium Layout) are 100% free for all creators (Starter, Pro, VIP & trial). */
+export function canUsePremiumLayout(_key?: string | null | undefined): boolean {
+  return true;
 }

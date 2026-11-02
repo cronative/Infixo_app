@@ -142,18 +142,28 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
           EXPERT_DEMO_CUSTOM_LINKS,
           EXPERT_DEMO_THEME,
           EXPERT_DEMO_GIGS,
+          EXPERT_DEMO_MEDIA_KIT_SETTINGS,
           EXPERT_DEMO_REVIEWS,
           EXPERT_DEMO_SETUP_ITEMS,
           EXPERT_DEMO_PRODUCTS,
+          EXPERT_DEMO_OTHER_SOCIALS,
+          EXPERT_DEMO_TEAM,
+          EXPERT_DEMO_BRANDS,
+          EXPERT_DEMO_ALL_SOCIAL_ACCOUNTS,
         } = await import("@/data/expertDemoCreator");
         setProfile(EXPERT_DEMO_PROFILE);
         setSocials(EXPERT_DEMO_SOCIALS);
+        setAllSocialAccounts(EXPERT_DEMO_ALL_SOCIAL_ACCOUNTS);
         setSeries(EXPERT_DEMO_SERIES);
         setCustomLinks(EXPERT_DEMO_CUSTOM_LINKS);
         setMediaKitPackages(EXPERT_DEMO_GIGS);
+        setMediaKitSettings(EXPERT_DEMO_MEDIA_KIT_SETTINGS);
         setReviews(EXPERT_DEMO_REVIEWS);
         setSetupItems(EXPERT_DEMO_SETUP_ITEMS);
         setProducts(EXPERT_DEMO_PRODUCTS);
+        setOtherSocials(EXPERT_DEMO_OTHER_SOCIALS);
+        setTeam(EXPERT_DEMO_TEAM);
+        setBrands(EXPERT_DEMO_BRANDS);
         setTheme(EXPERT_DEMO_THEME);
         setSubscription({ planKey: "pro", status: "active" });
         setNotFound(false);
@@ -502,8 +512,6 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
   const fullUrl = buildProfileUrl(handleStr);
 
   const queryLayout = searchParams?.get("layout");
-  const creatorPlanKey = subscription?.planKey;
-  const isProOrVip = canUsePremiumLayout(creatorPlanKey);
   const requestedPremium =
     profile.publicProfileLayout === "premium" ||
     (profile as any)?.visibilitySettings?.publicProfileLayout === "premium";
@@ -514,7 +522,7 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
       ? "premium"
       : queryLayout === "tabs" || queryLayout === "simple"
         ? "tabs"
-        : requestedPremium && isProOrVip
+        : requestedPremium
           ? "premium"
           : "tabs");
 
@@ -751,12 +759,13 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
           layoutMode={effectiveLayoutMode}
           initialTab={initialTab}
           seriesOpenMode="page"
-          seriesPreviewLimit={5}
+          seriesPreviewLimit={effectiveLayoutMode === "premium" ? 3 : 5}
           allSeriesHref={`/${handleStr.replace(/^@/, "")}/series`}
-          productsPreviewLimit={handleStr.replace(/^@/, "") === "demo_creator" ? 9 : 6}
+          productsPreviewLimit={effectiveLayoutMode === "premium" ? 3 : (handleStr.replace(/^@/, "") === "demo_creator" ? 9 : 6)}
           allProductsHref={`/${handleStr.replace(/^@/, "")}/products`}
           reviewsPreviewLimit={3}
           allReviewsHref={`/${handleStr.replace(/^@/, "")}/reviews`}
+          allLinksHref={`/${handleStr.replace(/^@/, "")}/links`}
         />
     </CreatorPublicShell>
   );

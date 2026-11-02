@@ -39,6 +39,9 @@ import * as publicProfileRoute from "../app/api/public/profile/[username]/route"
 import * as publicProductsRoute from "../app/api/public/products/route";
 import * as submitCollabRoute from "../app/api/collaborations/submit/route";
 import * as publicReportRoute from "../app/api/public/report/route";
+import * as nudgeRoute from "../app/api/public/nudge/route";
+import * as notificationsRoute from "../app/api/creator/notifications/route";
+import * as cleanupNotificationsCron from "../app/api/cron/cleanup-notifications/route";
 import * as meRoute from "../app/api/me/route";
 import * as logoutRoute from "../app/api/auth/logout/route";
 
@@ -128,6 +131,7 @@ async function cleanupDb() {
     await db.query("DELETE FROM mediakit_gigs WHERE creator_id = ?", [TEST_CREATOR_ID]);
     await db.query("DELETE FROM creator_teams WHERE creator_id = ?", [TEST_CREATOR_ID]);
     await db.query("DELETE FROM team_members WHERE creator_id = ?", [TEST_CREATOR_ID]);
+    await db.query("DELETE FROM creator_notifications WHERE creator_id = ?", [TEST_CREATOR_ID]);
     await db.query("DELETE FROM creators WHERE id = ? OR email = ?", [TEST_CREATOR_ID, TEST_EMAIL]);
   } catch (e: any) {
     console.warn("Cleanup warning:", e.message);
@@ -563,6 +567,38 @@ async function main() {
       details: "Automated test report submission",
     }, false);
     return publicReportRoute.POST(req);
+  });
+
+  await runTest("Public", "Submit fan nudge for creator", "POST", "/api/public/nudge", async () => {
+    const req = makeReq("/api/public/nudge", "POST", {
+      username: TEST_USERNAME,
+    }, false);
+    return nudgeRoute.POST(req);
+  });
+
+  let createdNotificationId = "";
+  await runTest("Notifications", "Fetch active creator notifications (GET /api/creator/notifications)", "GET", "/api/creator/notifications", async () => {
+    const req = makeReq("/api/creator/notifications", "GET");
+    const res = await notificationsRoute.GET(req);
+    const data = await res.clone().json();
+    const notifs = data?.data?.notifications || data?.notifications || [];
+    if (notifs.length > 0) {
+      createdNotificationId = notifs[0].id;
+    }
+    return res;
+  });
+
+  await runTest("Notifications", "Mark creator notification as read (PATCH /api/creator/notifications)", "PATCH", "/api/creator/notifications", async () => {
+    const req = makeReq("/api/creator/notifications", "PATCH", {
+      notificationId: createdNotificationId || "dummy_id",
+      markAll: !createdNotificationId,
+    });
+    return notificationsRoute.PATCH(req);
+  });
+
+  await runTest("Cron", "Execute notification lifecycle cleanup cron (GET /api/cron/cleanup-notifications)", "GET", "/api/cron/cleanup-notifications", async () => {
+    const req = makeReq("/api/cron/cleanup-notifications", "GET", null, false);
+    return cleanupNotificationsCron.GET(req);
   });
 
   // ─────────────────────────────────────────────────────────────────────────────

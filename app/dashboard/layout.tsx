@@ -21,6 +21,7 @@ import { getFreeTrialStatus } from "@/lib/trialStatus";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { OnboardingService } from "@/services/OnboardingService";
 import { debugLog } from "@/lib/debugLogger";
+import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import { TrialExpiredEmotionalModal } from "@/components/dashboard/TrialExpiredEmotionalModal";
 
 function getGreeting(): string {
@@ -59,6 +60,7 @@ function DesktopTopHeader() {
       </nav>
 
       <div className="flex items-center gap-2">
+        <NotificationBell />
         <button
           type="button"
           onClick={handleCopy}

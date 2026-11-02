@@ -282,7 +282,7 @@ export function PhonePreview({
             totalAudience={totalAudience}
             themeKey={resolvedThemeKey}
             variant="full"
-            layoutMode="tabs"
+            layoutMode={profile.publicProfileLayout === "premium" ? "premium" : "tabs"}
             seriesOnlyMode={cleanSubpath === "series"}
             productsOnlyMode={cleanSubpath === "products" || cleanSubpath === "shop"}
             linksOnlyMode={cleanSubpath === "links"}

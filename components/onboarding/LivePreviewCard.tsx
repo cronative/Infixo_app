@@ -64,6 +64,7 @@ import { PackageCard } from "@/components/collab/PackageCard";
 import { MediaKitSnapshotCard } from "@/components/collab/MediaKitSnapshotCard";
 import { BrandLogosWrap } from "@/components/collab/BrandLogosWrap";
 import { CollabEnquirySheet } from "@/components/collab/CollabEnquirySheet";
+import { EmptyProfileCard } from "@/components/public/EmptyProfileCard";
 import {
   CreatorProfile,
   SocialAccounts,
@@ -383,7 +384,8 @@ export interface LivePreviewCardProps {
   isInformational?: boolean;
   isOnboarding?: boolean;
   isFinishStep?: boolean;
-  layoutMode?: "tabs" | "stacked";
+  layoutMode?: "tabs" | "stacked" | "premium";
+  allLinksHref?: string;
   initialTab?: CreatorNavTabId;
   /** Marketing landing page demo: shows fan-count breakdown, "My Setup & Shop" in the Shop tab and verified-collab badges. */
   landingDemo?: boolean;
@@ -632,6 +634,7 @@ export function LivePreviewCard({
   isOnboarding: isOnboardingProp,
   isFinishStep: isFinishStepProp,
   layoutMode = "tabs",
+  allLinksHref,
   initialTab,
   landingDemo = false,
 }: LivePreviewCardProps) {
@@ -639,7 +642,9 @@ export function LivePreviewCard({
   const profile: CreatorProfile = incomingProfile || EMPTY_PROFILE_FALLBACK;
   const socials: SocialAccounts = incomingSocials || EMPTY_SOCIAL_ACCOUNTS;
   const series: Series[] = incomingSeries || [];
-  const displayedSeries = typeof seriesPreviewLimit === "number" ? series.slice(0, seriesPreviewLimit) : series;
+  const isPremiumLayout = layoutMode === "premium" || layoutMode === "stacked";
+  const effectiveSeriesPreviewLimit = isPremiumLayout ? 3 : seriesPreviewLimit;
+  const displayedSeries = typeof effectiveSeriesPreviewLimit === "number" ? series.slice(0, effectiveSeriesPreviewLimit) : series;
   const { showToast } = useToast();
   const [expandedSeriesMap, setExpandedSeriesMap] = useState<Record<string, boolean>>(() => {
     return series && series.length > 0 ? { [series[0].id]: true } : {};
@@ -759,6 +764,7 @@ export function LivePreviewCard({
   const [collaborationsList, setCollaborationsList] = useState<CreatorCollaboration[]>(passedCollaborations || []);
   const [setupList, setSetupList] = useState<CreatorSetupItem[]>(passedSetupItems || []);
   const [otherSocialsList, setOtherSocialsList] = useState<OtherSocialAccount[]>(passedOtherSocials || []);
+  const [allSocialAccountsList, setAllSocialAccountsList] = useState<any[]>(passedAllSocialAccounts || []);
   const [sectionsList, setSectionsList] = useState<CreatorProfileSection[]>(passedSections || DEFAULT_PROFILE_SECTIONS);
   const [isCollabInquiryOpen, setIsCollabInquiryOpen] = useState(false);
   const [isDashboardPreview, setIsDashboardPreview] = useState<boolean>(false);
@@ -789,6 +795,12 @@ export function LivePreviewCard({
   useEffect(() => {
     if (passedReviews !== undefined) {
       setApprovedReviews(passedReviews || []);
+      return;
+    }
+    if (profile.username === "demo_creator") {
+      import("@/data/expertDemoCreator").then(({ EXPERT_DEMO_REVIEWS }) => {
+        setApprovedReviews(EXPERT_DEMO_REVIEWS);
+      });
       return;
     }
     async function loadApprovedReviews() {
@@ -830,6 +842,10 @@ export function LivePreviewCard({
   useEffect(() => {
     if (passedTeam !== undefined) {
       setTeamData(passedTeam || { members: [] });
+    } else if (profile.username === "demo_creator") {
+      import("@/data/expertDemoCreator").then(({ EXPERT_DEMO_TEAM }) => {
+        setTeamData(EXPERT_DEMO_TEAM);
+      });
     } else if (isDashboardPreview) {
       const localTeam = teamRepository.get();
       if (localTeam) {
@@ -841,15 +857,19 @@ export function LivePreviewCard({
         setTeamData({ members: [] });
       }
     }
-  }, [passedTeam, isDashboardPreview]);
+  }, [passedTeam, isDashboardPreview, profile.username]);
 
   useEffect(() => {
     if (passedBrands !== undefined) {
       setBrandsList(passedBrands);
+    } else if (profile.username === "demo_creator") {
+      import("@/data/expertDemoCreator").then(({ EXPERT_DEMO_BRANDS }) => {
+        setBrandsList(EXPERT_DEMO_BRANDS);
+      });
     } else if (isDashboardPreview) {
       setBrandsList(brandsRepository.getAll());
     }
-  }, [passedBrands, isDashboardPreview]);
+  }, [passedBrands, isDashboardPreview, profile.username]);
 
   useEffect(() => {
     if (passedCollaborations !== undefined) {
@@ -862,18 +882,26 @@ export function LivePreviewCard({
   useEffect(() => {
     if (passedSetupItems !== undefined) {
       setSetupList(passedSetupItems);
+    } else if (profile.username === "demo_creator") {
+      import("@/data/expertDemoCreator").then(({ EXPERT_DEMO_SETUP_ITEMS }) => {
+        setSetupList(EXPERT_DEMO_SETUP_ITEMS);
+      });
     } else if (isDashboardPreview) {
       setSetupList(creatorSetupRepository.getAll());
     }
-  }, [passedSetupItems, isDashboardPreview]);
+  }, [passedSetupItems, isDashboardPreview, profile.username]);
 
   useEffect(() => {
     if (passedOtherSocials !== undefined) {
       setOtherSocialsList(passedOtherSocials);
+    } else if (profile.username === "demo_creator") {
+      import("@/data/expertDemoCreator").then(({ EXPERT_DEMO_OTHER_SOCIALS }) => {
+        setOtherSocialsList(EXPERT_DEMO_OTHER_SOCIALS);
+      });
     } else if (isDashboardPreview) {
       setOtherSocialsList(otherSocialsRepository.getAll());
     }
-  }, [passedOtherSocials, isDashboardPreview]);
+  }, [passedOtherSocials, isDashboardPreview, profile.username]);
 
   useEffect(() => {
     if (passedSections !== undefined) {
@@ -882,6 +910,16 @@ export function LivePreviewCard({
       setSectionsList(sectionsRepository.getAll());
     }
   }, [passedSections, isDashboardPreview]);
+
+  useEffect(() => {
+    if (passedAllSocialAccounts !== undefined && passedAllSocialAccounts.length > 0) {
+      setAllSocialAccountsList(passedAllSocialAccounts);
+    } else if (profile.username === "demo_creator") {
+      import("@/data/expertDemoCreator").then(({ EXPERT_DEMO_ALL_SOCIAL_ACCOUNTS }) => {
+        setAllSocialAccountsList(EXPERT_DEMO_ALL_SOCIAL_ACCOUNTS);
+      });
+    }
+  }, [passedAllSocialAccounts, profile.username]);
 
   const [mediaKitPackages, setMediaKitPackages] = useState<MediaKitPackage[]>(passedMediaKitPackages || []);
   const [mediaKitSettings, setMediaKitSettings] = useState<MediaKitSettings>(passedMediaKitSettings || MediaKitService.DEFAULT_SETTINGS);
@@ -1042,6 +1080,13 @@ export function LivePreviewCard({
     if (passedMediaKitPackages !== undefined) {
       setMediaKitPackages(passedMediaKitPackages || []);
       if (passedMediaKitSettings) setMediaKitSettings(passedMediaKitSettings);
+      return;
+    }
+    if (safeProfile.username === "demo_creator") {
+      import("@/data/expertDemoCreator").then(({ EXPERT_DEMO_GIGS, EXPERT_DEMO_MEDIA_KIT_SETTINGS }) => {
+        setMediaKitPackages(EXPERT_DEMO_GIGS);
+        setMediaKitSettings(EXPERT_DEMO_MEDIA_KIT_SETTINGS);
+      });
       return;
     }
     async function loadMediaKit() {
@@ -1256,20 +1301,34 @@ export function LivePreviewCard({
     },
   ].filter((item) => item.visible && (item.hasAccount || item.count > 0 || (item.url && item.url !== "#")));
 
-  const fanbaseSocialCards = activeSocialList.filter((s) => s.hasAccount || s.count > 0);
+  // Only primary social accounts (YouTube, Instagram, Facebook) fetch/display follower & subscriber counts
+  const PRIMARY_SOCIAL_PLATFORMS = useMemo(() => new Set(["youtube", "instagram", "facebook"]), []);
+  const fanbaseSocialCards = activeSocialList.filter(
+    (s) => PRIMARY_SOCIAL_PLATFORMS.has(s.platform) && (s.hasAccount || s.count > 0)
+  );
   const fanbaseSocialGridColumns = `repeat(${Math.min(Math.max(fanbaseSocialCards.length, 1), 3)}, minmax(0, 1fr))`;
 
   const aboutSocialCards = useMemo(() => {
-    if (passedAllSocialAccounts && passedAllSocialAccounts.length > 0) {
-      return passedAllSocialAccounts
+    const rawList =
+      allSocialAccountsList && allSocialAccountsList.length > 0
+        ? allSocialAccountsList
+        : passedAllSocialAccounts && passedAllSocialAccounts.length > 0
+        ? passedAllSocialAccounts
+        : null;
+
+    if (rawList && rawList.length > 0) {
+      return rawList
         .filter((acc) => acc.username || (acc.followerCount && acc.followerCount > 0))
         .map((acc: any) => {
           const platform = (acc.platform || "").toLowerCase();
           const rawHandle = (acc.username || acc.accountName || "").replace(/^@/, "");
-          const count = acc.followerCount || 0;
           const isYoutube = platform === "youtube";
           const isInstagram = platform === "instagram";
           const isFacebook = platform === "facebook";
+          const isPrimary = Boolean(acc.isPrimary || acc.is_primary);
+          // Follower & subscriber count is only fetched/shown for primary YouTube, Instagram, Facebook
+          const isCountEligible = (isYoutube || isInstagram || isFacebook) && isPrimary;
+          const count = isCountEligible ? (acc.followerCount || 0) : 0;
           const url =
             acc.url ||
             (isInstagram
@@ -1279,8 +1338,7 @@ export function LivePreviewCard({
               : isFacebook
               ? `https://facebook.com/${rawHandle}`
               : buildSocialUrl(platform, rawHandle));
-          const isPrimary = Boolean(acc.isPrimary || acc.is_primary);
-          const label =
+          const platformLabel =
             platform === "youtube"
               ? "YouTube"
               : platform === "instagram"
@@ -1288,10 +1346,12 @@ export function LivePreviewCard({
               : platform === "facebook"
               ? "Facebook"
               : platform;
+          const label = acc.accountName || platformLabel;
           const unit = isYoutube ? "Subscribers" : "Followers";
           return {
             id: acc.id,
             platform,
+            platformLabel,
             label,
             handle: rawHandle,
             name: acc.accountName || rawHandle,
@@ -1303,7 +1363,47 @@ export function LivePreviewCard({
         });
     }
     return fanbaseSocialCards;
-  }, [passedAllSocialAccounts, fanbaseSocialCards]);
+  }, [allSocialAccountsList, passedAllSocialAccounts, fanbaseSocialCards]);
+
+  const groupedSocials = useMemo(() => {
+    const platformCounts: Record<string, number> = {};
+    aboutSocialCards.forEach((c: any) => {
+      const p = (c.platform || "other").toLowerCase();
+      platformCounts[p] = (platformCounts[p] || 0) + 1;
+    });
+
+    const hasMultiAccount = Object.values(platformCounts).some((count) => count > 1);
+    if (!hasMultiAccount) {
+      return [{ groupTitle: null, platform: "all", items: aboutSocialCards }];
+    }
+
+    const platformOrder = ["instagram", "youtube", "facebook"];
+    const groups: Array<{ groupTitle: string; platform: string; items: any[] }> = [];
+
+    platformOrder.forEach((plat) => {
+      const items = aboutSocialCards.filter((c: any) => (c.platform || "").toLowerCase() === plat);
+      if (items.length > 0) {
+        const title =
+          plat === "instagram"
+            ? "Instagram Accounts"
+            : plat === "youtube"
+            ? "YouTube Channels"
+            : plat === "facebook"
+            ? "Facebook Pages"
+            : `${plat.charAt(0).toUpperCase() + plat.slice(1)} Accounts`;
+        groups.push({ groupTitle: title, platform: plat, items });
+      }
+    });
+
+    const otherItems = aboutSocialCards.filter(
+      (c: any) => !platformOrder.includes((c.platform || "").toLowerCase())
+    );
+    if (otherItems.length > 0) {
+      groups.push({ groupTitle: "Other Connected Profiles", platform: "other", items: otherItems });
+    }
+
+    return groups;
+  }, [aboutSocialCards]);
 
   const handleCopyClick = async (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
@@ -1479,7 +1579,20 @@ export function LivePreviewCard({
     navTabs.push(collabTabObj);
   }
 
-  const isTabsLayout = layoutMode !== "stacked" && !isListingPage && navTabs.length >= 1;
+  // Profile is fresh/empty if creator has not added bio, socials, series, links, products, setups, or collab packages
+  const isProfileEmpty =
+    !isListingPage &&
+    !Boolean(profile.bio?.trim()) &&
+    fanbaseSocialCards.length === 0 &&
+    series.length === 0 &&
+    validLinksCount === 0 &&
+    (!products || products.length === 0) &&
+    validSetupList.length === 0 &&
+    navActivePackages.length === 0 &&
+    approvedReviews.length === 0 &&
+    activeTeamMembers.length === 0;
+
+  const isTabsLayout = !isPremiumLayout && !isListingPage && !isProfileEmpty && navTabs.length >= 1;
 
   // collab_package_view: once per page view per package, when the Collab section shows its card.
   const collabSectionVisible =
@@ -1661,8 +1774,8 @@ export function LivePreviewCard({
         ["--desktop-surface-shadow" as any]: isPublicSurface ? "none" : surfaceShadow,
         boxShadow: isPublicSurface ? "none" : undefined,
       }}
-      className={`relative w-full max-w-full flex-1 flex flex-col ${
-        containedScroll ? "overflow-hidden min-h-0 h-full max-h-full" : "min-h-full"
+      className={`relative w-full max-w-full flex-1 flex flex-col overflow-hidden ${
+        containedScroll ? "min-h-0 h-full max-h-full" : "min-h-full"
       } ${
         isPublicSurface
           ? "px-4 pt-[20px] sm:px-5 sm:pt-[20px] rounded-[5px] border profile-card-glass"
@@ -1929,13 +2042,54 @@ export function LivePreviewCard({
         } pt-1.5 sm:pt-2 pb-6`}
       >
 
-        {/* 2. About Tab (Compact, flat, 5px radius, theme-aware layout) */}
-        {!isListingPage && (!isTabsLayout || activeNavTab === "about" || activeNavTab === "fanbase") && (
-          <div id="about-section" className={`relative z-10 w-full text-left animate-fade-in ${isTabsLayout ? "order-[4] mt-1 sm:mt-1.5" : "order-[1] mt-4 sm:mt-5 space-y-2"}`}>
+        {/* Fresh / In-Progress Profile State: Warm emotional visitor welcome & interactive nudge */}
+        {isProfileEmpty && (
+          <EmptyProfileCard
+            creatorName={profile.displayName || profile.username || "Creator"}
+            creatorId={profile.id}
+            creatorUsername={profile.username}
+            isDashboardPreview={isDashboardPreview}
+          />
+        )}
+
+        {/* 4. About Section */}
+        {!isListingPage && !isProfileEmpty && (isPremiumLayout || (!isTabsLayout ? true : (activeNavTab === "about" || activeNavTab === "fanbase"))) && (profile.bio?.trim() || effectiveVisibilitySettings.showFanbase !== false || isDashboardPreview) && (
+          <div
+            id="about-section"
+            style={
+              isPremiumLayout
+                ? {
+                    backgroundColor: "color-mix(in srgb, var(--accent) 4.5%, var(--surface))",
+                    borderColor: "var(--surface-border)",
+                  }
+                : undefined
+            }
+            className={`relative z-10 w-full text-left animate-fade-in ${
+              isPremiumLayout
+                ? "order-[4] mt-5 sm:mt-6 p-3.5 sm:p-4 rounded-[5px] border shadow-xs space-y-3"
+                : isTabsLayout
+                ? "order-[4] mt-1 sm:mt-1.5"
+                : "order-[4] mt-4 sm:mt-5 space-y-2"
+            }`}
+          >
             {!isTabsLayout && (
               <TabSectionHeader
                 title="About"
                 subtitle="Get to know me & find my socials."
+                action={
+                  isPremiumLayout ? (
+                    <span
+                      style={{
+                        color: "var(--accent-text)",
+                        backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
+                        borderColor: "var(--surface-border)",
+                      }}
+                      className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
+                    >
+                      Bio &amp; Reach
+                    </span>
+                  ) : undefined
+                }
                 primaryTextColor={c.primaryText}
                 secondaryTextColor={c.secondaryText}
                 headingFontFamily={typ.headingFontFamily}
@@ -1952,27 +2106,29 @@ export function LivePreviewCard({
                   }}
                   className="rounded-[5px] border overflow-hidden text-left shadow-none"
                 >
-                  {/* Compact theme-tinted header */}
-                  <div
-                    style={{
-                      backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
-                      borderColor: "var(--surface-border)",
-                    }}
-                    className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b"
-                  >
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-(--accent-text) shrink-0" />
-                      <h2
-                        style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                        className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
-                      >
-                        About Me
-                      </h2>
+                  {/* Compact theme-tinted header (shown in tabs layout to avoid duplicate header in premium) */}
+                  {!isPremiumLayout && (
+                    <div
+                      style={{
+                        backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
+                        borderColor: "var(--surface-border)",
+                      }}
+                      className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b"
+                    >
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-(--accent-text) shrink-0" />
+                        <h2
+                          style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                          className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
+                        >
+                          About Me
+                        </h2>
+                      </div>
+                      <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
+                        A little about me and what I love creating.
+                      </p>
                     </div>
-                    <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
-                      A little about me and what I love creating.
-                    </p>
-                  </div>
+                  )}
 
                   {/* Bio Editorial Text */}
                   <div className="p-3 sm:p-3.5">
@@ -2086,17 +2242,48 @@ export function LivePreviewCard({
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        )}
 
-              {/* 3. Social Accounts Card */}
-              {effectiveVisibilitySettings.showFanbase !== false && aboutSocialCards.length > 0 && (
-                <div
-                  style={{
-                    backgroundColor: "transparent",
-                    borderColor: "var(--surface-border)",
-                  }}
-                  className="rounded-[5px] border overflow-hidden text-left shadow-none"
-                >
-                  {/* Compact theme-tinted header */}
+        {/* 9. Tools I Use Section */}
+        {!isListingPage && (isPremiumLayout || (!isTabsLayout ? true : activeNavTab === "about")) && (() => {
+          const activeSetupItems = (setupList || []).filter((it) => it.isActive !== false);
+          if (activeSetupItems.length === 0 && !isDashboardPreview) return null;
+          const visibleSetupItems = isSetupExpanded ? activeSetupItems : activeSetupItems.slice(0, 4);
+
+          return (
+            <div id="tools-section" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[5] mt-5 sm:mt-6 space-y-3" : isTabsLayout ? "order-[4] mt-1.5 sm:mt-2 space-y-2" : "order-[5] mt-6 sm:mt-7 space-y-2"}`}>
+              {isPremiumLayout && (
+                <TabSectionHeader
+                  title="Tools I Use"
+                  subtitle="A few tools I use to create my content."
+                  action={
+                    <span
+                      style={{
+                        color: "var(--accent-text)",
+                        backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
+                        borderColor: "var(--surface-border)",
+                      }}
+                      className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
+                    >
+                      {activeSetupItems.length} {activeSetupItems.length === 1 ? "Item" : "Items"}
+                    </span>
+                  }
+                  primaryTextColor={c.primaryText}
+                  secondaryTextColor={c.secondaryText}
+                  headingFontFamily={typ.headingFontFamily}
+                />
+              )}
+              <div
+                style={{
+                  backgroundColor: "transparent",
+                  borderColor: "var(--surface-border)",
+                }}
+                className="rounded-[5px] border overflow-hidden text-left shadow-none"
+              >
+                {/* Compact theme-tinted header (shown in tabs layout to avoid duplicate header in premium) */}
+                {!isPremiumLayout && (
                   <div
                     style={{
                       backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
@@ -2106,227 +2293,269 @@ export function LivePreviewCard({
                   >
                     <div>
                       <div className="flex items-center gap-2">
-                        <Share2 className="h-4 w-4 text-(--accent-text) shrink-0" />
+                        <Camera className="h-4 w-4 text-(--accent-text) shrink-0" />
                         <h2
                           style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
                           className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
                         >
-                          Social Accounts
+                          Tools I Use
                         </h2>
                       </div>
                       <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
-                        Follow along and stay connected with me.
+                        A few tools I use to create my content.
                       </p>
                     </div>
                     <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
-                      {aboutSocialCards.length} connected
+                      {activeSetupItems.length} items
                     </span>
                   </div>
+                )}
 
-                  {/* Body: Individual horizontal cards with 5px radius and ~8px gap */}
-                  <div className="p-2 sm:p-2.5 space-y-2">
-                    {aboutSocialCards.map((item: any, idx: number) => {
-                      const rawHandle = (item.handle || item.name || item.label).replace(/^@/, "");
-                      const isServiceOnly = item.platform === "spotify" && rawHandle.toLowerCase() === "spotify";
-                      const displayHandle = isServiceOnly ? "Spotify Artist" : `@${rawHandle}`;
-                      const countFormatted = item.count > 0 ? formatCount(item.count) : null;
-
-                      const isYoutube = item.platform === "youtube";
-                      const isInstagram = item.platform === "instagram";
-                      const isFacebook = item.platform === "facebook";
-
-                      return (
-                        <a
-                          key={item.id ? `soc-${item.id}` : `${item.platform}-${item.handle || item.name}-${idx}`}
-                          href={item.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => {
-                            if (isInformationalMode) {
-                              e.preventDefault();
-                              showToast(`Redirects to ${item.label} on live profile ✨`);
-                            }
-                          }}
+                {/* Body: Individual horizontal cards with 5px radius and ~8px gap */}
+                <div className="p-2 sm:p-2.5 space-y-2">
+                  {visibleSetupItems.map((item) => (
+                    <a
+                      key={item.id}
+                      href={item.linkUrl || "#"}
+                      target={item.linkUrl ? "_blank" : undefined}
+                      rel="noopener noreferrer"
+                      onClick={(e) => {
+                        if (isInformationalMode) {
+                          e.preventDefault();
+                          showToast(`Viewing setup item: ${item.name}`);
+                        } else if (item.linkUrl) {
+                          trackPublicEvent("setup_click", String(item.id));
+                        }
+                      }}
+                      style={{
+                        backgroundColor: "transparent",
+                        borderColor: "var(--surface-border)",
+                      }}
+                      className="rounded-[5px] border p-2.5 sm:p-3 flex items-center justify-between gap-2.5 transition-colors hover:border-(--surface-border)/40 cursor-pointer text-left group"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div
                           style={{
-                            backgroundColor: "transparent",
+                            backgroundColor: "color-mix(in srgb, var(--accent) 8%, var(--surface))",
                             borderColor: "var(--surface-border)",
                           }}
-                          className="rounded-[5px] border p-2.5 sm:p-3 flex items-center justify-between gap-2.5 transition-colors hover:border-(--surface-border)/40 cursor-pointer text-left group"
-                          title={`Open ${item.label} (${displayHandle})`}
+                          className="h-9 w-9 rounded-[5px] border flex items-center justify-center shrink-0 text-(--accent-text)"
                         >
-                          {/* Left: Square Icon with theme wash */}
-                          <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                            <div
-                              style={{
-                                backgroundColor: "color-mix(in srgb, var(--accent) 8%, var(--surface))",
-                                borderColor: "var(--surface-border)",
-                              }}
-                              className="h-9 w-9 rounded-[5px] border flex items-center justify-center shrink-0 text-(--accent-text)"
-                            >
-                              {isInstagram && <InstagramOutlineIcon className="h-4.5 w-4.5" />}
-                              {isYoutube && <YoutubeOutlineIcon className="h-4.5 w-4.5" />}
-                              {isFacebook && <FacebookOutlineIcon className="h-4.5 w-4.5" />}
-                              {item.platform === "twitter" && <XTwitterIcon className="h-4 w-4" />}
-                              {item.platform === "linkedin" && <LinkedinIcon className="h-4 w-4" />}
-                              {item.platform === "threads" && <ThreadsIcon className="h-4 w-4" />}
-                              {item.platform === "snapchat" && <SnapchatIcon className="h-4 w-4" />}
-                              {item.platform === "spotify" && <SpotifyIcon className="h-4 w-4" />}
-                              {item.platform === "twitch" && <TwitchIcon className="h-4 w-4" />}
-                              {item.platform === "pinterest" && <PinterestIcon className="h-4 w-4" />}
-                              {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest"].includes(item.platform) && (
-                                <Globe className="h-4 w-4 text-[#71717A]" />
-                              )}
-                            </div>
-
-                            {/* Center: Platform Name + Username */}
-                            <div className="min-w-0 flex-1">
-                              <div style={{ color: c.primaryText }} className="text-[13px] font-medium leading-[18px] truncate group-hover:text-(--accent-text) transition-colors text-(--text)">
-                                {item.label}
-                              </div>
-                              <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[17px] text-(--text-muted) mt-0.5 truncate">
-                                {displayHandle}
-                              </p>
-                            </div>
+                          <Camera className="h-4 w-4 stroke-[1.75]" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div
+                            style={{ color: c.primaryText }}
+                            className="text-[13px] font-medium leading-[18px] truncate group-hover:text-(--accent-text) transition-colors text-(--text)"
+                          >
+                            {item.name}
                           </div>
+                          <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[17px] text-(--text-muted) mt-0.5 truncate">
+                            {item.usedFor || item.note || item.modelOrPlan || item.brand}
+                          </p>
+                        </div>
+                      </div>
+                      <ExternalLink className="h-3 w-3 text-(--text-muted) group-hover:text-(--text) shrink-0 transition-colors" />
+                    </a>
+                  ))}
+                </div>
 
-                          {/* Right: Small external-link icon at top, follower count as subtle secondary text below */}
-                          <div className="shrink-0 flex flex-col items-end justify-between self-stretch text-right min-h-[34px]">
-                            <ExternalLink className="h-3 w-3 text-(--text-muted) group-hover:text-(--text) transition-colors" />
-                            {countFormatted && (
-                              <span style={{ color: c.mutedText }} className="text-[10px] font-normal lowercase">
-                                {countFormatted} {item.unit ? item.unit.toLowerCase() : isYoutube ? "subscribers" : "followers"}
-                              </span>
-                            )}
-                          </div>
-                        </a>
-                      );
-                    })}
+                {activeSetupItems.length > 4 && (
+                  <div style={{ borderColor: "var(--surface-border)" }} className="border-t">
+                    <button
+                      type="button"
+                      onClick={() => setIsSetupExpanded(!isSetupExpanded)}
+                      className="w-full py-2 px-3 text-xs font-semibold text-(--text) hover:opacity-80 flex items-center justify-center gap-1.5 transition-opacity cursor-pointer text-center"
+                    >
+                      <span>{isSetupExpanded ? "Show Less" : `View All Items (${activeSetupItems.length})`}</span>
+                      {isSetupExpanded ? (
+                        <ChevronUp className="h-3.5 w-3.5 shrink-0" />
+                      ) : (
+                        <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+                      )}
+                    </button>
                   </div>
+                )}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* 10. Social Accounts Section */}
+        {!isListingPage && effectiveVisibilitySettings.showFanbase !== false && (isPremiumLayout || (!isTabsLayout ? true : (activeNavTab === "about" || activeNavTab === "fanbase"))) && aboutSocialCards.length > 0 && (
+          <div id="socials-section" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[9] mt-5 sm:mt-6 space-y-3" : isTabsLayout ? "order-[4] mt-1 sm:mt-1.5 space-y-2" : "order-[10] mt-6 sm:mt-7 space-y-2"}`}>
+            {isPremiumLayout && (
+              <TabSectionHeader
+                title="Social Accounts"
+                subtitle="Follow along and stay connected with me."
+                action={
+                  <span
+                    style={{
+                      color: "var(--accent-text)",
+                      backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
+                      borderColor: "var(--surface-border)",
+                    }}
+                    className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
+                  >
+                    {aboutSocialCards.length} Connected
+                  </span>
+                }
+                primaryTextColor={c.primaryText}
+                secondaryTextColor={c.secondaryText}
+                headingFontFamily={typ.headingFontFamily}
+              />
+            )}
+            <div
+              style={{
+                backgroundColor: "transparent",
+                borderColor: "var(--surface-border)",
+              }}
+              className="rounded-[5px] border overflow-hidden text-left shadow-none"
+            >
+              {/* Compact theme-tinted header (shown in tabs layout to avoid duplicate header in premium) */}
+              {!isPremiumLayout && (
+                <div
+                  style={{
+                    backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
+                    borderColor: "var(--surface-border)",
+                  }}
+                  className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
+                >
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Share2 className="h-4 w-4 text-(--accent-text) shrink-0" />
+                      <h2
+                        style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                        className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
+                      >
+                        Social Accounts
+                      </h2>
+                    </div>
+                    <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
+                      Follow along and stay connected with me.
+                    </p>
+                  </div>
+                  <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
+                    {aboutSocialCards.length} connected
+                  </span>
                 </div>
               )}
 
-              {/* 4. My Setup Card */}
-              {(() => {
-                const activeSetupItems = (setupList || []).filter((it) => it.isActive !== false);
-                if (activeSetupItems.length === 0) return null;
-                const visibleSetupItems = isSetupExpanded ? activeSetupItems : activeSetupItems.slice(0, 4);
-
-                return (
-                  <div
-                    id="setup-section"
-                    style={{
-                      backgroundColor: "transparent",
-                      borderColor: "var(--surface-border)",
-                    }}
-                    className="rounded-[5px] border overflow-hidden text-left shadow-none"
-                  >
-                    {/* Compact theme-tinted header */}
-                    <div
-                      style={{
-                        backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
-                        borderColor: "var(--surface-border)",
-                      }}
-                      className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
-                    >
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <Camera className="h-4 w-4 text-(--accent-text) shrink-0" />
-                          <h2
-                            style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                            className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
-                          >
-                            My Setup
-                          </h2>
-                        </div>
-                        <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
-                          A few tools I use to create my content.
-                        </p>
-                      </div>
-                      <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
-                        {activeSetupItems.length} items
-                      </span>
-                    </div>
-
-                    {/* Body: Individual horizontal cards with 5px radius and ~8px gap */}
-                    <div className="p-2 sm:p-2.5 space-y-2">
-                      {visibleSetupItems.map((item) => (
-                        <a
-                          key={item.id}
-                          href={item.linkUrl || "#"}
-                          target={item.linkUrl ? "_blank" : undefined}
-                          rel="noopener noreferrer"
-                          onClick={(e) => {
-                            if (isInformationalMode) {
-                              e.preventDefault();
-                              showToast(`Viewing setup item: ${item.name}`);
-                            } else if (item.linkUrl) {
-                              trackPublicEvent("setup_click", String(item.id));
-                            }
-                          }}
-                          style={{
-                            backgroundColor: "transparent",
-                            borderColor: "var(--surface-border)",
-                          }}
-                          className="rounded-[5px] border p-2.5 sm:p-3 flex items-center justify-between gap-2.5 transition-colors hover:border-(--surface-border)/40 cursor-pointer text-left group"
+              {/* Body: Grouped or Individual horizontal cards with 5px radius and ~8px gap */}
+              <div className="p-2 sm:p-2.5 space-y-3">
+                {groupedSocials.map((group, gIdx) => (
+                  <div key={group.groupTitle || `group-${gIdx}`} className="space-y-1.5">
+                    {group.groupTitle && (
+                      <div className="flex items-center justify-between px-1 pt-1 pb-0.5">
+                        <span
+                          style={{ color: c.secondaryText, fontFamily: typ.headingFontFamily }}
+                          className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-(--text-secondary)"
                         >
-                          {/* Left: Square Icon with theme wash */}
-                          <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                            <div
-                              style={{
-                                backgroundColor: "color-mix(in srgb, var(--accent) 8%, var(--surface))",
-                                borderColor: "var(--surface-border)",
-                              }}
-                              className="h-9 w-9 rounded-[5px] border flex items-center justify-center shrink-0 text-(--accent-text)"
-                            >
-                              <Camera className="h-4 w-4 stroke-[1.75]" />
-                            </div>
-
-                            {/* Center: Item Name + Note / description */}
-                            <div className="min-w-0 flex-1">
-                              <div
-                                style={{ color: c.primaryText }}
-                                className="text-[13px] font-medium leading-[18px] truncate group-hover:text-(--accent-text) transition-colors text-(--text)"
-                              >
-                                {item.name}
-                              </div>
-                              <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[17px] text-(--text-muted) mt-0.5 truncate">
-                                {item.usedFor || item.note || item.modelOrPlan || item.brand}
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* Right: Small external-link icon */}
-                          <ExternalLink className="h-3 w-3 text-(--text-muted) group-hover:text-(--text) shrink-0 transition-colors" />
-                        </a>
-                      ))}
-                    </div>
-
-                    {/* Footer: View All Items Toggle */}
-                    {activeSetupItems.length > 4 && (
-                      <div style={{ borderColor: "var(--surface-border)" }} className="border-t">
-                        <button
-                          type="button"
-                          onClick={() => setIsSetupExpanded(!isSetupExpanded)}
-                          className="w-full py-2 px-3 text-xs font-semibold text-(--text) hover:opacity-80 flex items-center justify-center gap-1.5 transition-opacity cursor-pointer text-center"
-                        >
-                          <span>{isSetupExpanded ? "Show Less" : `View All Items (${activeSetupItems.length})`}</span>
-                          {isSetupExpanded ? (
-                            <ChevronUp className="h-3.5 w-3.5 shrink-0" />
-                          ) : (
-                            <ArrowRight className="h-3.5 w-3.5 shrink-0" />
-                          )}
-                        </button>
+                          {group.groupTitle}
+                        </span>
+                        <span style={{ color: c.mutedText }} className="text-[10.5px] font-normal text-(--text-muted)">
+                          {group.items.length} {group.items.length === 1 ? "account" : "accounts"}
+                        </span>
                       </div>
                     )}
+                    <div className="space-y-2">
+                      {group.items.map((item: any, idx: number) => {
+                        const rawHandle = (item.handle || item.name || item.label).replace(/^@/, "");
+                        const isServiceOnly = item.platform === "spotify" && rawHandle.toLowerCase() === "spotify";
+                        const displayHandle = isServiceOnly ? "Spotify Artist" : `@${rawHandle}`;
+
+                        const isYoutube = item.platform === "youtube";
+                        const isInstagram = item.platform === "instagram";
+                        const isFacebook = item.platform === "facebook";
+                        // Only primary accounts of YouTube, Instagram, and Facebook fetch/show counts
+                        const isPrimaryAccount = Boolean(item.isPrimary && (isYoutube || isInstagram || isFacebook));
+                        const countFormatted = isPrimaryAccount && item.count > 0 ? formatCount(item.count) : null;
+
+                        return (
+                          <a
+                            key={item.id ? `soc-${item.id}` : `${item.platform}-${item.handle || item.name}-${idx}`}
+                            href={item.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => {
+                              if (isInformationalMode) {
+                                e.preventDefault();
+                                showToast(`Redirects to ${item.label} on live profile ✨`);
+                              }
+                            }}
+                            style={{
+                              backgroundColor: "transparent",
+                              borderColor: "var(--surface-border)",
+                            }}
+                            className="rounded-[5px] border p-2.5 sm:p-3 flex items-center justify-between gap-2.5 transition-colors hover:border-(--surface-border)/40 cursor-pointer text-left group"
+                            title={`Open ${item.label} (${displayHandle})`}
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                              <div
+                                style={{
+                                  backgroundColor: "color-mix(in srgb, var(--accent) 8%, var(--surface))",
+                                  borderColor: "var(--surface-border)",
+                                }}
+                                className="h-9 w-9 rounded-[5px] border flex items-center justify-center shrink-0 text-(--accent-text)"
+                              >
+                                {isInstagram && <InstagramOutlineIcon className="h-4.5 w-4.5" />}
+                                {isYoutube && <YoutubeOutlineIcon className="h-4.5 w-4.5" />}
+                                {isFacebook && <FacebookOutlineIcon className="h-4.5 w-4.5" />}
+                                {item.platform === "twitter" && <XTwitterIcon className="h-4 w-4" />}
+                                {item.platform === "linkedin" && <LinkedinIcon className="h-4 w-4" />}
+                                {item.platform === "threads" && <ThreadsIcon className="h-4 w-4" />}
+                                {item.platform === "snapchat" && <SnapchatIcon className="h-4 w-4" />}
+                                {item.platform === "spotify" && <SpotifyIcon className="h-4 w-4" />}
+                                {item.platform === "twitch" && <TwitchIcon className="h-4 w-4" />}
+                                {item.platform === "pinterest" && <PinterestIcon className="h-4 w-4" />}
+                                {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest"].includes(item.platform) && (
+                                  <Globe className="h-4 w-4 text-[#71717A]" />
+                                )}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  <span style={{ color: c.primaryText }} className="text-[13px] font-medium leading-[18px] truncate group-hover:text-(--accent-text) transition-colors text-(--text)">
+                                    {item.label}
+                                  </span>
+                                  {isPrimaryAccount && (
+                                    <span
+                                      style={{
+                                        backgroundColor: "color-mix(in srgb, var(--accent) 12%, transparent)",
+                                        color: "var(--accent-text)",
+                                        borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)",
+                                      }}
+                                      className="text-[9px] font-bold px-1.5 py-0.5 border rounded-[3px] shrink-0 uppercase tracking-wider"
+                                    >
+                                      Primary
+                                    </span>
+                                  )}
+                                </div>
+                                <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[17px] text-(--text-muted) mt-0.5 truncate">
+                                  {displayHandle}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="shrink-0 flex flex-col items-end justify-between self-stretch text-right min-h-[34px]">
+                              <ExternalLink className="h-3 w-3 text-(--text-muted) group-hover:text-(--text) transition-colors" />
+                              {countFormatted && (
+                                <span style={{ color: c.mutedText }} className="text-[10px] font-normal lowercase">
+                                  {countFormatted} {item.unit ? item.unit.toLowerCase() : isYoutube ? "subscribers" : "followers"}
+                                </span>
+                              )}
+                            </div>
+                          </a>
+                        );
+                      })}
+                    </div>
                   </div>
-                );
-              })()}
+                ))}
+              </div>
             </div>
           </div>
         )}
 
-        {/* 3. Links Section */}
-        {(linksOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "explore" || activeNavTab === "links"))) && (
+        {/* 2. Links Section */}
+        {(linksOnlyMode || (!isListingPage && (isPremiumLayout || !isTabsLayout || activeNavTab === "explore" || activeNavTab === "links"))) && (
           (() => {
             const validLinks = (customLinksList || []).filter(
               (l) => l.isEnabled !== false && l.title && (l.url || (l.kind === "collection" && l.items?.some((item) => item.isEnabled !== false && item.title && item.url)))
@@ -2336,7 +2565,7 @@ export function LivePreviewCard({
             if (validLinks.length === 0) {
               if (isDashboardPreview || linksOnlyMode) {
                 return (
-                  <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${linksOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-1.5 sm:mt-2" : "mt-6 sm:mt-7"}`}>
+                  <div id="links-section" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[2] mt-4 sm:mt-5" : linksOnlyMode ? "order-[5] mt-1.5 sm:mt-2" : isTabsLayout ? "order-[5] mt-1.5 sm:mt-2" : "order-[5] mt-6 sm:mt-7"}`}>
                     {!linksOnlyMode && (
                       <TabSectionHeader
                         title="Links"
@@ -2346,7 +2575,7 @@ export function LivePreviewCard({
                         headingFontFamily={typ.headingFontFamily}
                       />
                     )}
-                    <div className="rounded-xl border border-dashed border-(--surface-border) p-8 text-center my-2">
+                    <div className="rounded-[5px] border border-dashed border-(--surface-border) p-8 text-center my-2">
                       <div className="w-10 h-10 rounded-full bg-(--surface) flex items-center justify-center mx-auto mb-2 text-(--text-muted)">
                         <LinkIcon className="h-5 w-5" />
                       </div>
@@ -2360,18 +2589,13 @@ export function LivePreviewCard({
             }
 
             // Find pinned link (max 1 per creator).
-            // A pinned link may be a top-level link, or inside a collection (must move to top level).
             let pinnedLink: (CustomLink | CustomLinkItem) | null = null;
-
-            // 1. Check top-level links
             for (const link of validLinks) {
               if (link.isPinned && link.kind !== "collection") {
                 pinnedLink = link;
                 break;
               }
             }
-
-            // 2. If not found in top-level, check inside collections
             if (!pinnedLink) {
               for (const group of validLinks) {
                 if (group.kind === "collection" && group.items) {
@@ -2384,9 +2608,6 @@ export function LivePreviewCard({
               }
             }
 
-            // Clean up the remaining links:
-            // Remove pinned link from direct links or from group items.
-            // Hide collection if it was left with 0 items.
             const remainingItems = validLinks
               .map((link) => {
                 if (link.kind === "collection") {
@@ -2410,12 +2631,49 @@ export function LivePreviewCard({
                 return true;
               });
 
+            const maxLinks = isPremiumLayout ? (pinnedLink ? 9 : 10) : undefined;
+            const displayedRemainingItems = typeof maxLinks === "number" ? remainingItems.slice(0, maxLinks) : remainingItems;
+            const hasMoreLinks = validLinks.length > (pinnedLink ? displayedRemainingItems.length + 1 : displayedRemainingItems.length);
+
             return (
-              <div id="links-section" className={`relative z-10 order-[5] w-full text-left animate-fade-in ${linksOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-1.5 sm:mt-2" : "mt-6 sm:mt-7"}`}>
+              <div
+                id="links-section"
+                style={
+                  isPremiumLayout
+                    ? {
+                        backgroundColor: "color-mix(in srgb, var(--accent) 4.5%, var(--surface))",
+                        borderColor: "var(--surface-border)",
+                      }
+                    : undefined
+                }
+                className={`relative z-10 w-full text-left animate-fade-in ${
+                  isPremiumLayout
+                    ? "order-[2] mt-5 sm:mt-6 p-3.5 sm:p-4 rounded-[5px] border shadow-xs space-y-2.5"
+                    : linksOnlyMode
+                    ? "order-[5] mt-1.5 sm:mt-2"
+                    : isTabsLayout
+                    ? "order-[5] mt-1.5 sm:mt-2"
+                    : "order-[5] mt-6 sm:mt-7"
+                }`}
+              >
                 {!linksOnlyMode && (
                   <TabSectionHeader
                     title="Links"
                     subtitle="Recommended links, tickets & websites."
+                    action={
+                      isPremiumLayout ? (
+                        <span
+                          style={{
+                            color: "var(--accent-text)",
+                            backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
+                            borderColor: "var(--surface-border)",
+                          }}
+                          className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
+                        >
+                          {validLinks.length} {validLinks.length === 1 ? "Link" : "Links"}
+                        </span>
+                      ) : undefined
+                    }
                     primaryTextColor={c.primaryText}
                     secondaryTextColor={c.secondaryText}
                     headingFontFamily={typ.headingFontFamily}
@@ -2423,7 +2681,7 @@ export function LivePreviewCard({
                 )}
 
                 <div className="space-y-2 w-full">
-                  {/* 3. Pinned Link */}
+                  {/* Pinned Link */}
                   {pinnedLink && (
                     <LinkRow
                       link={pinnedLink}
@@ -2439,10 +2697,10 @@ export function LivePreviewCard({
                     />
                   )}
 
-                  {/* 2 & 4. Direct Links & Groups */}
+                  {/* Direct Links & Groups */}
                   {(() => {
                     let groupIndex = 0;
-                    return remainingItems.map((item) => {
+                    return displayedRemainingItems.map((item) => {
                       if (item.kind === "collection") {
                         const curGroupIndex = groupIndex++;
                         const isExpandedByParam = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("expandGroup") === "1" && curGroupIndex === 0;
@@ -2457,42 +2715,61 @@ export function LivePreviewCard({
                                 showToast(`Opens ${innerLink.title} ✨`);
                                 return;
                               }
-                              // Group children count as "groupId:childIndex".
                               const childIndex = (item.items || []).indexOf(innerLink);
                               trackPublicEvent("link_click", `${item.id}:${childIndex}`);
                             }}
                           />
                         );
                       }
-                    return (
-                      <LinkRow
-                        key={item.id}
-                        link={item}
-                        onClick={(e) => {
-                          if (isInformationalMode) {
-                            e.preventDefault();
-                            showToast(`Opens ${item.title} ✨`);
-                            return;
-                          }
-                          trackPublicEvent("link_click", String(item.id));
-                        }}
-                      />
-                    );
-                  });
-                })()}
+                      return (
+                        <LinkRow
+                          key={item.id}
+                          link={item}
+                          onClick={(e) => {
+                            if (isInformationalMode) {
+                              e.preventDefault();
+                              showToast(`Opens ${item.title} ✨`);
+                              return;
+                            }
+                            trackPublicEvent("link_click", String(item.id));
+                          }}
+                        />
+                      );
+                    });
+                  })()}
                 </div>
+
+                {/* View All Links button when count > 10 */}
+                {hasMoreLinks && (
+                  <div className="pt-2 text-center">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (isInformationalMode) {
+                          showToast("Opens all creator links ✨");
+                          return;
+                        }
+                        router.push(allLinksHref || `/${cleanHandle || "creator"}/links`);
+                      }}
+                      className="tap-scale w-full py-2.5 px-4 rounded-[5px] bg-(--surface) hover:bg-(--surface-border) text-(--text) border border-(--surface-border)/80 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center shadow-none"
+                    >
+                      <span>{`View all links (${validLinks.length})`}</span>
+                      <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+                    </button>
+                  </div>
+                )}
               </div>
             );
           })()
         )}
 
 
-        {/* 4. Series Section */}
-        {(seriesOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "watch" || activeNavTab === "series"))) && effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || seriesOnlyMode) && (
-          <div id="series-section" className={`relative z-10 order-[10] w-full text-left pb-12 ${seriesOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-1.5 sm:mt-2" : "mt-6 sm:mt-7 space-y-2.5"}`}>
+        {/* 1. Series Section */}
+        {(seriesOnlyMode || (!isListingPage && (isPremiumLayout || !isTabsLayout || activeNavTab === "watch" || activeNavTab === "series"))) && effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || seriesOnlyMode || isDashboardPreview) && (
+          <div id="series-section" className={`relative z-10 w-full text-left ${isPremiumLayout ? "order-[1] mt-4 sm:mt-5 space-y-2.5" : seriesOnlyMode ? "order-[10] mt-1.5 sm:mt-2 pb-12" : isTabsLayout ? "order-[10] mt-1.5 sm:mt-2 pb-12" : "order-[10] mt-6 sm:mt-7 space-y-2.5 pb-12"}`}>
             {!seriesOnlyMode && (
               <TabSectionHeader
-                title="Series"
+                title={isPremiumLayout ? "Series & Playlists" : "Series"}
                 subtitle={landingDemo ? "Start from Episode 1." : "Watch episodes in the right order."}
                 primaryTextColor={c.primaryText}
                 secondaryTextColor={c.secondaryText}
@@ -2657,9 +2934,9 @@ export function LivePreviewCard({
                     }
                     router.push(allSeriesHref);
                   }}
-                  className="tap-scale w-full py-2.5 px-4 rounded-xl bg-(--surface) hover:bg-(--surface-border) text-(--text) border border-(--surface-border)/80 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
+                  className="tap-scale w-full py-2.5 px-4 rounded-[5px] bg-(--surface) hover:bg-(--surface-border) text-(--text) border border-(--surface-border)/80 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center shadow-none"
                 >
-                  <span>See all series</span>
+                  <span>{`View all series (${series.length})`}</span>
                   <ArrowRight className="h-3.5 w-3.5 shrink-0" />
                 </button>
               </div>
@@ -2668,8 +2945,9 @@ export function LivePreviewCard({
         )}
 
         {/* Shop / Products Section */}
-        {((productsOnlyMode || (!isListingPage && (!isTabsLayout || activeNavTab === "shop"))) && ((products && products.length > 0) || productsOnlyMode)) && (
-          <section id="shop-section" aria-label="Shop" className={`relative z-10 order-[15] w-full text-left animate-fade-in ${productsOnlyMode ? "mt-1.5 sm:mt-2" : isTabsLayout ? "mt-1.5 sm:mt-2" : "mt-6 sm:mt-7 space-y-2.5"}`}>
+        {/* 3. Products Section */}
+        {((productsOnlyMode || (!isListingPage && (isPremiumLayout || !isTabsLayout || activeNavTab === "shop"))) && ((products && products.length > 0) || productsOnlyMode || isDashboardPreview)) && (
+          <section id="shop-section" aria-label="Shop" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[3] mt-5 sm:mt-6 space-y-3" : productsOnlyMode ? "order-[15] mt-1.5 sm:mt-2" : isTabsLayout ? "order-[15] mt-1.5 sm:mt-2" : "order-[15] mt-6 sm:mt-7 space-y-2.5"}`}>
             {landingDemo && (
               <h3
                 style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
@@ -2680,13 +2958,24 @@ export function LivePreviewCard({
             )}
             {!productsOnlyMode && !landingDemo && (
               <TabSectionHeader
-                title="Shop"
+                title={isPremiumLayout ? "Products" : "Shop"}
                 subtitle="Products I use and recommend."
                 primaryTextColor={c.primaryText}
                 secondaryTextColor={c.secondaryText}
                 headingFontFamily={typ.headingFontFamily}
                 action={
-                  products && products.length > 8 ? (
+                  isPremiumLayout && products && products.length > 0 ? (
+                    <span
+                      style={{
+                        color: "var(--accent-text)",
+                        backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
+                        borderColor: "var(--surface-border)",
+                      }}
+                      className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
+                    >
+                      {products.length} {products.length === 1 ? "Product" : "Products"}
+                    </span>
+                  ) : products && products.length > 8 ? (
                     <div className="relative">
                       <button
                         type="button"
@@ -2747,7 +3036,7 @@ export function LivePreviewCard({
               </div>
             ) : (
               <ProductGrid>
-                {(isProductsExpanded || productsOnlyMode ? sortedProducts : sortedProducts.slice(0, 6)).map((product: CreatorProduct) => (
+                {(isPremiumLayout ? sortedProducts.slice(0, 3) : (isProductsExpanded || productsOnlyMode ? sortedProducts : sortedProducts.slice(0, 6))).map((product: CreatorProduct) => (
                   <ProductGridCard
                     key={product.id}
                     name={product.name}
@@ -2769,7 +3058,26 @@ export function LivePreviewCard({
               </ProductGrid>
             )}
 
-            {!productsOnlyMode && sortedProducts.length > 6 && (
+            {isPremiumLayout && sortedProducts.length > 3 && (
+              <div className="pt-2.5 w-full text-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isInformationalMode) {
+                      showToast("Opens all creator products ✨");
+                      return;
+                    }
+                    router.push(allProductsHref || `/${cleanHandle || "creator"}/products`);
+                  }}
+                  className="w-full py-2.5 px-4 rounded-[5px] bg-(--surface) hover:bg-(--surface-border) text-(--text) border border-(--surface-border)/80 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center shadow-none"
+                >
+                  <span>{`View all products (${sortedProducts.length})`}</span>
+                  <ArrowRight className="h-3.5 w-3.5 shrink-0 text-(--icon)" />
+                </button>
+              </div>
+            )}
+
+            {!isPremiumLayout && !productsOnlyMode && sortedProducts.length > 6 && (
               <div className="pt-2.5 w-full text-center">
                 <button
                   type="button"
@@ -2791,52 +3099,91 @@ export function LivePreviewCard({
           </section>
         )}
 
-        {/* 5. Creator Team */}
-        {/* 5. Creator Team */}
-        {!isListingPage && (!isTabsLayout ? true : (activeNavTab === "collab" || activeNavTab === "work" || activeNavTab === "reviews")) && activeTeamMembers.length > 0 && (
+        {/* 8. Creator Team */}
+        {!isListingPage && (isPremiumLayout || (!isTabsLayout ? true : (activeNavTab === "collab" || activeNavTab === "work" || activeNavTab === "reviews"))) && activeTeamMembers.length > 0 && (
           <div
             id="team-section"
-            style={{
-              backgroundColor: "transparent",
-              borderColor: "var(--surface-border)",
-            }}
-            className={`relative z-10 order-[25] w-full text-left animate-fade-in rounded-[5px] border overflow-hidden shadow-none ${isTabsLayout ? "mt-1.5 sm:mt-2" : "mt-6 sm:mt-7"}`}
+            style={
+              isPremiumLayout
+                ? {
+                    backgroundColor: "color-mix(in srgb, var(--accent) 4.5%, var(--surface))",
+                    borderColor: "var(--surface-border)",
+                  }
+                : undefined
+            }
+            className={`relative z-10 ${
+              isPremiumLayout
+                ? "order-[8] mt-5 sm:mt-6 p-3.5 sm:p-4 rounded-[5px] border shadow-xs space-y-3"
+                : isTabsLayout
+                ? "order-[25] mt-1.5 sm:mt-2"
+                : "order-[25] mt-6 sm:mt-7"
+            } w-full text-left animate-fade-in`}
           >
-            {/* Compact theme-tinted header */}
+            {isPremiumLayout && (
+              <TabSectionHeader
+                title="Creative Team"
+                subtitle="Creative production crew, editors & management team."
+                action={
+                  <span
+                    style={{
+                      color: "var(--accent-text)",
+                      backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
+                      borderColor: "var(--surface-border)",
+                    }}
+                    className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
+                  >
+                    {activeTeamMembers.length} {activeTeamMembers.length === 1 ? "Member" : "Members"}
+                  </span>
+                }
+                primaryTextColor={c.primaryText}
+                secondaryTextColor={c.secondaryText}
+                headingFontFamily={typ.headingFontFamily}
+              />
+            )}
             <div
               style={{
-                backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
+                backgroundColor: isPremiumLayout ? "var(--surface)" : "transparent",
                 borderColor: "var(--surface-border)",
               }}
-              className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
+              className="rounded-[5px] border overflow-hidden shadow-none w-full"
             >
-              <div>
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-(--accent-text) shrink-0" />
-                  <h2
-                    style={{
-                      color: c.primaryText,
-                      fontFamily: typ.headingFontFamily,
-                    }}
-                    className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
-                  >
-                    {teamData.team?.teamName || "My Team"}
-                  </h2>
-                </div>
-                <p
-                  style={{ color: c.mutedText }}
-                  className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5"
+              {/* Compact theme-tinted header (shown in tabs layout to avoid duplicate header in premium) */}
+              {!isPremiumLayout && (
+                <div
+                  style={{
+                    backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
+                    borderColor: "var(--surface-border)",
+                  }}
+                  className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
                 >
-                  Creative production crew, editors &amp; management team.
-                </p>
-              </div>
-              <span
-                style={{ color: c.mutedText }}
-                className="text-[11px] font-normal shrink-0 text-(--text-muted)"
-              >
-                {activeTeamMembers.length} {activeTeamMembers.length === 1 ? "member" : "members"}
-              </span>
-            </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-(--accent-text) shrink-0" />
+                      <h2
+                        style={{
+                          color: c.primaryText,
+                          fontFamily: typ.headingFontFamily,
+                        }}
+                        className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
+                      >
+                        {teamData.team?.teamName || "My Team"}
+                      </h2>
+                    </div>
+                    <p
+                      style={{ color: c.mutedText }}
+                      className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5"
+                    >
+                      Creative production crew, editors &amp; management team.
+                    </p>
+                  </div>
+                  <span
+                    style={{ color: c.mutedText }}
+                    className="text-[11px] font-normal shrink-0 text-(--text-muted)"
+                  >
+                    {activeTeamMembers.length} {activeTeamMembers.length === 1 ? "member" : "members"}
+                  </span>
+                </div>
+              )}
 
             {/* Single-column vertical listing with subtle dividers between rows */}
             <div className="divide-y divide-(--surface-border) w-full">
@@ -2901,23 +3248,58 @@ export function LivePreviewCard({
                 );
               })}
             </div>
+            </div>
           </div>
         )}
 
-        {/* 5. Collab / Work with Me Section */}
-        {!isListingPage && (!isTabsLayout || activeNavTab === "collab" || activeNavTab === "work") && (() => {
+        {/* 6. Collaboration Packages Section */}
+        {!isListingPage && (isPremiumLayout || (!isTabsLayout || activeNavTab === "collab" || activeNavTab === "work")) && (() => {
           if (effectiveVisibilitySettings.showCollabGigs === false) return null;
 
           const activePackages = (mediaKitPackages || []).filter((p) => p.isActive);
-          const visibleReviews = showAllReviews ? approvedReviews : approvedReviews.slice(0, 4);
-          const hasMoreReviews = approvedReviews.length > 4;
+          if (!isDashboardPreview && activePackages.length === 0) return null;
 
           return (
-            <div id="collab-section" className={`relative z-10 order-[20] w-full text-left animate-fade-in ${isTabsLayout ? "mt-1 sm:mt-1.5 space-y-2" : "mt-4 sm:mt-5 space-y-2"}`}>
+            <div
+              id="collab-section"
+              style={
+                isPremiumLayout
+                  ? {
+                      backgroundColor: "color-mix(in srgb, var(--accent) 4.5%, var(--surface))",
+                      borderColor: "var(--surface-border)",
+                    }
+                  : undefined
+              }
+              className={`relative z-10 ${
+                isPremiumLayout
+                  ? "order-[6] mt-5 sm:mt-6 p-3.5 sm:p-4 rounded-[5px] border shadow-xs space-y-3"
+                  : isTabsLayout
+                  ? "order-[20] mt-1 sm:mt-1.5 space-y-2"
+                  : "order-[20] mt-4 sm:mt-5 space-y-2"
+              } w-full text-left animate-fade-in`}
+            >
               {!isTabsLayout && (
                 <TabSectionHeader
-                  title="Work with me"
+                  title={isPremiumLayout ? "Collaboration Packages" : "Work with me"}
                   subtitle="Collab packages & custom brand inquiries."
+                  action={
+                    isPremiumLayout && activePackages.length > 0 ? (
+                      <span
+                        style={{
+                          color: "var(--accent-text)",
+                          backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
+                          borderColor: "var(--surface-border)",
+                        }}
+                        className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
+                      >
+                        {activePackages.length} {activePackages.length === 1 ? "Package" : "Packages"}
+                      </span>
+                    ) : activePackages.length > 0 ? (
+                      <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
+                        {activePackages.length} {activePackages.length === 1 ? "package" : "packages"}
+                      </span>
+                    ) : undefined
+                  }
                   primaryTextColor={c.primaryText}
                   secondaryTextColor={c.secondaryText}
                   headingFontFamily={typ.headingFontFamily}
@@ -2928,39 +3310,41 @@ export function LivePreviewCard({
               <div
                 id="collab-packages-section"
                 style={{
-                  backgroundColor: "transparent",
+                  backgroundColor: isPremiumLayout ? "var(--surface)" : "transparent",
                   borderColor: "var(--surface-border)",
                 }}
                 className="rounded-[5px] border overflow-hidden text-left shadow-none"
               >
-                {/* Section Header */}
-                <div
-                  style={{
-                    backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
-                    borderColor: "var(--surface-border)",
-                  }}
-                  className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
-                >
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <Handshake className="h-4 w-4 text-(--accent-text) shrink-0" />
-                      <h2
-                        style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                        className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
-                      >
-                        Work With Me
-                      </h2>
+                {/* Section Header (shown in tabs layout to avoid duplicate header in premium) */}
+                {!isPremiumLayout && (
+                  <div
+                    style={{
+                      backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
+                      borderColor: "var(--surface-border)",
+                    }}
+                    className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Handshake className="h-4 w-4 text-(--accent-text) shrink-0" />
+                        <h2
+                          style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                          className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
+                        >
+                          {isPremiumLayout ? "Packages" : "Work With Me"}
+                        </h2>
+                      </div>
+                      <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
+                        I&apos;d love to bring your brand into my content. Explore my collab packages below.
+                      </p>
                     </div>
-                    <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
-                      I&apos;d love to bring your brand into my content. Explore my collab packages below.
-                    </p>
+                    {activePackages.length > 0 && (
+                      <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
+                        {activePackages.length} {activePackages.length === 1 ? "package" : "packages"}
+                      </span>
+                    )}
                   </div>
-                  {activePackages.length > 0 && (
-                    <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
-                      {activePackages.length} {activePackages.length === 1 ? "package" : "packages"}
-                    </span>
-                  )}
-                </div>
+                )}
 
                 {/* Packages List: Single vertical column inside the main section container */}
                 {activePackages.length > 0 && (
@@ -2982,139 +3366,6 @@ export function LivePreviewCard({
                   </div>
                 )}
               </div>
-
-              {/* 3. REVIEWS -> "What Brands Say" Card */}
-              {effectiveVisibilitySettings.showReviews !== false && approvedReviews.length > 0 && (
-                <div
-                  id="collab-reviews-section"
-                  style={{
-                    backgroundColor: "transparent",
-                    borderColor: "var(--surface-border)",
-                  }}
-                  className="rounded-[5px] border overflow-hidden text-left shadow-none"
-                >
-                  {/* Card Header */}
-                  <div
-                    style={{
-                      backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
-                      borderColor: "var(--surface-border)",
-                    }}
-                    className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <MessageSquare className="h-4 w-4 text-(--accent-text) shrink-0" />
-                        <h3
-                          style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                          className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
-                        >
-                          What Brands Say
-                        </h3>
-                      </div>
-                      <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
-                        Here&apos;s what brands I&apos;ve worked with have to say about our collaborations.
-                      </p>
-                    </div>
-                    <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
-                      {approvedReviews.length} {approvedReviews.length === 1 ? "review" : "reviews"}
-                    </span>
-                  </div>
-
-                  {/* Reviews List: Single vertical column across all breakpoints */}
-                  <div className="p-2 sm:p-2.5">
-                    <div className="flex flex-col space-y-2 w-full">
-                      {visibleReviews.map((rev) => {
-                        const ratingNum = Number(rev.rating) || 5;
-                        const initial = rev.clientName ? rev.clientName.trim().charAt(0).toUpperCase() : "B";
-
-                        return (
-                          <div
-                            key={rev.id}
-                            style={{
-                              backgroundColor: "transparent",
-                              borderColor: "var(--surface-border)",
-                            }}
-                            className="rounded-[5px] border overflow-hidden text-left shadow-none flex flex-col justify-between"
-                          >
-                            {/* Client Header */}
-                            <div className="px-2.5 py-2 sm:px-3 sm:py-2 flex items-center gap-2">
-                              <div
-                                style={{
-                                  borderColor: "var(--surface-border)",
-                                  backgroundColor: "color-mix(in srgb, var(--accent) 8%, var(--surface))",
-                                  color: "var(--accent-text)",
-                                }}
-                                className="h-7 w-7 rounded-[4px] border font-bold text-xs flex items-center justify-center shrink-0"
-                              >
-                                {initial}
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-1">
-                                  <p style={{ color: c.primaryText }} className="text-[13px] font-medium text-(--text) truncate leading-[18px]">
-                                    {rev.clientName}
-                                  </p>
-                                  {rev.isVerified && (
-                                    <CheckCircle2 className="h-3 w-3 text-(--accent-text) shrink-0" />
-                                  )}
-                                </div>
-                                {rev.projectTitle && (
-                                  <p style={{ color: c.mutedText }} className="text-[10.5px] font-normal truncate">
-                                    {rev.projectTitle}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Quote Content */}
-                            {rev.comment && (
-                              <div
-                                style={{ borderColor: "var(--surface-border)" }}
-                                className="px-2.5 py-2 sm:px-3 sm:py-2 border-t flex-1"
-                              >
-                                <p style={{ color: c.primaryText }} className="text-xs leading-relaxed font-normal">
-                                  &ldquo;{rev.comment.trim()}&rdquo;
-                                </p>
-                              </div>
-                            )}
-
-                            {/* Star Rating Footer */}
-                            <div
-                              style={{ borderColor: "var(--surface-border)" }}
-                              className="px-2.5 py-1.5 sm:px-3 sm:py-1.5 border-t flex items-center justify-between text-xs"
-                            >
-                              <div className="flex items-center gap-0.5 text-amber-500">
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    className={`h-3 w-3 ${i < ratingNum ? "fill-amber-400 text-amber-500" : "text-slate-300 dark:text-zinc-600"}`}
-                                  />
-                                ))}
-                              </div>
-                              <span style={{ color: c.mutedText }} className="text-[11px] font-semibold tabular-nums">
-                                {ratingNum.toFixed(1)} / 5
-                              </span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Show All / Show Less Toggle */}
-                  {hasMoreReviews && (
-                    <div style={{ borderColor: "var(--surface-border)" }} className="border-t py-2 sm:py-2.5 text-center">
-                      <button
-                        type="button"
-                        onClick={() => setShowAllReviews(!showAllReviews)}
-                        style={{ color: c.accentText || "var(--accent-text)" }}
-                        className="text-xs font-semibold hover:underline cursor-pointer"
-                      >
-                        {showAllReviews ? "Show less" : `Show all ${approvedReviews.length} reviews`}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
 
               {/* 4. Custom Collaboration Card */}
               <div
@@ -3188,6 +3439,244 @@ export function LivePreviewCard({
           );
         })()}
 
+        {/* 7. Reviews Section */}
+        {!isListingPage && (isPremiumLayout || (!isTabsLayout || activeNavTab === "collab" || activeNavTab === "work" || activeNavTab === "reviews")) && (() => {
+          if (effectiveVisibilitySettings.showReviews === false) return null;
+          if (approvedReviews.length === 0) return null;
+
+          const visibleReviews = showAllReviews ? approvedReviews : approvedReviews.slice(0, 4);
+          const hasMoreReviews = approvedReviews.length > 4;
+
+          return (
+            <div id="reviews-section" className={`relative z-10 ${isPremiumLayout ? "order-[7] mt-5 sm:mt-6 space-y-3" : isTabsLayout ? "order-[21] mt-1 sm:mt-1.5 space-y-2" : "order-[21] mt-4 sm:mt-5 space-y-2"} w-full text-left animate-fade-in`}>
+              {isPremiumLayout && (
+                <TabSectionHeader
+                  title="Reviews"
+                  subtitle="Verified feedback and testimonials from leading brands & collaboration partners."
+                  action={
+                    approvedReviews.length > 0 ? (
+                      <span
+                        style={{
+                          color: "var(--accent-text)",
+                          backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
+                          borderColor: "var(--surface-border)",
+                        }}
+                        className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
+                      >
+                        {approvedReviews.length} {approvedReviews.length === 1 ? "Review" : "Reviews"}
+                      </span>
+                    ) : undefined
+                  }
+                  primaryTextColor={c.primaryText}
+                  secondaryTextColor={c.secondaryText}
+                  headingFontFamily={typ.headingFontFamily}
+                />
+              )}
+
+              <div
+                id="collab-reviews-section"
+                style={{
+                  backgroundColor: "transparent",
+                  borderColor: "var(--surface-border)",
+                }}
+                className="rounded-[5px] border overflow-hidden text-left shadow-none"
+              >
+                {/* Card Header (for tabs layout) */}
+                {!isPremiumLayout && (
+                  <div
+                    style={{
+                      backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
+                      borderColor: "var(--surface-border)",
+                    }}
+                    className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="h-4 w-4 text-(--accent-text) shrink-0" />
+                        <h3
+                          style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                          className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
+                        >
+                          What Brands Say
+                        </h3>
+                      </div>
+                      <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
+                        Here&apos;s what brands I&apos;ve worked with have to say about our collaborations.
+                      </p>
+                    </div>
+                    <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
+                      {approvedReviews.length} {approvedReviews.length === 1 ? "review" : "reviews"}
+                    </span>
+                  </div>
+                )}
+
+                {/* Reviews List: Single vertical column across all breakpoints */}
+                <div className="p-2 sm:p-2.5">
+                  <div className="flex flex-col space-y-2 w-full">
+                    {visibleReviews.map((rev) => {
+                      const ratingNum = Number(rev.rating) || 5;
+                      const initial = rev.clientName ? rev.clientName.trim().charAt(0).toUpperCase() : "B";
+
+                      return (
+                        <div
+                          key={rev.id}
+                          style={{
+                            backgroundColor: "transparent",
+                            borderColor: "var(--surface-border)",
+                          }}
+                          className="rounded-[5px] border overflow-hidden text-left shadow-none flex flex-col justify-between"
+                        >
+                          {/* Client Header */}
+                          <div className="px-2.5 py-2 sm:px-3 sm:py-2 flex items-center gap-2">
+                            <div
+                              style={{
+                                borderColor: "var(--surface-border)",
+                                backgroundColor: "color-mix(in srgb, var(--accent) 8%, var(--surface))",
+                                color: "var(--accent-text)",
+                              }}
+                              className="h-7 w-7 rounded-[4px] border font-bold text-xs flex items-center justify-center shrink-0"
+                            >
+                              {initial}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-1">
+                                <p style={{ color: c.primaryText }} className="text-[13px] font-medium text-(--text) truncate leading-[18px]">
+                                  {rev.clientName}
+                                </p>
+                                {rev.isVerified && (
+                                  <CheckCircle2 className="h-3 w-3 text-(--accent-text) shrink-0" />
+                                )}
+                              </div>
+                              {rev.projectTitle && (
+                                <p style={{ color: c.mutedText }} className="text-[10.5px] font-normal truncate">
+                                  {rev.projectTitle}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Quote Content */}
+                          {rev.comment && (
+                            <div
+                              style={{ borderColor: "var(--surface-border)" }}
+                              className="px-2.5 py-2 sm:px-3 sm:py-2 border-t flex-1"
+                            >
+                              <p style={{ color: c.primaryText }} className="text-xs leading-relaxed font-normal">
+                                &ldquo;{rev.comment.trim()}&rdquo;
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Star Rating Footer */}
+                          <div
+                            style={{ borderColor: "var(--surface-border)" }}
+                            className="px-2.5 py-1.5 sm:px-3 sm:py-1.5 border-t flex items-center justify-between text-xs"
+                          >
+                            <div className="flex items-center gap-0.5 text-amber-500">
+                              {Array.from({ length: 5 }).map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`h-3 w-3 ${i < ratingNum ? "fill-amber-400 text-amber-500" : "text-slate-300 dark:text-zinc-600"}`}
+                                />
+                              ))}
+                            </div>
+                            <span style={{ color: c.mutedText }} className="text-[11px] font-semibold tabular-nums">
+                              {ratingNum.toFixed(1)} / 5
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Show All / Show Less Toggle */}
+                {hasMoreReviews && (
+                  <div style={{ borderColor: "var(--surface-border)" }} className="border-t py-2 sm:py-2.5 text-center">
+                    <button
+                      type="button"
+                      onClick={() => setShowAllReviews(!showAllReviews)}
+                      style={{ color: c.accentText || "var(--accent-text)" }}
+                      className="text-xs font-semibold hover:underline cursor-pointer"
+                    >
+                      {showAllReviews ? "Show less" : `Show all ${approvedReviews.length} reviews`}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* 10. Trusted Brands Section */}
+        {!isListingPage && (isPremiumLayout || (!isTabsLayout ? true : (activeNavTab === "collab" || activeNavTab === "work" || activeNavTab === "reviews"))) && (() => {
+          const activeBrands = (brandsList || []).filter((b) => b.isActive !== false);
+          if (activeBrands.length === 0) return null;
+
+          return (
+            <div
+              id="brands-section"
+              style={
+                isPremiumLayout
+                  ? {
+                      backgroundColor: "color-mix(in srgb, var(--accent) 4.5%, var(--surface))",
+                      borderColor: "var(--surface-border)",
+                    }
+                  : undefined
+              }
+              className={`relative z-10 ${
+                isPremiumLayout
+                  ? "order-[10] mt-5 sm:mt-6 p-3.5 sm:p-4 rounded-[5px] border shadow-xs space-y-3"
+                  : isTabsLayout
+                  ? "order-[24] mt-1.5 sm:mt-2 space-y-2"
+                  : "order-[24] mt-6 sm:mt-7 space-y-2"
+              } w-full text-left animate-fade-in`}
+            >
+              <TabSectionHeader
+                title="Trusted By Brands"
+                subtitle="Brands partnered with for podcasts, campaigns & keynotes."
+                action={
+                  <span
+                    style={{
+                      color: "var(--accent-text)",
+                      backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
+                      borderColor: "var(--surface-border)",
+                    }}
+                    className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
+                  >
+                    {activeBrands.length} {activeBrands.length === 1 ? "Brand" : "Brands"}
+                  </span>
+                }
+                primaryTextColor={c.primaryText}
+                secondaryTextColor={c.secondaryText}
+                headingFontFamily={typ.headingFontFamily}
+              />
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {activeBrands.map((brand) => (
+                  <a
+                    key={brand.id}
+                    href={brand.websiteUrl || "#"}
+                    target={brand.websiteUrl ? "_blank" : undefined}
+                    rel={brand.websiteUrl ? "noopener noreferrer" : undefined}
+                    style={{
+                      backgroundColor: "var(--surface)",
+                      borderColor: "var(--surface-border)",
+                    }}
+                    className="flex flex-col items-center justify-center p-3 rounded-[5px] border text-center transition-transform hover:-translate-y-0.5 cursor-pointer group shadow-none"
+                  >
+                    <span
+                      style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
+                      className="text-xs sm:text-[13px] font-bold group-hover:text-(--accent-text) transition-colors"
+                    >
+                      {brand.brandName}
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* 6. Standalone Reviews Only Mode (when accessing dedicated reviews tab directly) */}
         {reviewsOnlyMode && (
           <div id="reviews-only-section" className="relative z-10 order-[30] w-full text-left animate-fade-in mt-1.5 sm:mt-2 space-y-2">
@@ -3243,38 +3732,48 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {/* 7. Setup & Gear Section (landing demo shop tab or dedicated setup tab only) */}
-        {!isListingPage && (landingDemo ? (!isTabsLayout || activeNavTab === "shop") : (activeNavTab === "setup")) && (
+        {/* 5. Creator Setups Section (Rendered in Tabular/Landing view; Premium layout uses dedicated Tools I Use) */}
+        {!isListingPage && !isPremiumLayout && (landingDemo ? (!isTabsLayout || activeNavTab === "shop") : (activeNavTab === "setup")) && (
           (() => {
             const activeSetupItems = (setupList || []).filter((it) => it.isActive !== false);
             if (activeSetupItems.length === 0) return null;
             const visibleSetupItems = isSetupExpanded ? activeSetupItems : activeSetupItems.slice(0, 3);
 
             return (
-              <div id="setup-section" className={`relative z-10 ${isTabsLayout ? "order-[4] mt-1.5 sm:mt-2 space-y-2" : "order-[45] mt-6 sm:mt-7 space-y-2.5"} w-full text-left animate-fade-in`}>
-                <div>
-                  <div className="flex items-center justify-between px-0.5">
-                    <div className="flex items-center gap-2">
-                      <Laptop className="h-4.5 w-4.5 text-(--accent-text) shrink-0" />
-                      <h2
-                        style={{
-                          color: c.primaryText,
-                          fontFamily: typ.headingFontFamily,
-                          fontWeight: 800,
-                        }}
-                        className="text-lg sm:text-xl font-extrabold tracking-tight"
-                      >
-                        {landingDemo ? "My Setup & Shop" : "My Setup"}
-                      </h2>
+              <div id="setup-section" className={`relative z-10 ${isPremiumLayout ? "order-[5] mt-4 sm:mt-5 space-y-2" : isTabsLayout ? "order-[4] mt-1.5 sm:mt-2 space-y-2" : "order-[45] mt-6 sm:mt-7 space-y-2.5"} w-full text-left animate-fade-in`}>
+                {isPremiumLayout ? (
+                  <TabSectionHeader
+                    title="Creator Setups"
+                    subtitle="Tools & gear I use to create."
+                    primaryTextColor={c.primaryText}
+                    secondaryTextColor={c.secondaryText}
+                    headingFontFamily={typ.headingFontFamily}
+                  />
+                ) : (
+                  <div>
+                    <div className="flex items-center justify-between px-0.5">
+                      <div className="flex items-center gap-2">
+                        <Laptop className="h-4.5 w-4.5 text-(--accent-text) shrink-0" />
+                        <h2
+                          style={{
+                            color: c.primaryText,
+                            fontFamily: typ.headingFontFamily,
+                            fontWeight: 800,
+                          }}
+                          className="text-lg sm:text-xl font-extrabold tracking-tight"
+                        >
+                          {landingDemo ? "My Setup & Shop" : "My Setup"}
+                        </h2>
+                      </div>
                     </div>
+                    <p
+                      style={{ color: c.secondaryText }}
+                      className="text-xs sm:text-[13px] text-(--text-muted) font-normal px-0.5 mt-1"
+                    >
+                      {landingDemo ? "Gear I use & products I've made." : "Tools & gear I use to create."}
+                    </p>
                   </div>
-                  <p
-                    style={{ color: c.secondaryText }}
-                    className="text-xs sm:text-[13px] text-(--text-muted) font-normal px-0.5 mt-1"
-                  >
-                    {landingDemo ? "Gear I use & products I've made." : "Tools & gear I use to create."}
-                  </p>
-                </div>
+                )}
 
                 <div className="w-full pt-1">
                   <ProductGrid>
@@ -3311,11 +3810,9 @@ export function LivePreviewCard({
           })()
         )}
 
-        <div className="order-[70] h-3 shrink-0" aria-hidden="true" />
-
-        {/* Normal document flow footer at bottom of scrollable area */}
+        {/* Normal document flow footer at bottom of scrollable area: full width spanning card borders with zero bottom padding */}
         {!hideFooter && (
-          <div className="order-[80] mt-auto shrink-0 select-none pt-4 w-full">
+          <div className="order-[80] mt-auto shrink-0 select-none -mx-4 sm:-mx-5 -mb-6 rounded-none rounded-b-[5px] overflow-hidden">
             <MadeWithInflixo
               variant="card-footer"
               disabled={isInformationalMode}

@@ -220,7 +220,7 @@ export async function POST(req: Request) {
       return apiSuccess({ onboardingStep: body.onboardingStep }, "Onboarding step updated");
     }
 
-    const ALLOWED_LAYOUTS = ["default", "minimal", "creator", "spotlight", "studio"];
+    const ALLOWED_LAYOUTS = ["default", "minimal", "creator", "spotlight", "studio", "premium", "tabs"];
     const layoutCandidate = body.publicProfileLayout || visibilitySettings?.publicProfileLayout;
     const safeLayout = ALLOWED_LAYOUTS.includes(layoutCandidate) ? layoutCandidate : null;
 

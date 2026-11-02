@@ -7,6 +7,7 @@ import {
   RotateCw,
   Sparkles,
   Crown,
+  Layout,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { ThemeCard } from "@/themes/registry";
@@ -193,21 +194,21 @@ export default function DashboardPreviewPage() {
               <span>Display settings</span>
             </button>
 
-            {/* Premium Look Action Button */}
+            {/* Layout Selection Action Button */}
             <button
               type="button"
               onClick={() => setIsPremiumModalOpen(true)}
               className={`inline-flex items-center gap-1.5 h-8 px-3 rounded-[5px] text-[13px] font-medium border transition-all cursor-pointer ${
                 previewLayout === "premium"
-                  ? "bg-amber-50/80 border-amber-300 text-amber-900 font-bold shadow-xs"
+                  ? "bg-[#F7EEF2] border-[#7A2253]/30 text-[#7A2253] font-bold shadow-none"
                   : "bg-white hover:bg-[#FAFAFB] border-[#ECECF0] text-[#18181B]"
               }`}
-              title="Configure Premium Look (Vertical Showcase)"
+              title="Select Public Profile Layout"
             >
-              <Crown className="h-3.5 w-3.5 text-amber-500" />
-              <span>Premium Look</span>
-              <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-800 ml-0.5">
-                {isProOrVip ? (previewLayout === "premium" ? "Active" : "Pro") : "Pro / VIP"}
+              <Layout className="h-3.5 w-3.5 text-[#7A2253]" />
+              <span>{previewLayout === "premium" ? "Premium Layout" : "Tabular Layout"}</span>
+              <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 ml-0.5">
+                Free
               </span>
             </button>
 
@@ -232,24 +233,19 @@ export default function DashboardPreviewPage() {
           <div className="flex items-center gap-1 bg-[#F4F4F5] p-0.5 rounded-[6px]">
             <button
               type="button"
-              onClick={() => {
-                if (isProOrVip) handleApplyLayout("tabs");
-                else setPreviewLayout("tabs");
-              }}
-              className={`h-6 px-2.5 rounded-[4px] text-xs font-semibold transition-all cursor-pointer ${
+              onClick={() => handleApplyLayout("tabs")}
+              className={`h-6 px-2.5 rounded-[4px] text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 ${
                 previewLayout === "tabs"
                   ? "bg-white text-[#18181B] shadow-xs"
                   : "text-[#71717A] hover:text-[#18181B]"
               }`}
             >
-              Classic Tabs
+              <span>Tabular Layout</span>
+              <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1 rounded-sm">Free</span>
             </button>
             <button
               type="button"
-              onClick={() => {
-                if (isProOrVip) handleApplyLayout("premium");
-                else setPreviewLayout("premium");
-              }}
+              onClick={() => handleApplyLayout("premium")}
               className={`h-6 px-2.5 rounded-[4px] text-xs font-semibold transition-all flex items-center gap-1 cursor-pointer ${
                 previewLayout === "premium"
                   ? "bg-[#7A2253] text-white shadow-xs"
@@ -257,11 +253,11 @@ export default function DashboardPreviewPage() {
               }`}
             >
               <Sparkles className="h-3 w-3 text-amber-300" />
-              <span>Premium Look</span>
-              <span className={`text-[9px] uppercase font-bold tracking-wider px-1 py-0.2 rounded ${
-                previewLayout === "premium" ? "bg-white/20 text-white" : "bg-amber-100 text-amber-800"
+              <span>Premium Layout</span>
+              <span className={`text-[9px] font-bold px-1 rounded-sm ${
+                previewLayout === "premium" ? "bg-white/20 text-white" : "text-emerald-700 bg-emerald-50"
               }`}>
-                Pro
+                Free
               </span>
             </button>
           </div>

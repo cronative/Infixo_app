@@ -19,6 +19,10 @@ import {
   EXPERT_DEMO_PRODUCTS,
   EXPERT_DEMO_SETUP_ITEMS,
   EXPERT_DEMO_MEDIA_KIT_SETTINGS,
+  EXPERT_DEMO_OTHER_SOCIALS,
+  EXPERT_DEMO_TEAM,
+  EXPERT_DEMO_BRANDS,
+  EXPERT_DEMO_ALL_SOCIAL_ACCOUNTS,
 } from "@/data/expertDemoCreator";
 
 export function DemoCreatorContent({ forcedLayout }: { forcedLayout?: "tabs" | "premium" } = {}) {
@@ -96,6 +100,10 @@ export function DemoCreatorContent({ forcedLayout }: { forcedLayout?: "tabs" | "
           mediaKitPackages={EXPERT_DEMO_GIGS}
           mediaKitSettings={EXPERT_DEMO_MEDIA_KIT_SETTINGS}
           reviews={EXPERT_DEMO_REVIEWS}
+          otherSocials={EXPERT_DEMO_OTHER_SOCIALS}
+          team={EXPERT_DEMO_TEAM}
+          brands={EXPERT_DEMO_BRANDS}
+          allSocialAccounts={EXPERT_DEMO_ALL_SOCIAL_ACCOUNTS}
           totalAudience={totalAudience}
           variant="full"
           containedScroll={false}

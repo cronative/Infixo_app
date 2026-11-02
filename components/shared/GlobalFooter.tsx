@@ -33,9 +33,10 @@ export function GlobalFooter({
   return (
     <footer
       style={{
-        borderColor: "var(--surface-border)",
+        borderTopColor: "var(--surface-border, #e4e4e7)",
+        backgroundColor: "color-mix(in srgb, var(--accent, #7A2253) 3%, var(--card-bg, #ffffff))",
       }}
-      className={`w-full overflow-hidden rounded-[5px] border border-(--surface-border) text-center select-none ${className}`}
+      className={`w-full overflow-hidden border-t border-solid border-b-0 border-x-0 rounded-none rounded-b-[5px] text-center select-none ${className}`}
     >
       {/* Row 1 — Branding */}
       <div className="w-full px-3 py-2.5 sm:py-3 flex items-center justify-center gap-1.5 text-xs text-(--text-muted, #71717a)">

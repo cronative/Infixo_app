@@ -4,10 +4,6 @@ import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
 import { PremiumProfileLayout } from "@/components/public/PremiumProfileLayout";
 
 export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
-  if (props.layoutMode === "premium") {
-    return <PremiumProfileLayout {...props} />;
-  }
-
   const {
     themeKey,
     profile,
@@ -39,6 +35,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
     allReviewsHref,
     reviewsOnlyMode,
     linksOnlyMode,
+    allLinksHref,
     pageHeader,
     onShare,
     layoutMode,
@@ -79,6 +76,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       allReviewsHref={allReviewsHref}
       reviewsOnlyMode={reviewsOnlyMode}
       linksOnlyMode={linksOnlyMode}
+      allLinksHref={allLinksHref}
       pageHeader={pageHeader}
       onShare={onShare}
       layoutMode={layoutMode}

@@ -8,6 +8,7 @@ import { useToast } from "@/contexts/ToastContext";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import Image from "next/image";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
+import { NotificationBell } from "@/components/dashboard/NotificationBell";
 
 const ICON_BTN =
   "flex h-10 w-10 cursor-pointer items-center justify-center rounded-[5px] text-[#334155] transition-colors hover:bg-[#fdf2f8] hover:text-[#7A2253] active:bg-[#fce7f3]";
@@ -66,6 +67,7 @@ export function DashboardMobileHeader({
           )}
         </div>
 
+        <NotificationBell />
         <button type="button" onClick={handleCopy} className={ICON_BTN} aria-label="Copy profile link" title="Copy profile link">
           <Copy className="h-[18px] w-[18px]" />
         </button>

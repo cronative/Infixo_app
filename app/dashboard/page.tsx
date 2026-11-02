@@ -19,6 +19,8 @@ import {
   Users,
   MessageCircle,
   QrCode,
+  Heart,
+  ArrowRight,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -141,10 +143,25 @@ export default function DashboardOverviewPage() {
   const [reviews, setReviews] = useState<CreatorReview[]>([]);
   const [packages, setPackages] = useState<MediaKitPackage[]>([]);
   const [setupItems, setSetupItems] = useState<CreatorSetupItem[]>([]);
+  const [latestFanNudge, setLatestFanNudge] = useState<any | null>(null);
 
   const displayName = profile.displayName || "Creator";
   const handle = (profile.username || "").replace(/^@/, "");
   const profileUrl = buildProfileUrl(handle);
+
+  // Fetch unread fan nudges for motivational banner
+  useEffect(() => {
+    fetch("/api/creator/notifications")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        const notifs = data?.notifications || [];
+        const unreadNudge = notifs.find(
+          (n: any) => n.type === "fan_nudge" && n.status === "unread"
+        );
+        setLatestFanNudge(unreadNudge || null);
+      })
+      .catch(() => {});
+  }, []);
 
   // Fetch real count data on mount from exact pages' storage / repositories
   useEffect(() => {
@@ -408,6 +425,32 @@ export default function DashboardOverviewPage() {
           </button>
         </div>
       </div>
+
+      {/* Motivational Fan Nudge Alert (if fan visited & profile incomplete) */}
+      {latestFanNudge && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-3.5 rounded-[5px] border border-[#fbcfe8] bg-[#fdf2f8] text-[#7A2253] animate-fade-in shadow-none">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="h-8 w-8 rounded-[4px] bg-white border border-[#fbcfe8] flex items-center justify-center shrink-0">
+              <Heart className="h-4 w-4 fill-[#7A2253] text-[#7A2253]" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs sm:text-[13px] font-bold text-[#18181B] leading-tight">
+                A fan visited your profile and wants to connect! ✨
+              </p>
+              <p className="text-[11.5px] text-[#7A2253] mt-0.5 leading-tight truncate">
+                Add your bio and social accounts to welcome them to your space.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/profile"
+            className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-[5px] bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 shrink-0 transition-opacity"
+          >
+            <span>Complete Profile</span>
+            <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
+      )}
 
       {/* 2. SETUP CHECKLIST (Linktree-style interactive onboarding) */}
       <SetupChecklist

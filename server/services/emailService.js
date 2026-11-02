@@ -29,32 +29,35 @@ async function sendOtpEmail(toEmail, otpCode) {
       <body style="margin:0; padding:32px 16px; background-color:#ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
         <div style="max-width: 440px; margin: 0 auto; padding: 32px 24px; border-radius: 20px; background-color: #ffffff; border: 1px solid #D9DEE8; text-align: center;">
           <!-- Inflixo Logo -->
-          <div style="margin-bottom: 24px;">
-            <span style="font-size: 22px; font-weight: 900; color: #7A2253; letter-spacing: -0.5px;">
-              Inflixo
-            </span>
+          <div style="margin-bottom: 20px;">
+            <img
+              src="${process.env.NEXT_PUBLIC_APP_URL || "https://inflixo.com"}/images/inflixo-wordmark-title.png"
+              alt="Inflixo"
+              height="26"
+              style="height: 26px; width: auto; max-height: 26px; display: inline-block; border: 0;"
+            />
           </div>
 
           <!-- Heading -->
-          <h1 style="margin: 0 0 8px 0; color: #7A2253; font-size: 20px; font-weight: 800; tracking-tight: -0.5px;">
+          <h1 style="margin: 0 0 6px 0; color: #18181B; font-size: 20px; font-weight: 800; letter-spacing: -0.5px;">
             Your sign-in code
           </h1>
 
           <!-- Subtitle -->
-          <p style="margin: 0 0 24px 0; color: #64748B; font-size: 14px; font-weight: 500; line-height: 1.4;">
-            Use this code to sign in to Inflixo.
+          <p style="margin: 0 0 20px 0; color: #64748B; font-size: 13px; font-weight: 500; line-height: 1.4;">
+            Use this code to sign in to your Inflixo Creator Studio.
           </p>
 
           <!-- 4-Digit Code Box -->
-          <div style="background-color: #F4F6F8; border: 1px solid #D9DEE8; border-radius: 16px; padding: 18px; margin-bottom: 20px;">
-            <span style="font-size: 36px; font-weight: 900; letter-spacing: 12px; color: #7A2253; font-family: monospace;">
+          <div style="background-color: #FAF5F7; border: 1.5px dashed #7A2253; border-radius: 5px; padding: 18px; margin-bottom: 18px;">
+            <span style="font-size: 38px; font-weight: 900; letter-spacing: 14px; color: #7A2253; font-family: 'Courier New', Courier, monospace; line-height: 1; padding-left: 14px;">
               ${otpCode}
             </span>
           </div>
 
           <!-- Expiry Notice -->
-          <p style="margin: 0 0 20px 0; color: #64748B; font-size: 13px; font-weight: 600;">
-            Expires in 10 minutes.
+          <p style="margin: 0 0 20px 0; color: #64748B; font-size: 12px; font-weight: 600;">
+            Code valid for 5 minutes. Never share this code with anyone.
           </p>
 
           <!-- Disclaimer -->
