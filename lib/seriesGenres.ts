@@ -12,6 +12,7 @@ export interface GenreItem {
 export interface GenreGroup {
   name: string;
   slug: string;
+  emoji: string;
   iconName: string;
   genres: GenreItem[];
 }
@@ -20,6 +21,7 @@ export const GENRE_GROUPS: GenreGroup[] = [
   {
     name: "Vlogs & Life",
     slug: "vlogs-life",
+    emoji: "🎥",
     iconName: "Video",
     genres: [
       { name: "Daily Vlogs", slug: "daily-vlogs", aliases: ["vlog", "vlogs", "daily", "life", "lifestyle", "routine"] },
@@ -42,6 +44,7 @@ export const GENRE_GROUPS: GenreGroup[] = [
   {
     name: "Travel & Adventure",
     slug: "travel-adventure",
+    emoji: "✈️",
     iconName: "Compass",
     genres: [
       { name: "Travel Vlogs", slug: "travel-vlogs", aliases: ["travel", "trip", "safar", "ghumna", "tour", "vlog"] },
@@ -57,6 +60,7 @@ export const GENRE_GROUPS: GenreGroup[] = [
   {
     name: "Food",
     slug: "food",
+    emoji: "🍜",
     iconName: "Utensils",
     genres: [
       { name: "Street Food", slug: "street-food", aliases: ["street food", "chaat", "thela", "street eat", "food", "khana"] },
@@ -72,6 +76,7 @@ export const GENRE_GROUPS: GenreGroup[] = [
   {
     name: "Challenges & Experiments",
     slug: "challenges-experiments",
+    emoji: "🔥",
     iconName: "Zap",
     genres: [
       { name: "Challenges", slug: "challenges", aliases: ["challenge", "task", "mukabla", "dare"] },
@@ -86,6 +91,7 @@ export const GENRE_GROUPS: GenreGroup[] = [
   {
     name: "Shows & Formats",
     slug: "shows-formats",
+    emoji: "📺",
     iconName: "Tv",
     genres: [
       { name: "Reality Show", slug: "reality-show", aliases: ["reality show", "reality"] },
@@ -102,6 +108,7 @@ export const GENRE_GROUPS: GenreGroup[] = [
   {
     name: "Comedy",
     slug: "comedy",
+    emoji: "😂",
     iconName: "Laugh",
     genres: [
       { name: "Comedy Sketches", slug: "comedy-sketches", aliases: ["comedy sketches", "comedy", "sketch", "skits", "hasya", "funny", "jokes", "chutkule"] },
@@ -121,10 +128,12 @@ export const GENRE_GROUPS: GenreGroup[] = [
   {
     name: "Bollywood-Style Stories",
     slug: "bollywood-style-stories",
+    emoji: "❤️",
     iconName: "Heart",
     genres: [
       { name: "Love Story", slug: "love-story", aliases: ["love story", "love", "pyaar", "ishq", "mohabbat", "aashiqui"] },
       { name: "Romance", slug: "romance", aliases: ["romance", "romantic", "pyaar", "love", "dil"] },
+      { name: "Drama", slug: "drama", aliases: ["drama", "natak", "kahani", "emotional", "dramatic"] },
       { name: "College Romance", slug: "college-romance", aliases: ["college romance", "campus love", "crush", "pyaar", "love"] },
       { name: "Triangle Love Story", slug: "triangle-love-story", aliases: ["triangle love", "love triangle", "teesra", "pyaar", "love"] },
       { name: "Heartbreak & Breakup", slug: "heartbreak-breakup", aliases: ["heartbreak", "breakup", "judai", "sad", "dard", "bewafa"] },
@@ -146,6 +155,7 @@ export const GENRE_GROUPS: GenreGroup[] = [
   {
     name: "Thriller, Action & More",
     slug: "thriller-action-more",
+    emoji: "🎬",
     iconName: "ShieldAlert",
     genres: [
       { name: "Action", slug: "action", aliases: ["action", "fight", "stunts", "maar dhaad"] },
@@ -169,6 +179,7 @@ export const GENRE_GROUPS: GenreGroup[] = [
   {
     name: "Web Series & Films",
     slug: "web-series-films",
+    emoji: "📽️",
     iconName: "Film",
     genres: [
       { name: "Web Series", slug: "web-series", aliases: ["web series", "series", "ott", "episodes"] },
@@ -183,6 +194,7 @@ export const GENRE_GROUPS: GenreGroup[] = [
   {
     name: "Music & Performance",
     slug: "music-performance",
+    emoji: "🎵",
     iconName: "Music",
     genres: [
       { name: "Music Show & Covers", slug: "music-show-covers", aliases: ["music", "gana", "cover song", "singing", "sangeet", "sur"] },
@@ -198,6 +210,7 @@ export const GENRE_GROUPS: GenreGroup[] = [
   {
     name: "Learning",
     slug: "learning",
+    emoji: "📚",
     iconName: "GraduationCap",
     genres: [
       { name: "Education & Explainers", slug: "education-explainers", aliases: ["education", "explainer", "padhai", "seekho", "knowledge"] },
@@ -214,6 +227,7 @@ export const GENRE_GROUPS: GenreGroup[] = [
   {
     name: "Lifestyle & Hobbies",
     slug: "lifestyle-hobbies",
+    emoji: "💄",
     iconName: "Sparkles",
     genres: [
       { name: "Lifestyle", slug: "lifestyle", aliases: ["lifestyle", "daily routine", "life"] },
@@ -221,7 +235,7 @@ export const GENRE_GROUPS: GenreGroup[] = [
       { name: "Yoga", slug: "yoga", aliases: ["yoga", "pranayam", "meditation", "dhyan"] },
       { name: "Beauty & Makeup", slug: "beauty-makeup", aliases: ["beauty", "makeup", "cosmetics", "makeover"] },
       { name: "Fashion & Styling", slug: "fashion-styling", aliases: ["fashion", "styling", "outfits", "kapde", "style"] },
-      { name: "Skincare", slug: "skincare", aliases: ["skincare", "skin", "glow", "dermat"] },
+      { name: "Skincare", slug: "skincare", aliases: ["skin", "skincare", "glow", "dermat"] },
       { name: "DIY & Crafts", slug: "diy-crafts", aliases: ["diy", "crafts", "craft", "handmade", "jugaad"] },
       { name: "Home & Decor", slug: "home-decor", aliases: ["home decor", "interior", "house decor"] },
       { name: "Gardening", slug: "gardening", aliases: ["gardening", "plants", "bagwani", "flowers"] },
@@ -236,6 +250,7 @@ export const GENRE_GROUPS: GenreGroup[] = [
   {
     name: "Sports & Gaming",
     slug: "sports-gaming",
+    emoji: "🏏",
     iconName: "Gamepad2",
     genres: [
       { name: "Gaming", slug: "gaming", aliases: ["gaming", "gamer", "games", "gameplay", "stream"] },
@@ -250,6 +265,7 @@ export const GENRE_GROUPS: GenreGroup[] = [
   {
     name: "Culture & Spiritual",
     slug: "culture-spiritual",
+    emoji: "🙏",
     iconName: "Sun",
     genres: [
       { name: "Devotional & Spiritual", slug: "devotional-spiritual", aliases: ["devotional", "spiritual", "bhakti", "puja", "mandir", "god", "adhyatm"] },
@@ -261,6 +277,7 @@ export const GENRE_GROUPS: GenreGroup[] = [
   {
     name: "Real India",
     slug: "real-india",
+    emoji: "🌾",
     iconName: "Landmark",
     genres: [
       { name: "Village Vlogs", slug: "village-vlogs", aliases: ["village vlogs", "gaon", "dehat", "rural", "pind", "kisan"] },
@@ -273,6 +290,7 @@ export const GENRE_GROUPS: GenreGroup[] = [
   {
     name: "Other",
     slug: "other-group",
+    emoji: "✨",
     iconName: "MoreHorizontal",
     genres: [
       { name: "Other", slug: "other", aliases: ["other", "misc", "miscellaneous"] },
@@ -308,14 +326,14 @@ export const MIGRATION_GENRE_MAP: Record<string, string> = {
   travel: "Travel Vlogs",
   food: "Food Vlogs",
   "food & cooking": "Recipes & Cooking",
-  "comedy & sketches": "Comedy Sketches",
   comedy: "Comedy Sketches",
+  "comedy & sketches": "Comedy Sketches",
   fitness: "Fitness & Health",
   adventure: "Adventure & Trekking",
-  "sci-fi": "Sci-Fi",
   education: "Education & Explainers",
   "music & dance": "Music Show & Covers",
   entertainment: "Other",
+  "sci-fi": "Sci-Fi",
 };
 
 /**
@@ -386,4 +404,3 @@ export function normalizeSeriesGenres(
 
   return canonicalList.join(", ");
 }
-

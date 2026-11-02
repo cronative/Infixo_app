@@ -178,8 +178,10 @@ export function GenreMultiSelect({
             return (
               <div key={group.slug} className="space-y-1.5">
                 {/* Small group label: icon + name, muted, uppercase-ish */}
-                <div className="flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-wider text-[#64748b]">
-                  <IconComponent className="h-3 w-3 text-[#94a3b8] shrink-0" />
+                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#64748b]">
+                  <span className="text-[12px] leading-none shrink-0" role="img" aria-label={group.name}>
+                    {group.emoji}
+                  </span>
                   <span>{group.name}</span>
                 </div>
 
