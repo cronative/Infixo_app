@@ -49,3 +49,4 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: { code: "SERVER_ERROR", message: "Could not reorder products." } }, { status: 500 });
   }
 }
+
