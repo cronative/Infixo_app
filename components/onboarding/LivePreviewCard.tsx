@@ -3287,8 +3287,8 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {/* 6. Media Kit v2 / Collab Tab Section (Shared between /:username/mediakit and Collab tab) */}
-        {(mediaKitOnlyMode || (!isListingPage && (isTabsLayout ? (activeNavTab === "collab" || activeNavTab === "work") : false))) && (
+        {/* 6. Media Kit v2 (Only on standalone /:username/mediakit page) */}
+        {mediaKitOnlyMode && (
           <div id="collab-section" className="relative z-10 order-[20] mt-1 sm:mt-1.5 w-full text-left animate-fade-in">
             <MediaKitV2Content
               profile={profile}
@@ -3299,7 +3299,7 @@ export function LivePreviewCard({
               settings={mediaKitSettings}
               reviews={approvedReviews}
               team={teamData}
-              hideTeam={!mediaKitOnlyMode}
+              hideTeam={false}
               isInformational={isInformationalMode}
               onEnquirePackage={(selected) => {
                 setSelectedEnquiryPackage(selected);
@@ -3322,12 +3322,12 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {/* 6b. Collaboration Packages Section (for non-tabs / premium layout) */}
-        {!isListingPage && (isPremiumLayout || !isTabsLayout) && (() => {
+        {/* 6b. Collaboration Packages Section (Restored classic Collab tab design) */}
+        {!isListingPage && (isPremiumLayout || (!isTabsLayout || activeNavTab === "collab" || activeNavTab === "work")) && (() => {
           if (effectiveVisibilitySettings.showCollabGigs === false) return null;
 
           const activePackages = (mediaKitPackages || []).filter((p) => p.isActive);
-          if (!isDashboardPreview && activePackages.length === 0) return null;
+          if (!isDashboardPreview && activePackages.length === 0 && !isTabsLayout) return null;
 
           return (
             <div
@@ -3417,7 +3417,7 @@ export function LivePreviewCard({
                 )}
 
                 {/* Packages List: Single vertical column inside the main section container */}
-                {activePackages.length > 0 && (
+                {activePackages.length > 0 ? (
                   <div className="p-2 sm:p-2.5">
                     <div className="flex flex-col space-y-2 w-full">
                       {activePackages.map((pkg) => (
@@ -3433,6 +3433,12 @@ export function LivePreviewCard({
                         />
                       ))}
                     </div>
+                  </div>
+                ) : (
+                  <div className="px-4 py-8 text-center">
+                    <p style={{ color: c.mutedText }} className="text-xs font-medium">
+                      No packages available at the moment.
+                    </p>
                   </div>
                 )}
               </div>
@@ -3510,7 +3516,7 @@ export function LivePreviewCard({
         })()}
 
         {/* 7. Reviews Section */}
-        {!isListingPage && (isPremiumLayout || !isTabsLayout) && (() => {
+        {!isListingPage && (isPremiumLayout || (!isTabsLayout || activeNavTab === "collab" || activeNavTab === "work" || activeNavTab === "reviews")) && (() => {
           if (effectiveVisibilitySettings.showReviews === false) return null;
           if (approvedReviews.length === 0) return null;
 
