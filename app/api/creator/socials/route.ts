@@ -337,16 +337,6 @@ export async function DELETE(req: Request) {
       return apiError("Invalid account id", 400);
     }
 
-    // 1. Rule: Trial plan cannot remove social accounts (403 REMOVE_NOT_ALLOWED_IN_TRIAL)
-    const planKey = await getCreatorPlanKey(creatorId);
-    if (planKey === "trial") {
-      return apiError(
-        "Removing social accounts is not available on Trial. Upgrade to a paid plan.",
-        403,
-        { code: "REMOVE_NOT_ALLOWED_IN_TRIAL" }
-      );
-    }
-
     // 2. Fetch the target account
     const [rows]: any = await db.query(
       "SELECT id, platform, username, is_primary FROM social_accounts WHERE id = ? AND creator_id = ?",
@@ -358,20 +348,17 @@ export async function DELETE(req: Request) {
     }
 
     const targetAccount = rows[0];
+    let promotedAccount: { id: number; platform: string; username: string } | null = null;
 
-    // 3. Rule: Primary account cannot be removed while extra accounts exist
+    // 3. If the Primary account is deleted and secondaries exist, the oldest secondary becomes Primary
     if (Boolean(targetAccount.is_primary)) {
-      const [extras]: any = await db.query(
-        "SELECT COUNT(*) as count FROM social_accounts WHERE creator_id = ? AND platform = ? AND id != ?",
+      const [oldestSecondary]: any = await db.query(
+        "SELECT id, platform, username FROM social_accounts WHERE creator_id = ? AND platform = ? AND id != ? ORDER BY id ASC LIMIT 1",
         [creatorId, targetAccount.platform, accountId]
       );
-      const extraCount = Number(extras?.[0]?.count || 0);
-      if (extraCount > 0) {
-        return apiError(
-          "Primary account cannot be removed while other accounts exist on this platform. Remove secondary accounts first.",
-          400,
-          { code: "PRIMARY_HAS_SECONDARY_ACCOUNTS" }
-        );
+      if (oldestSecondary && oldestSecondary.length > 0) {
+        promotedAccount = oldestSecondary[0];
+        await db.query("UPDATE social_accounts SET is_primary = 1 WHERE id = ?", [promotedAccount!.id]);
       }
     }
 
@@ -393,7 +380,7 @@ export async function DELETE(req: Request) {
       console.error("Failed to sync peak fanbase after deletion:", e);
     }
 
-    return apiSuccess({ id: accountId }, "Social account removed successfully");
+    return apiSuccess({ id: accountId, promotedAccount }, "Social account removed successfully");
   } catch (err: any) {
     console.error("DELETE Socials Error:", err);
     return apiError(err.message || "Failed to remove social account", 500);

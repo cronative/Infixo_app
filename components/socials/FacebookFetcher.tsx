@@ -155,7 +155,7 @@ export function FacebookFetcher({ username, onConfirmSync, onBeforeFetch, varian
           {loading ? (
             <>
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              Fetching Facebook Page...
+              Fetching… this can take up to 20s
             </>
           ) : (
             <>

@@ -11,6 +11,8 @@ import {
   EyeOff,
   Eye,
   Loader2,
+  ArrowUpRight,
+  Trash2,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -61,6 +63,10 @@ export default function DashboardSocialsPage() {
   const [refreshingId, setRefreshingId] = useState<number | null>(null);
   const [togglingHideId, setTogglingHideId] = useState<number | null>(null);
   const [addingSecondary, setAddingSecondary] = useState(false);
+
+  // Delete state
+  const [accountToDelete, setAccountToDelete] = useState<SocialAccountRow | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Modals
   const [celebrationOpen, setCelebrationOpen] = useState(false);
@@ -118,6 +124,9 @@ export default function DashboardSocialsPage() {
   const handleRefreshCount = async (account: SocialAccountRow) => {
     if (!account.isPrimary) return;
     setRefreshingId(account.id);
+    if (account.platform === "facebook") {
+      showToast("Fetching… this can take up to 20s");
+    }
     try {
       let followerCount = account.followerCount;
       let mediaCount = account.mediaCount || 0;
@@ -181,6 +190,49 @@ export default function DashboardSocialsPage() {
       showToast("Could not refresh count. Please try again.", "error");
     } finally {
       setRefreshingId(null);
+    }
+  };
+
+  // Delete account (recalculates total fans & era; auto-fetches count if oldest secondary is promoted to Primary)
+  const handleDeleteAccount = async () => {
+    if (!accountToDelete) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/creator/socials/${accountToDelete.id}`, {
+        method: "DELETE",
+      });
+      const json = await res.json().catch(() => null);
+      if (!res.ok) {
+        showToast(json?.message || "Failed to remove account", "error");
+        return;
+      }
+
+      const cleanHandle = (accountToDelete.username || "").replace(/^@/, "");
+      showToast(`Removed @${cleanHandle} from your profile`);
+      setAccountToDelete(null);
+
+      // Refresh accounts list & creator context
+      await fetchAccounts();
+      refresh();
+
+      // If the primary was deleted and an existing secondary was promoted to Primary, fetch its count automatically
+      const promoted = json?.data?.promotedAccount;
+      if (promoted && promoted.id) {
+        const promotedRow: SocialAccountRow = {
+          id: promoted.id,
+          platform: promoted.platform as any,
+          accountName: promoted.username,
+          username: promoted.username,
+          followerCount: 0,
+          isPrimary: true,
+        };
+        await handleRefreshCount(promotedRow);
+      }
+    } catch (err) {
+      console.error("Failed to remove account:", err);
+      showToast("Could not remove account. Please try again.", "error");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -360,8 +412,8 @@ export default function DashboardSocialsPage() {
         </p>
       </div>
 
-      {/* 3. SINGLE CARD LIST FOR ALL 3 PLATFORMS */}
-      <div className="rounded-[5px] border border-[#ECECF0] bg-white divide-y divide-[#ECECF0]">
+      {/* 3. PLATFORM SECTIONS (One section per platform) */}
+      <div className="space-y-6">
         {platformRows.map((row) => {
           const primaryAcc = row.accounts.find((a) => a.isPrimary);
           const secondaryAccs = row.accounts.filter((a) => !a.isPrimary);
@@ -369,51 +421,26 @@ export default function DashboardSocialsPage() {
           const canAddMore = row.accounts.length < maxPerPlatform;
 
           return (
-            <div
-              key={row.platform}
-              className="min-h-[56px] sm:min-h-[60px] px-3.5 sm:px-4 py-2.5 flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap"
-            >
-              {/* Left: Platform Icon + Name (count/max) */}
-              <div className="flex items-center gap-2.5 shrink-0 min-w-[140px]">
-                <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-[5px] ${row.iconBg}`}>
-                  {row.icon}
+            <div key={row.platform} className="space-y-3">
+              {/* Section Header */}
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] ${row.iconBg}`}>
+                    {row.icon}
+                  </div>
+                  <h3 className="text-sm font-semibold text-[#18181B] flex items-center gap-1.5">
+                    <span>{row.title}</span>
+                    <span className="text-xs font-normal text-[#6B6B76] tabular-nums">
+                      ({row.accounts.length}/{maxPerPlatform})
+                    </span>
+                  </h3>
                 </div>
-                <span className="text-[14px] font-semibold text-[#18181B]">
-                  {row.title}
-                </span>
-                <span className="text-xs text-[#6B6B76] tabular-nums">
-                  ({row.accounts.length}/{maxPerPlatform})
-                </span>
-              </div>
 
-              {/* Middle: Account chips or "Not connected" */}
-              <div className="flex-1 flex items-center gap-2 flex-wrap min-w-0">
-                {loading ? (
-                  <span className="text-xs text-[#6B6B76]">Loading...</span>
-                ) : orderedAccounts.length === 0 ? (
-                  <span className="text-xs text-[#94A3B8]">Not connected</span>
-                ) : (
-                  orderedAccounts.map((acc) => (
-                    <AccountChip
-                      key={acc.id}
-                      account={acc}
-                      canHideFromProfile={canHideFromProfile}
-                      isRefreshing={refreshingId === acc.id}
-                      isTogglingHide={togglingHideId === acc.id}
-                      onRefresh={() => handleRefreshCount(acc)}
-                      onToggleHide={() => handleToggleHide(acc)}
-                    />
-                  ))
-                )}
-              </div>
-
-              {/* Right: Small [+ Add] button */}
-              <div className="shrink-0">
                 {canAddMore ? (
                   <button
                     type="button"
                     onClick={() => openAddAccount(row.platform)}
-                    className="inline-flex items-center gap-1 h-7 px-2.5 rounded-[5px] border border-[#E2E8F0] bg-[#FAFAFB] hover:bg-[#F7EEF2] hover:border-[#7A2253]/30 text-xs font-semibold text-[#18181B] hover:text-[#7A2253] transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1 h-7 px-2.5 rounded-[5px] border border-[#E2E8F0] bg-white hover:bg-[#F7EEF2] hover:border-[#7A2253]/30 text-xs font-semibold text-[#18181B] hover:text-[#7A2253] transition-colors cursor-pointer"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     <span>Add</span>
@@ -422,13 +449,34 @@ export default function DashboardSocialsPage() {
                   <span className="text-[11px] font-medium text-[#94A3B8]">Max reached</span>
                 )}
               </div>
+
+              {/* Grid or Empty */}
+              {loading ? (
+                <div className="text-xs text-[#6B6B76] py-1">Loading...</div>
+              ) : orderedAccounts.length === 0 ? (
+                <div className="text-xs text-[#94A3B8] py-1">Not connected</div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {orderedAccounts.map((acc) => (
+                    <AccountCard
+                      key={acc.id}
+                      account={acc}
+                      iconBg={row.iconBg}
+                      platformIcon={row.icon}
+                      isRefreshing={refreshingId === acc.id}
+                      onRefresh={() => handleRefreshCount(acc)}
+                      onDelete={() => setAccountToDelete(acc)}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           );
         })}
       </div>
 
       {/* 4. FOOTER: HOW WE COUNT TEXT LINK */}
-      <div className="pt-1 pb-4 flex justify-start">
+      <div className="pt-2 pb-4 flex justify-start">
         <button
           type="button"
           onClick={() => setIsInfoModalOpen(true)}
@@ -658,6 +706,47 @@ export default function DashboardSocialsPage() {
         </ModalBody>
       </Modal>
 
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={Boolean(accountToDelete)}
+        onClose={() => {
+          if (!deleting) setAccountToDelete(null);
+        }}
+        title="Remove Account"
+        icon={<Trash2 className="h-5 w-5 text-rose-600" />}
+        size="sm"
+      >
+        <ModalBody className="p-5 text-left space-y-2">
+          <p className="text-sm text-[#18181B]">
+            Remove <span className="font-semibold">@{accountToDelete?.username.replace(/^@/, "")}</span> from your profile?
+          </p>
+          {accountToDelete?.isPrimary && (
+            <p className="text-xs text-[#6B6B76]">
+              If other accounts exist on this platform, the oldest secondary account will automatically become your new primary account and its follower count will be fetched.
+            </p>
+          )}
+        </ModalBody>
+        <ModalFooter className="px-5 py-3.5 flex justify-end gap-2">
+          <button
+            type="button"
+            disabled={deleting}
+            onClick={() => setAccountToDelete(null)}
+            className="h-8 px-3.5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            disabled={deleting}
+            onClick={handleDeleteAccount}
+            className="h-8 px-3.5 rounded-[5px] bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5"
+          >
+            {deleting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+            <span>{deleting ? "Removing..." : "Remove"}</span>
+          </button>
+        </ModalFooter>
+      </Modal>
+
       {/* Celebration Modal */}
       <CreatorEraCelebrationModal
         isOpen={celebrationOpen}
@@ -671,25 +760,25 @@ export default function DashboardSocialsPage() {
 }
 
 /* ==========================================================================
-   ACCOUNT CHIP COMPONENT
+   ACCOUNT CARD COMPONENT
    ========================================================================== */
-interface AccountChipProps {
+interface AccountCardProps {
   account: SocialAccountRow;
-  canHideFromProfile: boolean;
+  iconBg: string;
+  platformIcon: React.ReactNode;
   isRefreshing: boolean;
-  isTogglingHide: boolean;
   onRefresh: () => void;
-  onToggleHide: () => void;
+  onDelete: () => void;
 }
 
-function AccountChip({
+function AccountCard({
   account,
-  canHideFromProfile,
+  iconBg,
+  platformIcon,
   isRefreshing,
-  isTogglingHide,
   onRefresh,
-  onToggleHide,
-}: AccountChipProps) {
+  onDelete,
+}: AccountCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -705,68 +794,46 @@ function AccountChip({
 
   const cleanHandle = (account.username || "").replace(/^@/, "");
   const profileUrl = buildAccountProfileUrl(account.platform, cleanHandle);
-  const hasMenuActions = account.isPrimary || canHideFromProfile;
 
   return (
     <div
-      className={`inline-flex items-center gap-1.5 rounded-[5px] border px-2.5 py-1 text-xs transition-colors ${
-        account.isHidden
-          ? "border-[#E2E8F0] bg-[#F8FAFC] opacity-75"
-          : "border-[#ECECF0] bg-[#FAFAFB] hover:border-[#cbd5e1]"
+      className={`rounded-[5px] border border-[#ECECF0] bg-white p-3.5 flex flex-col justify-between hover:border-[#cbd5e1] transition-colors h-full ${
+        account.isHidden ? "opacity-75" : ""
       }`}
     >
-      {/* Handle + External Link */}
-      <a
-        href={profileUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center gap-1 font-semibold text-[#18181B] hover:text-[#7A2253] hover:underline truncate max-w-[160px]"
-        title={`Open @${cleanHandle}`}
-      >
-        <span className="truncate">@{cleanHandle}</span>
-        {!account.isPrimary && <ExternalLink className="h-3 w-3 shrink-0 text-[#6B6B76]" />}
-      </a>
+      {/* Top Row: [platform icon/avatar] @handle + Primary/Secondary tag … ⋮ menu (top-right) */}
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0 flex-wrap">
+          <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] ${iconBg}`}>
+            {platformIcon}
+          </div>
+          <span className="font-semibold text-xs text-[#18181B] truncate max-w-[130px]" title={`@${cleanHandle}`}>
+            @{cleanHandle}
+          </span>
+          {account.isPrimary ? (
+            <span className="inline-flex items-center rounded-[4px] bg-[#F7EEF2] border border-[#FCE7F3] px-1.5 py-0.5 text-[10px] font-semibold text-[#7A2253]">
+              Primary
+            </span>
+          ) : (
+            <span className="inline-flex items-center rounded-[4px] bg-[#F1F5F9] border border-[#E2E8F0] px-1.5 py-0.5 text-[10px] font-medium text-[#64748B]">
+              Secondary
+            </span>
+          )}
+        </div>
 
-      {/* Count (Primary only) */}
-      {account.isPrimary && (
-        <span className="font-bold text-[#18181B] tabular-nums">
-          {formatFans(account.followerCount)}
-        </span>
-      )}
-
-      {/* Primary / Secondary Tag */}
-      {account.isPrimary ? (
-        <span className="inline-flex items-center rounded-[4px] bg-[#F7EEF2] border border-[#FCE7F3] px-1.5 py-0.5 text-[10px] font-semibold text-[#7A2253]">
-          Primary
-        </span>
-      ) : (
-        <span className="inline-flex items-center rounded-[4px] bg-[#F1F5F9] border border-[#E2E8F0] px-1.5 py-0.5 text-[10px] font-medium text-[#64748B]">
-          Secondary
-        </span>
-      )}
-
-      {/* Hidden Tag */}
-      {account.isHidden && (
-        <span className="inline-flex items-center gap-0.5 rounded-[4px] bg-slate-200/70 px-1.5 py-0.5 text-[10px] font-medium text-[#475569]">
-          <EyeOff className="h-2.5 w-2.5" />
-          <span>Hidden</span>
-        </span>
-      )}
-
-      {/* ⋮ Menu (Refresh count on Primary; Hide/Show on Pro/VIP) */}
-      {hasMenuActions && (
+        {/* ⋮ Menu (top-right) */}
         <div className="relative shrink-0" ref={menuRef}>
           <button
             type="button"
             onClick={() => setMenuOpen((prev) => !prev)}
-            className="flex h-5 w-5 items-center justify-center rounded-[4px] text-[#6B6B76] hover:text-[#18181B] hover:bg-[#ECECF0]/60 transition-colors cursor-pointer"
+            className="flex h-6 w-6 items-center justify-center rounded-[4px] text-[#6B6B76] hover:text-[#18181B] hover:bg-[#ECECF0]/60 transition-colors cursor-pointer"
             aria-label="Account actions"
           >
             <MoreVertical className="h-3.5 w-3.5" />
           </button>
 
           {menuOpen && (
-            <div className="absolute right-0 top-full mt-1 w-40 rounded-[5px] border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in duration-150">
+            <div className="absolute right-0 top-full mt-1 w-36 rounded-[5px] border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in duration-150">
               {account.isPrimary && (
                 <button
                   type="button"
@@ -786,33 +853,48 @@ function AccountChip({
                 </button>
               )}
 
-              {canHideFromProfile && (
-                <button
-                  type="button"
-                  disabled={isTogglingHide}
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onToggleHide();
-                  }}
-                  className="flex w-full items-center gap-2 rounded-[4px] px-2.5 py-1.5 text-xs font-semibold text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-50"
-                >
-                  {account.isHidden ? (
-                    <>
-                      <Eye className="h-3.5 w-3.5 text-[#64748b]" />
-                      <span>Show on profile</span>
-                    </>
-                  ) : (
-                    <>
-                      <EyeOff className="h-3.5 w-3.5 text-[#64748b]" />
-                      <span>Hide from profile</span>
-                    </>
-                  )}
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onDelete();
+                }}
+                className="flex w-full items-center gap-2 rounded-[4px] px-2.5 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+              >
+                <Trash2 className="h-3.5 w-3.5 text-rose-600" />
+                <span>Delete</span>
+              </button>
             </div>
           )}
         </div>
+      </div>
+
+      {/* Primary only: count + "followers/subscribers" */}
+      {account.isPrimary ? (
+        <div className="my-2.5">
+          <div className="text-lg font-bold text-[#18181B] tabular-nums leading-tight">
+            {formatFans(account.followerCount)}
+          </div>
+          <div className="text-[11px] text-[#6B6B76]">
+            {account.platform === "youtube" ? "subscribers" : "followers"}
+          </div>
+        </div>
+      ) : (
+        <div className="my-2.5 flex-1" />
       )}
+
+      {/* Bottom: "View ↗" link */}
+      <div className="pt-1 mt-auto">
+        <a
+          href={profileUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-0.5 text-xs font-semibold text-[#64748B] hover:text-[#7A2253] hover:underline transition-colors w-fit"
+        >
+          <span>View</span>
+          <ArrowUpRight className="h-3 w-3" />
+        </a>
+      </div>
     </div>
   );
 }
