@@ -15,7 +15,7 @@ import {
   XTwitterIcon,
   YoutubeIcon,
 } from "@/components/shared/BrandIcons";
-import { formatCount } from "@/utils/format";
+import { formatFans } from "@/lib/creatorEra";
 
 export interface AboutColors {
   primary?: string;
@@ -74,10 +74,13 @@ export function BrandPlatformIcon({ platform, size = 32 }: { platform: string; s
 
 // ── Light section header ──────────────────────────────────────
 
-/** Title + subtitle + count, 1px divider below; no filled background. */
+/** Title + subtitle + count on a subtle theme tint, 1px divider below; body stays plain. */
 export function AboutHeader({ title, subtitle, count, colors }: { title: string; subtitle?: string; count?: ReactNode; colors: AboutColors }) {
   return (
-    <div className="flex items-end justify-between gap-3 border-b border-(--surface-border) px-3 pb-2 pt-2.5 sm:px-3.5">
+    <div
+      className="flex items-end justify-between gap-3 border-b border-(--surface-border) px-3 pb-2 pt-2.5 sm:px-3.5"
+      style={{ backgroundColor: "color-mix(in srgb, var(--accent) 5%, transparent)" }}
+    >
       <div className="min-w-0">
         <h2 style={{ color: colors.primary, fontFamily: colors.headingFont }} className="text-sm font-semibold leading-5 tracking-tight text-(--text)">
           {title}
@@ -181,33 +184,43 @@ export function AboutMeBlock({
 
 // ── 2. Fanbase by platform ────────────────────────────────────
 
-export function FanbaseByPlatform({ items, colors }: { items: { platform: string; label?: string; count: number }[]; colors: AboutColors }) {
+const unitFor = (platform: string, unit?: string) =>
+  (unit || (platform === "youtube" ? "subscribers" : "followers")).toLowerCase();
+
+export function FanbaseByPlatform({
+  items,
+  total,
+  colors,
+}: {
+  items: { platform: string; label?: string; handle?: string; count: number; unit?: string }[];
+  /** Combined total shown in the header — pass the same number the profile header shows. */
+  total?: number;
+  colors: AboutColors;
+}) {
   const rows = items.filter((i) => i.count > 0).sort((a, b) => b.count - a.count);
-  const total = rows.reduce((s, r) => s + r.count, 0);
-  if (total === 0) return null;
+  const sum = rows.reduce((s, r) => s + r.count, 0);
+  if (sum === 0) return null;
   return (
     <div className={CARD}>
-      <AboutHeader title="Fanbase by platform" subtitle="Primary accounts only." count={`${formatCount(total)} total`} colors={colors} />
-      <ul className="space-y-3 p-3 sm:p-3.5">
+      <AboutHeader title="Fanbase by platform" subtitle="Primary accounts only." count={`${formatFans(total && total > 0 ? total : sum)} total`} colors={colors} />
+      <ul className="divide-y divide-(--surface-border)">
         {rows.map((r) => {
           const p = r.platform.toLowerCase();
-          const pct = Math.round((r.count / total) * 100);
+          const handle = (r.handle || "").replace(/^@/, "");
           return (
-            <li key={p} className="flex items-center gap-2.5">
-              <BrandPlatformIcon platform={p} size={26} />
+            <li key={p} className="flex min-h-12 items-center gap-2.5 px-3 py-1.5 sm:px-3.5">
+              <BrandPlatformIcon platform={p} size={28} />
               <div className="min-w-0 flex-1">
-                <div className="flex items-baseline justify-between gap-2 text-xs">
-                  <span style={{ color: colors.primary }} className="font-medium text-(--text)">
-                    {PLATFORM_BRAND[p]?.label ?? r.label ?? p}
-                  </span>
-                  <span style={{ color: colors.muted }} className="tabular-nums text-(--text-muted)">
-                    <span style={{ color: colors.primary }} className="font-semibold text-(--text)">{formatCount(r.count)}</span> · {pct}%
-                  </span>
-                </div>
-                <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-(--surface)">
-                  <div className="h-full rounded-full" style={{ width: `${Math.max(3, pct)}%`, background: PLATFORM_BRAND[p]?.bar ?? "var(--accent)" }} />
-                </div>
+                <p style={{ color: colors.primary }} className="truncate text-[13px] font-medium leading-[18px] text-(--text)">
+                  {PLATFORM_BRAND[p]?.label ?? r.label ?? p}
+                </p>
+                {handle && (
+                  <p style={{ color: colors.muted }} className="truncate text-xs leading-4 text-(--text-muted)">@{handle}</p>
+                )}
               </div>
+              <span style={{ color: colors.muted }} className="shrink-0 text-right text-xs tabular-nums text-(--text-muted)">
+                <span style={{ color: colors.primary }} className="text-[13px] font-semibold text-(--text)">{formatFans(r.count)}</span> {unitFor(p, r.unit)}
+              </span>
             </li>
           );
         })}
@@ -258,9 +271,8 @@ export function SocialAccountsBlock({
       {showHeader && <AboutHeader title="Social accounts" subtitle="Follow along and stay connected with me." count={`${total} connected`} colors={colors} />}
       <div className="space-y-3 p-2.5 sm:p-3">
         {groups.map((group, gi) => {
-          // Primary (or single-account platforms) get a full row; extra IG/YT/FB accounts become chips.
-          const rows = group.items.filter((i) => i.isPrimary || !COUNTED.has(i.platform));
-          const chips = group.items.filter((i) => !i.isPrimary && COUNTED.has(i.platform));
+          // One connected list per group: primary first, then the rest.
+          const ordered = [...group.items].sort((a, b) => Number(Boolean(b.isPrimary)) - Number(Boolean(a.isPrimary)));
           return (
             <div key={group.groupTitle ?? `g-${gi}`} className="space-y-1.5">
               {group.groupTitle && (
@@ -273,60 +285,49 @@ export function SocialAccountsBlock({
                   </span>
                 </div>
               )}
-              {rows.map((item, i) => {
-                const count = item.isPrimary && COUNTED.has(item.platform) && (item.count ?? 0) > 0 ? item.count! : null;
-                return (
-                  <a
-                    key={item.id ?? `${item.platform}-${item.handle}-${i}`}
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={click(item)}
-                    className="group flex items-center gap-2.5 rounded-[5px] border border-(--surface-border) p-2.5 transition-colors hover:border-(--accent)"
-                    title={`Open ${PLATFORM_BRAND[item.platform]?.label ?? item.platform}`}
-                  >
-                    <BrandPlatformIcon platform={item.platform} size={34} />
-                    <div className="min-w-0 flex-1">
-                      <p style={{ color: colors.primary }} className="truncate text-[13px] font-medium leading-[18px] text-(--text)">
-                        {handleOf(item)}
-                      </p>
-                      <p style={{ color: colors.muted }} className="truncate text-xs leading-[17px] text-(--text-muted)">
-                        {count ? (
-                          <>
-                            <span style={{ color: colors.primary }} className="font-semibold text-(--text)">{formatCount(count)}</span>{" "}
-                            {(item.unit || (item.platform === "youtube" ? "Subscribers" : "Followers")).toLowerCase()}
-                          </>
-                        ) : (
-                          PLATFORM_BRAND[item.platform]?.label ?? item.label ?? item.platform
-                        )}
-                      </p>
-                    </div>
-                    <ArrowUpRight style={{ color: colors.muted }} className="h-4 w-4 shrink-0 text-(--text-muted) transition-colors group-hover:text-(--text)" />
-                  </a>
-                );
-              })}
-              {chips.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 pt-0.5">
-                  {chips.map((item, i) => (
-                    <a
-                      key={item.id ?? `${item.platform}-chip-${item.handle}-${i}`}
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={click(item)}
-                      className="inline-flex h-7 max-w-full items-center gap-1.5 rounded-full border border-(--surface-border) pl-0.5 pr-2.5 transition-colors hover:border-(--accent)"
-                      title={`Open ${handleOf(item)}`}
-                    >
-                      <span className="overflow-hidden rounded-full">
+              <ul className="divide-y divide-(--surface-border) overflow-hidden rounded-[8px] border border-(--surface-border)">
+                {ordered.map((item, i) => {
+                  const count = item.isPrimary && COUNTED.has(item.platform) && (item.count ?? 0) > 0 ? item.count! : null;
+                  return (
+                    <li key={item.id ?? `${item.platform}-${item.handle}-${i}`}>
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={click(item)}
+                        className="group flex h-11 items-center gap-2 sm:gap-2.5 px-3 transition-colors hover:bg-(--surface)"
+                        aria-label={`${handleOf(item)}${count ? `, ${formatFans(count)} ${unitFor(item.platform, item.unit)}` : ""}`}
+                        title={`Open ${handleOf(item)} on ${PLATFORM_BRAND[item.platform]?.label ?? item.platform}`}
+                      >
                         <BrandPlatformIcon platform={item.platform} size={22} />
-                      </span>
-                      <span style={{ color: colors.primary }} className="truncate text-xs font-medium text-(--text)">
-                        {handleOf(item)}
-                      </span>
-                    </a>
-                  ))}
-                </div>
-              )}
+                        <span style={{ color: colors.primary }} className="min-w-0 truncate text-[13px] font-medium text-(--text)">
+                          {handleOf(item)}
+                        </span>
+                        {item.isPrimary && COUNTED.has(item.platform) && (
+                          <span
+                            style={{
+                              backgroundColor: "color-mix(in srgb, var(--accent) 12%, transparent)",
+                              color: "var(--accent-text)",
+                              borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)",
+                            }}
+                            className="shrink-0 rounded-[3px] border px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider"
+                          >
+                            Primary
+                          </span>
+                        )}
+                        <span className="flex-1" />
+                        {count && (
+                          <span style={{ color: colors.muted }} className="shrink-0 text-xs tabular-nums text-(--text-muted)">
+                            <span style={{ color: colors.primary }} className="font-semibold text-(--text)">{formatFans(count)}</span>
+                            <span className="hidden sm:inline"> {unitFor(item.platform, item.unit)}</span>
+                          </span>
+                        )}
+                        <ArrowUpRight style={{ color: colors.muted }} className="h-4 w-4 shrink-0 text-(--text-muted) transition-colors group-hover:text-(--text)" />
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           );
         })}

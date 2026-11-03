@@ -2161,7 +2161,8 @@ export function LivePreviewCard({
               {/* 2. Fanbase by platform (primary accounts) — replaces the duplicate Era/Fans card */}
               {effectiveVisibilitySettings.showFanbase !== false && (
                 <FanbaseByPlatform
-                  items={fanbaseSocialCards.map((s) => ({ platform: s.platform, label: s.label, count: Number(s.count) || 0 }))}
+                  items={fanbaseSocialCards.map((s) => ({ platform: s.platform, label: s.label, handle: s.handle, unit: s.unit, count: Number(s.count) || 0 }))}
+                  total={totalAudience}
                   colors={aboutColors}
                 />
               )}
@@ -2950,7 +2951,7 @@ export function LivePreviewCard({
               {!isPremiumLayout && (
                 <div
                   style={{
-                    backgroundColor: "transparent",
+                    backgroundColor: "color-mix(in srgb, var(--accent) 5%, transparent)",
                     borderColor: "var(--surface-border)",
                   }}
                   className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between gap-2"
