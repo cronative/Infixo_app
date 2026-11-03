@@ -753,7 +753,8 @@ export function LivePreviewCard({
       raw === "series" || raw === "watch" ? "watch" :
       raw === "links" || raw === "explore" ? "links" :
       raw === "shop" || raw === "products" ? "shop" :
-      raw === "setup" || raw === "fanbase" || raw === "about" ? "about" :
+      raw === "setup" ? "setup" :
+      raw === "fanbase" || raw === "about" ? "about" :
       raw === "reviews" || raw === "work" || raw === "collab" ? "collab" :
       undefined;
 
@@ -1605,10 +1606,12 @@ export function LivePreviewCard({
   const hasReviewsContent = !isListingPage && effectiveVisibilitySettings.showReviews !== false && approvedReviews.length > 0;
 
   const hasFanbaseTab = !isListingPage && effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || fanbaseSocialCards.length > 0);
-  const hasAboutTab = !isListingPage && (Boolean(profile.bio?.trim()) || hasFanbaseTab || hasSetupContent || activeTeamMembers.length > 0 || (isDashboardPreview && initialTab === "about"));
+  const hasAboutTab = !isListingPage && (Boolean(profile.bio?.trim()) || hasFanbaseTab || activeTeamMembers.length > 0 || (isDashboardPreview && initialTab === "about"));
   const hasWatchTab = hasSeriesContent || (!isListingPage && isDashboardPreview && initialTab === "watch");
   const hasLinksTab = hasLinksContent || (!isListingPage && isDashboardPreview && initialTab === "links");
   const hasShopTab = hasShopContent || (!isListingPage && isDashboardPreview && initialTab === "shop");
+  // My Setup gets its own nav chip whenever the creator has visible gear.
+  const hasSetupTab = hasSetupContent || (!isListingPage && isDashboardPreview && initialTab === "setup");
   const hasWorkTab = hasWorkCollab || hasReviewsContent || (!isListingPage && isDashboardPreview && initialTab === "collab");
 
   const aboutTabObj = { id: "about" as CreatorNavTabId, label: "About", icon: User };
@@ -1623,34 +1626,22 @@ export function LivePreviewCard({
     label: "Shop",
     icon: ShoppingBag,
   };
+  const setupTabObj = { id: "setup" as CreatorNavTabId, label: "My Setup", icon: Laptop };
   const collabTabObj = {
     id: "collab" as CreatorNavTabId,
     label: "Collab",
     icon: Briefcase,
   };
 
-  const navTabs: { id: CreatorNavTabId; label: string; icon: any; count?: number | string }[] = [];
-  if (hasWatchTab) {
-    navTabs.push(watchTabObj);
-    if (hasLinksTab) navTabs.push(linksTabObj);
-    if (hasShopTab) navTabs.push(shopTabObj);
-    if (hasAboutTab) navTabs.push(aboutTabObj);
-    if (hasWorkTab) navTabs.push(collabTabObj);
-  } else if (hasLinksTab) {
-    navTabs.push(linksTabObj);
-    if (hasShopTab) navTabs.push(shopTabObj);
-    if (hasAboutTab) navTabs.push(aboutTabObj);
-    if (hasWorkTab) navTabs.push(collabTabObj);
-  } else if (hasShopTab) {
-    navTabs.push(shopTabObj);
-    if (hasAboutTab) navTabs.push(aboutTabObj);
-    if (hasWorkTab) navTabs.push(collabTabObj);
-  } else if (hasAboutTab) {
-    navTabs.push(aboutTabObj);
-    if (hasWorkTab) navTabs.push(collabTabObj);
-  } else if (hasWorkTab) {
-    navTabs.push(collabTabObj);
-  }
+  // Fixed order; a chip only shows when its section has content.
+  const navTabs: { id: CreatorNavTabId; label: string; icon: any; count?: number | string }[] = [
+    hasWatchTab && watchTabObj,
+    hasLinksTab && linksTabObj,
+    hasShopTab && shopTabObj,
+    hasSetupTab && setupTabObj,
+    hasAboutTab && aboutTabObj,
+    hasWorkTab && collabTabObj,
+  ].filter(Boolean) as { id: CreatorNavTabId; label: string; icon: any }[];
 
   // Profile is fresh/empty if creator has not added bio, socials, series, links, products, setups, or collab packages
   const isProfileEmpty =
@@ -1713,7 +1704,8 @@ export function LivePreviewCard({
       const tabParam = urlParams.get("tab");
       const target = tabParam || initialTab;
       const normalizedTab: CreatorNavTabId | null =
-        target === "fanbase" || target === "about" || target === "setup" ? "about" :
+        target === "setup" ? "setup" :
+        target === "fanbase" || target === "about" ? "about" :
         target === "series" || target === "watch" ? "watch" :
         target === "links" || target === "explore" ? "links" :
         target === "shop" || target === "products" ? "shop" :
@@ -2173,7 +2165,7 @@ export function LivePreviewCard({
         )}
 
         {/* 9. My Setup Section (on About tab or standalone setupOnlyMode) */}
-        {(setupOnlyMode || (!isListingPage && (isPremiumLayout || (!isTabsLayout ? true : activeNavTab === "about")))) && (() => {
+        {(setupOnlyMode || (!isListingPage && (isPremiumLayout || (!isTabsLayout ? true : activeNavTab === "setup")))) && (() => {
           const activeSetupItems = (setupList || []).filter((it) => it.isActive !== false && it.name?.trim());
           if (activeSetupItems.length === 0 && !isDashboardPreview && !setupOnlyMode) return null;
 

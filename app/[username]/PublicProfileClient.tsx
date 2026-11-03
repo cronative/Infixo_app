@@ -72,7 +72,8 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
     rawTab === "series" || rawTab === "watch" ? "watch" :
     rawTab === "links" || rawTab === "explore" ? "links" :
     rawTab === "shop" || rawTab === "products" ? "shop" :
-    rawTab === "setup" || rawTab === "about" || rawTab === "fanbase" ? "about" :
+    rawTab === "setup" ? "setup" :
+    rawTab === "about" || rawTab === "fanbase" ? "about" :
     rawTab === "reviews" || rawTab === "work" || rawTab === "collab" ? "collab" :
     undefined;
   const { showToast } = useToast();
