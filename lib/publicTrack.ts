@@ -98,7 +98,7 @@ export function trackPublicEvent(type: PublicEventType, target: string | null = 
       visitorId: getVisitorId(),
       source: context.source,
       // Referrer on every event so traffic sources can be attributed per action, not only per visit.
-      metadata: { referrer: document.referrer || "" },
+      metadata: { referrer: document.referrer || "", via: shareVia() },
     });
     const blob = new Blob([body], { type: "application/json" });
     if (!navigator.sendBeacon?.("/api/analytics/track", blob)) {
@@ -115,4 +115,14 @@ export function trackProfileView() {
   if (last && Date.now() - last < PROFILE_VIEW_WINDOW_MS) return;
   writeStorage(key, String(Date.now()));
   trackPublicEvent("profile_view");
+}
+
+/** `?ref=share` (added by the Share modal) → "share"; anything else is ignored. */
+function shareVia(): string {
+  try {
+    const ref = new URLSearchParams(window.location.search).get("ref");
+    return ref === "share" ? "share" : "";
+  } catch {
+    return "";
+  }
 }

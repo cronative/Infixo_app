@@ -138,3 +138,11 @@ export function WhatsappIcon(props: SVGProps<SVGSVGElement>) {
 }
 
 
+
+export function TelegramIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <path d="M21.94 4.3a1.2 1.2 0 0 0-1.62-1.37L2.86 9.66c-1.05.41-1.04 1.9.02 2.29l4.34 1.6 1.68 5.42c.2.66 1.03.87 1.52.38l2.43-2.43 4.62 3.4c.7.51 1.69.13 1.87-.72L21.94 4.3ZM9.6 13.9l8.5-7.6-6.9 8.73-.32 3.03-1.28-4.16Z" />
+    </svg>
+  );
+}

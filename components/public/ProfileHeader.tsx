@@ -418,7 +418,7 @@ export function ProfileHeader({
       {/* scrolls underneath (z above content).                          */}
       {/* ============================================================== */}
       <div
-        className="relative z-30 -mx-4 sm:-mx-5 -mt-[20px] mb-2 sm:mb-2.5 flex h-11 sm:h-12 items-center justify-between gap-2 px-4 sm:px-5 rounded-none border-b border-(--divider) bg-transparent transition-shadow duration-200"
+        className="relative z-30 -mx-4 sm:-mx-5 -mt-[20px] mb-2 sm:mb-2.5 flex h-11 sm:h-12 items-center justify-between gap-2 px-4 sm:px-5 rounded-none border-b border-(--divider) bg-(--card-bg) transition-shadow duration-200"
         style={{ boxShadow: navScrolled ? "var(--nav-shadow-scrolled)" : "var(--nav-shadow)" }}
       >
         {/* Left: Back button (on subpages) OR Small Inflixo Logo (no tagline) */}
@@ -463,9 +463,10 @@ export function ProfileHeader({
             onClick={onShareClick}
             title="Share profile"
             aria-label="Share profile"
-            className="tap-scale flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-[5px] bg-transparent hover:bg-(--accent-soft) text-(--icon) transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
+            className="tap-scale relative inline-flex h-9 min-w-9 items-center justify-center gap-1.5 rounded-[8px] border border-(--surface-border) bg-[color-mix(in_srgb,var(--accent)_8%,transparent)] px-0 text-(--accent) transition-colors cursor-pointer hover:bg-[color-mix(in_srgb,var(--accent)_14%,transparent)] focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden after:absolute after:-inset-1 after:content-[''] min-[360px]:px-3"
           >
-            <Share2 className="h-4 w-4 shrink-0" />
+            <Share2 className="h-[18px] w-[18px] shrink-0" />
+            <span className="hidden text-[13px] font-semibold min-[360px]:inline">Share</span>
           </button>
         </div>
       </div>

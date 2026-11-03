@@ -228,6 +228,7 @@ const SOURCE_COLORS: Record<string, string> = {
   Instagram: "#E1306C",
   YouTube: "#FF0000",
   WhatsApp: "#25D366",
+  "Shared link": "#0EA5E9",
   Direct: "#7A2253",
   Other: "#A1A1AA",
 };

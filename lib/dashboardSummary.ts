@@ -21,7 +21,7 @@ export const DASHBOARD_METRICS = {
 } as const;
 export type DashboardMetricKey = keyof typeof DASHBOARD_METRICS;
 
-export type TrafficSource = "Instagram" | "YouTube" | "WhatsApp" | "Direct" | "Other";
+export type TrafficSource = "Instagram" | "YouTube" | "WhatsApp" | "Shared link" | "Direct" | "Other";
 
 export interface DashboardMetric {
   /** Last 7 days incl. today. */
@@ -67,6 +67,7 @@ interface DayRow extends RowDataPacket {
 }
 interface RefRow extends RowDataPacket {
   ref: string | null;
+  via: string | null;
   ig: number;
   n: number;
 }
@@ -106,10 +107,11 @@ export async function buildDashboardSummary(creatorId: string): Promise<Dashboar
     ),
     db.query<RefRow[]>(
       `SELECT JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.referrer')) AS ref,
+              JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.via')) AS via,
               (user_agent LIKE '%Instagram%') AS ig, COUNT(*) AS n
        FROM analytics_events
        WHERE creator_id = ? AND event_type = 'profile_view' AND created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
-       GROUP BY ref, ig`,
+       GROUP BY ref, via, ig`,
       [creatorId],
     ),
     db.query<RowDataPacket[]>(
@@ -150,7 +152,9 @@ export async function buildDashboardSummary(creatorId: string): Promise<Dashboar
 
   const sourceCounts = new Map<TrafficSource, number>();
   for (const row of refs) {
-    const source = classifyReferrer(row.ref, Number(row.ig) === 1);
+    // Known referrers (Instagram, WhatsApp…) win; otherwise a ?ref=share visit counts as "Shared link".
+    let source = classifyReferrer(row.ref, Number(row.ig) === 1);
+    if (row.via === "share" && (source === "Direct" || source === "Other")) source = "Shared link";
     sourceCounts.set(source, (sourceCounts.get(source) ?? 0) + (Number(row.n) || 0));
   }
   const sources = [...sourceCounts.entries()]
