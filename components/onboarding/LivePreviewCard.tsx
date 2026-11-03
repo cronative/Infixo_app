@@ -154,7 +154,7 @@ import {
 } from "@/lib/creatorEra";
 import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
 import { CreatorEraBottomSheet } from "@/components/shared/CreatorEraBottomSheet";
-import { EraAwardMedal } from "@/components/shared/EraBadge";
+import { AboutMeBlock, FanbaseByPlatform, SocialAccountsBlock } from "@/components/public/about/AboutSections";
 
 
 function formatIndianPackagePrice(pkg: MediaKitPackage): string {
@@ -1569,6 +1569,7 @@ export function LivePreviewCard({
 
   const cleanHandle = (profile.username || "").replace(/^@/, "");
   const formattedCategories = formatCategoryDots(profile.category, profile.customCategory);
+  const aboutColors = { primary: c.primaryText, secondary: c.secondaryText, muted: c.mutedText, headingFont: typ.headingFontFamily };
   const headerSocialList = activeSocialList.filter((s) => s.hasAccount || s.count > 0 || (s.url && s.url !== "#"));
   const activeTeamMembers = teamData.team?.isActive === false
     ? []
@@ -2133,41 +2134,10 @@ export function LivePreviewCard({
             )}
 
             <div className="space-y-2">
-              {/* 1. About Me Card */}
-              {profile.bio && profile.bio.trim() && (
-                <div
-                  style={{
-                    backgroundColor: "transparent",
-                    borderColor: "var(--surface-border)",
-                  }}
-                  className="rounded-[5px] border overflow-hidden text-left shadow-none"
-                >
-                  {/* Compact theme-tinted header (shown in tabs layout to avoid duplicate header in premium) */}
-                  {!isPremiumLayout && (
-                    <div
-                      style={{
-                        backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
-                        borderColor: "var(--surface-border)",
-                      }}
-                      className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b"
-                    >
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-(--accent-text) shrink-0" />
-                        <h2
-                          style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                          className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
-                        >
-                          About Me
-                        </h2>
-                      </div>
-                      <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
-                        A little about me and what I love creating.
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Bio Editorial Text */}
-                  <div className="p-3 sm:p-3.5">
+              {/* 1. About me: bio + location + languages + content tags (hidden on public when no bio) */}
+              <AboutMeBlock
+                bio={
+                  profile.bio?.trim() ? (
                     <ExpandableText
                       text={profile.bio}
                       style={{ color: c.primaryText }}
@@ -2175,115 +2145,25 @@ export function LivePreviewCard({
                       buttonStyle={{ color: c.accentText || c.primaryText }}
                       buttonClassName="mt-1 inline-flex items-center gap-0.5 text-[11px] font-bold hover:underline cursor-pointer select-none"
                     />
-                  </div>
-                </div>
-              )}
+                  ) : null
+                }
+                location={[profile.city, profile.state, profile.country].map((v) => (v || "").trim()).filter(Boolean).join(", ") || null}
+                languages={(Array.isArray(mediaKitSettings?.contentLanguages)
+                  ? mediaKitSettings.contentLanguages
+                  : String(mediaKitSettings?.contentLanguages || "").split(",")
+                ).map((l) => String(l).trim()).filter(Boolean)}
+                tags={formattedCategories ? formattedCategories.split(" · ") : []}
+                ownerPreview={isDashboardPreview}
+                showHeader={!isPremiumLayout}
+                colors={aboutColors}
+              />
 
-              {/* 2. Total Fanbase Card */}
-              {effectiveVisibilitySettings.showFanbase !== false && (totalAudience > 0 || (effectiveFanbase ?? 0) > 0 || fanbaseSocialCards.length > 0) && (
-                <div
-                  style={{
-                    backgroundColor: "transparent",
-                    borderColor: "var(--surface-border)",
-                  }}
-                  className="rounded-[5px] border overflow-hidden text-left shadow-none"
-                >
-                  {/* Compact theme-tinted header */}
-                  <div
-                    style={{
-                      backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
-                      borderColor: "var(--surface-border)",
-                    }}
-                    className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-(--accent-text) shrink-0" />
-                        <h2
-                          style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                          className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
-                        >
-                          Total Fanbase
-                        </h2>
-                      </div>
-                      <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
-                        My creator journey across platforms.
-                      </p>
-                    </div>
-                    <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
-                      {(() => {
-                        const count = aboutSocialCards.length || fanbaseSocialCards.length || 3;
-                        return `${count} ${count === 1 ? "platform" : "platforms"}`;
-                      })()}
-                    </span>
-                  </div>
-
-                  {/* Body: Two Columns (Creator Era | Total Fans) */}
-                  <div className="flex items-center justify-between">
-                    {/* Left Column: Creator Era */}
-                    {(() => {
-                      const stage = creatorEra?.badge?.includes("Silver")
-                        ? "Silver"
-                        : creatorEra?.badge?.includes("Gold")
-                        ? "Gold"
-                        : "Bronze";
-                      const medalColor = stage === "Gold" ? "#D4A017" : stage === "Silver" ? "#8E9AA7" : "#C27838";
-
-                      return (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (isInformationalMode) {
-                              showToast("Creator Era reflects total cross-platform audience ✨");
-                            } else {
-                              setBentoEraSheetOpen(true);
-                            }
-                          }}
-                          className="flex items-center gap-2.5 min-w-0 flex-1 text-left cursor-pointer group/era px-3.5 py-2.5 sm:px-4 sm:py-3"
-                        >
-                          {creatorEra ? (
-                            <EraAwardMedal era={creatorEra.era} stage={creatorEra.stage} size={24} className="transition-transform group-hover/era:scale-110" />
-                          ) : (
-                            <Award
-                              className="h-4.5 w-4.5 shrink-0 transition-transform group-hover/era:scale-110"
-                              style={{ color: medalColor }}
-                            />
-                          )}
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-1">
-                              <span
-                                style={{ color: c.primaryText }}
-                                className="text-[13px] font-medium leading-[18px] truncate group-hover/era:underline text-(--text)"
-                              >
-                                {creatorEra?.badge || "Creator Era"}
-                              </span>
-                              <Info className="h-3 w-3 text-(--text-muted) shrink-0" />
-                            </div>
-                            <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[17px] text-(--text-muted) mt-0.5">
-                              Creator Era
-                            </p>
-                          </div>
-                        </button>
-                      );
-                    })()}
-
-                    {/* Full-height vertical divider */}
-                    <div style={{ backgroundColor: "var(--surface-border)" }} className="self-stretch w-px shrink-0" aria-hidden="true" />
-
-                    {/* Right Column: Total Fans */}
-                    <div className="text-right shrink-0 min-w-[85px] sm:min-w-[95px] px-3.5 py-2.5 sm:px-4 sm:py-3 flex flex-col justify-center">
-                      <div
-                        style={{ color: c.primaryText }}
-                        className="text-[15px] sm:text-base font-semibold tabular-nums tracking-tight leading-[21px] text-(--text)"
-                      >
-                        {formatFans(totalAudience > 0 ? totalAudience : (effectiveFanbase ?? 0))}
-                      </div>
-                      <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[17px] text-(--text-muted) mt-0.5">
-                        Total Fans
-                      </p>
-                    </div>
-                  </div>
-                </div>
+              {/* 2. Fanbase by platform (primary accounts) — replaces the duplicate Era/Fans card */}
+              {effectiveVisibilitySettings.showFanbase !== false && (
+                <FanbaseByPlatform
+                  items={fanbaseSocialCards.map((s) => ({ platform: s.platform, label: s.label, count: Number(s.count) || 0 }))}
+                  colors={aboutColors}
+                />
               )}
             </div>
           </div>
@@ -2373,14 +2253,13 @@ export function LivePreviewCard({
                 {!isPremiumLayout && (
                   <div
                     style={{
-                      backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
+                      backgroundColor: "transparent",
                       borderColor: "var(--surface-border)",
                     }}
                     className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between gap-2"
                   >
                     <div>
                       <div className="flex items-center gap-2">
-                        <Laptop className="h-4 w-4 text-(--accent-text) shrink-0" />
                         <h2
                           style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
                           className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
@@ -2477,163 +2356,19 @@ export function LivePreviewCard({
                 headingFontFamily={typ.headingFontFamily}
               />
             )}
-            <div
-              style={{
-                backgroundColor: "transparent",
-                borderColor: "var(--surface-border)",
+            <SocialAccountsBlock
+              groups={groupedSocials.map((g) => ({ groupTitle: g.groupTitle, items: g.items }))}
+              total={aboutSocialCards.length}
+              colors={aboutColors}
+              showHeader={!isPremiumLayout}
+              onLinkClick={(item) => {
+                if (isInformationalMode) {
+                  showToast(`Redirects to ${item.label || item.platform} on live profile ✨`);
+                  return false;
+                }
+                return true;
               }}
-              className="rounded-[5px] border overflow-hidden text-left shadow-none"
-            >
-              {/* Compact theme-tinted header (shown in tabs layout to avoid duplicate header in premium) */}
-              {!isPremiumLayout && (
-                <div
-                  style={{
-                    backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
-                    borderColor: "var(--surface-border)",
-                  }}
-                  className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
-                >
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <Share2 className="h-4 w-4 text-(--accent-text) shrink-0" />
-                      <h2
-                        style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                        className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
-                      >
-                        Social Accounts
-                      </h2>
-                    </div>
-                    <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
-                      Follow along and stay connected with me.
-                    </p>
-                  </div>
-                  <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
-                    {aboutSocialCards.length} connected
-                  </span>
-                </div>
-              )}
-
-              {/* Body: Grouped or Individual horizontal cards with 5px radius and ~8px gap */}
-              <div className="p-2 sm:p-2.5 space-y-3">
-                {groupedSocials.map((group, gIdx) => (
-                  <div key={group.groupTitle || `group-${gIdx}`} className="space-y-1.5">
-                    {group.groupTitle && (
-                      <div className="flex items-center justify-between px-1 pt-1 pb-0.5">
-                        <span
-                          style={{ color: c.secondaryText, fontFamily: typ.headingFontFamily }}
-                          className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-(--text-secondary)"
-                        >
-                          {group.groupTitle}
-                        </span>
-                        <span style={{ color: c.mutedText }} className="text-[10.5px] font-normal text-(--text-muted)">
-                          {group.items.length} {group.items.length === 1 ? "account" : "accounts"}
-                        </span>
-                      </div>
-                    )}
-                    <div className="space-y-2">
-                      {group.items.map((item: any, idx: number) => {
-                        const rawHandle = (item.handle || item.name || item.label).replace(/^@/, "");
-                        const isServiceOnly = item.platform === "spotify" && rawHandle.toLowerCase() === "spotify";
-                        const displayHandle = isServiceOnly ? "Spotify Artist" : `@${rawHandle}`;
-
-                        const isYoutube = item.platform === "youtube";
-                        const isInstagram = item.platform === "instagram";
-                        const isFacebook = item.platform === "facebook";
-                        // Only primary accounts of YouTube, Instagram, and Facebook fetch/show counts
-                        const isPrimaryAccount = Boolean(item.isPrimary && (isYoutube || isInstagram || isFacebook));
-                        const countFormatted = isPrimaryAccount && item.count > 0 ? formatCount(item.count) : null;
-
-                        return (
-                          <a
-                            key={item.id ? `soc-${item.id}` : `${item.platform}-${item.handle || item.name}-${idx}`}
-                            href={item.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => {
-                              if (isInformationalMode) {
-                                e.preventDefault();
-                                showToast(`Redirects to ${item.label} on live profile ✨`);
-                              }
-                            }}
-                            style={{
-                              backgroundColor: "transparent",
-                              borderColor: "var(--surface-border)",
-                            }}
-                            className="rounded-[5px] border p-2.5 sm:p-3 flex items-center justify-between gap-2.5 transition-colors hover:border-(--surface-border)/40 cursor-pointer text-left group"
-                            title={`Open ${item.label} (${displayHandle})`}
-                          >
-                            <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                              <div
-                                style={{
-                                  backgroundColor: "color-mix(in srgb, var(--accent) 8%, var(--surface))",
-                                  borderColor: "var(--surface-border)",
-                                }}
-                                className="h-9 w-9 rounded-[5px] border flex items-center justify-center shrink-0 text-(--accent-text)"
-                              >
-                                {isInstagram && <InstagramOutlineIcon className="h-4.5 w-4.5" />}
-                                {isYoutube && <YoutubeOutlineIcon className="h-4.5 w-4.5" />}
-                                {isFacebook && <FacebookOutlineIcon className="h-4.5 w-4.5" />}
-                                {item.platform === "twitter" && <XTwitterIcon className="h-4 w-4" />}
-                                {item.platform === "linkedin" && <LinkedinIcon className="h-4 w-4" />}
-                                {item.platform === "threads" && <ThreadsIcon className="h-4 w-4" />}
-                                {item.platform === "snapchat" && <SnapchatIcon className="h-4 w-4" />}
-                                {item.platform === "spotify" && <SpotifyIcon className="h-4 w-4" />}
-                                {item.platform === "twitch" && <TwitchIcon className="h-4 w-4" />}
-                                {item.platform === "pinterest" && <PinterestIcon className="h-4 w-4" />}
-                                {!["instagram", "youtube", "facebook", "twitter", "linkedin", "threads", "snapchat", "spotify", "twitch", "pinterest"].includes(item.platform) && (
-                                  <Globe className="h-4 w-4 text-[#71717A]" />
-                                )}
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-1.5 min-w-0">
-                                  <span style={{ color: c.primaryText }} className="text-[13px] font-medium leading-[18px] truncate group-hover:text-(--accent-text) transition-colors text-(--text)">
-                                    {displayHandle}
-                                  </span>
-                                  {isPrimaryAccount ? (
-                                    <span
-                                      style={{
-                                        backgroundColor: "color-mix(in srgb, var(--accent) 12%, transparent)",
-                                        color: "var(--accent-text)",
-                                        borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)",
-                                      }}
-                                      className="text-[9px] font-bold px-1.5 py-0.5 border rounded-[3px] shrink-0 uppercase tracking-wider"
-                                    >
-                                      Primary
-                                    </span>
-                                  ) : (isYoutube || isInstagram || isFacebook) ? (
-                                    <span
-                                      style={{
-                                        backgroundColor: "var(--surface)",
-                                        color: c.mutedText,
-                                        borderColor: "var(--surface-border)",
-                                      }}
-                                      className="text-[9px] font-semibold px-1.5 py-0.5 border rounded-[3px] shrink-0 uppercase tracking-wider"
-                                    >
-                                      Secondary
-                                    </span>
-                                  ) : null}
-                                </div>
-                                <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[17px] text-(--text-muted) mt-0.5 truncate">
-                                  {item.platformLabel || item.label}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="shrink-0 flex flex-col items-end justify-between self-stretch text-right min-h-[34px]">
-                              <ExternalLink className="h-3 w-3 text-(--text-muted) group-hover:text-(--text) transition-colors" />
-                              {countFormatted && (
-                                <span style={{ color: c.mutedText }} className="text-[10px] font-normal lowercase">
-                                  {countFormatted} {item.unit ? item.unit.toLowerCase() : isYoutube ? "subscribers" : "followers"}
-                                </span>
-                              )}
-                            </div>
-                          </a>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            />
           </div>
         )}
 
@@ -3215,14 +2950,13 @@ export function LivePreviewCard({
               {!isPremiumLayout && (
                 <div
                   style={{
-                    backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
+                    backgroundColor: "transparent",
                     borderColor: "var(--surface-border)",
                   }}
                   className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between gap-2"
                 >
                   <div>
                     <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-(--accent-text) shrink-0" />
                       <h2
                         style={{
                           color: c.primaryText,

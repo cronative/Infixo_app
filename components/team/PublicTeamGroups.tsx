@@ -54,6 +54,8 @@ export function PublicTeamGroups({
   }
 
   const isEditorial = variant === "mediakit";
+  // Profile: with more than 2 members, cards scroll sideways on mobile instead of stacking.
+  const scrollOnMobile = !isEditorial && activeMembers.length > 2;
 
   return (
     <div className="space-y-4 w-full text-left">
@@ -82,6 +84,8 @@ export function PublicTeamGroups({
             className={
               isEditorial
                 ? "flex flex-col space-y-2.5 w-full"
+                : scrollOnMobile
+                ? "-mx-3 flex snap-x snap-mandatory gap-2 overflow-x-auto px-3 pb-1 sm:mx-0 sm:block sm:space-y-2 sm:overflow-visible sm:px-0 sm:pb-0 [scrollbar-width:none]"
                 : "space-y-2"
             }
           >
@@ -120,7 +124,7 @@ export function PublicTeamGroups({
                   }}
                   className={`flex items-start justify-between gap-3 border p-3 sm:p-3.5 transition-colors ${
                     isEditorial ? "rounded-xl" : "rounded-[5px]"
-                  }`}
+                  } ${scrollOnMobile ? "w-[78%] max-w-[300px] shrink-0 snap-start sm:w-auto sm:max-w-none" : ""}`}
                 >
                   {/* Left: Round Photo + Name + Role Chip + One-liner in italics */}
                   <div className="flex items-start gap-3 min-w-0 flex-1">
