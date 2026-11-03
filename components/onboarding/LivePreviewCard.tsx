@@ -151,7 +151,7 @@ import {
 } from "@/lib/creatorEra";
 import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
 import { CreatorEraBottomSheet } from "@/components/shared/CreatorEraBottomSheet";
-import { AboutMeBlock, FanbaseByPlatform, SocialAccountsBlock } from "@/components/public/about/AboutSections";
+import { AboutMeBlock, FanbaseByPlatform, Section, SocialAccountsBlock } from "@/components/public/about/AboutSections";
 import { AudienceSnapshot, CustomCollaboration, WhatBrandsSay, WorkWithMe } from "@/components/public/collab/CollabSections";
 
 
@@ -2452,50 +2452,24 @@ export function LivePreviewCard({
             return (
               <div
                 id="links-section"
-                style={
-                  isPremiumLayout
-                    ? {
-                        backgroundColor: "color-mix(in srgb, var(--accent) 4.5%, var(--surface))",
-                        borderColor: "var(--surface-border)",
-                      }
-                    : undefined
-                }
                 className={`relative z-10 w-full text-left animate-fade-in ${
                   isPremiumLayout
-                    ? "order-[2] mt-5 sm:mt-6 p-3.5 sm:p-4 rounded-[5px] border shadow-xs space-y-2.5"
-                    : linksOnlyMode
-                    ? "order-[5] mt-1.5 sm:mt-2"
-                    : isTabsLayout
+                    ? "order-[2] mt-5 sm:mt-6"
+                    : linksOnlyMode || isTabsLayout
                     ? "order-[5] mt-1.5 sm:mt-2"
                     : "order-[5] mt-6 sm:mt-7"
                 }`}
               >
-                <TabSectionHeader
+                <Section
                   title="Links"
                   subtitle="Recommended links, tickets & websites"
-                  action={
-                    isPremiumLayout ? (
-                      <span
-                        style={{
-                          color: "var(--accent-text)",
-                          backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
-                          borderColor: "var(--surface-border)",
-                        }}
-                        className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
-                      >
-                        {validLinks.length} {validLinks.length === 1 ? "Link" : "Links"}
-                      </span>
-                    ) : undefined
-                  }
-                  primaryTextColor={c.primaryText}
-                  secondaryTextColor={c.secondaryText}
-                  headingFontFamily={typ.headingFontFamily}
-                />
-
-                <div className="space-y-2 w-full">
-                  {/* Pinned Link */}
+                  count={`${validLinks.length} ${validLinks.length === 1 ? "link" : "links"}`}
+                  colors={aboutColors}
+                >
+                  {/* Featured link first (⭐ chip only), then links & folders as divided rows */}
                   {pinnedLink && (
                     <LinkRow
+                      flat
                       link={pinnedLink}
                       isPinned={true}
                       onClick={(e) => {
@@ -2508,8 +2482,6 @@ export function LivePreviewCard({
                       }}
                     />
                   )}
-
-                  {/* Direct Links & Groups */}
                   {(() => {
                     let groupIndex = 0;
                     return displayedRemainingItems.map((item) => {
@@ -2518,6 +2490,7 @@ export function LivePreviewCard({
                         const isExpandedByParam = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("expandGroup") === "1" && curGroupIndex === 0;
                         return (
                           <LinkGroupRow
+                            flat
                             key={item.id}
                             group={item}
                             index={curGroupIndex}
@@ -2535,6 +2508,7 @@ export function LivePreviewCard({
                       }
                       return (
                         <LinkRow
+                          flat
                           key={item.id}
                           link={item}
                           onClick={(e) => {
@@ -2549,11 +2523,7 @@ export function LivePreviewCard({
                       );
                     });
                   })()}
-                </div>
-
-                {/* View All Links button when count > 10 */}
-                {hasMoreLinks && (
-                  <div className="pt-2 text-center">
+                  {hasMoreLinks && (
                     <button
                       type="button"
                       onClick={() => {
@@ -2563,13 +2533,13 @@ export function LivePreviewCard({
                         }
                         router.push(allLinksHref || `/${cleanHandle || "creator"}/links`);
                       }}
-                      className="tap-scale w-full py-2.5 px-4 rounded-[5px] bg-(--surface) hover:bg-(--surface-border) text-(--text) border border-(--surface-border)/80 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center shadow-none"
+                      className="flex h-11 w-full items-center justify-center gap-1.5 text-xs sm:text-[13px] font-semibold text-(--accent-text) hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)] transition-colors cursor-pointer"
                     >
                       <span>{`View all links (${validLinks.length})`}</span>
                       <ArrowRight className="h-3.5 w-3.5 shrink-0" />
                     </button>
-                  </div>
-                )}
+                  )}
+                </Section>
               </div>
             );
           })()
@@ -2579,14 +2549,15 @@ export function LivePreviewCard({
         {/* 1. Series Section */}
         {(seriesOnlyMode || (!isListingPage && (isPremiumLayout || !isTabsLayout || activeNavTab === "watch" || activeNavTab === "series"))) && effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || seriesOnlyMode || isDashboardPreview) && (
           <div id="series-section" className={`relative z-10 w-full text-left ${isPremiumLayout ? "order-[1] mt-4 sm:mt-5 space-y-2.5" : seriesOnlyMode ? "order-[10] mt-1.5 sm:mt-2 pb-4" : isTabsLayout ? `order-[10] mt-1.5 sm:mt-2 ${isDashboardPreview ? "pb-2" : "pb-12"}` : `order-[10] mt-6 sm:mt-7 space-y-2.5 ${isDashboardPreview ? "pb-2" : "pb-12"}`}`}>
-            <TabSectionHeader
+            <Section
               title={isPremiumLayout ? "Series & Playlists" : "Series"}
               subtitle={landingDemo ? "Start from Episode 1." : "Watch episodes in the right order."}
-              primaryTextColor={c.primaryText}
-              secondaryTextColor={c.secondaryText}
-              headingFontFamily={typ.headingFontFamily}
-              action={
-                availableSeriesPlatforms.length > 0 ? (
+              count={`${series.length} series`}
+              colors={aboutColors}
+              divided={false}
+            >
+            {availableSeriesPlatforms.length > 0 && (
+              <div className="border-b border-(--surface-border) px-3 py-2 sm:px-3.5">
                   <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar py-0.5">
                     {["All", ...availableSeriesPlatforms].map((plat) => {
                       const isActive = seriesFilter.toLowerCase() === plat.toLowerCase();
@@ -2606,9 +2577,9 @@ export function LivePreviewCard({
                       );
                     })}
                   </div>
-                ) : undefined
-              }
-            />
+                
+              </div>
+            )}
 
             {series.length === 0 ? (
               <div
@@ -2616,7 +2587,7 @@ export function LivePreviewCard({
                   backgroundColor: c.elevatedBackground,
                   borderColor: c.border,
                 }}
-                className="rounded-2xl border p-4 text-center space-y-1"
+                className="m-3 rounded-[5px] border p-4 text-center space-y-1"
               >
                 <p
                   style={{ color: c.primaryText }}
@@ -2632,7 +2603,7 @@ export function LivePreviewCard({
                 </p>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-3 p-3">
                 {(() => {
                   const filtered = displayedSeries.filter((s) => {
                     if (seriesFilter.toLowerCase() === "all") return true;
@@ -2710,7 +2681,7 @@ export function LivePreviewCard({
             )}
 
             {!seriesOnlyMode && allSeriesHref && series.length > displayedSeries.length && (
-              <div className="pt-2 text-center">
+              <div className="border-t border-(--surface-border)">
                 <button
                   type="button"
                   onPointerEnter={() => {
@@ -2725,13 +2696,14 @@ export function LivePreviewCard({
                     }
                     router.push(allSeriesHref);
                   }}
-                  className="tap-scale w-full py-2.5 px-4 rounded-[5px] bg-(--surface) hover:bg-(--surface-border) text-(--text) border border-(--surface-border)/80 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center shadow-none"
+                  className="flex h-11 w-full items-center justify-center gap-1.5 text-xs sm:text-[13px] font-semibold text-(--accent-text) hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)] transition-colors cursor-pointer"
                 >
                   <span>{`View all series (${series.length})`}</span>
                   <ArrowRight className="h-3.5 w-3.5 shrink-0" />
                 </button>
               </div>
             )}
+            </Section>
           </div>
         )}
 
@@ -2739,34 +2711,16 @@ export function LivePreviewCard({
         {/* 3. Products Section */}
         {((productsOnlyMode || (!isListingPage && (isPremiumLayout || !isTabsLayout || activeNavTab === "shop"))) && ((products && products.length > 0) || productsOnlyMode || isDashboardPreview)) && (
           <section id="shop-section" aria-label="Shop" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[3] mt-5 sm:mt-6 space-y-3" : productsOnlyMode ? "order-[15] mt-1.5 sm:mt-2" : isTabsLayout ? "order-[15] mt-1.5 sm:mt-2" : "order-[15] mt-6 sm:mt-7 space-y-2.5"}`}>
-            {landingDemo && (
-              <h3
-                style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                className="px-0.5 pb-2 text-[13.5px] sm:text-sm font-bold"
-              >
-                Digital products
-              </h3>
-            )}
-            {!landingDemo && (
-              <TabSectionHeader
-                title={isPremiumLayout ? "Products" : "Shop"}
-                subtitle="Products I use and recommend."
-                primaryTextColor={c.primaryText}
-                secondaryTextColor={c.secondaryText}
-                headingFontFamily={typ.headingFontFamily}
-                action={
-                  isPremiumLayout && products && products.length > 0 ? (
-                    <span
-                      style={{
-                        color: "var(--accent-text)",
-                        backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
-                        borderColor: "var(--surface-border)",
-                      }}
-                      className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
-                    >
-                      {products.length} {products.length === 1 ? "Product" : "Products"}
-                    </span>
-                  ) : products && products.length > 8 ? (
+            <Section
+              title={landingDemo ? "Digital products" : isPremiumLayout ? "Products" : "Shop"}
+              subtitle="Products I use and recommend."
+              count={products && products.length > 0 ? `${products.length} ${products.length === 1 ? "product" : "products"}` : undefined}
+              colors={aboutColors}
+              divided={false}
+            >
+            {!isPremiumLayout && !landingDemo && products && products.length > 8 && (
+              <div className="flex justify-end border-b border-(--surface-border) px-3 py-2 sm:px-3.5">
+
                     <div className="relative">
                       <button
                         type="button"
@@ -2805,9 +2759,7 @@ export function LivePreviewCard({
                         </div>
                       )}
                     </div>
-                  ) : undefined
-                }
-              />
+              </div>
             )}
 
             {products.length === 0 ? (
@@ -2816,7 +2768,7 @@ export function LivePreviewCard({
                   backgroundColor: c.elevatedBackground,
                   borderColor: c.border,
                 }}
-                className="rounded-[5px] border p-3.5 sm:p-4 text-center space-y-0.5 shadow-none"
+                className="m-3 rounded-[5px] border p-3.5 sm:p-4 text-center space-y-0.5 shadow-none"
               >
                 <p style={{ color: c.primaryText }} className="text-xs sm:text-sm font-semibold">
                   No products yet
@@ -2826,6 +2778,7 @@ export function LivePreviewCard({
                 </p>
               </div>
             ) : (
+              <div className="p-3">
               <ProductGrid>
                 {(isPremiumLayout ? sortedProducts.slice(0, 3) : (isProductsExpanded || productsOnlyMode ? sortedProducts : sortedProducts.slice(0, 6))).map((product: CreatorProduct, idx: number) => (
                   <ProductGridCard
@@ -2850,10 +2803,11 @@ export function LivePreviewCard({
                   />
                 ))}
               </ProductGrid>
+              </div>
             )}
 
             {isPremiumLayout && sortedProducts.length > 3 && (
-              <div className="pt-2.5 w-full text-center">
+              <div className="border-t border-(--surface-border)">
                 <button
                   type="button"
                   onClick={() => {
@@ -2863,7 +2817,7 @@ export function LivePreviewCard({
                     }
                     router.push(allProductsHref || `/${cleanHandle || "creator"}/products`);
                   }}
-                  className="w-full py-2.5 px-4 rounded-[5px] bg-(--surface) hover:bg-(--surface-border) text-(--text) border border-(--surface-border)/80 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center shadow-none"
+                  className="flex h-11 w-full items-center justify-center gap-1.5 text-xs sm:text-[13px] font-semibold text-(--accent-text) hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)] transition-colors cursor-pointer"
                 >
                   <span>{`View all products (${sortedProducts.length})`}</span>
                   <ArrowRight className="h-3.5 w-3.5 shrink-0 text-(--icon)" />
@@ -2872,11 +2826,11 @@ export function LivePreviewCard({
             )}
 
             {!isPremiumLayout && !productsOnlyMode && sortedProducts.length > 6 && (
-              <div className="pt-2.5 w-full text-center">
+              <div className="border-t border-(--surface-border)">
                 <button
                   type="button"
                   onClick={() => setIsProductsExpanded(!isProductsExpanded)}
-                  className="w-full py-2.5 px-4 rounded-[5px] bg-(--surface) hover:bg-(--surface-border) text-(--text) border border-(--surface-border)/80 text-xs sm:text-[13px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center shadow-none"
+                  className="flex h-11 w-full items-center justify-center gap-1.5 text-xs sm:text-[13px] font-semibold text-(--accent-text) hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)] transition-colors cursor-pointer"
                 >
                   <span>{isProductsExpanded ? "Show Less Products" : `View All Products (${sortedProducts.length})`}</span>
                   {isProductsExpanded ? <ChevronUp className="h-3.5 w-3.5 shrink-0 text-(--icon)" /> : <ChevronDown className="h-3.5 w-3.5 shrink-0 text-(--icon)" />}
@@ -2886,10 +2840,11 @@ export function LivePreviewCard({
 
             {/* Affiliate Disclaimer: inside content at bottom, ONLY IF at least one product has is_affiliate = true */}
             {products && products.some((p) => p.isAffiliate) && (
-              <p className="text-center text-[10px] sm:text-[10.5px] pt-3 pb-1 opacity-70" style={{ color: c.mutedText }}>
+              <p className="border-t border-(--surface-border) px-3 py-2 text-center text-[10px] sm:text-[10.5px] opacity-70" style={{ color: c.mutedText }}>
                 Some links are affiliate links.
               </p>
             )}
+            </Section>
           </section>
         )}
 
@@ -3070,7 +3025,12 @@ export function LivePreviewCard({
                   totalFans={totalAudience}
                   topPlatform={topPlatform ? { platform: topPlatform.platform, handle: topPlatform.handle, count: Number(topPlatform.count) || 0, unit: topPlatform.unit } : null}
                   tags={formattedCategories ? formattedCategories.split(" · ") : []}
-                  mediaKitHref={cleanHandle && cleanHandle !== "demo_creator" ? `/${cleanHandle}/mediakit` : undefined}
+                  // Public media kit only (never a dashboard link); hidden when the creator has none.
+                  mediaKitHref={
+                    cleanHandle && cleanHandle !== "demo_creator" && (activePackages.length > 0 || hasMediaKitV2Story)
+                      ? `/${cleanHandle}/media-kit`
+                      : undefined
+                  }
                   onMediaKitClick={(e) => {
                     if (isInformationalMode) {
                       e.preventDefault();
@@ -3265,7 +3225,7 @@ export function LivePreviewCard({
             boxShadow: eff.shadow,
             ["--mt-lift" as string]: `${moveTopLift}px`,
           }}
-          className="tap-scale fixed bottom-[calc(1.5rem+var(--mt-lift,0px))] right-5 sm:bottom-[calc(5rem+var(--mt-lift,0px))] sm:right-6 z-40 inline-flex h-11 w-11 sm:h-11 sm:w-11 items-center justify-center rounded-[5px] shadow-lg transition-all hover:scale-110 cursor-pointer"
+          className="tap-scale fixed bottom-[calc(5rem+env(safe-area-inset-bottom)+var(--mt-lift,0px))] right-3 sm:bottom-[calc(5rem+var(--mt-lift,0px))] sm:right-[max(1rem,calc((100vw-580px)/2-3.75rem))] z-40 inline-flex h-10 w-10 sm:h-11 sm:w-11 opacity-90 hover:opacity-100 items-center justify-center rounded-[5px] shadow-lg transition-all hover:scale-110 cursor-pointer"
           aria-label="Scroll to top"
           title="Scroll to top"
         >

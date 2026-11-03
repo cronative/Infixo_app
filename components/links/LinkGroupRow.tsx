@@ -16,6 +16,8 @@ export interface LinkGroupRowProps {
   index?: number;
   initiallyOpen?: boolean;
   onLinkClick?: (link: CustomLinkItem) => void;
+  /** Divided-row style inside a Section container (no own border; children indented). */
+  flat?: boolean;
   className?: string;
 }
 
@@ -24,6 +26,7 @@ export function LinkGroupRow({
   index = 0,
   initiallyOpen = false,
   onLinkClick,
+  flat = false,
   className = "",
 }: LinkGroupRowProps) {
   const [isOpen, setIsOpen] = useState(initiallyOpen);
@@ -126,19 +129,19 @@ export function LinkGroupRow({
 
   return (
     <div
-      className={`rounded-[5px] border border-(--surface-border) overflow-hidden transition-all duration-200 shadow-none bg-transparent ${className}`}
+      className={`${flat ? "" : "rounded-[5px] border border-(--surface-border)"} overflow-hidden transition-all duration-200 shadow-none bg-transparent ${className}`}
     >
       {/* Group Trigger Button (~48px height) */}
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
-        className={`w-full min-h-[48px] h-[48px] px-3.5 py-2 flex items-center justify-between gap-3 text-left cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 ${themeConfig.focusRing} focus-visible:ring-offset-1 select-none ${themeConfig.headerBg}`}
+        className={`w-full min-h-[48px] h-[48px] px-3.5 py-2 flex items-center justify-between gap-3 text-left cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 ${themeConfig.focusRing} focus-visible:ring-offset-1 select-none ${flat ? "hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)]" : themeConfig.headerBg}`}
       >
         <div className="flex items-center gap-3 min-w-0 flex-1">
           {/* Folder Icon Tile */}
           <div
-            className={`w-7 h-7 rounded-[4px] shrink-0 flex items-center justify-center shadow-none transition-colors ${themeConfig.folderIcon}`}
+            className={`${flat ? "w-8 h-8" : "w-7 h-7"} rounded-[4px] shrink-0 flex items-center justify-center shadow-none transition-colors ${themeConfig.folderIcon}`}
           >
             <Folder className="h-4 w-4" />
           </div>
@@ -199,6 +202,7 @@ export function LinkGroupRow({
               key={item.id}
               link={item}
               compact
+              className={flat ? "pl-12" : ""}
               onClick={() => onLinkClick?.(item)}
             />
           ))}

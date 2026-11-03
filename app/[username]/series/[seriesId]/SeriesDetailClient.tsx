@@ -39,6 +39,10 @@ import {
 } from "@/components/public/publicTheme";
 import { PlatformThumbnailBox, extractYouTubeVideoId } from "@/components/shared/PlatformThumbnailBox";
 import { resolveThemeKey } from "@/lib/themeKeys";
+import { Section } from "@/components/public/about/AboutSections";
+import { getCreatorEra } from "@/lib/creatorEra";
+import { eraRing, getEraConfig } from "@/lib/eraConfig";
+import { getInitials } from "@/lib/avatar";
 
 function getPlatformInfo(platformStr?: string, urlStr?: string) {
   const p = (platformStr || "").toLowerCase();
@@ -271,6 +275,9 @@ export function SeriesDetailClient({
   const themeKey = resolveThemeKey(creator?.themeKey);
   const pt = getPublicTheme(themeKey);
   const c = pt.colors;
+  const sectionColors = { primary: c.primaryText, secondary: c.secondaryText, muted: c.mutedText };
+  const creatorEra = getCreatorEra(creator?.totalFanbase ?? null);
+  const creatorEraCfg = creatorEra ? getEraConfig(creatorEra.era) : null;
   const usesDarkControls = pt.isDark;
 
   const seasonsList: Season[] = useMemo(() => {
@@ -495,7 +502,7 @@ export function SeriesDetailClient({
         />
       }
     >
-      <PublicCard themeKey={themeKey} className="overflow-hidden">
+      <PublicCard themeKey={themeKey} className="overflow-hidden w-full max-w-[580px] mx-auto">
         {/* Card content container */}
         <div className="flex-1 flex flex-col relative rounded-t-[5px] overflow-hidden">
           {/* Series Hero: Full width with floating controls, center play button, and bottom-left badge */}
@@ -586,7 +593,7 @@ export function SeriesDetailClient({
           {/* Content below hero */}
           <div className="flex flex-col p-4 sm:p-5 space-y-3.5">
             {/* 1. Series Title */}
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-snug">
+            <h1 style={pt.headingStyle} className="text-xl sm:text-2xl font-semibold tracking-tight leading-snug">
               {series.title}
             </h1>
 
@@ -642,32 +649,24 @@ export function SeriesDetailClient({
               </div>
             )}
 
-            {/* 4. Episodes Section */}
-            <div className="space-y-3 pt-1">
-              {/* Episodes Heading */}
-              <div>
-                <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight">
-                  Episodes ({currentEpisodes.length})
-                </h2>
-                {allSamePlatform && (
-                  <p className="text-xs text-slate-500 dark:text-slate-400 font-normal mt-0.5">
-                    Episodes open on {allSamePlatform}
-                  </p>
-                )}
-              </div>
-
-              {/* Seasons Selector if multiple seasons */}
+            {/* 4. Episodes — shared Section (tinted header, connected divided rows) */}
+            <Section
+              title="Episodes"
+              subtitle={allSamePlatform ? `Episodes open on ${allSamePlatform}` : "Watch in order, from Episode 1."}
+              count={`${currentEpisodes.length} ${currentEpisodes.length === 1 ? "episode" : "episodes"}`}
+              colors={sectionColors}
+            >
               {seasonsList.length > 1 && (
-                <div className="-mx-1 flex items-center gap-1.5 overflow-x-auto px-1 pb-1 scrollbar-none">
+                <div className="flex items-center gap-1.5 overflow-x-auto px-3 py-2 scrollbar-none">
                   {seasonsList.map((sn, idx) => (
                     <button
                       key={sn.id || idx}
                       type="button"
                       onClick={() => setActiveSeasonIndex(idx)}
-                      className={`tap-scale inline-flex h-8 shrink-0 cursor-pointer items-center rounded-lg border px-3 transition-all text-xs font-semibold ${
+                      className={`tap-scale inline-flex h-8 shrink-0 cursor-pointer items-center rounded-full border px-3 text-xs font-semibold transition-all ${
                         activeSeasonIndex === idx
-                          ? "bg-[#7A2253] border-[#7A2253] text-white"
-                          : "bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/10"
+                          ? "border-(--accent) bg-(--accent) text-(--on-accent)"
+                          : "border-(--surface-border) bg-transparent text-(--text-muted) hover:text-(--text)"
                       }`}
                     >
                       {sn.title || `Season ${sn.seasonNumber || idx + 1}`} · {sn.episodes?.length || 0}
@@ -675,86 +674,73 @@ export function SeriesDetailClient({
                   ))}
                 </div>
               )}
-
-              {/* Episode Cards (Compact Rows: ~56-60px height, 8px gap) */}
               {currentEpisodes.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-slate-200 dark:border-white/10 p-6 text-center text-xs text-slate-400">
-                  No episodes added to this series yet.
-                </div>
+                <p style={{ color: c.mutedText }} className="px-4 py-6 text-center text-xs">No episodes added to this series yet.</p>
               ) : (
-                <div className="space-y-2">
-                  {currentEpisodes.map((ep: Episode, index: number) => {
-                    const partNum = ep.episodeNumber || index + 1;
-                    const partNumStr = partNum < 10 ? `0${partNum}` : `${partNum}`;
-                    const epTitleStr = ep.title?.trim() || `Episode ${partNum}`;
-                    const cleanTitle = epTitleStr.replace(/^Part\s*0?\d+[:\s-]*/i, "").replace(/^Episode\s*0?\d+[:\s-]*/i, "").trim() || epTitleStr;
-                    const epPlatformName = episodePlatform(ep.externalUrl) || detectedPlatform || "Video";
-
-                    return (
-                      <a
-                        key={ep.id || index}
-                        href={ep.externalUrl || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => trackEpisodeClick(ep)}
-                        aria-label={`Ep ${partNum} · ${cleanTitle}`}
-                        className="group/ep flex items-center justify-between gap-3 px-3.5 py-3 rounded-[5px] border border-slate-200/70 dark:border-white/10 bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-white/[0.04] hover:border-[#7A2253]/30 dark:hover:border-white/20 transition-all text-left cursor-pointer"
-                      >
-                        <span className="text-xs sm:text-[13px] font-semibold text-slate-900 dark:text-white line-clamp-2 break-words group-hover/ep:text-[#7A2253] dark:group-hover/ep:text-rose-400 transition-colors">
-                          Ep {partNum} · {cleanTitle}
-                        </span>
-                        <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover/ep:text-[#7A2253] dark:group-hover/ep:text-rose-400 transition-colors shrink-0" />
-                      </a>
-                    );
-                  })}
-                </div>
+                currentEpisodes.map((ep: Episode, index: number) => {
+                  const partNum = ep.episodeNumber || index + 1;
+                  const epTitleStr = ep.title?.trim() || `Episode ${partNum}`;
+                  const cleanTitle = epTitleStr.replace(/^Part\s*0?\d+[:\s-]*/i, "").replace(/^Episode\s*0?\d+[:\s-]*/i, "").trim() || epTitleStr;
+                  return (
+                    <a
+                      key={ep.id || index}
+                      href={ep.externalUrl || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => trackEpisodeClick(ep)}
+                      aria-label={`Ep ${partNum} · ${cleanTitle}`}
+                      className="group/ep flex min-h-12 items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-[color-mix(in_srgb,var(--accent)_7%,transparent)] sm:px-3.5"
+                    >
+                      <span style={{ color: c.mutedText }} className="w-9 shrink-0 text-xs font-medium tabular-nums">
+                        Ep {partNum}
+                      </span>
+                      <span style={{ color: c.primaryText }} className="min-w-0 flex-1 text-[13px] font-medium leading-[18px] line-clamp-2 break-words">
+                        {cleanTitle}
+                      </span>
+                      <ArrowUpRight style={{ color: c.mutedText }} className="h-4 w-4 shrink-0 transition-colors group-hover/ep:text-(--accent-text)" />
+                    </a>
+                  );
+                })
               )}
-            </div>
+            </Section>
 
-            {/* 5. Bottom Creator Card */}
-            <div className="mt-5 rounded-xl bg-slate-50/80 dark:bg-white/[0.04] border border-slate-200/70 dark:border-white/10 p-3.5 sm:p-4 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="relative h-11 w-11 sm:h-12 sm:w-12 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 shrink-0 border border-slate-200 dark:border-white/10">
-                  {creator?.photoDataUrl ? (
-                    <img src={creator.photoDataUrl} alt={creator.displayName} className="h-full w-full object-cover" />
-                  ) : (
-                    <span className="flex h-full w-full items-center justify-center text-sm font-bold text-slate-600">
-                      {creator?.displayName?.[0] || "C"}
-                    </span>
+            {/* 5. Series by — Section-style row */}
+            <Section title="Series by" colors={sectionColors}>
+              <div className="flex items-center gap-3 px-3 py-3 sm:px-3.5">
+                <span
+                  className="shrink-0 rounded-full p-[2px]"
+                  style={{ background: creatorEraCfg ? eraRing(creatorEraCfg) : "var(--surface-border)" }}
+                >
+                  <span className="block h-11 w-11 overflow-hidden rounded-full border-2 border-(--card-bg) bg-(--surface)">
+                    {creator?.photoDataUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={creator.photoDataUrl} alt={creator.displayName} className="h-full w-full object-cover" />
+                    ) : (
+                      <span className="flex h-full w-full items-center justify-center text-sm font-bold text-(--accent-text)">
+                        {getInitials(creator?.displayName || username)}
+                      </span>
+                    )}
+                  </span>
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p style={{ color: c.primaryText }} className="truncate text-sm font-semibold">{creator?.displayName || username}</p>
+                  <p style={{ color: c.mutedText }} className="truncate text-xs">@{username.replace(/^@/, "")}</p>
+                  {creator?.bio && (
+                    <p style={{ color: c.secondaryText }} className="truncate text-xs">{creator.bio}</p>
                   )}
                 </div>
-                <div className="min-w-0">
-                  <span className="text-[11px] font-medium text-slate-400 block leading-tight">
-                    Series by
-                  </span>
-                  <div className="flex items-center gap-1.5 pt-0.5">
-                    <span className="text-sm font-bold text-slate-900 dark:text-white truncate">
-                      {creator?.displayName || username}
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-400 truncate pt-0.5">
-                    <span>@{username.replace(/^@/, "")}</span>
-                    {creator?.bio && (
-                      <>
-                        <span className="mx-1 text-slate-400">·</span>
-                        <span>{creator.bio}</span>
-                      </>
-                    )}
-                  </p>
-                </div>
+                <a
+                  href={profileUrl}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    router.push(profileUrl);
+                  }}
+                  className="tap-scale inline-flex h-8 shrink-0 items-center rounded-[5px] border border-(--accent) px-3 text-xs font-medium text-(--accent-text) transition-colors hover:bg-(--accent-soft)"
+                >
+                  View profile →
+                </a>
               </div>
-
-              <a
-                href={profileUrl}
-                onClick={(e) => {
-                  e.preventDefault();
-                  router.push(profileUrl);
-                }}
-                className="tap-scale shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-white border border-slate-200/80 dark:border-white/10 text-xs font-bold transition-all cursor-pointer"
-              >
-                <span>View profile →</span>
-              </a>
-            </div>
+            </Section>
           </div>
         </div>
       </PublicCard>

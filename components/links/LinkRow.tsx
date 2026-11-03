@@ -9,6 +9,8 @@ export interface LinkRowProps {
   link: CustomLink | CustomLinkItem;
   isPinned?: boolean;
   compact?: boolean;
+  /** Divided-row style inside a Section container: no own border/radius, Featured is just a chip. */
+  flat?: boolean;
   className?: string;
   onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
@@ -17,6 +19,7 @@ export function LinkRow({
   link,
   isPinned = false,
   compact = false,
+  flat = false,
   className = "",
   onClick,
 }: LinkRowProps) {
@@ -120,8 +123,10 @@ export function LinkRow({
       rel="noopener noreferrer"
       aria-label={`${title} – opens ${ariaDestination}`}
       onClick={onClick}
-      className={`group relative flex items-center justify-between gap-3 min-h-[48px] h-auto min-[400px]:h-[48px] px-3.5 py-2 rounded-[5px] border ${
-        isFeatured ? "border-(--accent) shadow-2xs" : "border-(--surface-border)"
+      className={`group relative flex items-center justify-between gap-3 min-h-[48px] h-auto min-[400px]:h-[48px] px-3.5 py-2 ${
+        flat
+          ? "rounded-none hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)]!"
+          : `rounded-[5px] border ${isFeatured ? "border-(--accent) shadow-2xs" : "border-(--surface-border)"}`
       } bg-transparent text-left transition-all duration-150 ease-out hover:bg-(--surface)/40 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-1 cursor-pointer select-none ${className}`}
     >
       <div className="flex items-center gap-3 min-w-0 flex-1">

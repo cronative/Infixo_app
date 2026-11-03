@@ -110,6 +110,39 @@ export function AboutHeader({ title, subtitle, count, colors }: { title: string;
 
 const CARD = "rounded-[5px] border border-(--surface-border) overflow-hidden text-left";
 
+/**
+ * Shared public-page Section: tinted header (title + subtitle left, count/actions right, 1px divider)
+ * and one connected bordered body. Use `divided` for 1px-divided rows.
+ */
+export function Section({
+  title,
+  subtitle,
+  count,
+  colors,
+  divided = true,
+  bodyClassName = "",
+  children,
+  id,
+  className = "",
+}: {
+  title: string;
+  subtitle?: string;
+  count?: ReactNode;
+  colors: AboutColors;
+  divided?: boolean;
+  bodyClassName?: string;
+  children: ReactNode;
+  id?: string;
+  className?: string;
+}) {
+  return (
+    <section id={id} className={`${CARD} ${className}`}>
+      <AboutHeader title={title} subtitle={subtitle} count={count} colors={colors} />
+      <div className={`${divided ? "divide-y divide-(--surface-border)" : ""} ${bodyClassName}`}>{children}</div>
+    </section>
+  );
+}
+
 // ── 1. About me ───────────────────────────────────────────────
 
 export function AboutMeBlock({
