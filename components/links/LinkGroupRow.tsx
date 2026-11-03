@@ -132,7 +132,7 @@ export function LinkGroupRow({
       className={`${
         flat
           ? isOpen
-            ? "m-2 rounded-[6px] border border-[color-mix(in_srgb,var(--accent)_30%,var(--surface-border))]"
+            ? "border-l-[3px] border-l-[color-mix(in_srgb,var(--accent)_55%,transparent)]"
             : ""
           : "rounded-[5px] border border-(--surface-border)"
       } overflow-hidden transition-all duration-200 shadow-none bg-transparent ${className}`}
