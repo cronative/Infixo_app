@@ -1428,45 +1428,35 @@ export function LivePreviewCard({
     return fanbaseSocialCards;
   }, [allSocialAccountsList, passedAllSocialAccounts, fanbaseSocialCards]);
 
+  // "Find me elsewhere": everything except the primary Instagram/YouTube/Facebook accounts,
+  // which already appear in "Fanbase by platform". (The fallback list only holds primaries.)
+  const extraSocialCards = useMemo(
+    () =>
+      aboutSocialCards.filter((card: any) => {
+        const isMain = PRIMARY_SOCIAL_PLATFORMS.has((card.platform || "").toLowerCase());
+        const isPrimary = card.isPrimary === undefined ? isMain : Boolean(card.isPrimary);
+        return !(isMain && isPrimary);
+      }),
+    [aboutSocialCards, PRIMARY_SOCIAL_PLATFORMS]
+  );
+
   const groupedSocials = useMemo(() => {
-    const platformCounts: Record<string, number> = {};
-    aboutSocialCards.forEach((c: any) => {
-      const p = (c.platform || "other").toLowerCase();
-      platformCounts[p] = (platformCounts[p] || 0) + 1;
-    });
-
-    const hasMultiAccount = Object.values(platformCounts).some((count) => count > 1);
-    if (!hasMultiAccount) {
-      return [{ groupTitle: null, platform: "all", items: aboutSocialCards }];
-    }
-
     const platformOrder = ["instagram", "youtube", "facebook"];
-    const groups: Array<{ groupTitle: string; platform: string; items: any[] }> = [];
-
+    const titles: Record<string, string> = {
+      instagram: "More on Instagram",
+      youtube: "More on YouTube",
+      facebook: "More on Facebook",
+    };
+    const groups: Array<{ groupTitle: string | null; platform: string; items: any[] }> = [];
     platformOrder.forEach((plat) => {
-      const items = aboutSocialCards.filter((c: any) => (c.platform || "").toLowerCase() === plat);
-      if (items.length > 0) {
-        const title =
-          plat === "instagram"
-            ? "Instagram Accounts"
-            : plat === "youtube"
-            ? "YouTube Channels"
-            : plat === "facebook"
-            ? "Facebook Pages"
-            : `${plat.charAt(0).toUpperCase() + plat.slice(1)} Accounts`;
-        groups.push({ groupTitle: title, platform: plat, items });
-      }
+      const items = extraSocialCards.filter((c: any) => (c.platform || "").toLowerCase() === plat);
+      if (items.length > 0) groups.push({ groupTitle: titles[plat], platform: plat, items });
     });
-
-    const otherItems = aboutSocialCards.filter(
-      (c: any) => !platformOrder.includes((c.platform || "").toLowerCase())
-    );
-    if (otherItems.length > 0) {
-      groups.push({ groupTitle: "Other Connected Profiles", platform: "other", items: otherItems });
-    }
-
-    return groups;
-  }, [aboutSocialCards]);
+    const otherItems = extraSocialCards.filter((c: any) => !platformOrder.includes((c.platform || "").toLowerCase()));
+    if (otherItems.length > 0) groups.push({ groupTitle: "Also find me on", platform: "other", items: otherItems });
+    // A single group needs no sub-heading.
+    return groups.length === 1 ? [{ ...groups[0], groupTitle: null }] : groups;
+  }, [extraSocialCards]);
 
   const handleCopyClick = async (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
@@ -2334,12 +2324,12 @@ export function LivePreviewCard({
         })()}
 
         {/* 10. Social Accounts Section */}
-        {!isListingPage && effectiveVisibilitySettings.showFanbase !== false && (isPremiumLayout || (!isTabsLayout ? true : (activeNavTab === "about" || activeNavTab === "fanbase"))) && aboutSocialCards.length > 0 && (
+        {!isListingPage && effectiveVisibilitySettings.showFanbase !== false && (isPremiumLayout || (!isTabsLayout ? true : (activeNavTab === "about" || activeNavTab === "fanbase"))) && extraSocialCards.length > 0 && (
           <div id="socials-section" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[9] mt-5 sm:mt-6 space-y-3" : isTabsLayout ? "order-[4] mt-1 sm:mt-1.5 space-y-2" : "order-[10] mt-6 sm:mt-7 space-y-2"}`}>
             {isPremiumLayout && (
               <TabSectionHeader
-                title="Social Accounts"
-                subtitle="Follow along and stay connected with me."
+                title="Find me elsewhere"
+                subtitle="My other channels & profiles — come say hi!"
                 action={
                   <span
                     style={{
@@ -2349,7 +2339,7 @@ export function LivePreviewCard({
                     }}
                     className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
                   >
-                    {aboutSocialCards.length} Connected
+                    {extraSocialCards.length} More
                   </span>
                 }
                 primaryTextColor={c.primaryText}
@@ -2359,7 +2349,7 @@ export function LivePreviewCard({
             )}
             <SocialAccountsBlock
               groups={groupedSocials.map((g) => ({ groupTitle: g.groupTitle, items: g.items }))}
-              total={aboutSocialCards.length}
+              total={extraSocialCards.length}
               colors={aboutColors}
               showHeader={!isPremiumLayout}
               onLinkClick={(item) => {

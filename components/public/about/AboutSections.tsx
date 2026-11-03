@@ -268,7 +268,7 @@ export function SocialAccountsBlock({
 
   return (
     <div className={CARD}>
-      {showHeader && <AboutHeader title="Social accounts" subtitle="Follow along and stay connected with me." count={`${total} connected`} colors={colors} />}
+      {showHeader && <AboutHeader title="Find me elsewhere" subtitle="My other channels & profiles — come say hi!" count={`${total} more`} colors={colors} />}
       <div className="space-y-3 p-2.5 sm:p-3">
         {groups.map((group, gi) => {
           // One connected list per group: primary first, then the rest.
