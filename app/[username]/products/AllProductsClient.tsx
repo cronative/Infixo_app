@@ -19,6 +19,7 @@ import {
 } from "@/types";
 import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
 import { setPublicTrackContext } from "@/lib/publicTrack";
+import { buildPrimarySocialAccounts } from "@/lib/socialAccounts";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -58,47 +59,6 @@ function isFreeTrialExpired(subscription?: {
     if (nowMs - actMs > thirtyDaysMs) return true;
   }
   return false;
-}
-
-function buildSocialAccounts(rows: Array<Record<string, unknown>>): SocialAccounts {
-  const accounts: SocialAccounts = { ...EMPTY_SOCIAL_ACCOUNTS };
-  rows.forEach((row) => {
-    const platform = String(row.platform || "").toLowerCase();
-    const isPrimary = Boolean(row.isPrimary || row.is_primary);
-    const handle = String(row.username || row.accountName || "");
-    const cleanHandle = handle.replace(/^@/, "");
-    const count = Number(row.followerCount || row.followers || 0);
-
-    if (platform === "instagram") {
-      if (isPrimary || !accounts.instagram.username) {
-        accounts.instagram = {
-          ...accounts.instagram,
-          followers: count,
-          username: handle,
-          url: cleanHandle ? `https://instagram.com/${cleanHandle}` : "",
-        };
-      }
-    } else if (platform === "youtube") {
-      if (isPrimary || !accounts.youtube.username) {
-        accounts.youtube = {
-          ...accounts.youtube,
-          subscribers: count,
-          username: handle,
-          url: cleanHandle ? `https://youtube.com/@${cleanHandle}` : "",
-        };
-      }
-    } else if (platform === "facebook") {
-      if (isPrimary || !accounts.facebook.username) {
-        accounts.facebook = {
-          ...accounts.facebook,
-          followers: count,
-          username: handle,
-          url: cleanHandle ? `https://facebook.com/${cleanHandle}` : "",
-        };
-      }
-    }
-  });
-  return accounts;
 }
 
 export default function AllProductsClient() {
@@ -212,7 +172,7 @@ export default function AllProductsClient() {
           setAllSocialAccounts(socialsData);
         }
         const mappedSocials = Array.isArray(socialsData)
-          ? buildSocialAccounts(socialsData)
+          ? buildPrimarySocialAccounts(socialsData)
           : typeof socialsData === "object" && socialsData !== null
             ? socialsData
             : EMPTY_SOCIAL_ACCOUNTS;

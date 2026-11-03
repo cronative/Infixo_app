@@ -22,6 +22,7 @@ import {
   EXPERT_DEMO_THEME,
 } from "@/data/expertDemoCreator";
 import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
+import { buildPrimarySocialAccounts } from "@/lib/socialAccounts";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -61,40 +62,6 @@ function isFreeTrialExpired(subscription?: {
     if (nowMs - actMs > thirtyDaysMs) return true;
   }
   return false;
-}
-
-function buildSocialAccounts(rows: Array<Record<string, unknown>>): SocialAccounts {
-  const accounts: SocialAccounts = { ...EMPTY_SOCIAL_ACCOUNTS };
-  rows.forEach((row) => {
-    const platform = String(row.platform || "").toLowerCase();
-    const handle = String(row.username || row.accountName || "");
-    const cleanHandle = handle.replace(/^@/, "");
-    const count = Number(row.followerCount || row.followers || 0);
-
-    if (platform === "instagram") {
-      accounts.instagram = {
-        ...accounts.instagram,
-        followers: count,
-        username: handle,
-        url: cleanHandle ? `https://instagram.com/${cleanHandle}` : "",
-      };
-    } else if (platform === "youtube") {
-      accounts.youtube = {
-        ...accounts.youtube,
-        subscribers: count,
-        username: handle,
-        url: cleanHandle ? `https://youtube.com/@${cleanHandle}` : "",
-      };
-    } else if (platform === "facebook") {
-      accounts.facebook = {
-        ...accounts.facebook,
-        followers: count,
-        username: handle,
-        url: cleanHandle ? `https://facebook.com/${cleanHandle}` : "",
-      };
-    }
-  });
-  return accounts;
 }
 
 export default function TeamPageClient() {
@@ -170,7 +137,7 @@ export default function TeamPageClient() {
 
         const freshTheme = resolveThemeKey(freshProfile.themeKey);
         const rawSocials = socialsRes.data?.socials || socialsRes.socials;
-        const freshSocials = Array.isArray(rawSocials) ? buildSocialAccounts(rawSocials) : EMPTY_SOCIAL_ACCOUNTS;
+        const freshSocials = Array.isArray(rawSocials) ? buildPrimarySocialAccounts(rawSocials) : EMPTY_SOCIAL_ACCOUNTS;
         const freshTeamObj = teamRes.data?.team || teamRes.team || null;
         const freshMembers = Array.isArray(teamRes.data?.members || teamRes.members)
           ? (teamRes.data?.members || teamRes.members)

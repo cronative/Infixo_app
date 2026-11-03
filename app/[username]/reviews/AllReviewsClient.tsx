@@ -18,6 +18,7 @@ import {
   ThemeKey,
 } from "@/types";
 import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
+import { buildPrimarySocialAccounts } from "@/lib/socialAccounts";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -49,42 +50,6 @@ function isFreeTrialExpired(subscription?: {
   if (Number.isNaN(activatedMs)) return false;
 
   return Date.now() - activatedMs > 7 * 24 * 60 * 60 * 1000;
-}
-
-function buildSocialAccounts(rows: Array<Record<string, unknown>>): SocialAccounts {
-  const accounts: SocialAccounts = { ...EMPTY_SOCIAL_ACCOUNTS };
-
-  rows.forEach((row) => {
-    const platform = String(row.platform || "");
-    const handle = String(row.username || row.accountName || "");
-    const cleanHandle = handle.replace(/^@/, "");
-    const count = Number(row.followerCount || 0);
-
-    if (platform === "instagram") {
-      accounts.instagram = {
-        ...accounts.instagram,
-        followers: count,
-        username: handle,
-        url: cleanHandle ? `https://instagram.com/${cleanHandle}` : "",
-      };
-    } else if (platform === "youtube") {
-      accounts.youtube = {
-        ...accounts.youtube,
-        subscribers: count,
-        username: handle,
-        url: cleanHandle ? `https://youtube.com/@${cleanHandle}` : "",
-      };
-    } else if (platform === "facebook") {
-      accounts.facebook = {
-        ...accounts.facebook,
-        followers: count,
-        username: handle,
-        url: cleanHandle ? `https://facebook.com/${cleanHandle}` : "",
-      };
-    }
-  });
-
-  return accounts;
 }
 
 export default function AllReviewsClient() {
@@ -149,7 +114,7 @@ export default function AllReviewsClient() {
         setProfile(freshProfile);
         setTheme(resolveThemeKey(freshProfile.themeKey));
         const rawSocials = socialsRes.data?.socials || socialsRes.socials;
-        setSocials(Array.isArray(rawSocials) ? buildSocialAccounts(rawSocials) : EMPTY_SOCIAL_ACCOUNTS);
+        setSocials(Array.isArray(rawSocials) ? buildPrimarySocialAccounts(rawSocials) : EMPTY_SOCIAL_ACCOUNTS);
         const rawReviews = reviewsRes.data?.reviews || reviewsRes.reviews;
         setReviews(Array.isArray(rawReviews) ? rawReviews : []);
         setNotFound(false);

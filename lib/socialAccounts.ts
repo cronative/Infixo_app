@@ -81,3 +81,32 @@ return updated;
 export function calculateTotalAudience(accounts: SocialAccounts | any): number {
   return calculateTotalFanbase(accounts) ?? 0;
 }
+
+/**
+ * Raw social_accounts rows → SocialAccounts, exactly like the main public profile:
+ * the platform's primary account supplies handle + follower count (only primaries count toward fans);
+ * a secondary only fills the handle when the platform has no primary.
+ */
+export function buildPrimarySocialAccounts(rows: Array<Record<string, unknown>>): SocialAccounts {
+  const accounts: SocialAccounts = {
+    ...EMPTY_SOCIAL_ACCOUNTS,
+    instagram: { ...EMPTY_SOCIAL_ACCOUNTS.instagram },
+    youtube: { ...EMPTY_SOCIAL_ACCOUNTS.youtube },
+    facebook: { ...EMPTY_SOCIAL_ACCOUNTS.facebook },
+  };
+  for (const row of rows) {
+    const platform = String(row.platform || "").toLowerCase();
+    const isPrimary = Boolean(row.isPrimary ?? row.is_primary);
+    const handle = String(row.username || row.accountName || "");
+    const clean = handle.replace(/^@/, "");
+    const count = isPrimary ? Number(row.followerCount ?? row.follower_count ?? 0) || 0 : 0;
+    if (platform === "instagram" && (isPrimary || !accounts.instagram.username)) {
+      accounts.instagram = { ...accounts.instagram, followers: count || accounts.instagram.followers, username: handle, url: clean ? `https://instagram.com/${clean}` : "" };
+    } else if (platform === "youtube" && (isPrimary || !accounts.youtube.username)) {
+      accounts.youtube = { ...accounts.youtube, subscribers: count || accounts.youtube.subscribers, username: handle, url: clean ? `https://youtube.com/@${clean}` : "" };
+    } else if (platform === "facebook" && (isPrimary || !accounts.facebook.username)) {
+      accounts.facebook = { ...accounts.facebook, followers: count || accounts.facebook.followers, username: handle, url: clean ? `https://facebook.com/${clean}` : "" };
+    }
+  }
+  return accounts;
+}

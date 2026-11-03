@@ -23,6 +23,7 @@ import {
 import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
 import { setPublicTrackContext } from "@/lib/publicTrack";
 import { SocialService } from "@/services/SocialService";
+import { buildPrimarySocialAccounts } from "@/lib/socialAccounts";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -61,40 +62,6 @@ function isFreeTrialExpired(subscription?: {
     if (!Number.isNaN(actMs) && nowMs - actMs > 7 * 24 * 60 * 60 * 1000) return true;
   }
   return false;
-}
-
-function buildSocialAccounts(rows: Array<Record<string, unknown>>): SocialAccounts {
-  const accounts: SocialAccounts = { ...EMPTY_SOCIAL_ACCOUNTS };
-  rows.forEach((row) => {
-    const platform = String(row.platform || "").toLowerCase();
-    const handle = String(row.username || row.accountName || "");
-    const cleanHandle = handle.replace(/^@/, "");
-    const count = Number(row.followerCount || row.followers || 0);
-
-    if (platform === "instagram") {
-      accounts.instagram = {
-        ...accounts.instagram,
-        followers: count,
-        username: handle,
-        url: cleanHandle ? `https://instagram.com/${cleanHandle}` : "",
-      };
-    } else if (platform === "youtube") {
-      accounts.youtube = {
-        ...accounts.youtube,
-        subscribers: count,
-        username: handle,
-        url: cleanHandle ? `https://youtube.com/@${cleanHandle}` : "",
-      };
-    } else if (platform === "facebook") {
-      accounts.facebook = {
-        ...accounts.facebook,
-        followers: count,
-        username: handle,
-        url: cleanHandle ? `https://facebook.com/${cleanHandle}` : "",
-      };
-    }
-  });
-  return accounts;
 }
 
 export default function AllLinksClient() {
@@ -191,7 +158,7 @@ export default function AllLinksClient() {
         setTheme(freshTheme);
         if (Array.isArray(rawSocials)) {
           setAllSocialAccounts(rawSocials);
-          setSocials(buildSocialAccounts(rawSocials));
+          setSocials(buildPrimarySocialAccounts(rawSocials));
         }
         setCustomLinks(Array.isArray(rawLinks) ? rawLinks : []);
         setNotFound(false);
