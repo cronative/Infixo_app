@@ -129,7 +129,13 @@ export function LinkGroupRow({
 
   return (
     <div
-      className={`${flat ? "" : "rounded-[5px] border border-(--surface-border)"} overflow-hidden transition-all duration-200 shadow-none bg-transparent ${className}`}
+      className={`${
+        flat
+          ? isOpen
+            ? "m-2 rounded-[6px] border border-[color-mix(in_srgb,var(--accent)_30%,var(--surface-border))]"
+            : ""
+          : "rounded-[5px] border border-(--surface-border)"
+      } overflow-hidden transition-all duration-200 shadow-none bg-transparent ${className}`}
     >
       {/* Group Trigger Button (~48px height) */}
       <button
@@ -137,7 +143,9 @@ export function LinkGroupRow({
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
         className={`w-full min-h-[48px] h-[48px] px-3.5 py-2 flex items-center justify-between gap-3 text-left cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 ${themeConfig.focusRing} focus-visible:ring-offset-1 select-none ${
-          flat ? "hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)]" : themeConfig.headerBg
+          flat
+            ? "bg-[color-mix(in_srgb,var(--accent)_7%,transparent)] hover:bg-[color-mix(in_srgb,var(--accent)_10%,transparent)]"
+            : themeConfig.headerBg
         }`}
       >
         <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -205,7 +213,7 @@ export function LinkGroupRow({
               key={item.id}
               link={item}
               compact
-              className="pl-[58px]"
+              className="pl-[52px]"
               onClick={() => onLinkClick?.(item)}
             />
           ))}
