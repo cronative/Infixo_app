@@ -978,6 +978,14 @@ export function LivePreviewCard({
   const profileScrollRef = useRef<HTMLDivElement | null>(null);
   const [navScrolled, setNavScrolled] = useState(false);
   const [showMoveToTop, setShowMoveToTop] = useState(false);
+  // How much of the footer is on screen; the back-to-top button rises by this so it never covers "Powered by".
+  const [moveTopLift, setMoveTopLift] = useState(0);
+  const footerRef = useRef<HTMLDivElement>(null);
+  const updateMoveTopLift = () => {
+    const rect = footerRef.current?.getBoundingClientRect();
+    const visible = rect ? Math.max(0, Math.min(rect.height, window.innerHeight - rect.top)) : 0;
+    setMoveTopLift((prev) => (Math.abs(prev - visible) < 1 ? prev : Math.round(visible)));
+  };
   const [showStickyProfileHeader, setShowStickyProfileHeader] = useState(false);
 
   const safeProfile: CreatorProfile = Object.assign(
@@ -1513,6 +1521,7 @@ export function LivePreviewCard({
   const handleContainedScroll = (event: { currentTarget: HTMLDivElement }) => {
     const el = event.currentTarget;
     setShowMoveToTop(el.scrollTop > 200);
+    updateMoveTopLift();
     setShowStickyProfileHeader(el.scrollTop > 80);
     setNavScrolled(el.scrollTop > 0);
   };
@@ -1528,6 +1537,7 @@ export function LivePreviewCard({
     const handleScroll = () => {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
       setNavScrolled(scrollY > 0);
+      updateMoveTopLift();
       if (scrollY > 80) {
         setShowStickyProfileHeader(true);
         setShowMoveToTop(scrollY > 200);
@@ -2941,7 +2951,7 @@ export function LivePreviewCard({
               {!isPremiumLayout && (
                 <div
                   style={{
-                    backgroundColor: "color-mix(in srgb, var(--accent) 5%, transparent)",
+                    backgroundColor: "color-mix(in srgb, var(--accent) 7%, transparent)",
                     borderColor: "var(--surface-border)",
                   }}
                   className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between gap-2"
@@ -3609,7 +3619,7 @@ export function LivePreviewCard({
 
         {/* Normal document flow footer at bottom of scrollable area: full width spanning card borders with zero bottom padding */}
         {!hideFooter && (
-          <div className="order-[80] mt-auto pt-4 shrink-0 select-none -mx-4 sm:-mx-5 -mb-6 rounded-none rounded-b-[5px] overflow-hidden">
+          <div ref={footerRef} className="order-[80] mt-auto pt-4 shrink-0 select-none -mx-4 sm:-mx-5 -mb-6 rounded-none rounded-b-[5px] overflow-hidden">
             <MadeWithInflixo
               variant="card-footer"
               disabled={isInformationalMode}
@@ -3628,8 +3638,9 @@ export function LivePreviewCard({
             backgroundColor: c.accent,
             color: "var(--on-accent)",
             boxShadow: eff.shadow,
+            ["--mt-lift" as string]: `${moveTopLift}px`,
           }}
-          className="tap-scale fixed bottom-6 right-5 sm:bottom-20 sm:right-6 z-40 inline-flex h-11 w-11 sm:h-11 sm:w-11 items-center justify-center rounded-[5px] shadow-lg transition-all hover:scale-110 cursor-pointer"
+          className="tap-scale fixed bottom-[calc(1.5rem+var(--mt-lift,0px))] right-5 sm:bottom-[calc(5rem+var(--mt-lift,0px))] sm:right-6 z-40 inline-flex h-11 w-11 sm:h-11 sm:w-11 items-center justify-center rounded-[5px] shadow-lg transition-all hover:scale-110 cursor-pointer"
           aria-label="Scroll to top"
           title="Scroll to top"
         >

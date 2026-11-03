@@ -36,6 +36,7 @@ import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
 import { CreatorEraBottomSheet } from "@/components/shared/CreatorEraBottomSheet";
 import { EraBadge } from "@/components/shared/EraBadge";
 import { eraRing, getEraConfig } from "@/lib/eraConfig";
+import { platformRank } from "@/components/public/about/AboutSections";
 import {
   type CreatorEra,
   formatFans,
@@ -382,20 +383,20 @@ export function ProfileHeader({
     const fromBreakdown = platformBreakdown
       .filter((pb) => main.includes(pb.platform.toLowerCase()))
       .map((pb) => ({ platform: pb.platform.toLowerCase(), label: pb.label || pb.shortLabel, count: pb.count }));
-    if (fromBreakdown.length > 0) return fromBreakdown;
+    if (fromBreakdown.length > 0) return fromBreakdown.sort((a, b) => platformRank(a.platform) - platformRank(b.platform));
     return socialList
       .filter((s) => main.includes(s.platform.toLowerCase()) && typeof s.count === "number" && s.count > 0)
       .map((s) => ({ platform: s.platform.toLowerCase(), label: s.label, count: s.count as number }));
   }, [platformBreakdown, socialList]);
 
   const allActiveSocials = useMemo(() => {
-    const list = socialList.filter(
-      (s) => s.hasAccount || (typeof s.count === "number" && s.count > 0) || (s.url && s.url !== "#")
-    );
+    const list = socialList
+      .filter((s) => s.hasAccount || (typeof s.count === "number" && s.count > 0) || (s.url && s.url !== "#"))
+      .sort((a, b) => platformRank(a.platform) - platformRank(b.platform));
     if (list.length > 0) return list;
 
     if (platformBreakdown && platformBreakdown.length > 0) {
-      return platformBreakdown.map((pb) => ({
+      return [...platformBreakdown].sort((a, b) => platformRank(a.platform) - platformRank(b.platform)).map((pb) => ({
         platform: pb.platform,
         label: pb.label || pb.shortLabel,
         count: pb.count,

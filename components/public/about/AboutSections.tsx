@@ -24,6 +24,14 @@ export interface AboutColors {
   headingFont?: string;
 }
 
+// ── Platform order (same everywhere: Instagram → YouTube → Facebook → others) ──
+
+export const PLATFORM_ORDER = ["instagram", "youtube", "facebook"];
+export const platformRank = (platform: string) => {
+  const i = PLATFORM_ORDER.indexOf((platform || "").toLowerCase());
+  return i === -1 ? PLATFORM_ORDER.length : i;
+};
+
 // ── Brand colours ─────────────────────────────────────────────
 
 const IG_GRADIENT = "linear-gradient(45deg, #FEDA75 0%, #FA7E1E 25%, #D62976 50%, #962FBF 75%, #4F5BD5 100%)";
@@ -79,7 +87,7 @@ export function AboutHeader({ title, subtitle, count, colors }: { title: string;
   return (
     <div
       className="flex items-end justify-between gap-3 border-b border-(--surface-border) px-3 pb-2 pt-2.5 sm:px-3.5"
-      style={{ backgroundColor: "color-mix(in srgb, var(--accent) 5%, transparent)" }}
+      style={{ backgroundColor: "color-mix(in srgb, var(--accent) 7%, transparent)" }}
     >
       <div className="min-w-0">
         <h2 style={{ color: colors.primary, fontFamily: colors.headingFont }} className="text-sm font-semibold leading-5 tracking-tight text-(--text)">
@@ -197,7 +205,7 @@ export function FanbaseByPlatform({
   total?: number;
   colors: AboutColors;
 }) {
-  const rows = items.filter((i) => i.count > 0).sort((a, b) => b.count - a.count);
+  const rows = items.filter((i) => i.count > 0).sort((a, b) => platformRank(a.platform) - platformRank(b.platform));
   const sum = rows.reduce((s, r) => s + r.count, 0);
   if (sum === 0) return null;
   return (
