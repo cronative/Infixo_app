@@ -476,7 +476,7 @@ export default function DashboardSocialsPage() {
       </div>
 
       {/* 3. PLATFORM SECTIONS — 3 columns ≥1200px, 2 on tablet, stacked on mobile */}
-      <div className="grid grid-cols-1 items-start gap-3 md:max-[1199px]:grid-cols-2 min-[1200px]:grid-cols-3">
+      <div className="grid grid-cols-1 items-start gap-3 md:max-[1399px]:grid-cols-2 min-[1400px]:grid-cols-3">
         {platformRows.map((row) => (
           <PlatformSection
             key={row.platform}
@@ -1034,8 +1034,8 @@ function AccountRow({
       </span>
       <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] ${iconBg}`}>{platformIcon}</span>
       <div className="min-w-0 flex-1">
-        <div className="flex min-w-0 items-center gap-1.5">
-          <span className="truncate text-[13px] font-semibold text-[#18181B]" title={`@${cleanHandle}`}>
+        <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5">
+          <span className="min-w-0 break-all text-[13px] font-semibold leading-snug text-[#18181B]" title={`@${cleanHandle}`}>
             @{cleanHandle}
           </span>
           {isPrimary && (

@@ -179,10 +179,19 @@ export default function PublicMediaKitPage() {
   useEffect(() => {
     if (!loaded || !profile || typeof window === "undefined") return;
     if (new URLSearchParams(window.location.search).get("download") !== "pdf") return;
-    const cleanHandle = (profile.username || params.username || "creator").replace(/^@/, "");
     void downloadPdf();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run once when the page has loaded
   }, [loaded, profile, params.username]);
+
+  // ?print=1 (used by the PDF renderer). Every hook stays above the early returns below (React #310).
+  const [isPrint, setIsPrint] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const p = new URLSearchParams(window.location.search).get("print");
+      if (p === "1" || p === "true") setIsPrint(true);
+    }
+  }, []);
 
   if (!loaded) {
     return <SyncingLoader message="Loading Official Creator Media Kit..." fullScreen hideProgressBar={true} />;
@@ -222,15 +231,6 @@ export default function PublicMediaKitPage() {
     typeof window !== "undefined"
       ? `${window.location.origin}/${cleanHandle}/mediakit`
       : `https://inflixo.com/${cleanHandle}/mediakit`;
-
-  const [isPrint, setIsPrint] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const p = new URLSearchParams(window.location.search).get("print");
-      if (p === "1" || p === "true") setIsPrint(true);
-    }
-  }, []);
 
   async function handleShareMediaKit() {
     const title = `${profile?.displayName || cleanHandle} — Media Kit on Inflixo`;

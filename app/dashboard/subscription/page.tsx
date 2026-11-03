@@ -131,7 +131,9 @@ function PlanPage() {
     json("/api/products").then((d) => set("products", Number(d.used ?? d.items?.length ?? 0))).catch(() => {});
     json("/api/links").then((d) => set("links", Number(d.used ?? d.items?.length ?? 0))).catch(() => {});
     if (profile.email) json(`/api/creator/reviews?email=${encodeURIComponent(profile.email)}`).then((d) => set("reviews", (d.data?.reviews || []).length)).catch(() => {});
-    if (profile.id) json(`/api/creator/setup?creatorId=${encodeURIComponent(profile.id)}`).then((d) => set("gear", (d.data?.items || []).length)).catch(() => {});
+    // Same lookup + response shape as the My Setup page, so both show the same item count.
+    const setupLookup = profile.id || profile.email || profile.username;
+    if (setupLookup) json(`/api/creator/setup?creatorId=${encodeURIComponent(setupLookup)}`).then((d) => set("gear", (d.data?.items || d.items || []).length)).catch(() => {});
     const identifier = profile.email || profile.username;
     if (identifier) {
       MediaKitService.fetchFromDb(identifier, profile.id).then(({ packages }) => set("packages", packages.length)).catch(() => {});

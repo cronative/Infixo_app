@@ -62,6 +62,9 @@ function getGreeting(): string {
 }
 
 export default function DashboardOverviewPage() {
+  // Time-based greeting only on the client: server and browser clocks/time zones differ (hydration #418).
+  const [greeting, setGreeting] = useState("Welcome back 👋");
+  useEffect(() => setGreeting(getGreeting()), []);
   const {
     profile,
     socials,
@@ -313,7 +316,7 @@ export default function DashboardOverviewPage() {
 
   return (
     <PageContainer className="select-none text-left">
-      <PageHeader eyebrow={getGreeting()} {...PAGE_COPY.dashboard} />
+      <PageHeader eyebrow={greeting} {...PAGE_COPY.dashboard} />
 
       {/* 1. LINK BAR */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 bg-white border border-[#ECECF0] rounded-[5px]">

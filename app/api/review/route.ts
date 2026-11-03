@@ -5,6 +5,14 @@ import { ensureReviewsTable } from "@/lib/reviewsDb";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 
 // GET /api/review?token=... — Fetch review invitation for public brand page
+const toUtcIso = (v: string | Date | null | undefined) => {
+  if (!v) return null;
+  const d = new Date(v);
+  if (isNaN(d.getTime())) return null;
+  // Never return a future instant (clock skew / bad rows).
+  return new Date(Math.min(d.getTime(), Date.now())).toISOString();
+};
+
 export async function GET(req: Request) {
   try {
     await ensureReviewsTable();
@@ -50,7 +58,7 @@ export async function GET(req: Request) {
         ratingTimelyDelivery: Number(r.rating_timely_delivery || 5),
         comment: r.comment || "",
         status: r.status,
-        createdAt: r.created_at,
+        createdAt: toUtcIso(r.created_at),
       },
       creator: creator
         ? {

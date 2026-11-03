@@ -30,8 +30,10 @@ import { getPlanQuota } from "@/services/subscriptionLimits";
 
 function formatDate(dateStr: string): string {
   try {
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return "Recently";
+    const parsed = new Date(dateStr);
+    if (isNaN(parsed.getTime())) return "Recently";
+    // Stored as UTC; shown in the viewer's own time zone, never in the future.
+    const d = new Date(Math.min(parsed.getTime(), Date.now()));
     return d.toLocaleDateString("en-GB", {
       day: "numeric",
       month: "short",

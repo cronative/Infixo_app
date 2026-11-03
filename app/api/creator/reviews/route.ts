@@ -58,6 +58,14 @@ function getErrorMessage(error: unknown) {
 }
 
 // GET /api/creator/reviews (dashboard session, or public ?username=...)
+const toUtcIso = (v: string | Date | null | undefined) => {
+  if (!v) return null;
+  const d = new Date(v);
+  if (isNaN(d.getTime())) return null;
+  // Never return a future instant (clock skew / bad rows).
+  return new Date(Math.min(d.getTime(), Date.now())).toISOString();
+};
+
 export async function GET(req: Request) {
   try {
     await ensureReviewsTable();
@@ -138,8 +146,8 @@ export async function GET(req: Request) {
         invitationStatus,
         isVisible,
         isVerified: true,
-        createdAt: r.created_at,
-        updatedAt: r.updated_at,
+        createdAt: toUtcIso(r.created_at),
+        updatedAt: toUtcIso(r.updated_at),
       };
     });
 
