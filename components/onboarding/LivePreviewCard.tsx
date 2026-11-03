@@ -154,6 +154,7 @@ import {
 } from "@/lib/creatorEra";
 import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
 import { CreatorEraBottomSheet } from "@/components/shared/CreatorEraBottomSheet";
+import { EraAwardMedal } from "@/components/shared/EraBadge";
 
 
 function formatIndianPackagePrice(pkg: MediaKitPackage): string {
@@ -2240,10 +2241,14 @@ export function LivePreviewCard({
                           }}
                           className="flex items-center gap-2.5 min-w-0 flex-1 text-left cursor-pointer group/era px-3.5 py-2.5 sm:px-4 sm:py-3"
                         >
-                          <Award
-                            className="h-4.5 w-4.5 shrink-0 transition-transform group-hover/era:scale-110"
-                            style={{ color: medalColor }}
-                          />
+                          {creatorEra ? (
+                            <EraAwardMedal era={creatorEra.era} stage={creatorEra.stage} size={24} className="transition-transform group-hover/era:scale-110" />
+                          ) : (
+                            <Award
+                              className="h-4.5 w-4.5 shrink-0 transition-transform group-hover/era:scale-110"
+                              style={{ color: medalColor }}
+                            />
+                          )}
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-1">
                               <span

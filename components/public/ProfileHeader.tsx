@@ -13,7 +13,7 @@ import {
   Crown,
   Users,
   ExternalLink,
-  Medal,
+  Info,
   Handshake,
 } from "lucide-react";
 import {
@@ -34,6 +34,8 @@ import { BRAND_BG, BRAND_VERIFIED_FILL } from "@/lib/brandColors";
 import { InflixoWordmark } from "@/components/brand/InflixoLogo";
 import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
 import { CreatorEraBottomSheet } from "@/components/shared/CreatorEraBottomSheet";
+import { EraBadge } from "@/components/shared/EraBadge";
+import { eraRing, getEraConfig } from "@/lib/eraConfig";
 import {
   type CreatorEra,
   formatFans,
@@ -54,31 +56,6 @@ function getEraBadgeColors(stage?: string) {
       return "bg-[#FFE4D6] text-[#9A3412] border-[#FED7AA]/60";
   }
 }
-
-/** Tier palette for the premium Era pill + avatar ring (same hues as the profile Era colours). */
-const ERA_TIER: Record<string, { text: string; icon: string; border: string; bg: string; ring: string }> = {
-  Bronze: {
-    text: "#9A3412",
-    icon: "#C2410C",
-    border: "#F2B48C",
-    bg: "linear-gradient(135deg, #FFF4EC 0%, #FFE4D2 100%)",
-    ring: "linear-gradient(135deg, #F6C39F 0%, #C2410C 55%, #8C5A2B 100%)",
-  },
-  Silver: {
-    text: "#334155",
-    icon: "#64748B",
-    border: "#CBD5E1",
-    bg: "linear-gradient(135deg, #F8FAFC 0%, #E8EDF3 100%)",
-    ring: "linear-gradient(135deg, #F1F5F9 0%, #94A3B8 55%, #64748B 100%)",
-  },
-  Gold: {
-    text: "#92400E",
-    icon: "#D97706",
-    border: "#F5C451",
-    bg: "linear-gradient(135deg, #FFFBEB 0%, #FEF0C7 100%)",
-    ring: "linear-gradient(135deg, #FDE68A 0%, #D97706 55%, #B8860B 100%)",
-  },
-};
 
 export interface ProfileHeaderSocialItem {
   platform: string;
@@ -382,7 +359,7 @@ export function ProfileHeader({
   const effectiveFanbase = totalAudience || creatorEra?.min || 0;
   const currentEra = creatorEra || (effectiveFanbase > 0 ? getCreatorEra(effectiveFanbase) : null);
   const eraProgress = getEraProgress(effectiveFanbase);
-  const tier = currentEra ? ERA_TIER[currentEra.stage] ?? ERA_TIER.Bronze : null;
+  const eraCfg = currentEra ? getEraConfig(currentEra.era) : null;
 
   // Total Fans popover: per-platform counts (primary accounts only, same as the total).
   const [fansOpen, setFansOpen] = useState(false);
@@ -498,7 +475,7 @@ export function ProfileHeader({
       <div className="flex items-center justify-center gap-3 sm:gap-4 w-full mt-1 sm:mt-1.5 mx-auto">
         {/* LEFT: Creator Avatar (reduced slightly as requested: 68px on mobile, 76px on sm) */}
         <div className="relative shrink-0">
-          <div className="p-[2px] sm:p-[2.5px] rounded-full shadow-xs" style={{ background: tier?.ring ?? "var(--avatar-ring)" }}>
+          <div className="p-[2px] sm:p-[2.5px] rounded-full shadow-xs" style={{ background: eraCfg ? eraRing(eraCfg) : "var(--avatar-ring)" }}>
             <div className="p-[1.5px] bg-(--card-bg) rounded-full">
               <div className="relative h-[68px] w-[68px] sm:h-[76px] sm:w-[76px] rounded-full overflow-hidden bg-(--card-bg) ">
                 {hasAvatar && photoUrl ? (
@@ -603,29 +580,18 @@ export function ProfileHeader({
       {/* ROW 3: COMPACT CREATOR ERA + TOTAL FANS PILL (5px radius)      */}
       {/* ============================================================== */}
       {(currentEra || effectiveFanbase > 0) && (
-        <div className="w-full mt-2 sm:mt-2.5 flex items-center justify-center gap-2">
-          {/* Premium Era badge: tier gradient + tier border + medal; opens the Era modal */}
-          <button
-            type="button"
-            onClick={() => setEraSheetOpen(true)}
-            className="tap-scale inline-flex h-9 min-w-0 max-w-[62%] items-center gap-1.5 rounded-[5px] border pl-1.5 pr-3 shadow-[0_1px_2px_rgba(0,0,0,0.06)] transition-[filter] hover:brightness-[1.03] cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
-            style={{
-              background: tier?.bg ?? "var(--surface)",
-              borderColor: tier?.border ?? "var(--surface-border)",
-              color: tier?.text ?? "var(--text)",
-            }}
-            title="View Creator Era levels"
-            aria-label={`${currentEra?.badge || "Creator"} — view Creator Era levels`}
-          >
-            <span
-              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-black/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]"
-              style={{ background: getMedalGradient(currentEra?.stage) }}
-              aria-hidden
-            >
-              <Medal className="h-3.5 w-3.5 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.25)]" strokeWidth={2.2} />
-            </span>
-            <span className="truncate text-xs sm:text-[13px] font-semibold leading-none">{currentEra?.badge || "Creator"}</span>
-          </button>
+        <div className="w-full mt-2 sm:mt-2.5 flex items-center justify-center gap-1.5 sm:gap-2">
+          {/* Premium Era badge (era colour + tier metal + award); whole pill and ⓘ open the Era modal */}
+          {currentEra ? (
+            <EraBadge
+              era={currentEra.era}
+              stage={currentEra.stage}
+              label={currentEra.badge}
+              showInfo
+              onClick={() => setEraSheetOpen(true)}
+              className="shrink shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
+            />
+          ) : null}
 
           {/* Total Fans: tap for per-platform counts */}
           <div ref={fansRef} className="relative shrink-0">
@@ -634,20 +600,23 @@ export function ProfileHeader({
               onClick={() => setFansOpen((v) => !v)}
               aria-expanded={fansOpen}
               aria-haspopup="dialog"
-              className="tap-scale inline-flex h-9 items-center gap-1.5 rounded-full border border-(--surface-border) bg-transparent px-3 hover:bg-(--surface)/50 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
+              className="tap-scale inline-flex h-9 items-center gap-1 rounded-full border border-(--surface-border) bg-transparent px-2.5 hover:bg-(--surface)/50 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
               title="See fans by platform"
             >
               <span className="text-xs sm:text-[13px] font-semibold text-(--text) tabular-nums leading-none">{formatFans(effectiveFanbase)}</span>
-              <span className="text-[11px] sm:text-xs text-(--text-muted) leading-none">Total Fans</span>
+              <span className="text-[11px] sm:text-xs text-(--text-muted) leading-none whitespace-nowrap">Total Fans</span>
+              <Info className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0 text-(--text-muted)" aria-hidden />
             </button>
 
             {fansOpen && (
               <div
                 role="dialog"
                 aria-label="Fans by platform"
-                className="absolute right-0 top-[calc(100%+6px)] z-40 w-[210px] rounded-[8px] border border-[#E4E4E7] bg-white p-2 text-left shadow-[0_10px_30px_rgba(0,0,0,0.14)]"
+                className="absolute right-0 top-[calc(100%+6px)] z-40 w-[248px] rounded-[8px] border border-[#E4E4E7] bg-white p-2 text-left shadow-[0_10px_30px_rgba(0,0,0,0.14)]"
               >
-                <p className="px-1.5 pb-1 text-[11px] font-medium uppercase tracking-wide text-[#8E8E93]">Fans by platform</p>
+                <p className="px-1.5 pb-2 text-[12px] leading-snug text-[#52525B]">
+                  Total Fans is your combined audience from your primary Instagram, YouTube &amp; Facebook accounts, calculated by Inflixo AI.
+                </p>
                 {fanPlatforms.length === 0 ? (
                   <p className="px-1.5 py-1.5 text-xs text-[#6B6B76]">No platform counts yet.</p>
                 ) : (

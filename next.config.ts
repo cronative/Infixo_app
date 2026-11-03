@@ -45,6 +45,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    // Sign-up and log-in share one OTP flow; /signup is the friendly link used in marketing CTAs.
+    return [{ source: "/signup", destination: "/login", permanent: false }];
+  },
   async rewrites() {
     return {
       beforeFiles: [

@@ -4,7 +4,6 @@ import { ReactNode } from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
-  Award,
   Clapperboard,
   Copy,
   IdCard,
@@ -20,6 +19,8 @@ import {
 import { StatCard, StatCardGrid } from "@/components/dashboard/StatCard";
 import { formatCount } from "@/utils/format";
 import { formatFans, getCreatorEra, getEraProgress } from "@/lib/creatorEra";
+import { eraFill, eraInk, getEraConfig } from "@/lib/eraConfig";
+import { EraAwardMedal } from "@/components/shared/EraBadge";
 import type { DashboardMetricKey, DashboardSummary } from "@/lib/dashboardSummary";
 
 const CARD = "rounded-[5px] border border-[#E8E8EC] bg-white";
@@ -299,21 +300,22 @@ export function QuickActions({ addEpisodeHref, onCopyLink }: { addEpisodeHref: s
 
 // ── 6. Era progress ───────────────────────────────────────────
 
-const STAGE_ICON: Record<string, string> = { Gold: "#D97706", Silver: "#64748B", Bronze: "#C2410C" };
-
 export function EraProgressCard({ fans, onShare }: { fans: number; onShare: () => void }) {
   const era = getCreatorEra(fans);
   const progress = getEraProgress(fans);
+  const cfg = getEraConfig(era?.era);
   return (
     <section className={`${CARD} p-4`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF7ED]">
-            <Award className="h-5 w-5" style={{ color: STAGE_ICON[era?.stage ?? "Bronze"] }} />
-          </span>
+          <EraAwardMedal era={cfg.name} stage={era?.stage ?? "Bronze"} size={38} />
           <div className="min-w-0">
-            <p className="text-[12.5px] text-[#6B6B76]">Creator Era · {formatFans(fans)} fans</p>
-            <p className="truncate text-[15px] font-semibold text-[#18181B]">{era?.badge ?? "Rising Bronze Creator"}</p>
+            <p className="text-[12.5px] text-[#6B6B76]">
+              {cfg.award} · {formatFans(fans)} fans
+            </p>
+            <p className="truncate text-[15px] font-semibold" style={{ color: eraInk(cfg.color) }}>
+              {era?.badge ?? "Rising Bronze Creator"}
+            </p>
           </div>
         </div>
         <button type="button" onClick={onShare} className="shrink-0 text-[12.5px] font-medium text-[#7A2253] hover:underline underline-offset-2 cursor-pointer">
@@ -321,7 +323,7 @@ export function EraProgressCard({ fans, onShare }: { fans: number; onShare: () =
         </button>
       </div>
       <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-[#F4F4F5]">
-        <div className="h-full rounded-full bg-[#7A2253] transition-all" style={{ width: `${Math.max(3, progress.progressPercent)}%` }} />
+        <div className="h-full rounded-full transition-all" style={{ width: `${Math.max(3, progress.progressPercent)}%`, background: eraFill(cfg) }} />
       </div>
       <p className="mt-1.5 text-[12px] text-[#6B6B76]">
         {progress.nextBadge && progress.fansNeeded > 0 ? (

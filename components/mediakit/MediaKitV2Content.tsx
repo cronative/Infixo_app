@@ -15,7 +15,6 @@ import {
   MessageSquare,
   ArrowUpRight,
   Clock,
-  Award,
   ExternalLink,
   Film,
   ShieldCheck,
@@ -40,6 +39,7 @@ import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { SeriesPoster } from "@/components/shared/SeriesPoster";
 import { PublicTeamGroups } from "@/components/team/PublicTeamGroups";
 import { formatFans, getCreatorEra, calculateTotalFanbase } from "@/lib/creatorEra";
+import { EraAwardMedal } from "@/components/shared/EraBadge";
 import { formatCount } from "@/utils/format";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { useToast } from "@/contexts/ToastContext";
@@ -345,7 +345,7 @@ export function MediaKitV2Content({
             </span>
             {creatorEra && (
               <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E7E0D6] bg-white px-3 py-1 text-xs font-semibold text-[#44403C]">
-                <Award className="h-3.5 w-3.5 text-[#7A2253]" />
+                <EraAwardMedal era={creatorEra.era} stage={creatorEra.stage} size={18} />
                 <span>{creatorEra.badge}</span>
                 <span className="text-[#78716C] font-normal italic">— earned, not bought</span>
               </span>

@@ -1,7 +1,9 @@
 "use client";
 
 import { forwardRef, type CSSProperties, type ReactNode } from "react";
-import { Award, BadgeCheck } from "lucide-react";
+import { BadgeCheck } from "lucide-react";
+import { EraAwardMedal } from "@/components/shared/EraBadge";
+import { eraAlpha, eraInk, eraSoftBg, getEraConfig, parseEraBadge } from "@/lib/eraConfig";
 import { QRCode } from "@/components/creator-card/QRCode";
 import {
   FacebookIcon,
@@ -137,12 +139,6 @@ function nameFontSize(name: string, max: number) {
 const SERIF = "ui-serif, Georgia, Cambria, 'Times New Roman', serif";
 const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
 
-// Same colours the public profile uses for the Creator Era pill.
-const ERA_COLORS: Record<EraStage, { icon: string; bg: string; text: string; border: string }> = {
-  Bronze: { icon: "#C2410C", bg: "#FFE4D6", text: "#9A3412", border: "#FED7AA" },
-  Silver: { icon: "#64748B", bg: "#F1F5F9", text: "#475569", border: "#E2E8F0" },
-  Gold: { icon: "#D97706", bg: "#FEF3C7", text: "#B45309", border: "#FDE68A" },
-};
 
 const PLATFORM_ICONS: Record<CardPlatform, (p: { width: number; height: number }) => ReactNode> = {
   instagram: (p) => <InstagramIcon {...p} />,
@@ -517,18 +513,20 @@ function CompactIdentity({ skin, props, avatarSize }: IdentityProps) {
 
 function EraChip({ era }: { era: CreatorCardEra | null }) {
   if (!era) return null;
-  const c = ERA_COLORS[era.stage] ?? ERA_COLORS.Gold;
+  const { era: eraName } = parseEraBadge(era.badge);
+  const cfg = getEraConfig(eraName);
   return (
     <div
       style={{
         display: "inline-flex",
         alignItems: "center",
         gap: 8,
-        padding: "8px 18px 8px 14px",
-        borderRadius: 999,
-        background: c.bg,
-        border: `1.5px solid ${c.border}`,
-        color: c.text,
+        padding: "6px 16px 6px 6px",
+        borderRadius: 10,
+        // White base so the soft era tint reads the same on light and dark card themes.
+        background: `${eraSoftBg(cfg)}, #FFFFFF`,
+        border: `1.5px solid ${eraAlpha(cfg.accent ?? cfg.color, 0.5)}`,
+        color: eraInk(cfg.color),
         fontSize: 16,
         fontWeight: 700,
         lineHeight: 1.2,
@@ -536,7 +534,7 @@ function EraChip({ era }: { era: CreatorCardEra | null }) {
         boxShadow: "0 4px 14px rgba(0, 0, 0, 0.08)",
       }}
     >
-      <Award width={20} height={20} color={c.icon} strokeWidth={2.2} />
+      <EraAwardMedal era={eraName} stage={era.stage} size={28} />
       <span>{era.badge}</span>
     </div>
   );

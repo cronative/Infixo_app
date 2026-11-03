@@ -19,6 +19,7 @@ export const RESERVED_USERNAMES = new Set([
   "demo_creator",
   "home",
   "login",
+  "signup",
   "logout",
   "onboarding",
   "privacy",

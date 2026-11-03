@@ -25,6 +25,7 @@ import { YoutubeFetcher } from "@/components/socials/YoutubeFetcher";
 import { FacebookFetcher } from "@/components/socials/FacebookFetcher";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { PageContainer } from "@/components/dashboard/PageContainer";
+import { EraBadge } from "@/components/shared/EraBadge";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PAGE_COPY } from "@/components/dashboard/pageCopy";
@@ -382,7 +383,7 @@ export default function DashboardSocialsPage() {
         <StatCard
           label="Total fans"
           value={formatFans(effectiveFanbase)}
-          badge={creatorEra?.badge}
+          badge={creatorEra ? <EraBadge era={creatorEra.era} stage={creatorEra.stage} label={creatorEra.badge} size="sm" /> : undefined}
           action={{ label: "Share era", onClick: () => setCelebrationOpen(true), title: "Share your Creator Era badge" }}
           footer={
             eraProgress.nextBadge && eraProgress.fansNeeded > 0 ? (
