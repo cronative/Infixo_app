@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { Check, ChevronDown, ChevronUp, X, Sparkles, ExternalLink, ArrowRight } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, X } from "lucide-react";
 import type { CreatorProfile, SocialAccounts } from "@/types";
+import { useSetupStep } from "@/lib/setupProgress";
 
 interface SetupChecklistProps {
   profile: CreatorProfile;
@@ -26,7 +27,6 @@ export interface ChecklistItem {
 }
 
 const STORAGE_KEY_DISMISSED = "inflixo_setup_checklist_dismissed";
-const STORAGE_KEY_SHARED = "inflixo_profile_shared_once";
 
 export function SetupChecklist({
   profile,
@@ -42,10 +42,8 @@ export function SetupChecklist({
     return localStorage.getItem(STORAGE_KEY_DISMISSED) === "true";
   });
 
-  const [hasSharedProfile, setHasSharedProfile] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem(STORAGE_KEY_SHARED) === "true";
-  });
+  // Set only by an actual share action (Copy / WhatsApp / X / LinkedIn / View QR), not by opening the modal.
+  const hasSharedProfile = useSetupStep("shared");
 
   // 1. Social connection check
   const hasSocialConnected = Boolean(
@@ -71,13 +69,6 @@ export function SetupChecklist({
       profile.bio.trim().length > 0
   );
 
-  const handleShareClick = () => {
-    setHasSharedProfile(true);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEY_SHARED, "true");
-    }
-    onShare();
-  };
 
   // 4. Checklist definition
   const items: ChecklistItem[] = useMemo(
@@ -89,7 +80,7 @@ export function SetupChecklist({
           "Introduce yourself to visitors. A thoughtful bio makes your link in bio more engaging, authentic, and trustworthy.",
         isDone: hasNameAndBio,
         actionLabel: "Add name & bio",
-        actionHref: "/dashboard/settings",
+        actionHref: "/dashboard/profile?edit=details",
       },
       {
         id: "profile-image",
@@ -98,7 +89,7 @@ export function SetupChecklist({
           "A great profile image makes your link in bio more trustworthy and helps fans recognize you immediately.",
         isDone: hasPhoto,
         actionLabel: "Add profile image",
-        actionHref: "/dashboard/settings",
+        actionHref: "/dashboard/profile?edit=photo",
       },
       {
         id: "socials",
@@ -134,10 +125,10 @@ export function SetupChecklist({
           "Put your link in your Instagram bio, YouTube description, and TikTok to welcome your audience.",
         isDone: hasSharedProfile,
         actionLabel: "Share profile link",
-        onAction: handleShareClick,
+        onAction: onShare,
       },
     ],
-    [hasNameAndBio, hasPhoto, hasSocialConnected, linksCount, hasPickedTheme, hasSharedProfile]
+    [hasNameAndBio, hasPhoto, hasSocialConnected, linksCount, hasPickedTheme, hasSharedProfile, onShare]
   );
 
   const completedCount = items.filter((item) => item.isDone).length;
@@ -156,6 +147,8 @@ export function SetupChecklist({
     }
   }, [items]);
 
+  const [listOpen, setListOpen] = useState(false);
+
   const toggleItem = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
   };
@@ -167,43 +160,40 @@ export function SetupChecklist({
     }
   };
 
-  // Emotional subtitle based on progress
-  const emotionalSubtitle = useMemo(() => {
-    if (completedCount === totalCount) {
-      return "All set! Your profile is 100% complete and ready to convert visitors into fans.";
-    }
-    if (completedCount >= 4) {
-      return "You're almost there! Just a couple quick steps to turn your profile into a high-converting hub.";
-    }
-    if (completedCount >= 1) {
-      return "Great start! Complete these quick steps to make your profile look credible and trustworthy.";
-    }
-    return "Complete these essential steps to make your link in bio feel verified, trusted, and ready for fans.";
-  }, [completedCount, totalCount]);
-
   // Auto-hide when 6/6 (all completed) or if the user dismissed it via the X button
   if (completedCount === totalCount || isDismissed) {
     return null;
   }
 
+  const nextItem = items.find((item) => !item.isDone);
   return (
-    <div className="p-4 sm:p-5 bg-white border border-[#ECECF0] rounded-[5px] text-left transition-all">
-      {/* 1. Header with title, badge and dismiss button */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="text-[15px] sm:text-[16px] font-bold text-[#18181B] tracking-tight">
-              Your setup checklist
-            </h3>
-            <span className="inline-flex items-center px-2 py-0.5 rounded-[5px] text-[11.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-              {completedCount}/{totalCount}
+    <div className="bg-white border border-[#ECECF0] rounded-[5px] text-left">
+      {/* Slim one-line progress bar; the full checklist opens below on demand. */}
+      <div className="flex items-center gap-3 px-3.5 py-2.5 min-h-[44px]">
+        <button
+          type="button"
+          onClick={() => setListOpen((v) => !v)}
+          aria-expanded={listOpen}
+          className="flex min-w-0 flex-1 items-center gap-3 text-left cursor-pointer"
+        >
+          <span className="shrink-0 text-[13px] font-semibold text-[#18181B] whitespace-nowrap">
+            Setup <span className="tabular-nums">{completedCount}/{totalCount}</span>
+          </span>
+          <span className="h-1.5 min-w-[60px] flex-1 overflow-hidden rounded-full bg-[#F4F4F5]">
+            <span
+              style={{ width: `${Math.max(5, progressPercent)}%` }}
+              className="block h-full rounded-full bg-[#7A2253] transition-all duration-500 ease-out"
+            />
+          </span>
+          {nextItem && (
+            <span className="hidden sm:inline truncate max-w-[220px] text-[12.5px] text-[#6B6B76]">
+              Next: <span className="font-medium text-[#18181B]">{nextItem.title}</span>
             </span>
-          </div>
-          <p className="text-[12.5px] text-[#6B6B76] font-normal mt-1 leading-snug">
-            {emotionalSubtitle}
-          </p>
-        </div>
-
+          )}
+          <span className="shrink-0 text-[#8E8E93]">
+            {listOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </span>
+        </button>
         <button
           type="button"
           onClick={handleDismiss}
@@ -215,16 +205,9 @@ export function SetupChecklist({
         </button>
       </div>
 
-      {/* 2. Progress bar */}
-      <div className="mt-3.5 w-full bg-[#F4F4F5] h-2 rounded-[5px] overflow-hidden">
-        <div
-          style={{ width: `${Math.max(5, progressPercent)}%` }}
-          className="h-full bg-gradient-to-r from-[#7A2253] via-[#8E2861] to-[#A23372] rounded-[5px] transition-all duration-500 ease-out"
-        />
-      </div>
-
-      {/* 3. Interactive Checklist items (Accordion style) */}
-      <div className="mt-3.5 divide-y divide-[#F4F4F5]">
+      {listOpen && (
+      <div className="border-t border-[#F4F4F5] px-3.5 pb-1">
+      <div className="divide-y divide-[#F4F4F5]">
         {items.map((item) => {
           const isExpanded = expandedId === item.id;
           return (
@@ -309,6 +292,8 @@ export function SetupChecklist({
           );
         })}
       </div>
+      </div>
+      )}
     </div>
   );
 }

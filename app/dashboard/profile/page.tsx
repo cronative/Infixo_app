@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import {
   Camera,
   Sparkles,
@@ -33,10 +33,14 @@ const BIO_SUGGESTIONS = [
 ];
 
 export default function DashboardProfilePage() {
-  const { profile, updateProfile } = useCreator();
+  const { profile, updateProfile, loading } = useCreator();
   const { showToast } = useToast();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const photoButtonRef = useRef<HTMLButtonElement>(null);
+  const displayNameRef = useRef<HTMLInputElement>(null);
+  const deepLinkHandled = useRef(false);
+  const [highlightPhoto, setHighlightPhoto] = useState(false);
 
   const [isEditing, setIsEditing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -68,6 +72,37 @@ export default function DashboardProfilePage() {
     setErrors({});
     setIsEditing(true);
   };
+
+  // Deep links from the dashboard setup checklist: ?edit=details | ?edit=photo
+  useEffect(() => {
+    if (loading || deepLinkHandled.current || typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const target = params.get("edit");
+    if (target !== "details" && target !== "photo") return;
+    deepLinkHandled.current = true;
+
+    // Drop the param so refresh/back doesn't reopen the editor.
+    params.delete("edit");
+    const qs = params.toString();
+    window.history.replaceState(window.history.state, "", `${window.location.pathname}${qs ? `?${qs}` : ""}${window.location.hash}`);
+
+    handleStartEdit();
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (target === "photo") {
+          const btn = photoButtonRef.current;
+          btn?.scrollIntoView({ behavior: "smooth", block: "center" });
+          btn?.focus({ preventScroll: true });
+          setHighlightPhoto(true);
+          window.setTimeout(() => setHighlightPhoto(false), 2600);
+        } else {
+          const input = displayNameRef.current;
+          input?.scrollIntoView({ behavior: "smooth", block: "center" });
+          input?.focus({ preventScroll: true });
+        }
+      });
+    });
+  }, [loading]);
 
   const handleCancelEdit = () => {
     if (snapshot) {
@@ -295,9 +330,12 @@ export default function DashboardProfilePage() {
 
                 <div className="mt-3 space-y-1 w-full flex flex-col items-center sm:items-start">
                   <button
+                    ref={photoButtonRef}
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] px-4 py-2 text-xs font-semibold text-[#7A2253] transition-colors cursor-pointer shadow-2xs"
+                    className={`inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] px-4 py-2 text-xs font-semibold text-[#7A2253] transition-all cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7A2253] focus-visible:ring-offset-2 ${
+                      highlightPhoto ? "ring-2 ring-[#7A2253] ring-offset-2 animate-pulse" : ""
+                    }`}
                   >
                     <Camera className="h-3.5 w-3.5" />
                     <span>Upload photo</span>
@@ -334,6 +372,7 @@ export default function DashboardProfilePage() {
                       <User className="h-4 w-4" />
                     </span>
                     <input
+                      ref={displayNameRef}
                       type="text"
                       value={displayName}
                       placeholder="e.g. Rahul Sharma"

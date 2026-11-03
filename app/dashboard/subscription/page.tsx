@@ -5,20 +5,14 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
   Activity,
-  Briefcase,
   CalendarClock,
   CreditCard,
   Crown,
-  Film,
   Gem,
-  Layers,
-  Link2,
   RefreshCw,
-  ShoppingBag,
   Sparkles,
-  Star,
-  Wrench,
 } from "lucide-react";
+import { StatCard, StatCardGrid } from "@/components/dashboard/StatCard";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import {
@@ -88,26 +82,23 @@ function useMockSubscription(real: Subscription | null | undefined): Subscriptio
   }, [mock, real, now]);
 }
 
-function UsageRow({ icon, label, used, limit, detail }: { icon: ReactNode; label: string; used: number | null; limit: number; detail?: string }) {
+function UsageRow({ label, used, limit, detail }: { label: string; used: number | null; limit: number; detail?: string }) {
   const unlimited = isUnlimited(limit);
   const pct = used === null || unlimited || limit <= 0 ? 0 : Math.min(100, Math.round((used / limit) * 100));
   const barColor = pct >= 100 ? "bg-[#E11D48]" : pct >= 80 ? "bg-amber-500" : "bg-[#7A2253]";
   return (
-    <div className="flex items-center gap-3 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] p-3 shadow-none min-w-0">
-      <div className={ICON_BOX}>{icon}</div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-baseline justify-between gap-2">
-          <p className="line-clamp-2 break-words text-[13px] font-semibold text-[#18181B]" title={label}>{label}</p>
-          <p className="shrink-0 text-[12px] font-medium text-[#18181B] tabular-nums">
-            {used === null ? "–" : unlimited ? `${used} · Unlimited` : `${used} of ${limit}`}
-          </p>
-        </div>
-        {detail && <p className="line-clamp-2 break-words text-[12px] text-[#6B6B76]" title={detail}>{detail}</p>}
-        <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-[#ECECF0]">
-          <div className={`h-full rounded-full transition-all ${barColor}`} style={{ width: `${unlimited ? 0 : pct}%` }} />
-        </div>
-      </div>
-    </div>
+    <StatCard
+      label={label}
+      value={used === null ? "–" : unlimited ? `${used} · Unlimited` : `${used} of ${limit}`}
+      footer={
+        <>
+          {detail && <p className="truncate text-[12px] text-[#6B6B76]" title={detail}>{detail}</p>}
+          <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-[#ECECF0]">
+            <div className={`h-full rounded-full transition-all ${barColor}`} style={{ width: `${unlimited ? 0 : pct}%` }} />
+          </div>
+        </>
+      }
+    />
   );
 }
 
@@ -186,19 +177,18 @@ function PlanPage() {
   // ---- Usage ---------------------------------------------------------------
   const fullest = getFullestSeriesEpisodeUsage(series, planKey);
   const usageRows = [
-    { icon: <Layers className="h-4 w-4" />, label: "Series", used: series.length, limit: plan.limits.series },
+    { label: "Series", used: series.length, limit: plan.limits.series },
     {
-      icon: <Film className="h-4 w-4" />,
       label: "Episodes",
       used: fullest.series ? countSeriesEpisodes(fullest.series) : 0,
       limit: plan.limits.episodesPerSeries,
       detail: fullest.series ? `Per series · most in ${fullest.series.title}` : "Per series",
     },
-    { icon: <ShoppingBag className="h-4 w-4" />, label: "Shop products", used: counts.products, limit: plan.limits.products },
-    { icon: <Link2 className="h-4 w-4" />, label: "Links", used: counts.links, limit: plan.limits.links },
-    { icon: <Briefcase className="h-4 w-4" />, label: "Collab packages", used: counts.packages, limit: plan.limits.collabPackages },
-    { icon: <Star className="h-4 w-4" />, label: "Brand reviews", used: counts.reviews, limit: plan.limits.reviews },
-    { icon: <Wrench className="h-4 w-4" />, label: "Gear items", used: counts.gear, limit: plan.limits.gearItems },
+    { label: "Shop products", used: counts.products, limit: plan.limits.products },
+    { label: "Links", used: counts.links, limit: plan.limits.links },
+    { label: "Collab packages", used: counts.packages, limit: plan.limits.collabPackages },
+    { label: "Brand reviews", used: counts.reviews, limit: plan.limits.reviews },
+    { label: "Gear items", used: counts.gear, limit: plan.limits.gearItems },
   ];
 
   // ---- Actions -------------------------------------------------------------
@@ -278,9 +268,9 @@ function PlanPage() {
           </div>
           <h2 className="text-[16px] font-semibold text-[#18181B]">Usage</h2>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+        <StatCardGrid cols={3}>
           {usageRows.map((row) => <UsageRow key={row.label} {...row} />)}
-        </div>
+        </StatCardGrid>
       </section>
 
       {/* d. Plans */}

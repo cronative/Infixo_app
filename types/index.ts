@@ -214,6 +214,8 @@ export interface CreatorProfile {
   visibilitySettings?: VisibilitySettings;
   peakFanbase?: number | null;
   eraUnlockedPending?: boolean;
+  /** Number of times the creator applied a theme from the dashboard (server-tracked). */
+  themeChangesCount?: number;
   updatedAt: string;
 }
 

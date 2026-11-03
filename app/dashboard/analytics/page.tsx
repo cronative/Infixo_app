@@ -3,12 +3,8 @@
 import { useEffect, useState } from "react";
 import {
   ChevronDown,
-  Eye,
-  FileText,
   Link2,
-  MousePointerClick,
   Package,
-  Send,
   ShoppingBag,
   Tv,
   Wrench,
@@ -16,20 +12,20 @@ import {
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { SectionCard } from "@/components/dashboard/SectionCard";
-import { StatGrid, StatTile } from "@/components/dashboard/StatTile";
+import { StatCard, StatCardGrid } from "@/components/dashboard/StatCard";
 import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import type { AnalyticsPeriod, AnalyticsSummary, AnalyticsTotals } from "@/lib/analyticsSummary";
 
-const TILES: { key: keyof AnalyticsTotals; label: string; icon: React.ReactNode }[] = [
-  { key: "profileViews", label: "Profile opens", icon: <Eye className="h-[30px] w-[30px]" strokeWidth={2.25} /> },
-  { key: "seriesOpens", label: "Series opens", icon: <Tv className="h-[30px] w-[30px]" strokeWidth={2.25} /> },
-  { key: "episodeClicks", label: "Episode clicks", icon: <MousePointerClick className="h-[30px] w-[30px]" strokeWidth={2.25} /> },
-  { key: "linkClicks", label: "Link clicks", icon: <Link2 className="h-[30px] w-[30px]" strokeWidth={2.25} /> },
-  { key: "productClicks", label: "Product clicks", icon: <ShoppingBag className="h-[30px] w-[30px]" strokeWidth={2.25} /> },
-  { key: "setupClicks", label: "Setup clicks", icon: <Wrench className="h-[30px] w-[30px]" strokeWidth={2.25} /> },
-  { key: "mediaKitViews", label: "Media kit views", icon: <FileText className="h-[30px] w-[30px]" strokeWidth={2.25} /> },
-  { key: "collabPackageViews", label: "Package views", icon: <Package className="h-[30px] w-[30px]" strokeWidth={2.25} /> },
-  { key: "collabRequests", label: "Collab requests", icon: <Send className="h-[30px] w-[30px]" strokeWidth={2.25} /> },
+const TILES: { key: keyof AnalyticsTotals; label: string }[] = [
+  { key: "profileViews", label: "Profile opens" },
+  { key: "seriesOpens", label: "Series opens" },
+  { key: "episodeClicks", label: "Episode clicks" },
+  { key: "linkClicks", label: "Link clicks" },
+  { key: "productClicks", label: "Product clicks" },
+  { key: "setupClicks", label: "Setup clicks" },
+  { key: "mediaKitViews", label: "Media kit views" },
+  { key: "collabPackageViews", label: "Package views" },
+  { key: "collabRequests", label: "Collab requests" },
 ];
 
 const fmt = (n: number) => n.toLocaleString("en-IN");
@@ -98,16 +94,11 @@ export default function DashboardAnalyticsPage() {
         </p>
       )}
 
-      <StatGrid className="lg:grid-cols-5 scroll-mt-20">
+      <StatCardGrid cols={3} className="scroll-mt-20">
         {TILES.map((tile) => (
-          <StatTile
-            key={tile.key}
-            icon={tile.icon}
-            value={loading || !data ? "…" : fmt(data.totals[tile.key])}
-            label={tile.label}
-          />
+          <StatCard key={tile.key} label={tile.label} value={loading || !data ? "…" : fmt(data.totals[tile.key])} />
         ))}
-      </StatGrid>
+      </StatCardGrid>
 
       <div className="space-y-5">
         <Section id="series" title="Series" icon={<Tv className="h-4 w-4" />} loading={loading} empty={!items?.series.some((s) => s.opens + s.episodeClicks > 0)}>

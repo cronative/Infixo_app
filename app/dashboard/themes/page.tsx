@@ -23,6 +23,7 @@ import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import { ThemeBackgroundAnim } from "@/components/theme/ThemeBackgroundAnim";
+import { isSetupStepDone, markSetupStep } from "@/lib/setupProgress";
 
 type GroupFilter = "all" | ThemeGroup;
 
@@ -174,6 +175,7 @@ export default function DashboardThemesPage() {
     try {
       await setTheme(previewThemeKey);
       ThemeService.setSelectedTheme(previewThemeKey, true);
+      markSetupStep("theme");
       showToast(`${previewDisplayName} applied`);
     } catch {
       showToast("Could not apply theme. Please try again.", "error");
@@ -184,6 +186,11 @@ export default function DashboardThemesPage() {
 
   // Selecting a card ONLY updates the preview; below 1024px it opens the full-screen preview sheet.
   const handleSelectTheme = (tKey: ThemeKey) => {
+    // Re-selecting the active theme (e.g. keeping the default) confirms it — no Apply step is shown for it.
+    if (tKey === theme && !isThemeLocked(tKey) && !isSetupStepDone("theme")) {
+      ThemeService.setSelectedTheme(tKey, true);
+      markSetupStep("theme");
+    }
     setPreviewThemeKey(tKey);
     if (window.matchMedia("(max-width: 1023px)").matches) setSheetOpen(true);
   };

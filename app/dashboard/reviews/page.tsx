@@ -44,6 +44,11 @@ function formatDate(dateStr: string): string {
 
 export default function DashboardReviewsPage() {
   const { profile, subscription } = useCreator();
+
+  // Opening Reviews clears the dashboard Brand Inbox "unread reviews" count.
+  useEffect(() => {
+    fetch("/api/creator/reviews/seen", { method: "POST" }).catch(() => {});
+  }, []);
   const { showToast } = useToast();
 
   const [reviews, setReviews] = useState<CreatorReview[]>([]);

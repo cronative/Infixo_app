@@ -7,7 +7,6 @@ import {
   RefreshCw,
   Plus,
   Share2,
-  Users,
   EyeOff,
   Eye,
   Loader2,
@@ -26,10 +25,10 @@ import { YoutubeFetcher } from "@/components/socials/YoutubeFetcher";
 import { FacebookFetcher } from "@/components/socials/FacebookFetcher";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { PageContainer } from "@/components/dashboard/PageContainer";
+import { StatCard } from "@/components/dashboard/StatCard";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import { getCreatorEra, getEraProgress, formatFans } from "@/lib/creatorEra";
-import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
 import { CreatorEraCelebrationModal } from "@/components/shared/CreatorEraCelebrationModal";
 import { PLANS } from "@/config/plans";
 
@@ -380,32 +379,19 @@ export default function DashboardSocialsPage() {
 
       {/* 2. COMPACT TOTAL FANS BAR (~72px max height, single row) */}
       <div className="space-y-1.5">
-        <div className="rounded-[5px] border border-[#ECECF0] bg-white px-4 py-2.5 min-h-[56px] max-h-[72px] flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-wrap">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
-              <Users className="h-4 w-4" />
-            </div>
-            <span className="text-xl sm:text-2xl font-bold text-[#18181B] tabular-nums leading-none whitespace-nowrap">
-              {formatFans(effectiveFanbase)}
-            </span>
-            {creatorEra && <CreatorEraBadge badge={creatorEra.badge} />}
-            {eraProgress.nextBadge && eraProgress.fansNeeded > 0 && (
-              <span className="text-xs text-[#6B6B76] font-medium truncate hidden sm:inline">
-                {formatFans(eraProgress.fansNeeded)} more to{" "}
-                {eraProgress.nextBadge.replace(/ Creator$/, "")}
-              </span>
-            )}
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setCelebrationOpen(true)}
-            className="dash-btn-sm bg-[#7A2253] text-white shrink-0"
-          >
-            <Share2 className="h-3.5 w-3.5" />
-            <span>Share era</span>
-          </button>
-        </div>
+        <StatCard
+          label="Total fans"
+          value={formatFans(effectiveFanbase)}
+          badge={creatorEra?.badge}
+          action={{ label: "Share era", onClick: () => setCelebrationOpen(true), title: "Share your Creator Era badge" }}
+          footer={
+            eraProgress.nextBadge && eraProgress.fansNeeded > 0 ? (
+              <p className="truncate text-[12px] text-[#6B6B76]">
+                {formatFans(eraProgress.fansNeeded)} more to {eraProgress.nextBadge.replace(/ Creator$/, "")}
+              </p>
+            ) : undefined
+          }
+        />
 
         <p className="text-xs text-[#6B6B76] px-0.5">
           Your first account on each platform is your primary account. Only primary accounts count toward your fans.

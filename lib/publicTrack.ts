@@ -97,7 +97,8 @@ export function trackPublicEvent(type: PublicEventType, target: string | null = 
       eventId: eventId(type, target),
       visitorId: getVisitorId(),
       source: context.source,
-      metadata: type === "profile_view" ? { referrer: document.referrer || "" } : undefined,
+      // Referrer on every event so traffic sources can be attributed per action, not only per visit.
+      metadata: { referrer: document.referrer || "" },
     });
     const blob = new Blob([body], { type: "application/json" });
     if (!navigator.sendBeacon?.("/api/analytics/track", blob)) {

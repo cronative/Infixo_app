@@ -7,7 +7,6 @@ import {
   Briefcase,
   Plus,
   Trash2,
-  ExternalLink,
   Check,
   X,
   Film,
@@ -29,7 +28,6 @@ import {
   List,
   Tag,
   Info,
-  Users,
 } from "lucide-react";
 import {
   InstagramIcon,
@@ -54,7 +52,7 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import { formatFans } from "@/lib/creatorEra";
 import { SectionCard } from "@/components/dashboard/SectionCard";
-import { StatGrid, StatTile } from "@/components/dashboard/StatTile";
+import { StatCard, StatCardGrid } from "@/components/dashboard/StatCard";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { canCreateGig, getPlanQuota } from "@/services/subscriptionLimits";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
@@ -958,71 +956,42 @@ export default function DashboardMediaKitPage() {
       />
 
       {/* 2. STAT CARDS */}
-      <StatGrid className="lg:grid-cols-4">
-        <StatTile
-          icon={<Users className="h-4 w-4" />}
-          value={totalAudience > 0 ? formatFans(totalAudience) : "0"}
-          label="Total fanbase"
-        />
-        <StatTile
-          icon={<Share2 className="h-4 w-4" />}
-          value={connectedPlatforms}
+      <StatCardGrid cols={4}>
+        <StatCard label="Total fanbase" value={totalAudience > 0 ? formatFans(totalAudience) : "0"} />
+        <StatCard
           label="Connected platforms"
-          extra={
-            <div className="flex items-center gap-1.5">
-              {hasInstagram && (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white" title="Instagram">
-                  <InstagramIcon className="h-3 w-3 text-white" />
-                </span>
-              )}
-              {hasYoutube && (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FF0000] text-white" title="YouTube">
-                  <YoutubeIcon className="h-3 w-3 text-white" />
-                </span>
-              )}
-              {hasFacebook && (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#1877F2] text-white" title="Facebook">
-                  <FacebookIcon className="h-3 w-3 text-white" />
-                </span>
-              )}
-              {connectedPlatforms === 0 && (
-                <span className="text-[11px] text-[#94a3b8]">None connected</span>
-              )}
-            </div>
+          value={connectedPlatforms}
+          badge={
+            connectedPlatforms > 0 ? (
+              <span className="flex items-center gap-1.5">
+                {hasInstagram && (
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white" title="Instagram">
+                    <InstagramIcon className="h-3 w-3 text-white" />
+                  </span>
+                )}
+                {hasYoutube && (
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FF0000] text-white" title="YouTube">
+                    <YoutubeIcon className="h-3 w-3 text-white" />
+                  </span>
+                )}
+                {hasFacebook && (
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#1877F2] text-white" title="Facebook">
+                    <FacebookIcon className="h-3 w-3 text-white" />
+                  </span>
+                )}
+              </span>
+            ) : (
+              "None connected"
+            )
           }
         />
-        <StatTile
-          icon={<Briefcase className="h-4 w-4" />}
-          value={activePackages}
-          label="Active packages"
-          extra={
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-(--success)">
-              <span className="h-1.5 w-1.5 rounded-full bg-(--success)" />
-              {activePackages > 0 ? "Active" : "None active"}
-            </span>
-          }
-        />
-        <StatTile
-          icon={<Mail className="h-4 w-4" />}
-          value={
-            <span className="line-clamp-2 break-all" title={settings.sponsorEmail || profile.email || "nikunj.appz@gmail.com"}>
-              {settings.sponsorEmail || profile.email || "nikunj.appz@gmail.com"}
-            </span>
-          }
-          valueClassName="text-sm font-semibold leading-snug text-(--text)"
+        <StatCard label="Active packages" value={activePackages} badge={activePackages > 0 ? "Active" : "None active"} />
+        <StatCard
           label="Contact email"
-          action={
-            <button
-              type="button"
-              onClick={() => setIsContactModalOpen(true)}
-              className="cursor-pointer p-0.5 text-(--muted) transition-colors hover:text-(--primary)"
-              title="Configure brand contact"
-            >
-              <ExternalLink className="h-3.5 w-3.5" />
-            </button>
-          }
+          value={settings.sponsorEmail || profile.email || "nikunj.appz@gmail.com"}
+          action={{ label: "Edit", onClick: () => setIsContactModalOpen(true), title: "Configure brand contact" }}
         />
-      </StatGrid>
+      </StatCardGrid>
 
       {/* 2.5 ABOUT YOU FOR BRANDS (MEDIA KIT V2) */}
       <SectionCard

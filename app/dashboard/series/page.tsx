@@ -346,6 +346,19 @@ export default function MySeriesPage() {
     });
   };
 
+  // Dashboard quick action deep link: ?addEpisode={seriesId}. Opens once, then drops the param.
+  useEffect(() => {
+    if (typeof window === "undefined" || loading || !seriesList.length) return;
+    const sp = new URLSearchParams(window.location.search);
+    const addEpisodeId = sp.get("addEpisode");
+    if (!addEpisodeId) return;
+    sp.delete("addEpisode");
+    const qs = sp.toString();
+    window.history.replaceState(window.history.state, "", `${window.location.pathname}${qs ? `?${qs}` : ""}`);
+    const target = seriesList.find((s) => s.id === addEpisodeId) ?? seriesList[0];
+    if (target) handleOpenAddEpisode(target);
+  }, [loading, seriesList]);
+
   // Open Edit Episode Modal
   const handleOpenEditEpisode = (series: Series, ep: Episode) => {
     setEpisodeModalState({

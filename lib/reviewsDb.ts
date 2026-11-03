@@ -37,6 +37,9 @@ export async function ensureReviewsTable() {
       "ALTER TABLE creator_reviews ADD COLUMN rating_timely_delivery INT NOT NULL DEFAULT 5",
       "ALTER TABLE creator_reviews ADD COLUMN invitation_status VARCHAR(32) NOT NULL DEFAULT 'pending'",
       "ALTER TABLE creator_reviews ADD COLUMN is_visible TINYINT(1) NOT NULL DEFAULT 1",
+      // Existing reviews count as already seen; new rows default to unseen (dashboard Brand Inbox).
+      "ALTER TABLE creator_reviews ADD COLUMN creator_seen TINYINT(1) NOT NULL DEFAULT 1",
+      "ALTER TABLE creator_reviews ALTER COLUMN creator_seen SET DEFAULT 0",
     ];
     for (const q of alterQueries) {
       try {
@@ -71,4 +74,19 @@ export async function ensureReviewsTable() {
   } catch (_e) {
     // Ignore error if table exists
   }
+}
+
+/** Submitted brand reviews the creator hasn't opened the Reviews page for yet. */
+export async function countUnseenReviews(creatorId: string): Promise<number> {
+  await ensureReviewsTable();
+  const [rows]: any = await db.query(
+    "SELECT COUNT(*) AS n FROM creator_reviews WHERE creator_id = ? AND status IN ('approved', 'rejected', 'pending_approval') AND creator_seen = 0",
+    [creatorId],
+  );
+  return Number(rows?.[0]?.n || 0);
+}
+
+export async function markReviewsSeen(creatorId: string): Promise<void> {
+  await ensureReviewsTable();
+  await db.query("UPDATE creator_reviews SET creator_seen = 1 WHERE creator_id = ? AND creator_seen = 0", [creatorId]);
 }

@@ -94,7 +94,11 @@ function TrialAccessBar() {
   const dayText = daysLeft === 1 ? "1 day" : `${daysLeft} days`;
   const message = trialStatus.isExpired
     ? "Your Free Trial has ended (Profile is now private)"
-    : `${dayText} left in Free Trial — after 7 days profile will be private`;
+    : `${dayText} left in Free Trial — profile will be private on ${
+        "expiresAt" in trialStatus && trialStatus.expiresAt
+          ? trialStatus.expiresAt.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
+          : "trial end"
+      }`;
   const cta = trialStatus.isExpired ? "Choose a plan" : "Upgrade Plan";
 
   return (

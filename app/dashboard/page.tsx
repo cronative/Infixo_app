@@ -1,29 +1,19 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
-  Briefcase,
   Check,
   Copy,
   ExternalLink,
-  Eye,
   Film,
   Folder,
-  Inbox,
-  Laptop,
   Link2,
-  MousePointerClick,
   Plus,
   Share2,
   ShoppingBag,
-  Sparkles,
-  Users,
   MessageCircle,
-  MessageSquare,
   QrCode,
-  Heart,
-  ArrowRight,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -35,70 +25,39 @@ import {
 import { QRCode } from "@/components/creator-card/QRCode";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { copyToClipboard } from "@/lib/copyToClipboard";
-import { buildProfileUrl, formatCount } from "@/utils/format";
+import { buildProfileUrl } from "@/utils/format";
 import { SocialService } from "@/services/SocialService";
 import { getSeriesEpisodes } from "@/lib/seriesMetrics";
-import {
-  customLinksRepository,
-  reviewsRepository,
-  creatorSetupRepository,
-} from "@/repositories/localRepository";
-import { MediaKitService } from "@/services/MediaKitService";
+import { customLinksRepository } from "@/repositories/localRepository";
 import { ProductService } from "@/services/ProductService";
 import { LinkService } from "@/services/LinkService";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PAGE_COPY } from "@/components/dashboard/pageCopy";
-import { StatTile } from "@/components/dashboard/StatTile";
-import type {
-  SocialAccounts,
-  CustomLink,
-  CreatorReview,
-  CreatorSetupItem,
-  MediaKitPackage,
-  CreatorProduct,
-} from "@/types";
-import { getCreatorEra, formatFans } from "@/lib/creatorEra";
+import {
+  BrandInboxCard,
+  EraProgressCard,
+  QuickActions,
+  RowCount,
+  SmartAlerts,
+  TopPerformers,
+  TrafficSources,
+  WeeklyMetrics,
+  type SmartAlert,
+} from "@/components/dashboard/home/DashboardWidgets";
+import type { DashboardSummary } from "@/lib/dashboardSummary";
+import type { SocialAccounts, CustomLink, CreatorProduct } from "@/types";
+import { getCreatorEra } from "@/lib/creatorEra";
 import { CreatorEraCelebrationModal } from "@/components/shared/CreatorEraCelebrationModal";
 import { SetupChecklist } from "@/components/dashboard/SetupChecklist";
+import { markSetupStep, useSetupStep } from "@/lib/setupProgress";
+import { ThemeService } from "@/services/ThemeService";
 
 function getGreeting(): string {
   const hour = new Date().getHours();
   if (hour < 12) return "Good morning 👋";
   if (hour < 18) return "Good afternoon 👋";
   return "Good evening 👋";
-}
-
-interface SectionHeaderProps {
-  title: string;
-  subtitle?: string;
-  icon?: React.ReactNode;
-  action?: React.ReactNode;
-}
-
-function SectionHeader({ title, subtitle, icon, action }: SectionHeaderProps) {
-  return (
-    <div className="flex items-center justify-between gap-3 mb-2.5">
-      <div className="flex items-center gap-3 min-w-0">
-        {icon && (
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
-            {icon}
-          </div>
-        )}
-        <div className="min-w-0">
-          <h3 className="text-[16px] font-semibold text-[#18181B] leading-tight">
-            {title}
-          </h3>
-          {subtitle && (
-            <p className="text-[12px] text-[#6B6B76] font-normal mt-0.5 leading-tight">
-              {subtitle}
-            </p>
-          )}
-        </div>
-      </div>
-      {action && <div>{action}</div>}
-    </div>
-  );
 }
 
 export default function DashboardOverviewPage() {
@@ -111,6 +70,7 @@ export default function DashboardOverviewPage() {
     theme,
     isTrialExpired,
     openTrialExpiredModal,
+    refresh,
   } = useCreator();
   const { showToast } = useToast();
 
@@ -126,27 +86,12 @@ export default function DashboardOverviewPage() {
     }
   }, [profile.eraUnlockedPending]);
 
-  // Analytics 7d data
-  const [weekStats, setWeekStats] = useState<{
-    profileViews: number;
-    seriesOpens: number;
-    clicks: number;
-  } | null>(null);
-
-  const [analyticsItems, setAnalyticsItems] = useState<{
-    series: { id: string; title: string; opens: number; episodeClicks: number }[];
-    links: { id: string; title: string; clicks: number }[];
-    products: { id: string; name: string; clicks: number }[];
-  } | null>(null);
-
-  // Real data state from pages' sources
+  // Real data for the Series / Shop / Links lists
   const [customLinks, setCustomLinks] = useState<CustomLink[]>([]);
   const [products, setProducts] = useState<CreatorProduct[]>([]);
-  const [reviews, setReviews] = useState<CreatorReview[]>([]);
-  const [packages, setPackages] = useState<MediaKitPackage[]>([]);
-  const [setupItems, setSetupItems] = useState<CreatorSetupItem[]>([]);
-  const [unreadRequestsCount, setUnreadRequestsCount] = useState<number>(0);
   const [latestFanNudge, setLatestFanNudge] = useState<any | null>(null);
+  // Everything else on the home screen (7-day window) comes from one endpoint.
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
 
   const displayName = profile.displayName || "Creator";
   const handle = (profile.username || "").replace(/^@/, "");
@@ -181,14 +126,6 @@ export default function DashboardOverviewPage() {
           setCustomLinks(Array.isArray(storedLinks) ? storedLinks : []);
         });
 
-      // 2. Reviews
-      const storedReviews = reviewsRepository.getAll();
-      setReviews(Array.isArray(storedReviews) ? storedReviews : []);
-
-      // 3. Setup gear items
-      const storedSetup = creatorSetupRepository.getAll();
-      setSetupItems(Array.isArray(storedSetup) ? storedSetup : []);
-
       // 4. Products / Shop items
       ProductService.list()
         .then((items) => setProducts(Array.isArray(items) ? items : []))
@@ -198,81 +135,53 @@ export default function DashboardOverviewPage() {
     }
   }, []);
 
-  // Collab packages & requests: use the exact same source as Media Kit / Requests pages
-  useEffect(() => {
-    const creatorLookup = profile.id || profile.email || profile.username;
-    if (!creatorLookup) return;
-
-    MediaKitService.fetchFromDb(profile.email || profile.username || creatorLookup, profile.id)
-      .then(({ packages: dbPackages }) => {
-        if (Array.isArray(dbPackages)) {
-          setPackages(dbPackages);
-        }
-      })
-      .catch(() => {});
-
-    const fetchRequests = () => {
-      fetch(`/api/creator/requests?creatorId=${encodeURIComponent(creatorLookup)}`)
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data) => {
-          const reqList = data?.data?.requests || data?.requests;
-          const unread = data?.data?.unreadCount ?? data?.unreadCount ?? (Array.isArray(reqList) ? reqList.filter((r: any) => r.status === "NEW").length : 0);
-          setUnreadRequestsCount(Number(unread) || 0);
-        })
-        .catch(() => {});
-    };
-
-    fetchRequests();
-    window.addEventListener("collab-requests-updated", fetchRequests);
-    return () => window.removeEventListener("collab-requests-updated", fetchRequests);
-  }, [profile.id, profile.email, profile.username]);
-
-  // 7-day counts & top items from GET /api/analytics?period=7d
-  useEffect(() => {
-    let ignore = false;
-    if (!profile.id && !profile.email) {
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    fetch("/api/analytics?period=7d")
+  const summaryAt = useRef(0);
+  const loadSummary = useCallback((force = false) => {
+    if (!force && Date.now() - summaryAt.current < 3000) return Promise.resolve();
+    summaryAt.current = Date.now();
+    return fetch("/api/dashboard/summary", { cache: "no-store" })
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error("Unavailable"))))
-      .then((data) => {
-        if (ignore) return;
-        const t = data?.totals || {};
-        setWeekStats({
-          profileViews: Number(t.profileViews) || 0,
-          seriesOpens: Number(t.seriesOpens) || 0,
-          clicks:
-            (Number(t.episodeClicks) || 0) +
-            (Number(t.linkClicks) || 0) +
-            (Number(t.productClicks) || 0) +
-            (Number(t.setupClicks) || 0),
-        });
-
-        if (data?.items) {
-          setAnalyticsItems({
-            series: Array.isArray(data.items.series) ? data.items.series : [],
-            links: Array.isArray(data.items.links) ? data.items.links : [],
-            products: Array.isArray(data.items.products) ? data.items.products : [],
-          });
-        }
+      .then((body) => {
+        if (body?.status === 1 && body.data) setSummary(body.data as DashboardSummary);
       })
-      .catch(() => {
-        if (!ignore) {
-          setWeekStats(null);
-          setAnalyticsItems(null);
-        }
-      })
-      .finally(() => {
-        if (!ignore) setLoading(false);
-      });
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
-    return () => {
-      ignore = true;
+  useEffect(() => {
+    if (!profile.id && !profile.email) return;
+    void loadSummary();
+    const onUpdate = () => void loadSummary(true);
+    window.addEventListener("collab-requests-updated", onUpdate);
+    return () => window.removeEventListener("collab-requests-updated", onUpdate);
+  }, [profile.id, profile.email, loadSummary]);
+
+  // Keep the checklist current when returning to the dashboard (client nav, tab switch, bfcache) — no hard reload.
+  const profileLoadingRef = useRef(profileLoading);
+  useEffect(() => {
+    profileLoadingRef.current = profileLoading;
+  }, [profileLoading]);
+  useEffect(() => {
+    let last = 0;
+    const sync = () => {
+      // The provider is already fetching on first app load; don't double up.
+      if (profileLoadingRef.current) return;
+      if (document.visibilityState !== "visible" || Date.now() - last < 5000) return;
+      last = Date.now();
+      void refresh({ silent: true });
+      void loadSummary();
     };
-  }, [profile.id, profile.email]);
+    sync();
+    const onShow = (e: PageTransitionEvent) => e.persisted && sync();
+    document.addEventListener("visibilitychange", sync);
+    window.addEventListener("focus", sync);
+    window.addEventListener("pageshow", onShow);
+    return () => {
+      document.removeEventListener("visibilitychange", sync);
+      window.removeEventListener("focus", sync);
+      window.removeEventListener("pageshow", onShow);
+    };
+  }, [refresh, loadSummary]);
 
   // Copy Profile URL Handler
   async function handleCopyLink() {
@@ -282,6 +191,7 @@ export default function DashboardOverviewPage() {
       return;
     }
     const success = await copyToClipboard(profileUrl);
+    if (success) markSetupStep("shared");
     setCopied(success);
     showToast(
       success ? "Bio link copied to clipboard! ✨" : "Could not copy link",
@@ -294,7 +204,6 @@ export default function DashboardOverviewPage() {
   const effectiveSocials: SocialAccounts = socials;
   const effectiveTotalAudience =
     totalAudience > 0 ? totalAudience : SocialService.calculateTotalAudience(effectiveSocials);
-  const currentEra = getCreatorEra(effectiveTotalAudience);
 
   // Content Counts
   const seriesCount = series.length;
@@ -343,10 +252,63 @@ export default function DashboardOverviewPage() {
       (socials?.facebook?.followers ?? 0) > 0
   );
 
+  // Done once the creator applies or re-confirms any theme (incl. the default), or already uses a non-default one.
+  const themeConfirmed = useSetupStep("theme");
   const hasPickedTheme = Boolean(
-    (theme && theme !== "inflixo-maroon") ||
+    themeConfirmed ||
+      (profile.themeChangesCount ?? 0) > 0 ||
+      ThemeService.getThemeChangesCount() > 0 ||
+      (theme && theme !== "inflixo-maroon") ||
       (profile.themeKey && profile.themeKey !== "inflixo-maroon")
   );
+
+  // Quick action: add an episode to the most recently updated series (or create the first series).
+  const latestSeries = useMemo(
+    () =>
+      [...series].sort(
+        (a: any, b: any) => new Date(b.updatedAt || b.createdAt || 0).getTime() - new Date(a.updatedAt || a.createdAt || 0).getTime()
+      )[0],
+    [series]
+  );
+  const addEpisodeHref = latestSeries
+    ? `/dashboard/series?addEpisode=${encodeURIComponent(latestSeries.id)}`
+    : "/dashboard/series?new=true";
+
+  const mediaKitUrl = `${profileUrl}/mediakit`;
+  async function handleShareMediaKit() {
+    if (isTrialExpired) {
+      openTrialExpiredModal();
+      return;
+    }
+    const ok = await copyToClipboard(mediaKitUrl);
+    showToast(ok ? "Media kit link copied — share it with brands ✨" : "Could not copy link", ok ? "success" : "error");
+  }
+
+  const alerts: SmartAlert[] = [
+    ...(summary?.limits ?? []).map((l) => ({
+      id: `limit-${l.resource}-${l.label}`,
+      tone: "warn" as const,
+      text: `${l.label}: plan limit reached (${l.used}/${l.limit}).`,
+      cta: { label: "Upgrade", href: l.href },
+    })),
+    ...(!profile.bio?.trim()
+      ? [{ id: "bio", tone: "info" as const, text: "Your bio is empty — tell fans and brands what you create.", cta: { label: "Add bio", href: "/dashboard/profile?edit=details" } }]
+      : []),
+    ...(!profile.photoDataUrl?.trim()
+      ? [{ id: "avatar", tone: "info" as const, text: "Add a profile photo so fans recognise you.", cta: { label: "Add photo", href: "/dashboard/profile?edit=photo" } }]
+      : []),
+    ...((summary?.inbox.stalePending ?? 0) > 0
+      ? [{
+          id: "stale-requests",
+          tone: "warn" as const,
+          text: `${summary!.inbox.stalePending} collab ${summary!.inbox.stalePending === 1 ? "request has" : "requests have"} been waiting over 48h.`,
+          cta: { label: "Reply", href: "/dashboard/mediakit#requests" },
+        }]
+      : []),
+    ...(latestFanNudge
+      ? [{ id: "fan-nudge", tone: "info" as const, text: "A fan visited your profile and wants to connect. Complete your profile to welcome them.", cta: { label: "Complete profile", href: "/dashboard/profile" } }]
+      : []),
+  ];
 
   return (
     <PageContainer className="select-none text-left">
@@ -420,33 +382,7 @@ export default function DashboardOverviewPage() {
         </div>
       </div>
 
-      {/* Motivational Fan Nudge Alert (if fan visited & profile incomplete) */}
-      {latestFanNudge && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-3.5 rounded-[5px] border border-[#fbcfe8] bg-[#fdf2f8] text-[#7A2253] animate-fade-in shadow-none">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="h-8 w-8 rounded-[4px] bg-white border border-[#fbcfe8] flex items-center justify-center shrink-0">
-              <Heart className="h-4 w-4 fill-[#7A2253] text-[#7A2253]" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs sm:text-[13px] font-bold text-[#18181B] leading-tight">
-                A fan visited your profile and wants to connect! ✨
-              </p>
-              <p className="text-[11.5px] text-[#7A2253] mt-0.5 leading-tight truncate">
-                Add your bio and social accounts to welcome them to your space.
-              </p>
-            </div>
-          </div>
-          <Link
-            href="/dashboard/profile"
-            className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-[5px] bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 shrink-0 transition-opacity"
-          >
-            <span>Complete Profile</span>
-            <ArrowRight className="h-3 w-3" />
-          </Link>
-        </div>
-      )}
-
-      {/* 2. SETUP CHECKLIST (Linktree-style interactive onboarding) */}
+      {/* Setup checklist: slim one-line progress (hidden at 6/6) */}
       <SetupChecklist
         profile={profile}
         socials={socials}
@@ -457,59 +393,26 @@ export default function DashboardOverviewPage() {
         onCopyLink={handleCopyLink}
       />
 
-      {/* 2. SECTION: THIS WEEK */}
-      <section className="space-y-3">
-        <SectionHeader
-          title="This week"
-          subtitle="Overview of your reach and engagement across Inflixo"
-          icon={<Sparkles className="h-4 w-4 text-[#7A2253]" />}
-          action={
-            <Link
-              href="/dashboard/analytics"
-              className="text-[13px] font-medium text-[#7A2253] hover:underline inline-flex items-center gap-1 cursor-pointer"
-            >
-              <span>See all analytics</span>
-              <span>→</span>
-            </Link>
-          }
-        />
+      {/* 1. Brand inbox */}
+      <BrandInboxCard inbox={summary?.inbox ?? null} loading={loading} onShareMediaKit={handleShareMediaKit} />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-3">
-          <StatTile
-            icon={<Users className="h-[30px] w-[30px]" strokeWidth={2.25} />}
-            value={
-              <div className="flex items-center gap-2 flex-wrap">
-                <span>{formatFans(effectiveTotalAudience)}</span>
-                <span className="inline-flex items-center px-1.5 py-0.5 rounded-[5px] text-[11px] font-semibold bg-[#F7EEF2] text-[#7A2253] border border-[#7A2253]/20">
-                  {currentEra?.badge || "Rising Bronze"}
-                </span>
-              </div>
-            }
-            label="Total fans"
-            action={
-              <button
-                type="button"
-                onClick={() => setCelebrationOpen(true)}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[5px] text-[11px] font-semibold text-[#7A2253] bg-[#F7EEF2] hover:bg-[#F2DFE8] transition-colors border border-[#7A2253]/20 cursor-pointer"
-                title="Share your Creator Era badge"
-              >
-                <Sparkles className="h-3 w-3" />
-                <span>Share Era</span>
-              </button>
-            }
-          />
-          <StatTile
-            icon={<Eye className="h-[30px] w-[30px]" strokeWidth={2.25} />}
-            value={loading ? "..." : formatCount(weekStats?.profileViews ?? 0)}
-            label="Profile opens"
-          />
-          <StatTile
-            icon={<MousePointerClick className="h-[30px] w-[30px]" strokeWidth={2.25} />}
-            value={loading ? "..." : formatCount(weekStats?.clicks ?? 0)}
-            label="Clicks"
-          />
-        </div>
-      </section>
+      {/* 2. Last 7 days */}
+      <WeeklyMetrics metrics={summary?.metrics ?? null} loading={loading} />
+
+      {/* 3 + 4. Top performers & traffic sources */}
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+        <TopPerformers top={summary?.top ?? null} />
+        <TrafficSources sources={summary?.sources ?? null} />
+      </div>
+
+      {/* 5. Quick actions */}
+      <QuickActions addEpisodeHref={addEpisodeHref} onCopyLink={handleCopyLink} />
+
+      {/* 6. Era progress */}
+      <EraProgressCard fans={effectiveTotalAudience} onShare={() => setCelebrationOpen(true)} />
+
+      {/* 7. Smart alerts (only when true) */}
+      <SmartAlerts alerts={alerts} />
 
       {/* 3. SECTION: CONTENT & STOREFRONT */}
       <section className="space-y-3">
@@ -573,6 +476,7 @@ export default function DashboardOverviewPage() {
                           {epCount} episode{epCount === 1 ? "" : "s"}
                         </p>
                       </div>
+                      <RowCount count={summary?.rows.series[String(item.id)]} unit="play" />
                     </Link>
                   );
                 })
@@ -648,6 +552,7 @@ export default function DashboardOverviewPage() {
                           {priceText}
                         </p>
                       </div>
+                      <RowCount count={summary?.rows.products[String(item.id)]} unit="click" />
                     </Link>
                   );
                 })
@@ -737,6 +642,7 @@ export default function DashboardOverviewPage() {
                           {isGroup ? "Link group" : item.url}
                         </p>
                       </div>
+                      <RowCount count={summary?.rows.links[String(item.id)]} unit="click" />
                     </Link>
                   );
                 })
@@ -754,45 +660,6 @@ export default function DashboardOverviewPage() {
           </div>
         </div>
 
-        {/* Compact Chip Row */}
-        <div className="flex flex-wrap items-center gap-2 pt-1">
-          <Link
-            href="/dashboard/reviews"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] border border-[#ECECF0] bg-white hover:border-[#CBD5E1] hover:bg-[#FAFAFB] text-[12px] font-medium text-[#18181B] transition-colors"
-          >
-            <MessageSquare className="h-3.5 w-3.5 text-[#7A2253]" />
-            <span>Brand reviews ({reviews.length})</span>
-          </Link>
-
-          <Link
-            href="/dashboard/requests"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] border border-[#ECECF0] bg-white hover:border-[#CBD5E1] hover:bg-[#FAFAFB] text-[12px] font-medium text-[#18181B] transition-colors"
-          >
-            <Inbox className="h-3.5 w-3.5 text-[#7A2253]" />
-            <span>Collab requests</span>
-            {unreadRequestsCount > 0 && (
-              <span className="inline-flex items-center px-1.5 py-0.5 rounded-[4px] text-[10px] font-bold bg-[#EAF7F0] text-[#17845B] border border-[#17845B]/20">
-                {unreadRequestsCount} new
-              </span>
-            )}
-          </Link>
-
-          <Link
-            href="/dashboard/mediakit"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] border border-[#ECECF0] bg-white hover:border-[#CBD5E1] hover:bg-[#FAFAFB] text-[12px] font-medium text-[#18181B] transition-colors"
-          >
-            <Briefcase className="h-3.5 w-3.5 text-[#7A2253]" />
-            <span>Media kit</span>
-          </Link>
-
-          <Link
-            href="/dashboard/setup"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] border border-[#ECECF0] bg-white hover:border-[#CBD5E1] hover:bg-[#FAFAFB] text-[12px] font-medium text-[#18181B] transition-colors"
-          >
-            <Laptop className="h-3.5 w-3.5 text-[#7A2253]" />
-            <span>My Setup ({setupItems.length})</span>
-          </Link>
-        </div>
       </section>
 
       {/* Share Modal */}
@@ -829,6 +696,7 @@ export default function DashboardOverviewPage() {
 
           <div className="grid grid-cols-2 gap-2 pt-2">
             <a
+              onClick={() => markSetupStep("shared")}
               href={`https://wa.me/?text=${encodeURIComponent(`Check out my official creator series and links on Inflixo: ${profileUrl}`)}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -838,6 +706,7 @@ export default function DashboardOverviewPage() {
               <span>WhatsApp</span>
             </a>
             <a
+              onClick={() => markSetupStep("shared")}
               href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(profileUrl)}&text=${encodeURIComponent(`Watch my latest series and check out my bio on @inflixo`)}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -847,6 +716,7 @@ export default function DashboardOverviewPage() {
               <span>X (Twitter)</span>
             </a>
             <a
+              onClick={() => markSetupStep("shared")}
               href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(profileUrl)}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -858,6 +728,7 @@ export default function DashboardOverviewPage() {
             <button
               type="button"
               onClick={() => {
+                markSetupStep("shared");
                 setShareOpen(false);
                 setQrOpen(true);
               }}

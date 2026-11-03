@@ -36,7 +36,8 @@ interface CreatorContextValue {
   openTrialExpiredModal: () => void;
   closeTrialExpiredModal: () => void;
   handleViewProfile: (e?: React.MouseEvent) => void;
-  refresh: () => void;
+  /** Re-syncs from the server. `silent` keeps current data on screen (no loading state). */
+  refresh: (opts?: { silent?: boolean }) => Promise<void>;
   updateProfile: (patch: Partial<CreatorProfile>) => void;
   updateSocials: (patch: Partial<SocialAccounts>) => void;
   setTheme: (key: ThemeKey) => void;
@@ -89,14 +90,17 @@ export function CreatorProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const refresh = useCallback(async () => {
-    setLoading(true);
-    // 1. Instant local storage state for fast first paint
-    setProfile(ProfileService.getProfile());
-    setSocials(SocialService.getAccounts());
-    setThemeState(ThemeService.getSelectedTheme());
-    setSubscription(SubscriptionService.get());
-    setSeries(SeriesService.getAllLocal());
+  const refresh = useCallback(async (opts?: { silent?: boolean }) => {
+    const silent = opts?.silent === true;
+    if (!silent) {
+      setLoading(true);
+      // 1. Instant local storage state for fast first paint
+      setProfile(ProfileService.getProfile());
+      setSocials(SocialService.getAccounts());
+      setThemeState(ThemeService.getSelectedTheme());
+      setSubscription(SubscriptionService.get());
+      setSeries(SeriesService.getAllLocal());
+    }
 
     // 2. Authoritative Server DB Sync via /api/me (cookie-backed session)
     try {

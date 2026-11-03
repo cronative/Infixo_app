@@ -69,6 +69,8 @@ export function getFreeTrialStatus(subscription?: Subscription | null, nowMs = D
     isExpired,
     daysLeft,
     shouldWarn: isExpired || daysLeft <= 3,
+    /** When the trial ends (profile goes private). */
+    expiresAt: new Date(expiresAtMs),
   };
 }
 
