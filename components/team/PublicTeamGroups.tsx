@@ -134,7 +134,8 @@ export function PublicTeamGroups({
                     />
 
                     <div className="min-w-0 flex-1 space-y-1">
-                      <div className="flex flex-wrap items-center gap-1.5">
+                      {/* Profile: role chip sits below the name; media kit keeps it inline. */}
+                      <div className={isEditorial ? "flex flex-wrap items-center gap-1.5" : "flex flex-col items-start gap-1"}>
                         <p
                           style={{
                             color: isEditorial
