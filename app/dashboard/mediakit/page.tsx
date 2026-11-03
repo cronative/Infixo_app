@@ -24,6 +24,7 @@ import {
   Share2,
   Download,
   FileText,
+  Loader2,
   Calendar,
   List,
   Tag,
@@ -54,6 +55,7 @@ import { formatFans } from "@/lib/creatorEra";
 import { SectionCard } from "@/components/dashboard/SectionCard";
 import { StatCard, StatCardGrid } from "@/components/dashboard/StatCard";
 import { copyToClipboard } from "@/lib/copyToClipboard";
+import { PDF_PREPARING_LABEL, useMediaKitPdf } from "@/hooks/useMediaKitPdf";
 import { canCreateGig, getPlanQuota } from "@/services/subscriptionLimits";
 import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
@@ -892,12 +894,13 @@ export default function DashboardMediaKitPage() {
   const cleanHandle = (profile.username || "creator").replace(/^@/, "");
   const mediaKitPath = `/${cleanHandle}/mediakit`;
   const mediaKitUrl = typeof window !== "undefined" ? `${window.location.origin}${mediaKitPath}` : mediaKitPath;
-  const pdfDownloadUrl = `/api/creator/mediakit/pdf?username=${encodeURIComponent(cleanHandle)}`;
   const activePackages = packages.filter((p) => p.isActive).length;
   const hasInstagram = Boolean(socials?.instagram?.url || socials?.instagram?.username || (socials?.instagram?.followers ?? 0) > 0);
   const hasYoutube = Boolean(socials?.youtube?.url || socials?.youtube?.username || (socials?.youtube?.subscribers ?? 0) > 0);
   const hasFacebook = Boolean(socials?.facebook?.url || socials?.facebook?.username || (socials?.facebook?.followers ?? 0) > 0);
   const connectedPlatforms = [hasInstagram, hasYoutube, hasFacebook].filter(Boolean).length;
+
+  const { download: downloadPdf, loading: pdfLoading } = useMediaKitPdf(cleanHandle);
 
   const handleCopyMediaKit = async () => {
     const ok = await copyToClipboard(mediaKitUrl);
@@ -933,16 +936,17 @@ export default function DashboardMediaKitPage() {
         {...PAGE_COPY.mediakit}
         actions={
           <>
-            <a
-              href={pdfDownloadUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="dash-btn-secondary"
+            <button
+              type="button"
+              onClick={downloadPdf}
+              disabled={pdfLoading}
+              aria-busy={pdfLoading}
+              className="dash-btn-secondary disabled:cursor-wait disabled:opacity-70"
               title="Download A4 Media Kit PDF"
             >
-              <FileText className="h-3.5 w-3.5" />
-              <span>Download PDF</span>
-            </a>
+              {pdfLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5" />}
+              <span>{pdfLoading ? PDF_PREPARING_LABEL : "Download PDF"}</span>
+            </button>
             <button type="button" onClick={handleShareMediaKit} className="dash-btn-secondary" title="Share public media kit">
               <Share2 className="h-3.5 w-3.5" />
               <span>Share</span>
@@ -1000,14 +1004,16 @@ export default function DashboardMediaKitPage() {
         icon={<Sparkles className="h-4 w-4" />}
         action={
           <div className="flex items-center gap-3">
-            <a
-              href={pdfDownloadUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[12px] font-semibold text-[#64748b] hover:text-[#7A2253] transition-colors"
+            <button
+              type="button"
+              onClick={downloadPdf}
+              disabled={pdfLoading}
+              aria-busy={pdfLoading}
+              className="inline-flex items-center gap-1 text-[12px] font-semibold text-[#64748b] hover:text-[#7A2253] transition-colors cursor-pointer disabled:cursor-wait"
             >
-              Download PDF
-            </a>
+              {pdfLoading && <Loader2 className="h-3 w-3 animate-spin" />}
+              {pdfLoading ? PDF_PREPARING_LABEL : "Download PDF"}
+            </button>
             <a
               href={mediaKitPath}
               target="_blank"

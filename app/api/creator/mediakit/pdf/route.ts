@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer";
+import { withPdfPage } from "@/lib/pdfBrowser";
 import { db } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/session";
 
@@ -64,7 +64,7 @@ export async function GET(req: Request) {
         status: 200,
         headers: {
           "Content-Type": "application/pdf",
-          "Content-Disposition": `inline; filename="${cleanUsername}-mediakit.pdf"`,
+          "Content-Disposition": `attachment; filename="${cleanUsername}-media-kit.pdf"`,
           "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
         },
       });
@@ -73,25 +73,9 @@ export async function GET(req: Request) {
     const origin = getOriginFromReq(req);
     const targetUrl = `${origin}/${encodeURIComponent(cleanUsername)}/mediakit?print=1`;
 
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu",
-        "--font-render-hinting=medium",
-      ],
-    });
-
-    let pdfBuffer: Uint8Array;
-    try {
-      const page = await browser.newPage();
+    const pdfBuffer = await withPdfPage(async (page) => {
       await page.setViewport({ width: 1200, height: 1600, deviceScaleFactor: 2 });
-      await page.goto(targetUrl, {
-        waitUntil: ["load", "networkidle0"],
-        timeout: 30000,
-      });
+      await page.goto(targetUrl, { waitUntil: ["load", "networkidle0"] });
 
       // Allow a brief settling delay for fonts, SVG rendering, and images
       await new Promise((resolve) => setTimeout(resolve, 800));
@@ -100,17 +84,10 @@ export async function GET(req: Request) {
       const generated = await page.pdf({
         format: "A4",
         printBackground: true,
-        margin: {
-          top: "10mm",
-          bottom: "10mm",
-          left: "12mm",
-          right: "12mm",
-        },
+        margin: { top: "10mm", bottom: "10mm", left: "12mm", right: "12mm" },
       });
-      pdfBuffer = new Uint8Array(generated);
-    } finally {
-      await browser.close();
-    }
+      return new Uint8Array(generated);
+    });
 
     // Cache for 1 hour
     pdfCache.set(cleanUsername, {
@@ -122,14 +99,13 @@ export async function GET(req: Request) {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `inline; filename="${cleanUsername}-mediakit.pdf"`,
+        "Content-Disposition": `attachment; filename="${cleanUsername}-media-kit.pdf"`,
         "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
       },
     });
-  } catch (err: any) {
-    console.error("MediaKit Headless Chrome PDF Error:", err);
-    return new Response(`Failed to generate Media Kit PDF: ${err?.message || "Unknown error"}`, {
-      status: 500,
-    });
+  } catch (err) {
+    // Real error stays in server logs; the client only gets a generic message.
+    console.error("MediaKit PDF generation failed:", err);
+    return Response.json({ error: "Couldn't generate PDF, please try again" }, { status: 500 });
   }
 }

@@ -19,6 +19,7 @@ import { ThemeCard } from "@/themes/registry";
 import { Logo } from "@/components/shared/Logo";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { useToast } from "@/contexts/ToastContext";
+import { useMediaKitPdf } from "@/hooks/useMediaKitPdf";
 import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { CreatorPublicShell } from "@/components/public/CreatorPublicShell";
 import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
@@ -30,6 +31,7 @@ export default function PublicMediaKitPage() {
   const { showToast } = useToast();
 
   const [profile, setProfile] = useState<CreatorProfile | null>(null);
+  const { download: downloadPdf } = useMediaKitPdf(profile?.username || params.username);
   const [theme, setTheme] = useState<ThemeKey>(DEFAULT_THEME_KEY);
   const [socials, setSocials] = useState<SocialAccounts>(EMPTY_SOCIAL_ACCOUNTS);
   const [series, setSeries] = useState<Series[]>([]);
@@ -178,7 +180,8 @@ export default function PublicMediaKitPage() {
     if (!loaded || !profile || typeof window === "undefined") return;
     if (new URLSearchParams(window.location.search).get("download") !== "pdf") return;
     const cleanHandle = (profile.username || params.username || "creator").replace(/^@/, "");
-    window.location.href = `/api/creator/mediakit/pdf?username=${encodeURIComponent(cleanHandle)}`;
+    void downloadPdf();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once when the page has loaded
   }, [loaded, profile, params.username]);
 
   if (!loaded) {

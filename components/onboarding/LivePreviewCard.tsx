@@ -56,6 +56,7 @@ import {
   Rocket,
   Compass,
   Info,
+  Loader2,
 } from "lucide-react";
 import { TabSectionHeader, TabSectionBody } from "@/components/profile/TabSectionHeader";
 import { MediaKitSnapshotCard } from "@/components/collab/MediaKitSnapshotCard";
@@ -118,6 +119,7 @@ import {
 } from "@/components/shared/BrandIcons";
 import { InflixoLogoIcon } from "@/components/shared/Logo";
 import { useToast } from "@/contexts/ToastContext";
+import { PDF_PREPARING_LABEL, useMediaKitPdf } from "@/hooks/useMediaKitPdf";
 import { ShareSeriesModal } from "@/components/shared/ShareSeriesModal";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { MadeWithInflixo } from "@/components/shared/MadeWithInflixo";
@@ -1565,6 +1567,7 @@ export function LivePreviewCard({
   const surfaceBg = themeMeta.profileSurface?.background || c.profileBackground;
 
   const cleanHandle = (profile.username || "").replace(/^@/, "");
+  const { download: downloadMediaKitPdf, loading: mediaKitPdfLoading } = useMediaKitPdf(cleanHandle || "creator");
   const formattedCategories = formatCategoryDots(profile.category, profile.customCategory);
   const aboutColors = { primary: c.primaryText, secondary: c.secondaryText, muted: c.mutedText, headingFont: typ.headingFontFamily };
   const headerSocialList = activeSocialList.filter((s) => s.hasAccount || s.count > 0 || (s.url && s.url !== "#"));
@@ -2041,15 +2044,17 @@ export function LivePreviewCard({
                       <Briefcase className="h-3.5 w-3.5 opacity-70" style={{ color: c.primaryText }} />
                       <span>Media Kit</span>
                     </h2>
-                    <a
-                      href={`/api/creator/mediakit/pdf?username=${encodeURIComponent(cleanHandle || "creator")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      type="button"
+                      onClick={downloadMediaKitPdf}
+                      disabled={mediaKitPdfLoading}
+                      aria-busy={mediaKitPdfLoading}
                       style={{ color: c.accentText || c.primaryText }}
-                      className="text-[11px] sm:text-xs font-semibold hover:underline"
+                      className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-semibold hover:underline cursor-pointer disabled:cursor-wait"
                     >
-                      Download PDF
-                    </a>
+                      {mediaKitPdfLoading && <Loader2 className="h-3 w-3 animate-spin" />}
+                      {mediaKitPdfLoading ? PDF_PREPARING_LABEL : "Download PDF"}
+                    </button>
                   </div>
                   <p
                     style={{ color: c.secondaryText }}

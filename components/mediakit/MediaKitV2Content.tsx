@@ -19,6 +19,7 @@ import {
   Film,
   ShieldCheck,
   Users,
+  Loader2,
 } from "lucide-react";
 import {
   CreatorProfile,
@@ -43,6 +44,7 @@ import { EraAwardMedal } from "@/components/shared/EraBadge";
 import { formatCount } from "@/utils/format";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { useToast } from "@/contexts/ToastContext";
+import { PDF_PREPARING_LABEL, useMediaKitPdf } from "@/hooks/useMediaKitPdf";
 
 export interface MediaKitV2ContentProps {
   profile: CreatorProfile;
@@ -243,13 +245,14 @@ export function MediaKitV2Content({
     }
   };
 
+  const { download: downloadPdf, loading: pdfLoading } = useMediaKitPdf(cleanHandle);
+
   const handleDownloadPdf = () => {
     if (isInformational) {
       showToast("Downloads your 2-page A4 Media Kit PDF ✨");
       return;
     }
-    const pdfUrl = `/api/creator/mediakit/pdf?username=${encodeURIComponent(cleanHandle)}`;
-    window.open(pdfUrl, "_blank", "noopener,noreferrer");
+    void downloadPdf();
   };
 
   return (
@@ -881,10 +884,12 @@ export function MediaKitV2Content({
           <button
             type="button"
             onClick={handleDownloadPdf}
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#D6CEC2] bg-white px-4 py-2.5 text-xs sm:text-sm font-semibold text-[#1C1917] hover:bg-[#F5F0E8] transition-colors cursor-pointer"
+            disabled={pdfLoading}
+            aria-busy={pdfLoading}
+            className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#D6CEC2] bg-white px-4 py-2.5 text-xs sm:text-sm font-semibold text-[#1C1917] hover:bg-[#F5F0E8] transition-colors cursor-pointer disabled:cursor-wait disabled:opacity-80"
           >
-            <Download className="h-4 w-4 text-[#7A2253]" />
-            <span>Download PDF</span>
+            {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin text-[#7A2253]" /> : <Download className="h-4 w-4 text-[#7A2253]" />}
+            <span>{pdfLoading ? PDF_PREPARING_LABEL : "Download PDF"}</span>
           </button>
 
           <button
