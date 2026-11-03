@@ -108,8 +108,9 @@ export default function MySeriesPage() {
   // Undo delete tracker for episodes
   const pendingDeletesRef = useRef<Map<string, { timer: NodeJS.Timeout; backup: Episode; seriesId: string }>>(new Map());
 
-  // Drag-and-drop state for series only (episodes are ordered by number)
+  // Drag-and-drop state for series and episodes
   const [draggedSeriesIndex, setDraggedSeriesIndex] = useState<number | null>(null);
+  const [draggedEpisode, setDraggedEpisode] = useState<{ seriesId: string; index: number } | null>(null);
   const [failedCovers, setFailedCovers] = useState<Set<string>>(new Set());
 
   // Load series data EXACTLY ONCE on mount
@@ -359,21 +360,24 @@ export default function MySeriesPage() {
   };
 
   // On Add/Edit Episode Success
-  const handleEpisodeModalSaved = (savedEpisode: Episode, isNew?: boolean) => {
+  const handleEpisodeModalSaved = (savedEpisode: Episode | Episode[], isNew?: boolean) => {
     if (!episodeModalState) return;
     const { seriesId } = episodeModalState;
+    const episodesToApply = Array.isArray(savedEpisode) ? savedEpisode : [savedEpisode];
 
     setSeriesList((prev) =>
       prev.map((s) => {
         if (s.id !== seriesId) return s;
         const eps = s.seasons?.[0]?.episodes || [];
-        const updatedEps = isNew
-          ? [...eps, savedEpisode].sort(
-              (a, b) => (a.episodeNumber || 0) - (b.episodeNumber || 0)
-            )
-          : eps
-              .map((e) => (e.id === savedEpisode.id ? savedEpisode : e))
-              .sort((a, b) => (a.episodeNumber || 0) - (b.episodeNumber || 0));
+        let updatedEps = [...eps];
+        if (isNew) {
+          updatedEps = [...updatedEps, ...episodesToApply];
+        } else {
+          for (const ep of episodesToApply) {
+            updatedEps = updatedEps.map((e) => (e.id === ep.id ? ep : e));
+          }
+        }
+        updatedEps.sort((a, b) => (a.episodeNumber || 0) - (b.episodeNumber || 0));
 
         return {
           ...s,
@@ -436,6 +440,69 @@ export default function MySeriesPage() {
       await SeriesService.reorderSeries(copy.map((s) => s.id));
     } catch (err: any) {
       showToast("Couldn't save series order.", "error");
+    }
+  };
+
+  // Episode Reorder (Drag & Drop)
+  const handleEpisodeDragStart = (seriesId: string, index: number) => {
+    setDraggedEpisode({ seriesId, index });
+  };
+
+  const handleEpisodeDragEnd = () => {
+    setDraggedEpisode(null);
+  };
+
+  const handleEpisodeDrop = async (seriesId: string, targetIndex: number) => {
+    if (!draggedEpisode || draggedEpisode.seriesId !== seriesId || draggedEpisode.index === targetIndex) {
+      setDraggedEpisode(null);
+      return;
+    }
+
+    const series = seriesList.find((s) => s.id === seriesId);
+    if (!series) return;
+
+    const episodes = [...(series.seasons?.[0]?.episodes || [])].sort(
+      (a, b) => (a.episodeNumber || 0) - (b.episodeNumber || 0)
+    );
+
+    const fromIndex = draggedEpisode.index;
+    if (fromIndex < 0 || fromIndex >= episodes.length || targetIndex < 0 || targetIndex >= episodes.length) {
+      setDraggedEpisode(null);
+      return;
+    }
+
+    const [moved] = episodes.splice(fromIndex, 1);
+    episodes.splice(targetIndex, 0, moved);
+
+    // Renumber sequentially 1..N
+    const renumbered = episodes.map((ep, idx) => ({
+      ...ep,
+      episodeNumber: idx + 1,
+    }));
+
+    // Optimistic UI update
+    setSeriesList((prev) =>
+      prev.map((s) =>
+        s.id === seriesId
+          ? {
+              ...s,
+              seasons: [{ ...s.seasons[0], episodes: renumbered }],
+            }
+          : s
+      )
+    );
+
+    setDraggedEpisode(null);
+
+    try {
+      await SeriesService.reorderEpisodes(
+        seriesId,
+        renumbered.map((ep) => ep.id)
+      );
+      showToast("Episode order updated! ✨", "success");
+    } catch (err: any) {
+      showToast(err.message || "Couldn't save episode order.", "error");
+      SeriesService.fetchFromDb().then((res) => setSeriesList(res.series));
     }
   };
 
@@ -595,11 +662,14 @@ export default function MySeriesPage() {
           return (
             <div
               key={series.id}
-              draggable
-              onDragStart={() => handleSeriesDragStart(sIndex)}
-              onDragOver={(e) => e.preventDefault()}
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = "move";
+              }}
               onDrop={() => handleSeriesDrop(sIndex)}
-              className="rounded-[5px] border border-[#ECECF0] bg-white transition-all shadow-none"
+              className={`rounded-[5px] border border-[#ECECF0] bg-white transition-all shadow-none ${
+                draggedSeriesIndex === sIndex ? "opacity-40" : ""
+              }`}
             >
               {/* C3: Series Row Header */}
               <div
@@ -609,13 +679,20 @@ export default function MySeriesPage() {
                 {/* Left: Drag handle + Cover + Title + Stats */}
                 <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                   {/* Drag Handle */}
-                  <div
+                  <span
+                    draggable
+                    onDragStart={(e) => {
+                      e.stopPropagation();
+                      handleSeriesDragStart(sIndex);
+                    }}
+                    onDragEnd={() => setDraggedSeriesIndex(null)}
                     onClick={(e) => e.stopPropagation()}
                     className="p-1 text-slate-300 hover:text-slate-600 cursor-grab active:cursor-grabbing shrink-0"
                     title="Drag to reorder series"
+                    aria-label={`Drag to reorder ${series.title}`}
                   >
                     <GripVertical className="h-4 w-4" />
-                  </div>
+                  </span>
 
                   {/* 16:9 96px Cover Thumbnail or Platform Icon */}
                   <div className="relative h-12 w-20 sm:h-14 sm:w-24 shrink-0 rounded-[5px] bg-slate-100 overflow-hidden border border-[#ECECF0]">
@@ -756,10 +833,34 @@ export default function MySeriesPage() {
                           return (
                             <div
                               key={ep.id}
-                              className="group flex items-center justify-between gap-3 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] px-3 py-2 text-[13px] transition-colors hover:border-[#cbd5e1]"
+                              onDragOver={(e) => {
+                                e.preventDefault();
+                                e.dataTransfer.dropEffect = "move";
+                              }}
+                              onDrop={() => handleEpisodeDrop(series.id, epIndex)}
+                              className={`group flex items-center justify-between gap-3 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] px-3 py-2 text-[13px] transition-colors hover:border-[#cbd5e1] ${
+                                draggedEpisode?.seriesId === series.id && draggedEpisode?.index === epIndex
+                                  ? "opacity-40"
+                                  : ""
+                              }`}
                             >
-                              {/* Left: Number + Title (Inline edit) */}
-                              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                              {/* Left: Drag Handle + Number + Title (Inline edit) */}
+                              <div className="flex items-center gap-2 min-w-0 flex-1">
+                                {/* Drag Handle */}
+                                <span
+                                  draggable
+                                  onDragStart={(e) => {
+                                    e.stopPropagation();
+                                    handleEpisodeDragStart(series.id, epIndex);
+                                  }}
+                                  onDragEnd={handleEpisodeDragEnd}
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="text-slate-300 hover:text-slate-600 cursor-grab active:cursor-grabbing p-1 -ml-1 shrink-0"
+                                  title="Drag to reorder episode"
+                                  aria-label={`Drag to reorder ${ep.title}`}
+                                >
+                                  <GripVertical className="h-4 w-4" />
+                                </span>
                                 {/* Number (click to edit inline, auto-reorders) */}
                                 {isEditingNumber ? (
                                   <input
