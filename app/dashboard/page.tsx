@@ -52,6 +52,7 @@ import { CreatorEraCelebrationModal } from "@/components/shared/CreatorEraCelebr
 import { SetupChecklist } from "@/components/dashboard/SetupChecklist";
 import { markSetupStep, useSetupStep } from "@/lib/setupProgress";
 import { ThemeService } from "@/services/ThemeService";
+import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -258,8 +259,8 @@ export default function DashboardOverviewPage() {
     themeConfirmed ||
       (profile.themeChangesCount ?? 0) > 0 ||
       ThemeService.getThemeChangesCount() > 0 ||
-      (theme && theme !== "inflixo-maroon") ||
-      (profile.themeKey && profile.themeKey !== "inflixo-maroon")
+      (theme && theme !== DEFAULT_THEME_KEY) ||
+      (profile.themeKey && profile.themeKey !== DEFAULT_THEME_KEY)
   );
 
   // Quick action: add an episode to the most recently updated series (or create the first series).

@@ -21,7 +21,7 @@ import {
   EXPERT_DEMO_SOCIALS,
   EXPERT_DEMO_THEME,
 } from "@/data/expertDemoCreator";
-import { resolveThemeKey } from "@/lib/themeKeys";
+import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
 
 const EMPTY_PROFILE: CreatorProfile = {
   photoDataUrl: null,
@@ -110,7 +110,7 @@ export default function TeamPageClient() {
   const [profile, setProfile] = useState<CreatorProfile>(EMPTY_PROFILE);
   const [socials, setSocials] = useState<SocialAccounts>(EMPTY_SOCIAL_ACCOUNTS);
   const [team, setTeam] = useState<{ team?: CreatorTeam | null; members: TeamMember[] }>({ team: null, members: [] });
-  const [theme, setTheme] = useState<ThemeKey>("inflixo-maroon");
+  const [theme, setTheme] = useState<ThemeKey>(DEFAULT_THEME_KEY);
   const [loaded, setLoaded] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const fetchingRef = useRef(false);

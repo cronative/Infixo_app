@@ -578,8 +578,8 @@ RAINBOW_THEMES.forEach(registerTheme);
 PLACE_THEMES.forEach(registerTheme);
 ANIMATED_THEMES.forEach(registerTheme);
 
-/** Jamun (inflixo-maroon) stays the default. */
-export const DEFAULT_THEME = INFLIXO_MAROON;
+/** Kapas is the default theme for new creators and any unknown/removed theme id. */
+export const DEFAULT_THEME = KAPAS;
 
 export function getThemeDefinition(id: string | null | undefined): ThemeDefinition {
   return REGISTRY.get(id as ThemeKey) || DEFAULT_THEME;
@@ -595,13 +595,13 @@ export function themeTokenStyle(id: string | null | undefined): CSSProperties {
 }
 
 /**
- * Default theme tokens for shared widgets rendered outside a profile root (e.g. avatars in the dashboard).
+ * Brand (Jamun) theme tokens for shared widgets rendered outside a profile root (e.g. avatars in the dashboard).
  * `:where(:root)` has zero specificity, so where a name is also part of the dashboard design system
  * (--surface, --text-muted, --page-bg, --card-shadow in globals.css) the dashboard value still wins
  * outside the profile. Profile roots set every token inline, which overrides both.
  * Values are config constants, not user input.
  */
-export function themeTokensCss(id?: string): string {
+export function themeTokensCss(id: string = INFLIXO_MAROON.id): string {
   const tokens = getThemeDefinition(id).tokens as unknown as Record<string, string>;
   return `:where(:root){${Object.entries(tokens).map(([name, value]) => `${name}:${value}`).join(";")}}`;
 }

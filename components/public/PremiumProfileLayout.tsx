@@ -2,6 +2,7 @@
 
 import { LivePreviewCard } from "@/components/onboarding/LivePreviewCard";
 import { EMPTY_SOCIAL_ACCOUNTS } from "@/types";
+import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
 import type {
   CreatorProfile,
   SocialAccounts,
@@ -49,7 +50,7 @@ export interface PremiumProfileLayoutProps {
  */
 export function PremiumProfileLayout({
   profile,
-  themeKey = "inflixo-maroon",
+  themeKey = DEFAULT_THEME_KEY,
   socials = EMPTY_SOCIAL_ACCOUNTS,
   series = [],
   products = [],

@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { getCreatorEra, calculateTotalFanbase, formatFans } from "@/lib/creatorEra";
 import { formatCount } from "@/utils/format";
 import { getThemeDefinition } from "@/themes/config";
-import { resolveThemeKey } from "@/lib/themeKeys";
+import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
 
 export const runtime = "nodejs";
 
@@ -17,7 +17,7 @@ export async function GET(
   let displayName = "Creator";
   let handle = cleanUser || "creator";
   let photoUrl = "";
-  let themeKey = "inflixo-maroon";
+  let themeKey: string = DEFAULT_THEME_KEY;
   let peakFanbase: number | null = null;
   let currentFanbase: number | null = null;
 
@@ -32,7 +32,7 @@ export async function GET(
       displayName = c.display_name || cleanUser;
       handle = c.username || cleanUser;
       photoUrl = c.photo_url || "";
-      themeKey = c.theme_key || "inflixo-maroon";
+      themeKey = c.theme_key || DEFAULT_THEME_KEY;
       peakFanbase = c.peak_fanbase !== null && c.peak_fanbase !== undefined ? Number(c.peak_fanbase) : null;
 
       const [socials]: any = await db.query(

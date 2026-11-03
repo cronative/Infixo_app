@@ -1,7 +1,7 @@
 import type { ThemeKey } from "@/types";
 import { DEFAULT_THEME, listThemes } from "@/themes/config";
 
-/** The default theme (Jamun). Every unknown, removed or missing theme id resolves to it. */
+/** The default theme (Kapas). Every unknown, removed or missing theme id resolves to it. */
 export const DEFAULT_THEME_KEY: ThemeKey = DEFAULT_THEME.id;
 
 /** Every registered theme id (themes/config.ts). */
