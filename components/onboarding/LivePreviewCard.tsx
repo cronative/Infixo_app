@@ -1916,6 +1916,11 @@ export function LivePreviewCard({
           usesDarkControls={usesDarkControls}
           onShareClick={handleShareClick}
           onFanbaseClick={() => handleTabChange("about")}
+          onWorkWithMe={
+            isTabsLayout && !isListingPage && navTabs.some((t) => t.id === "collab")
+              ? () => handleTabChange("collab")
+              : undefined
+          }
         />
 
         {/* Navigation Tabs Bar - Fixed at bottom of top header (Never scrolls) */}

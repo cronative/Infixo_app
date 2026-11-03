@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -10,11 +10,11 @@ import {
   BadgeCheck,
   ChevronRight,
   Globe,
-  Info,
   Crown,
   Users,
   ExternalLink,
-  Award,
+  Medal,
+  Handshake,
 } from "lucide-react";
 import {
   InstagramIcon,
@@ -54,6 +54,31 @@ function getEraBadgeColors(stage?: string) {
       return "bg-[#FFE4D6] text-[#9A3412] border-[#FED7AA]/60";
   }
 }
+
+/** Tier palette for the premium Era pill + avatar ring (same hues as the profile Era colours). */
+const ERA_TIER: Record<string, { text: string; icon: string; border: string; bg: string; ring: string }> = {
+  Bronze: {
+    text: "#9A3412",
+    icon: "#C2410C",
+    border: "#F2B48C",
+    bg: "linear-gradient(135deg, #FFF4EC 0%, #FFE4D2 100%)",
+    ring: "linear-gradient(135deg, #F6C39F 0%, #C2410C 55%, #8C5A2B 100%)",
+  },
+  Silver: {
+    text: "#334155",
+    icon: "#64748B",
+    border: "#CBD5E1",
+    bg: "linear-gradient(135deg, #F8FAFC 0%, #E8EDF3 100%)",
+    ring: "linear-gradient(135deg, #F1F5F9 0%, #94A3B8 55%, #64748B 100%)",
+  },
+  Gold: {
+    text: "#92400E",
+    icon: "#D97706",
+    border: "#F5C451",
+    bg: "linear-gradient(135deg, #FFFBEB 0%, #FEF0C7 100%)",
+    ring: "linear-gradient(135deg, #FDE68A 0%, #D97706 55%, #B8860B 100%)",
+  },
+};
 
 export interface ProfileHeaderSocialItem {
   platform: string;
@@ -101,6 +126,8 @@ export interface ProfileHeaderProps {
   fansLabel?: string;
   /** Show a per-platform breakdown line (icon + count) under the combined count. */
   showPlatformBreakdown?: boolean;
+  /** When set, shows a small "Work with me" button beside the socials (opens the Collab tab). */
+  onWorkWithMe?: () => void;
 }
 
 function getPlatformIcon(platform: string, className?: string) {
@@ -336,6 +363,7 @@ export function ProfileHeader({
   onFanbaseClick,
   fansLabel = "followers",
   showPlatformBreakdown = false,
+  onWorkWithMe,
 }: ProfileHeaderProps) {
   const formattedTagline = useMemo(() => {
     if (!tagline) return null;
@@ -354,6 +382,34 @@ export function ProfileHeader({
   const effectiveFanbase = totalAudience || creatorEra?.min || 0;
   const currentEra = creatorEra || (effectiveFanbase > 0 ? getCreatorEra(effectiveFanbase) : null);
   const eraProgress = getEraProgress(effectiveFanbase);
+  const tier = currentEra ? ERA_TIER[currentEra.stage] ?? ERA_TIER.Bronze : null;
+
+  // Total Fans popover: per-platform counts (primary accounts only, same as the total).
+  const [fansOpen, setFansOpen] = useState(false);
+  const fansRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!fansOpen) return;
+    const onDown = (e: PointerEvent) => {
+      if (fansRef.current && !fansRef.current.contains(e.target as Node)) setFansOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setFansOpen(false);
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [fansOpen]);
+  const fanPlatforms = useMemo(() => {
+    const main = ["instagram", "youtube", "facebook"];
+    const fromBreakdown = platformBreakdown
+      .filter((pb) => main.includes(pb.platform.toLowerCase()))
+      .map((pb) => ({ platform: pb.platform.toLowerCase(), label: pb.label || pb.shortLabel, count: pb.count }));
+    if (fromBreakdown.length > 0) return fromBreakdown;
+    return socialList
+      .filter((s) => main.includes(s.platform.toLowerCase()) && typeof s.count === "number" && s.count > 0)
+      .map((s) => ({ platform: s.platform.toLowerCase(), label: s.label, count: s.count as number }));
+  }, [platformBreakdown, socialList]);
 
   const allActiveSocials = useMemo(() => {
     const list = socialList.filter(
@@ -442,7 +498,7 @@ export function ProfileHeader({
       <div className="flex items-center justify-center gap-3 sm:gap-4 w-full mt-1 sm:mt-1.5 mx-auto">
         {/* LEFT: Creator Avatar (reduced slightly as requested: 68px on mobile, 76px on sm) */}
         <div className="relative shrink-0">
-          <div className="p-[2px] sm:p-[2.5px] rounded-full shadow-xs" style={{ background: "var(--avatar-ring)" }}>
+          <div className="p-[2px] sm:p-[2.5px] rounded-full shadow-xs" style={{ background: tier?.ring ?? "var(--avatar-ring)" }}>
             <div className="p-[1.5px] bg-(--card-bg) rounded-full">
               <div className="relative h-[68px] w-[68px] sm:h-[76px] sm:w-[76px] rounded-full overflow-hidden bg-(--card-bg) ">
                 {hasAvatar && photoUrl ? (
@@ -469,11 +525,11 @@ export function ProfileHeader({
           {/* Proportional Verified Badge at Bottom-Right */}
           {isVerified && (
             <span
-              className="absolute -bottom-0.5 -right-0.5 flex items-center justify-center"
+              className="absolute bottom-0 right-0 flex h-[22px] w-[22px] sm:h-6 sm:w-6 items-center justify-center rounded-full bg-white shadow-[0_2px_6px_rgba(0,0,0,0.18)]"
               title="Verified Creator"
               aria-label="Verified creator"
             >
-              <BadgeCheck className={`h-4 w-4 sm:h-4.5 sm:w-4.5 ${BRAND_VERIFIED_FILL} text-white drop-shadow-xs`} />
+              <BadgeCheck className={`h-[17px] w-[17px] sm:h-[19px] sm:w-[19px] ${BRAND_VERIFIED_FILL} text-white`} strokeWidth={2.2} />
             </span>
           )}
         </div>
@@ -498,7 +554,7 @@ export function ProfileHeader({
           )}
 
           {/* 4. Social Icons directly under Category */}
-          {allActiveSocials.length > 0 && (
+          {(allActiveSocials.length > 0 || onWorkWithMe) && (
             <div className="flex items-center gap-2.5 sm:gap-3 pt-1.5">
               {allActiveSocials.map((item) => {
                 const hasUrl = Boolean(item.url && item.url !== "#");
@@ -527,6 +583,17 @@ export function ProfileHeader({
                   </div>
                 );
               })}
+              {onWorkWithMe && (
+                <button
+                  type="button"
+                  onClick={onWorkWithMe}
+                  className="tap-scale ml-0.5 inline-flex h-6 items-center gap-1 rounded-[5px] border border-(--surface-border) bg-(--accent-soft) px-2 text-[11px] sm:text-xs font-semibold text-(--accent-text) hover:opacity-90 transition-opacity cursor-pointer whitespace-nowrap focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
+                  title="See collab packages"
+                >
+                  <Handshake className="h-3 w-3 shrink-0" />
+                  <span>Work with me</span>
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -536,55 +603,71 @@ export function ProfileHeader({
       {/* ROW 3: COMPACT CREATOR ERA + TOTAL FANS PILL (5px radius)      */}
       {/* ============================================================== */}
       {(currentEra || effectiveFanbase > 0) && (
-        <div className="w-full mt-2 sm:mt-2.5 flex items-center justify-center">
+        <div className="w-full mt-2 sm:mt-2.5 flex items-center justify-center gap-2">
+          {/* Premium Era badge: tier gradient + tier border + medal; opens the Era modal */}
           <button
             type="button"
-            onClick={() => {
-              setEraSheetOpen(true);
+            onClick={() => setEraSheetOpen(true)}
+            className="tap-scale inline-flex h-9 min-w-0 max-w-[62%] items-center gap-1.5 rounded-full border pl-1.5 pr-3 shadow-[0_1px_2px_rgba(0,0,0,0.06)] transition-[filter] hover:brightness-[1.03] cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
+            style={{
+              background: tier?.bg ?? "var(--surface)",
+              borderColor: tier?.border ?? "var(--surface-border)",
+              color: tier?.text ?? "var(--text)",
             }}
-            className="tap-scale inline-flex items-center w-fit max-w-full rounded-[5px] border border-(--surface-border) bg-transparent hover:bg-(--surface)/50 overflow-hidden shadow-none transition-all text-left cursor-pointer group"
             title="View Creator Era levels"
-            aria-label="View Creator Era levels"
+            aria-label={`${currentEra?.badge || "Creator"} — view Creator Era levels`}
           >
-            {/* Left: Award Ribbon Icon + Badge Name + "Creator Era" + Info Icon */}
-            <div className="flex items-center gap-2 sm:gap-2.5 px-3 py-1.5 sm:py-2">
-              <Award
-                className="h-4.5 w-4.5 sm:h-5 sm:w-5 shrink-0 stroke-[1.8]"
-                style={{
-                  color:
-                    currentEra?.stage === "Gold"
-                      ? "#D97706"
-                      : currentEra?.stage === "Silver"
-                      ? "#64748B"
-                      : "#C2410C",
-                }}
-              />
-              <div className="min-w-0">
-                <div className="text-xs sm:text-[13px] font-medium text-(--text) truncate leading-tight">
-                  {currentEra?.badge || "Creator"}
-                </div>
-                <div className="text-[10px] sm:text-[11px] font-normal text-(--text-muted) leading-tight mt-0.5">
-                  Creator Era
-                </div>
-              </div>
-
-              {/* Info Icon (i) */}
-              <Info className="h-3.5 w-3.5 text-(--text-muted) group-hover:text-(--text) transition-colors shrink-0 ml-1 sm:ml-1.5" />
-            </div>
-
-            {/* Vertical Divider */}
-            <div className="w-px bg-(--surface-border) self-stretch shrink-0" aria-hidden="true" />
-
-            {/* Right: Total Fans Count + "Total Fans" */}
-            <div className="shrink-0 flex flex-col items-center justify-center px-3 sm:px-3.5 py-1.5 sm:py-2 text-center bg-transparent group-hover:bg-(--surface)/40 transition-colors">
-              <div className="text-xs sm:text-[13px] font-semibold text-(--text) tabular-nums leading-tight">
-                {formatFans(effectiveFanbase)}
-              </div>
-              <div className="text-[10px] sm:text-[11px] font-normal text-(--text-muted) leading-tight mt-0.5">
-                Total Fans
-              </div>
-            </div>
+            <span
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-black/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]"
+              style={{ background: getMedalGradient(currentEra?.stage) }}
+              aria-hidden
+            >
+              <Medal className="h-3.5 w-3.5 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.25)]" strokeWidth={2.2} />
+            </span>
+            <span className="truncate text-xs sm:text-[13px] font-semibold leading-none">{currentEra?.badge || "Creator"}</span>
           </button>
+
+          {/* Total Fans: tap for per-platform counts */}
+          <div ref={fansRef} className="relative shrink-0">
+            <button
+              type="button"
+              onClick={() => setFansOpen((v) => !v)}
+              aria-expanded={fansOpen}
+              aria-haspopup="dialog"
+              className="tap-scale inline-flex h-9 items-center gap-1.5 rounded-full border border-(--surface-border) bg-transparent px-3 hover:bg-(--surface)/50 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
+              title="See fans by platform"
+            >
+              <span className="text-xs sm:text-[13px] font-semibold text-(--text) tabular-nums leading-none">{formatFans(effectiveFanbase)}</span>
+              <span className="text-[11px] sm:text-xs text-(--text-muted) leading-none">Total Fans</span>
+            </button>
+
+            {fansOpen && (
+              <div
+                role="dialog"
+                aria-label="Fans by platform"
+                className="absolute right-0 top-[calc(100%+6px)] z-40 w-[210px] rounded-[8px] border border-[#E4E4E7] bg-white p-2 text-left shadow-[0_10px_30px_rgba(0,0,0,0.14)]"
+              >
+                <p className="px-1.5 pb-1 text-[11px] font-medium uppercase tracking-wide text-[#8E8E93]">Fans by platform</p>
+                {fanPlatforms.length === 0 ? (
+                  <p className="px-1.5 py-1.5 text-xs text-[#6B6B76]">No platform counts yet.</p>
+                ) : (
+                  <ul>
+                    {fanPlatforms.map((p) => (
+                      <li key={p.platform} className="flex items-center gap-2 rounded-[5px] px-1.5 py-1.5">
+                        {getPlatformCardIcon(p.platform)}
+                        <span className="min-w-0 flex-1 truncate text-[13px] text-[#18181B] capitalize">{p.label || p.platform}</span>
+                        <span className="text-[13px] font-semibold text-[#18181B] tabular-nums">{formatFans(p.count)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <div className="mt-1 flex items-center justify-between border-t border-[#F4F4F5] px-1.5 pt-1.5 text-[12px]">
+                  <span className="text-[#6B6B76]">Total</span>
+                  <span className="font-semibold text-[#18181B] tabular-nums">{formatFans(effectiveFanbase)}</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 

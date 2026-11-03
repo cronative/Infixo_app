@@ -85,12 +85,9 @@ export function CreatorEraBottomSheet({
             </div>
 
             <div className="min-w-0">
-              <h3 className="text-[16px] sm:text-[17px] font-bold text-[#0f172a] leading-tight truncate">
-                {isCreatorView ? (
-                  <>Your Journey · <span className="text-[#7A2253]">{era.badge}</span></>
-                ) : (
-                  <>{displayName} · <span className="text-[#7A2253]">{era.badge}</span></>
-                )}
+              <h3 className="text-[16px] sm:text-[17px] font-bold text-[#0f172a] leading-tight break-words">
+                <span className="block">{isCreatorView ? "Your Journey" : displayName}</span>
+                <span className="block mt-0.5 text-[#7A2253]">{era.badge}</span>
               </h3>
               <p className="text-xs text-[#64748b] mt-1 font-medium leading-snug">
                 {formatFans(fanCount)} people believe in this creative journey ✨
