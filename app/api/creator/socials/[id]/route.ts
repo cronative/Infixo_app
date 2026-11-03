@@ -93,6 +93,30 @@ export async function PATCH(
       );
     }
 
+    // 3. Make this account the platform's primary (counts toward Total Fans once refreshed)
+    if (body.makePrimary === true) {
+      if (Boolean(targetAccount.is_primary)) return apiSuccess({ id: accountId, isPrimary: true }, "Already primary");
+      await db.query("UPDATE social_accounts SET is_primary = 0 WHERE creator_id = ? AND platform = ?", [creatorId, targetAccount.platform]);
+      await db.query("UPDATE social_accounts SET is_primary = 1, sort_order = 0 WHERE id = ? AND creator_id = ?", [accountId, creatorId]);
+      return apiSuccess({ id: accountId, isPrimary: true }, "Primary account updated");
+    }
+
+    // 4. Edit the handle of a secondary account (primary handles are re-linked via Add to fetch counts)
+    if (typeof body.username === "string") {
+      if (Boolean(targetAccount.is_primary)) {
+        return apiError("To change your primary account, add the new account and make it primary.", 400);
+      }
+      const nextUsername = body.username.replace(/^@/, "").trim();
+      if (!nextUsername || nextUsername.length > 100 || /\s/.test(nextUsername)) return apiError("Enter a valid username", 400);
+      const [dupes]: any = await db.query(
+        "SELECT id FROM social_accounts WHERE creator_id = ? AND platform = ? AND LOWER(username) = LOWER(?) AND id != ?",
+        [creatorId, targetAccount.platform, nextUsername, accountId]
+      );
+      if (dupes && dupes.length > 0) return apiError("This account is already added.", 409);
+      await db.query("UPDATE social_accounts SET username = ? WHERE id = ? AND creator_id = ?", [nextUsername, accountId, creatorId]);
+      return apiSuccess({ id: accountId, username: nextUsername }, "Account updated");
+    }
+
     return apiError("No valid update fields provided", 400);
   } catch (err: any) {
     console.error("PATCH /api/creator/socials/:id Error:", err);

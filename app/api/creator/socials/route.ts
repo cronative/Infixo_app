@@ -85,7 +85,7 @@ export async function GET(req: Request) {
     }
 
     const [rows]: any = await db.query(
-      "SELECT * FROM social_accounts WHERE creator_id = ? ORDER BY is_primary DESC, id ASC",
+      "SELECT * FROM social_accounts WHERE creator_id = ? ORDER BY is_primary DESC, sort_order ASC, id ASC",
       [creatorId]
     );
 
@@ -384,5 +384,29 @@ export async function DELETE(req: Request) {
   } catch (err: any) {
     console.error("DELETE Socials Error:", err);
     return apiError(err.message || "Failed to remove social account", 500);
+  }
+}
+
+// PATCH /api/creator/socials — reorder secondary accounts of one platform: { platform, order: number[] }
+export async function PATCH(req: Request) {
+  try {
+    await ensureSocialAccountsColumns();
+    const auth = await requireCreator(req);
+    if (auth.error) return auth.error;
+    const creatorId = auth.creator.id;
+    const body = await req.json().catch(() => ({}));
+    const platform = String(body.platform || "").toLowerCase().trim();
+    const order: number[] = Array.isArray(body.order) ? body.order.map((v: unknown) => Number(v)).filter((v: number) => Number.isFinite(v) && v > 0) : [];
+    if (!platform || order.length === 0) return apiError("platform and order required", 400);
+
+    await Promise.all(
+      order.map((id, index) =>
+        db.query("UPDATE social_accounts SET sort_order = ? WHERE id = ? AND creator_id = ? AND platform = ?", [index + 1, id, creatorId, platform]),
+      ),
+    );
+    return apiSuccess({ platform, order }, "Order saved");
+  } catch (err: any) {
+    console.error("PATCH /api/creator/socials Error:", err);
+    return apiError(err.message || "Failed to reorder accounts", 500);
   }
 }

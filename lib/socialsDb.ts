@@ -27,17 +27,23 @@ export async function ensureSocialAccountsColumns(): Promise<void> {
   }
 
   try {
-    // Set is_primary = TRUE for the oldest account of each platform per creator
+    // Backfill: platforms with NO primary get their oldest account as primary.
+    // (Never touches platforms that already have one — creators can choose a different primary.)
     await db.query(`
       UPDATE social_accounts sa
       JOIN (
         SELECT creator_id, platform, MIN(id) AS min_id
         FROM social_accounts
         GROUP BY creator_id, platform
+        HAVING SUM(COALESCE(is_primary, 0)) = 0
       ) first_acc ON sa.id = first_acc.min_id
       SET sa.is_primary = TRUE
-      WHERE sa.is_primary = FALSE OR sa.is_primary IS NULL
     `);
+  } catch {}
+
+  try {
+    // Manual order for secondary accounts (primary always shows first).
+    await db.query(`ALTER TABLE social_accounts ADD COLUMN sort_order INT NOT NULL DEFAULT 0`);
   } catch {}
 
   try {

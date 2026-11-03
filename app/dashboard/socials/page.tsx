@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import {
-  ExternalLink,
   MoreVertical,
   RefreshCw,
   Plus,
@@ -12,6 +11,12 @@ import {
   Loader2,
   ArrowUpRight,
   Trash2,
+  GripVertical,
+  Lock,
+  Pencil,
+  Star,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -308,6 +313,77 @@ export default function DashboardSocialsPage() {
     }
   };
 
+  // Make a secondary account the platform's primary (its followers count once refreshed).
+  const handleMakePrimary = async (account: SocialAccountRow) => {
+    try {
+      const res = await fetch(`/api/creator/socials/${account.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ makePrimary: true }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || json?.status === 0) throw new Error(json?.message || "Failed");
+      showToast(`@${account.username.replace(/^@/, "")} is now your primary ${account.platform} account`);
+      await fetchAccounts();
+      // Fetch the new primary's count so Total Fans stays right.
+      await handleRefreshCount({ ...account, isPrimary: true });
+    } catch (err: any) {
+      showToast(err?.message || "Could not change primary account", "error");
+    }
+  };
+
+  // Edit a secondary account's handle.
+  const [editingAccount, setEditingAccount] = useState<SocialAccountRow | null>(null);
+  const [editHandle, setEditHandle] = useState("");
+  const [savingEdit, setSavingEdit] = useState(false);
+  const handleSaveEdit = async () => {
+    if (!editingAccount) return;
+    const next = editHandle.trim().replace(/^@/, "");
+    if (!next) return;
+    setSavingEdit(true);
+    try {
+      const res = await fetch(`/api/creator/socials/${editingAccount.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: next }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || json?.status === 0) throw new Error(json?.message || "Failed");
+      showToast("Account updated");
+      setEditingAccount(null);
+      await fetchAccounts();
+      refresh();
+    } catch (err: any) {
+      showToast(err?.message || "Could not update account", "error");
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  // Reorder secondary accounts within a platform (primary stays first).
+  const handleReorder = async (platform: SocialAccountRow["platform"], orderedSecondaryIds: number[]) => {
+    setAccounts((prev) => {
+      const others = prev.filter((a) => a.platform !== platform);
+      const primary = prev.filter((a) => a.platform === platform && a.isPrimary);
+      const secondary = orderedSecondaryIds
+        .map((id) => prev.find((a) => a.id === id))
+        .filter(Boolean) as SocialAccountRow[];
+      return [...others, ...primary, ...secondary];
+    });
+    try {
+      const res = await fetch("/api/creator/socials", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ platform, order: orderedSecondaryIds }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      refresh();
+    } catch {
+      showToast("Could not save the new order", "error");
+      fetchAccounts();
+    }
+  };
+
   const openAddAccount = (platform?: "instagram" | "youtube" | "facebook") => {
     if (platform) setAddPlatform(platform);
     setAddModalOpen(true);
@@ -399,68 +475,61 @@ export default function DashboardSocialsPage() {
         </p>
       </div>
 
-      {/* 3. PLATFORM SECTIONS (One section per platform) */}
-      <div className="space-y-6">
-        {platformRows.map((row) => {
-          const primaryAcc = row.accounts.find((a) => a.isPrimary);
-          const secondaryAccs = row.accounts.filter((a) => !a.isPrimary);
-          const orderedAccounts = primaryAcc ? [primaryAcc, ...secondaryAccs] : secondaryAccs;
-          const canAddMore = row.accounts.length < maxPerPlatform;
-
-          return (
-            <div key={row.platform} className="space-y-3">
-              {/* Section Header */}
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] ${row.iconBg}`}>
-                    {row.icon}
-                  </div>
-                  <h3 className="text-sm font-semibold text-[#18181B] flex items-center gap-1.5">
-                    <span>{row.title}</span>
-                    <span className="text-xs font-normal text-[#6B6B76] tabular-nums">
-                      ({row.accounts.length}/{maxPerPlatform})
-                    </span>
-                  </h3>
-                </div>
-
-                {canAddMore ? (
-                  <button
-                    type="button"
-                    onClick={() => openAddAccount(row.platform)}
-                    className="inline-flex items-center gap-1 h-7 px-2.5 rounded-[5px] border border-[#E2E8F0] bg-white hover:bg-[#F7EEF2] hover:border-[#7A2253]/30 text-xs font-semibold text-[#18181B] hover:text-[#7A2253] transition-colors cursor-pointer"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                    <span>Add</span>
-                  </button>
-                ) : (
-                  <span className="text-[11px] font-medium text-[#94A3B8]">Max reached</span>
-                )}
-              </div>
-
-              {/* Grid or Empty */}
-              {loading ? (
-                <div className="text-xs text-[#6B6B76] py-1">Loading...</div>
-              ) : orderedAccounts.length === 0 ? (
-                <div className="text-xs text-[#94A3B8] py-1">Not connected</div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {orderedAccounts.map((acc) => (
-                    <AccountCard
-                      key={acc.id}
-                      account={acc}
-                      iconBg={row.iconBg}
-                      platformIcon={row.icon}
-                      isRefreshing={refreshingId === acc.id}
-                      onRefresh={() => handleRefreshCount(acc)}
-                      onDelete={() => setAccountToDelete(acc)}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
+      {/* 3. PLATFORM SECTIONS — 3 columns ≥1200px, 2 on tablet, stacked on mobile */}
+      <div className="grid grid-cols-1 items-start gap-3 md:max-[1199px]:grid-cols-2 min-[1200px]:grid-cols-3">
+        {platformRows.map((row) => (
+          <PlatformSection
+            key={row.platform}
+            row={row}
+            loading={loading}
+            maxPerPlatform={maxPerPlatform}
+            refreshingId={refreshingId}
+            canHide={canHideFromProfile}
+            togglingHideId={togglingHideId}
+            onAdd={() => openAddAccount(row.platform)}
+            onRefresh={handleRefreshCount}
+            onDelete={(acc) => setAccountToDelete(acc)}
+            onEdit={(acc) => {
+              setEditingAccount(acc);
+              setEditHandle(acc.username.replace(/^@/, ""));
+            }}
+            onMakePrimary={handleMakePrimary}
+            onToggleHide={handleToggleHide}
+            onReorder={(ids) => handleReorder(row.platform, ids)}
+          />
+        ))}
       </div>
+
+      {/* Edit handle (secondary accounts) */}
+      <Modal
+        isOpen={Boolean(editingAccount)}
+        onClose={() => !savingEdit && setEditingAccount(null)}
+        title="Edit account"
+        description="Update the username for this secondary account."
+        size="sm"
+      >
+        <ModalBody className="p-5 text-left">
+          <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] overflow-hidden">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-xs text-[#64748b]">@</span>
+            <input
+              type="text"
+              value={editHandle}
+              onChange={(e) => setEditHandle(e.target.value.trim().replace(/^@/, ""))}
+              onKeyDown={(e) => e.key === "Enter" && handleSaveEdit()}
+              className="h-9 flex-1 bg-transparent px-3 text-sm text-[#0f172a] outline-none"
+              autoFocus
+            />
+          </div>
+        </ModalBody>
+        <ModalFooter className="px-5 py-3.5 flex justify-end gap-2">
+          <button type="button" onClick={() => setEditingAccount(null)} className="dash-btn-secondary" disabled={savingEdit}>
+            Cancel
+          </button>
+          <button type="button" onClick={handleSaveEdit} className="dash-btn-primary" disabled={savingEdit || !editHandle.trim()}>
+            {savingEdit ? "Saving…" : "Save"}
+          </button>
+        </ModalFooter>
+      </Modal>
 
       {/* 4. FOOTER: HOW WE COUNT TEXT LINK */}
       <div className="pt-2 pb-4 flex justify-start">
@@ -749,139 +818,328 @@ export default function DashboardSocialsPage() {
 /* ==========================================================================
    ACCOUNT CARD COMPONENT
    ========================================================================== */
-interface AccountCardProps {
+type PlatformRow = {
+  title: string;
+  platform: "instagram" | "youtube" | "facebook";
+  icon: React.ReactNode;
+  iconBg: string;
+  accounts: SocialAccountRow[];
+};
+
+const SECTION_TITLES: Record<PlatformRow["platform"], string> = {
+  instagram: "Instagram accounts",
+  youtube: "YouTube channels",
+  facebook: "Facebook pages",
+};
+
+interface PlatformSectionProps {
+  row: PlatformRow;
+  loading: boolean;
+  maxPerPlatform: number;
+  refreshingId: number | null;
+  canHide: boolean;
+  togglingHideId: number | null;
+  onAdd: () => void;
+  onRefresh: (acc: SocialAccountRow) => void;
+  onDelete: (acc: SocialAccountRow) => void;
+  onEdit: (acc: SocialAccountRow) => void;
+  onMakePrimary: (acc: SocialAccountRow) => void;
+  onToggleHide: (acc: SocialAccountRow) => void;
+  onReorder: (secondaryIds: number[]) => void;
+}
+
+/** One platform = one Section (tinted header, divided rows), like the Links page list. */
+function PlatformSection({
+  row,
+  loading,
+  maxPerPlatform,
+  refreshingId,
+  canHide,
+  togglingHideId,
+  onAdd,
+  onRefresh,
+  onDelete,
+  onEdit,
+  onMakePrimary,
+  onToggleHide,
+  onReorder,
+}: PlatformSectionProps) {
+  const primary = row.accounts.find((a) => a.isPrimary);
+  const secondary = row.accounts.filter((a) => !a.isPrimary);
+  const ordered = primary ? [primary, ...secondary] : secondary;
+  const canAddMore = row.accounts.length < maxPerPlatform;
+  const [dragId, setDragId] = useState<number | null>(null);
+
+  const moveSecondary = (id: number, toIndex: number) => {
+    const ids = secondary.map((a) => a.id).filter((x) => x !== id);
+    ids.splice(Math.max(0, Math.min(toIndex, ids.length)), 0, id);
+    onReorder(ids);
+  };
+
+  const addBtn = (
+    <button
+      type="button"
+      onClick={onAdd}
+      className="inline-flex h-7 shrink-0 items-center gap-1 rounded-[5px] border border-[#E2E8F0] bg-white px-2.5 text-xs font-semibold text-[#18181B] hover:border-[#7A2253]/40 hover:text-[#7A2253] transition-colors cursor-pointer"
+    >
+      <Plus className="h-3.5 w-3.5" />
+      Add
+    </button>
+  );
+
+  return (
+    <section className="rounded-[5px] border border-[#ECECF0] bg-white">
+      <div className="flex items-center justify-between gap-2 rounded-t-[5px] border-b border-[#ECECF0] bg-[#7A2253]/[0.07] px-3 py-2.5">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] ${row.iconBg}`}>{row.icon}</span>
+          <h3 className="truncate text-[13.5px] font-semibold text-[#18181B]">
+            {SECTION_TITLES[row.platform]}{" "}
+            <span className="text-xs font-normal text-[#6B6B76] tabular-nums">
+              ({row.accounts.length}/{maxPerPlatform})
+            </span>
+          </h3>
+        </div>
+        {ordered.length === 0 && !loading ? null : canAddMore ? addBtn : <span className="shrink-0 text-[11px] font-medium text-[#94A3B8]">Max reached</span>}
+      </div>
+
+      {loading ? (
+        <div className="px-3 py-4 text-xs text-[#6B6B76]">Loading…</div>
+      ) : ordered.length === 0 ? (
+        <div className="flex min-h-[52px] items-center justify-between gap-2 px-3 py-2">
+          <span className="text-[13px] text-[#94A3B8]">No {row.title} account yet</span>
+          {canAddMore && addBtn}
+        </div>
+      ) : (
+        <ul className="divide-y divide-[#ECECF0]">
+          {ordered.map((acc) => {
+            const secIndex = secondary.findIndex((a) => a.id === acc.id);
+            return (
+              <AccountRow
+                key={acc.id}
+                account={acc}
+                iconBg={row.iconBg}
+                platformIcon={row.icon}
+                isRefreshing={refreshingId === acc.id}
+                isTogglingHide={togglingHideId === acc.id}
+                canHide={canHide}
+                isDragging={dragId === acc.id}
+                canMoveUp={secIndex > 0}
+                canMoveDown={secIndex >= 0 && secIndex < secondary.length - 1}
+                onDragStart={() => setDragId(acc.id)}
+                onDragEnd={() => setDragId(null)}
+                onDropOn={() => {
+                  if (dragId !== null && dragId !== acc.id && !acc.isPrimary) moveSecondary(dragId, secIndex);
+                  setDragId(null);
+                }}
+                onMove={(dir) => moveSecondary(acc.id, secIndex + dir)}
+                onRefresh={() => onRefresh(acc)}
+                onDelete={() => onDelete(acc)}
+                onEdit={() => onEdit(acc)}
+                onMakePrimary={() => onMakePrimary(acc)}
+                onToggleHide={() => onToggleHide(acc)}
+              />
+            );
+          })}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+interface AccountRowProps {
   account: SocialAccountRow;
   iconBg: string;
   platformIcon: React.ReactNode;
   isRefreshing: boolean;
+  isTogglingHide: boolean;
+  canHide: boolean;
+  isDragging: boolean;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
+  onDragStart: () => void;
+  onDragEnd: () => void;
+  onDropOn: () => void;
+  onMove: (dir: -1 | 1) => void;
   onRefresh: () => void;
   onDelete: () => void;
+  onEdit: () => void;
+  onMakePrimary: () => void;
+  onToggleHide: () => void;
 }
 
-function AccountCard({
+function AccountRow({
   account,
   iconBg,
   platformIcon,
   isRefreshing,
+  isTogglingHide,
+  canHide,
+  isDragging,
+  canMoveUp,
+  canMoveDown,
+  onDragStart,
+  onDragEnd,
+  onDropOn,
+  onMove,
   onRefresh,
   onDelete,
-}: AccountCardProps) {
+  onEdit,
+  onMakePrimary,
+  onToggleHide,
+}: AccountRowProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
+    if (!menuOpen) return;
+    const close = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
     };
-    if (menuOpen) document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
   }, [menuOpen]);
 
   const cleanHandle = (account.username || "").replace(/^@/, "");
   const profileUrl = buildAccountProfileUrl(account.platform, cleanHandle);
+  const isPrimary = account.isPrimary;
+  const count = isPrimary ? Number(account.followerCount) || 0 : 0;
+  const unit = account.platform === "youtube" ? "subscribers" : "followers";
+  const iconBtn =
+    "flex h-7 w-7 shrink-0 items-center justify-center rounded-[5px] text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer";
+  const menuItem = "flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-medium text-[#18181B] hover:bg-[#F4F4F5] cursor-pointer";
 
   return (
-    <div
-      className={`rounded-[5px] border border-[#ECECF0] bg-white p-3.5 flex flex-col justify-between hover:border-[#cbd5e1] transition-colors h-full ${
-        account.isHidden ? "opacity-75" : ""
-      }`}
+    <li
+      draggable={!isPrimary}
+      onDragStart={(e) => {
+        if (isPrimary) return;
+        e.dataTransfer.effectAllowed = "move";
+        onDragStart();
+      }}
+      onDragEnd={onDragEnd}
+      onDragOver={(e) => {
+        if (!isPrimary) e.preventDefault();
+      }}
+      onDrop={(e) => {
+        e.preventDefault();
+        onDropOn();
+      }}
+      className={`flex min-h-[52px] items-center gap-2 px-2 py-2 transition-colors hover:bg-[#FAFAFB] last:rounded-b-[5px] ${isDragging ? "opacity-50" : ""} ${account.isHidden ? "opacity-70" : ""}`}
     >
-      {/* Top Row: [platform icon/avatar] @handle + Primary/Secondary tag … ⋮ menu (top-right) */}
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-2 min-w-0 flex-wrap">
-          <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] ${iconBg}`}>
-            {platformIcon}
-          </div>
-          <span className="font-semibold text-xs text-[#18181B] truncate max-w-[130px]" title={`@${cleanHandle}`}>
+      <span
+        className={`flex w-4 shrink-0 justify-center ${isPrimary ? "text-[#D4D4D8]" : "cursor-grab text-[#A1A1AA] active:cursor-grabbing"}`}
+        title={isPrimary ? "Primary account stays on top" : "Drag to reorder"}
+        aria-hidden
+      >
+        {isPrimary ? <Lock className="h-3 w-3" /> : <GripVertical className="h-4 w-4" />}
+      </span>
+      <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] ${iconBg}`}>{platformIcon}</span>
+      <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 items-center gap-1.5">
+          <span className="truncate text-[13px] font-semibold text-[#18181B]" title={`@${cleanHandle}`}>
             @{cleanHandle}
           </span>
-          {account.isPrimary ? (
-            <span className="inline-flex items-center rounded-[4px] bg-[#F7EEF2] border border-[#FCE7F3] px-1.5 py-0.5 text-[10px] font-semibold text-[#7A2253]">
-              Primary
-            </span>
-          ) : (
-            <span className="inline-flex items-center rounded-[4px] bg-[#F1F5F9] border border-[#E2E8F0] px-1.5 py-0.5 text-[10px] font-medium text-[#64748B]">
-              Secondary
-            </span>
-          )}
-        </div>
-
-        {/* ⋮ Menu (top-right) */}
-        <div className="relative shrink-0" ref={menuRef}>
-          <button
-            type="button"
-            onClick={() => setMenuOpen((prev) => !prev)}
-            className="flex h-6 w-6 items-center justify-center rounded-[4px] text-[#6B6B76] hover:text-[#18181B] hover:bg-[#ECECF0]/60 transition-colors cursor-pointer"
-            aria-label="Account actions"
+          <span
+            className={`shrink-0 rounded-[3px] border px-1.5 py-px text-[9.5px] font-bold uppercase tracking-wider ${
+              isPrimary ? "border-[#7A2253]/25 bg-[#F7EEF2] text-[#7A2253]" : "border-[#E4E4E7] bg-[#FAFAFB] text-[#71717A]"
+            }`}
           >
-            <MoreVertical className="h-3.5 w-3.5" />
-          </button>
+            {isPrimary ? "Primary" : "Secondary"}
+          </span>
+          {account.isHidden && <EyeOff className="h-3 w-3 shrink-0 text-[#A1A1AA]" aria-label="Hidden from profile" />}
+        </div>
+        <p className="truncate text-xs text-[#6B6B76]">
+          {isPrimary && count > 0 ? (
+            <>
+              <span className="font-semibold text-[#18181B]">{formatFans(count)}</span> {unit}
+            </>
+          ) : (
+            <span className="text-[#A1A1AA]">{isPrimary ? "Refresh to count followers" : "Not counted in fans"}</span>
+          )}
+        </p>
+      </div>
 
-          {menuOpen && (
-            <div className="absolute right-0 top-full mt-1 w-36 rounded-[5px] border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in duration-150">
-              {account.isPrimary && (
-                <button
-                  type="button"
-                  disabled={isRefreshing}
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onRefresh();
-                  }}
-                  className="flex w-full items-center gap-2 rounded-[4px] px-2.5 py-1.5 text-xs font-semibold text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-50"
-                >
-                  <RefreshCw
-                    className={`h-3.5 w-3.5 text-[#64748b] ${
-                      isRefreshing ? "animate-spin text-[#7A2253]" : ""
-                    }`}
-                  />
-                  <span>{isRefreshing ? "Refreshing..." : "Refresh count"}</span>
-                </button>
-              )}
-
+      <a href={profileUrl} target="_blank" rel="noopener noreferrer" className={iconBtn} title="View profile" aria-label="View profile">
+        <ArrowUpRight className="h-4 w-4" />
+      </a>
+      {!isPrimary && (
+        <button type="button" onClick={onEdit} className={iconBtn} title="Edit" aria-label="Edit">
+          <Pencil className="h-3.5 w-3.5" />
+        </button>
+      )}
+      <div className="relative shrink-0" ref={menuRef}>
+        <button type="button" onClick={() => setMenuOpen((v) => !v)} className={iconBtn} aria-label="More actions" aria-expanded={menuOpen}>
+          <MoreVertical className="h-4 w-4" />
+        </button>
+        {menuOpen && (
+          <div className="absolute right-0 top-full z-30 mt-1 w-44 overflow-hidden rounded-[5px] border border-[#ECECF0] bg-white py-1 shadow-lg">
+            {isPrimary ? (
               <button
                 type="button"
                 onClick={() => {
                   setMenuOpen(false);
-                  onDelete();
+                  onRefresh();
                 }}
-                className="flex w-full items-center gap-2 rounded-[4px] px-2.5 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                disabled={isRefreshing}
+                className={menuItem}
               >
-                <Trash2 className="h-3.5 w-3.5 text-rose-600" />
-                <span>Delete</span>
+                <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-[#7A2253]" : ""}`} />
+                {isRefreshing ? "Refreshing…" : "Refresh count"}
               </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Primary only: count + "followers/subscribers" */}
-      {account.isPrimary ? (
-        <div className="my-2.5">
-          <div className="text-lg font-bold text-[#18181B] tabular-nums leading-tight">
-            {formatFans(account.followerCount)}
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onMakePrimary();
+                  }}
+                  className={menuItem}
+                >
+                  <Star className="h-3.5 w-3.5" />
+                  Make primary
+                </button>
+                {canMoveUp && (
+                  <button type="button" onClick={() => { setMenuOpen(false); onMove(-1); }} className={menuItem}>
+                    <ArrowUp className="h-3.5 w-3.5" />
+                    Move up
+                  </button>
+                )}
+                {canMoveDown && (
+                  <button type="button" onClick={() => { setMenuOpen(false); onMove(1); }} className={menuItem}>
+                    <ArrowDown className="h-3.5 w-3.5" />
+                    Move down
+                  </button>
+                )}
+              </>
+            )}
+            {canHide && (
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onToggleHide();
+                }}
+                disabled={isTogglingHide}
+                className={menuItem}
+              >
+                {account.isHidden ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                {account.isHidden ? "Show on profile" : "Hide from profile"}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                setMenuOpen(false);
+                onDelete();
+              }}
+              className={`${menuItem} text-[#E11D48]`}
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Remove
+            </button>
           </div>
-          <div className="text-[11px] text-[#6B6B76]">
-            {account.platform === "youtube" ? "subscribers" : "followers"}
-          </div>
-        </div>
-      ) : (
-        <div className="my-2.5 flex-1" />
-      )}
-
-      {/* Bottom: "View ↗" link */}
-      <div className="pt-1 mt-auto">
-        <a
-          href={profileUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-0.5 text-xs font-semibold text-[#64748B] hover:text-[#7A2253] hover:underline transition-colors w-fit"
-        >
-          <span>View</span>
-          <ArrowUpRight className="h-3 w-3" />
-        </a>
+        )}
       </div>
-    </div>
+    </li>
   );
 }
