@@ -1038,24 +1038,18 @@ function AccountRow({
           <span className="truncate text-[13px] font-semibold text-[#18181B]" title={`@${cleanHandle}`}>
             @{cleanHandle}
           </span>
-          <span
-            className={`shrink-0 rounded-[3px] border px-1.5 py-px text-[9.5px] font-bold uppercase tracking-wider ${
-              isPrimary ? "border-[#7A2253]/25 bg-[#F7EEF2] text-[#7A2253]" : "border-[#E4E4E7] bg-[#FAFAFB] text-[#71717A]"
-            }`}
-          >
-            {isPrimary ? "Primary" : "Secondary"}
-          </span>
+          {isPrimary && (
+            <span className="shrink-0 rounded-[3px] border border-[#7A2253]/25 bg-[#F7EEF2] px-1.5 py-px text-[9.5px] font-bold uppercase tracking-wider text-[#7A2253]">
+              Primary
+            </span>
+          )}
           {account.isHidden && <EyeOff className="h-3 w-3 shrink-0 text-[#A1A1AA]" aria-label="Hidden from profile" />}
         </div>
-        <p className="truncate text-xs text-[#6B6B76]">
-          {isPrimary && count > 0 ? (
-            <>
-              <span className="font-semibold text-[#18181B]">{formatFans(count)}</span> {unit}
-            </>
-          ) : (
-            <span className="text-[#A1A1AA]">{isPrimary ? "Refresh to count followers" : "Not counted in fans"}</span>
-          )}
-        </p>
+        {isPrimary && count > 0 && (
+          <p className="truncate text-xs text-[#6B6B76]">
+            <span className="font-semibold text-[#18181B]">{formatFans(count)}</span> {unit}
+          </p>
+        )}
       </div>
 
       <a href={profileUrl} target="_blank" rel="noopener noreferrer" className={iconBtn} title="View profile" aria-label="View profile">
