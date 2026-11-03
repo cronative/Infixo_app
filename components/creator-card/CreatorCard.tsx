@@ -21,6 +21,7 @@ import {
 import { formatFans, type EraStage } from "@/lib/creatorEra";
 import { getInitials } from "@/lib/avatar";
 import type { CardAppearance, CardLayoutType } from "@/components/creator-card/cardAppearance";
+import { TAGLINE } from "@/lib/brand";
 
 /** Card layout size in CSS px. Exported at 2x → 1080 × 1920 (9:16) or 1080 × 1080 (1:1). */
 export const CARD_WIDTH = 540;
@@ -632,7 +633,7 @@ function Footer({ skin, assets }: { skin: Skin; assets: CreatorCardAssets }) {
         <img src={assets.icon} alt="" style={{ width: 22, height: 22, borderRadius: 6, display: "block" }} />
       )}
       <span>
-        Create yours at <span style={{ color: skin.text, fontWeight: 800 }}>inflixo.com</span>
+        {TAGLINE} <span style={{ color: skin.text, fontWeight: 800 }}>inflixo.com</span>
       </span>
     </div>
   );

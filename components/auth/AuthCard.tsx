@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Chip } from "@/components/ui/Chip";
+import { TAGLINE } from "@/lib/brand";
 
 interface AuthCardProps {
   eyebrow?: string;
@@ -48,7 +49,7 @@ export function AuthCard({
               priority
             />
             <span className="mt-1.5 text-[13px] sm:text-[14px] font-extrabold tracking-[0.08em] text-[#7A2253] select-none">
-              For Creators. By Creators.
+              {TAGLINE}
             </span>
           </Link>
         </div>

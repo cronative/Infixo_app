@@ -8,6 +8,7 @@ import { GA_MEASUREMENT_ID } from "@/lib/analytics";
 import { PwaInstallPrompt } from "@/components/shared/PwaInstallPrompt";
 import { CookieConsentBanner } from "@/components/shared/CookieConsentBanner";
 import { themeTokensCss } from "@/themes/config";
+import { DESCRIPTION, HEADLINE, TAGLINE } from "@/lib/brand";
 
 const poppins = Poppins({
   subsets: ["latin", "devanagari"],
@@ -17,9 +18,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Inflixo: Your Videos in Order, Your Creator World in One Link",
-  description:
-    "Turn your YouTube, Instagram & Facebook videos into bingeable series. Show your total fanbase, tour & ticket links, brand reviews and creator setup in one link in bio. Made in India for creators.",
+  title: `Inflixo — ${TAGLINE}`,
+  description: DESCRIPTION,
   keywords: [
     "Inflixo",
     "link in bio",
@@ -61,25 +61,25 @@ export const metadata: Metadata = {
     apple: "/logo-square.png",
   },
   openGraph: {
-    title: "Inflixo: Your Videos in Order, Your Creator World in One Link",
-    description: "Turn your YouTube, Instagram & Facebook videos into bingeable series. Show your total fanbase, tour & ticket links, brand reviews and creator setup in one link in bio. Made in India for creators.",
+    title: HEADLINE,
+    description: DESCRIPTION,
     url: "https://inflixo.com",
     siteName: "Inflixo",
     type: "website",
     images: [
       {
-        url: "https://inflixo.com/og-image.png",
+        url: "https://inflixo.com/api/og",
         width: 1200,
         height: 630,
-        alt: "Inflixo — One Link for Your Content, Series & Fanbase",
+        alt: `Inflixo — ${TAGLINE}`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Inflixo: Your Videos in Order, Your Creator World in One Link",
-    description: "Turn your YouTube, Instagram & Facebook videos into bingeable series. Show your total fanbase, tour & ticket links, brand reviews and creator setup in one link in bio. Made in India for creators.",
-    images: ["https://inflixo.com/og-image.png"],
+    title: HEADLINE,
+    description: DESCRIPTION,
+    images: ["https://inflixo.com/api/og"],
   },
 };
 
@@ -128,7 +128,7 @@ const jsonLd = {
         "highPrice": "399",
         "priceCurrency": "INR"
       },
-      "description": "Turn your YouTube, Instagram & Facebook videos into bingeable series. Show your total fanbase, tour & ticket links, brand reviews and creator setup in one link in bio."
+      "description": DESCRIPTION
     },
     {
       "@type": "FAQPage",

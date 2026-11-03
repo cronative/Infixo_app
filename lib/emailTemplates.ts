@@ -1,3 +1,4 @@
+import { HEADLINE, TAGLINE } from "@/lib/brand";
 // ---------------------------------------------------------------------------
 // Inflixo — Modern, Premium, Responsive Email Design System & Engine
 // Primary Brand Palette: #7A2253 (Inflixo Maroon)
@@ -140,10 +141,10 @@ function renderFooter(senderContext?: string): string {
 
           <!-- Official Brand Tagline & Mission -->
           <p style="color: #7A2253; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 4px 0;">
-            For Creators. By Creators.
+            ${TAGLINE}
           </p>
           <p style="color: #64748B; font-size: 12px; font-weight: 500; margin: 0 0 16px 0;">
-            Turn your videos into bingeable series. Your creator world in one link.
+            ${HEADLINE}
           </p>
 
           <!-- Context Line -->

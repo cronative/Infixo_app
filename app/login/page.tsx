@@ -20,6 +20,7 @@ import { TextField } from "@/components/ui/TextField";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { InlineAlert } from "@/components/ui/InlineAlert";
+import { HEADLINE } from "@/lib/brand";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -116,8 +117,8 @@ export default function LoginPage() {
   return (
     <AuthLayout showBackToHome={true}>
       <AuthCard
-        eyebrow="CREATOR STUDIO"
-        title="Sign in or Sign up"
+        eyebrow="SIGN IN OR SIGN UP"
+        title={HEADLINE}
         subtitle="Enter your email. We'll send you a 4-digit code. New here? We'll set up your profile right after."
         footer={
           <p className="text-center text-xs font-medium text-[#71717A]">

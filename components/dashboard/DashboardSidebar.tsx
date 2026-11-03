@@ -29,6 +29,7 @@ import { isNavActive } from "@/components/dashboard/navConfig";
 import { useCreator } from "@/contexts/CreatorContext";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { getInitials } from "@/lib/avatar";
+import { TAGLINE } from "@/lib/brand";
 
 interface NavItemConfig {
   href: string;
@@ -228,7 +229,7 @@ export function DashboardSidebar() {
       }`}
     >
       {/* 1. Logo block: height 64px, Inflixo wordmark vertically + horizontally centred, no tagline */}
-      <div className="h-16 shrink-0 flex items-center justify-center px-4">
+      <div className="h-16 shrink-0 flex flex-col items-center justify-center px-4">
         <Link
           href="/dashboard"
           className="inline-flex items-center justify-center transition-transform hover:opacity-90"
@@ -254,6 +255,9 @@ export function DashboardSidebar() {
             />
           )}
         </Link>
+        {!collapsed && (
+          <span className="mt-0.5 text-[11px] leading-none text-[#8E8E93] select-none whitespace-nowrap">{TAGLINE}</span>
+        )}
       </div>
 
       {/* 1px divider (--border), full sidebar width */}

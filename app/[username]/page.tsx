@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import type { RowDataPacket } from "mysql2";
 import { db } from "@/lib/db";
+import { profileDescription, profileTitle } from "@/lib/brand";
 import PublicProfileClient from "./PublicProfileClient";
 import { SkeletonProfileCard } from "@/components/ui/Skeleton";
 
@@ -136,33 +137,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
 
     const displayName = creator.display_name || creator.username || username;
-    const categoryText = [creator.profession, creator.category].filter(Boolean).join(" • ");
-    const locationText = [creator.city, creator.state, creator.country].filter(Boolean).join(", ");
-    const description =
-      creator.bio?.trim() ||
-      [categoryText, locationText, `Explore ${displayName}'s social fanbase, video series, links and collaboration profile on Inflixo.`]
-        .filter(Boolean)
-        .join(" — ");
-    const rawImage = creator.photo_url || `${SITE_URL}/logo-square.png`;
-    const image = rawImage.startsWith("http")
-      ? rawImage
-      : `${SITE_URL}${rawImage.startsWith("/") ? "" : "/"}${rawImage}`;
+    const description = profileDescription(displayName);
+    const pageTitle = profileTitle(displayName, creator.username || username);
+    const image = `${SITE_URL}/api/og/${encodeURIComponent(creator.username || username)}`;
 
     return {
-      title: `${displayName} (@${creator.username || username}) — Inflixo Creator Profile`,
+      title: pageTitle,
       description,
       alternates: { canonical: canonicalUrl },
       openGraph: {
-        title: `${displayName} on Inflixo`,
+        title: pageTitle,
         description,
         url: canonicalUrl,
         siteName: "Inflixo",
         type: "profile",
-        images: [{ url: image, width: 1200, height: 630, alt: `${displayName} Inflixo profile` }],
+        images: [{ url: image, width: 1200, height: 630, alt: `${displayName} on Inflixo` }],
       },
       twitter: {
         card: "summary_large_image",
-        title: `${displayName} on Inflixo`,
+        title: pageTitle,
         description,
         images: [image],
       },

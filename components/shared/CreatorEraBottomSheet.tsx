@@ -6,6 +6,7 @@ import { X, Check, Sparkles, ChevronDown } from "lucide-react";
 import type { CreatorEra } from "@/lib/creatorEra";
 import { ERA_CONFIG, ERA_ORDER, eraAlpha, eraInk, eraSoftBg, getEraConfig } from "@/lib/eraConfig";
 import { EraAwardMedal } from "@/components/shared/EraBadge";
+import { TAGLINE } from "@/lib/brand";
 
 export interface CreatorEraBottomSheetProps {
   isOpen: boolean;
@@ -151,6 +152,7 @@ export function CreatorEraBottomSheet({ isOpen, onClose, era, creatorName, isCre
 
         {/* CTA */}
         <div className="mt-2 shrink-0 border-t border-[#f1f5f9] pt-3">
+          <p className="mb-2 text-center text-[11.5px] font-semibold tracking-wide text-[#7A2253]">Inflixo · {TAGLINE}</p>
           {isCreatorView ? (
             <Link
               href="/eras"

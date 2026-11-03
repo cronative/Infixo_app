@@ -53,6 +53,7 @@ import {
   CATEGORY_GROUPS,
   TOTAL_CATEGORIES_COUNT,
 } from "@/data/creatorCategories";
+import { HEADLINE } from "@/lib/brand";
 
 const ONBOARDING_STORAGE_KEY = "inflixo_onboarding_draft";
 
@@ -684,14 +685,14 @@ export default function OnboardingPage() {
             <div className="space-y-1 mb-5">
               <h1 className="text-xl sm:text-[22px] font-extrabold text-[#281C25] tracking-tight leading-tight">
                 {step === 1
-                  ? "Claim your Inflixo link"
+                  ? HEADLINE
                   : step === 2
                   ? "Your audience is already out there."
                   : "Your stories deserve to be seen together."}
               </h1>
               <p className="text-xs sm:text-[13px] text-[#806F79] leading-relaxed">
                 {step === 1
-                  ? "Set up your creator identity. Your link can go in your Instagram, YouTube and other social bios."
+                  ? "Let's set up yours. Claim your Inflixo link — it goes in your Instagram, YouTube and other social bios."
                   : step === 2
                   ? "You've built your community across different platforms. Bring your social profiles together so fans can discover more of you in one place."
                   : "Every video takes effort, and every part tells a story. Bring your videos together so your fans can follow along, from the first part to the last."}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { InflixoWordmark } from "@/components/brand/InflixoLogo";
 import { openCookiePreferences } from "@/lib/cookieConsent";
 import { ReportProfileModal } from "@/components/public/ReportProfileModal";
+import { TAGLINE } from "@/lib/brand";
 
 export interface GlobalFooterProps {
   className?: string;
@@ -39,7 +40,7 @@ export function GlobalFooter({
       className={`w-full overflow-hidden border-t border-solid border-b-0 border-x-0 rounded-none rounded-b-[5px] text-center select-none ${className}`}
     >
       {/* Row 1 — Branding */}
-      <div className="w-full px-3 py-2.5 sm:py-3 flex items-center justify-center gap-1.5 text-xs text-(--text-muted, #71717a)">
+      <div className="w-full px-3 py-2.5 sm:py-3 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5 text-xs text-(--text-muted, #71717a)">
         <span className="font-normal select-none">Powered by</span>
         <Link
           href="/"
@@ -54,9 +55,11 @@ export function GlobalFooter({
           className="inline-flex items-center gap-1 font-semibold text-(--accent, #7A2253) hover:opacity-85 transition-opacity cursor-pointer underline underline-offset-[3px] decoration-(--accent, #7A2253)"
           aria-label="Inflixo Homepage"
         >
-          <span>inflixo</span>
+          <span>Inflixo</span>
           <span className="text-[10px] sm:text-[11px] no-underline inline-block translate-y-[-0.5px]">↗</span>
         </Link>
+        <span className="font-normal select-none" aria-hidden>·</span>
+        <span className="font-normal select-none">{TAGLINE}</span>
       </div>
 
       {/* Full-width Divider 1 */}
