@@ -1,31 +1,122 @@
 "use client";
 
-import { forwardRef } from "react";
-import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
-import { InflixoLogoIcon } from "@/components/shared/Logo";
+import { forwardRef, type CSSProperties, type ReactNode } from "react";
+import { Award, BadgeCheck } from "lucide-react";
 import { QRCode } from "@/components/creator-card/QRCode";
-import { FacebookIcon, InstagramIcon, XTwitterIcon, YoutubeIcon } from "@/components/shared/BrandIcons";
+import {
+  FacebookIcon,
+  InstagramIcon,
+  LinkedinIcon,
+  PinterestIcon,
+  SnapchatIcon,
+  SpotifyIcon,
+  ThreadsIcon,
+  TiktokIcon,
+  TwitchIcon,
+  XTwitterIcon,
+  YoutubeIcon,
+} from "@/components/shared/BrandIcons";
+import { formatFans, type EraStage } from "@/lib/creatorEra";
+import { getInitials } from "@/lib/avatar";
 import type { CardAppearance, CardLayoutType } from "@/components/creator-card/cardAppearance";
 
-/** Card layout size in CSS px. Exported at 2x → 1080 × 1920 (9:16). */
+/** Card layout size in CSS px. Exported at 2x → 1080 × 1920 (9:16) or 1080 × 1080 (1:1). */
 export const CARD_WIDTH = 540;
 export const CARD_HEIGHT = 960;
 export const CARD_EXPORT_PIXEL_RATIO = 2;
+/** 9:16 top/bottom safe zone (110 CSS px = 220 px at 1080 export). Only decoration lives here. */
+export const CARD_SAFE_ZONE = 110;
+
+export type CardAspect = "portrait" | "square";
+export const cardHeightFor = (aspect: CardAspect) => (aspect === "square" ? CARD_WIDTH : CARD_HEIGHT);
+
+export type CardPlatform =
+  | "instagram"
+  | "youtube"
+  | "facebook"
+  | "tiktok"
+  | "twitter"
+  | "linkedin"
+  | "threads"
+  | "snapchat"
+  | "pinterest"
+  | "twitch"
+  | "spotify";
+
+export interface CreatorCardAssets {
+  /** Same-origin data URLs (see useExportableAsset) so they survive PNG export. */
+  wordmark: string | null;
+  wordmarkWhite: string | null;
+  icon: string | null;
+}
+
+export interface CreatorCardStats {
+  fans: number;
+  series: number;
+  products: number;
+  links: number;
+}
+
+export interface CreatorCardEra {
+  badge: string;
+  stage: EraStage;
+}
 
 export interface CreatorCardProps {
   displayName: string;
   username: string;
-  category: string;
+  /** Content tags, already joined: "Vlogger · Podcaster". */
+  tags: string;
   /** Pre-resolved (data URL) photo, or null for the initials fallback. */
   photoSrc: string | null;
-  /** Already formatted with formatCount(); null hides the fanbase block. */
-  fanbase: string | null;
   profileUrl: string;
   appearance: CardAppearance;
   layout?: CardLayoutType;
-  customMessage?: string;
-  platforms?: ("instagram" | "youtube" | "facebook")[];
+  aspect?: CardAspect;
+  tagline: string;
+  platforms: CardPlatform[];
+  verified: boolean;
+  era: CreatorCardEra | null;
+  stats: CreatorCardStats;
+  assets: CreatorCardAssets;
 }
+
+// ─────────────────────────────────────────────────────────────
+// Colour helpers (theme accents are hex; anything else passes through)
+// ─────────────────────────────────────────────────────────────
+
+function hexRgb(color: string): [number, number, number] | null {
+  const m = color.trim().match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (!m) return null;
+  const h = m[1].length === 3 ? m[1].replace(/./g, (c) => c + c) : m[1];
+  return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)) as [number, number, number];
+}
+
+function alpha(color: string, a: number) {
+  const rgb = hexRgb(color);
+  if (!rgb) return `color-mix(in srgb, ${color} ${Math.round(a * 100)}%, transparent)`;
+  return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${a})`;
+}
+
+function mixWhite(color: string, t: number) {
+  const rgb = hexRgb(color);
+  if (!rgb) return color;
+  const [r, g, b] = rgb.map((v) => Math.round(v + (255 - v) * t));
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+function luminance(color: string) {
+  const rgb = hexRgb(color);
+  if (!rgb) return 0.3;
+  const [r, g, b] = rgb.map((v) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+const accentOnLight = (c: string) => (luminance(c) > 0.5 ? "#18181B" : c);
+const accentOnDark = (c: string) => (luminance(c) < 0.2 ? mixWhite(c, 0.5) : c);
 
 const graphemeLength = (text: string) => {
   if (typeof Intl !== "undefined" && "Segmenter" in Intl) {
@@ -34,1523 +125,902 @@ const graphemeLength = (text: string) => {
   return [...text].length;
 };
 
-function nameFontSize(name: string, max = 40) {
+function nameFontSize(name: string, max: number) {
   const len = graphemeLength(name);
-  if (len <= 14) return max;
-  if (len <= 20) return Math.round(max * 0.85);
-  if (len <= 28) return Math.round(max * 0.72);
-  return Math.round(max * 0.62);
+  if (len <= 12) return max;
+  if (len <= 18) return Math.round(max * 0.86);
+  if (len <= 24) return Math.round(max * 0.74);
+  if (len <= 32) return Math.round(max * 0.64);
+  return Math.round(max * 0.56);
+}
+
+const SERIF = "ui-serif, Georgia, Cambria, 'Times New Roman', serif";
+const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+
+// Same colours the public profile uses for the Creator Era pill.
+const ERA_COLORS: Record<EraStage, { icon: string; bg: string; text: string; border: string }> = {
+  Bronze: { icon: "#C2410C", bg: "#FFE4D6", text: "#9A3412", border: "#FED7AA" },
+  Silver: { icon: "#64748B", bg: "#F1F5F9", text: "#475569", border: "#E2E8F0" },
+  Gold: { icon: "#D97706", bg: "#FEF3C7", text: "#B45309", border: "#FDE68A" },
+};
+
+const PLATFORM_ICONS: Record<CardPlatform, (p: { width: number; height: number }) => ReactNode> = {
+  instagram: (p) => <InstagramIcon {...p} />,
+  youtube: (p) => <YoutubeIcon {...p} />,
+  facebook: (p) => <FacebookIcon {...p} />,
+  tiktok: (p) => <TiktokIcon {...p} />,
+  twitter: (p) => <XTwitterIcon {...p} />,
+  linkedin: (p) => <LinkedinIcon {...p} />,
+  threads: (p) => <ThreadsIcon {...p} />,
+  snapchat: (p) => <SnapchatIcon {...p} />,
+  pinterest: (p) => <PinterestIcon {...p} />,
+  twitch: (p) => <TwitchIcon {...p} />,
+  spotify: (p) => <SpotifyIcon {...p} />,
+};
+
+// ─────────────────────────────────────────────────────────────
+// Skin: the per-style visual tokens. Every style renders the same blocks.
+// ─────────────────────────────────────────────────────────────
+
+interface Skin {
+  text: string;
+  sub: string;
+  muted: string;
+  accent: string;
+  heading: string;
+  body: string;
+  weight: number;
+  logoWhite: boolean;
+  label?: CSSProperties;
+  name?: CSSProperties;
+  nameMax: number;
+  avatarShape: "circle" | "arch" | "squircle";
+  avatarRing: CSSProperties;
+  initialsBg: string;
+  initialsText: string;
+  tag: CSSProperties;
+  statWrap: CSSProperties;
+  statCell: CSSProperties;
+  statValue: CSSProperties;
+  statLabel: CSSProperties;
+  statDivider?: string;
+  qrTile: CSSProperties;
+  url?: CSSProperties;
+  tagline?: CSSProperties;
+}
+
+function buildSkin(layout: CardLayoutType, a: CardAppearance): Skin {
+  const dark = a.isDark;
+  const accent = dark ? accentOnDark(a.accent) : accentOnLight(a.accent);
+  const base: Skin = {
+    text: a.primaryText,
+    sub: a.secondaryText,
+    muted: a.mutedText,
+    accent,
+    heading: a.headingFont,
+    body: a.bodyFont,
+    weight: Number(a.headingWeight) || 700,
+    logoWhite: dark,
+    nameMax: 36,
+    avatarShape: "circle",
+    avatarRing: { padding: 5, background: a.bodyBackground, boxShadow: `0 0 0 2px ${alpha(a.accent, 0.35)}` },
+    initialsBg: alpha(a.accent, dark ? 0.25 : 0.12),
+    initialsText: accent,
+    tag: {
+      padding: "6px 16px",
+      borderRadius: 999,
+      background: a.chipBackground,
+      border: `1px solid ${a.border}`,
+      color: a.secondaryText,
+    },
+    statWrap: {},
+    statCell: {
+      padding: "12px 6px",
+      borderRadius: 16,
+      background: a.chipBackground,
+      border: `1px solid ${a.border}`,
+    },
+    statValue: { fontFamily: a.headingFont, fontWeight: 800, color: a.primaryText },
+    statLabel: { color: a.mutedText },
+    qrTile: {
+      borderRadius: 14,
+      boxShadow: dark ? `0 0 0 1px ${a.border}` : "0 8px 24px rgba(15, 23, 42, 0.10), 0 0 0 1px rgba(15, 23, 42, 0.06)",
+    },
+  };
+
+  switch (layout) {
+    case "minimal":
+      return {
+        ...base,
+        nameMax: 38,
+        label: { color: a.mutedText, letterSpacing: "0.26em" },
+        avatarRing: { padding: 6, background: "transparent", border: `2px solid ${alpha(a.accent, 0.5)}` },
+        tag: { padding: 0, background: "transparent", border: "none", color: a.secondaryText, fontWeight: 600 },
+        statWrap: { borderTop: `1px solid ${a.border}`, borderBottom: `1px solid ${a.border}`, padding: "14px 0" },
+        statCell: { padding: "2px 6px" },
+        statDivider: a.border,
+        statValue: { fontFamily: a.headingFont, fontWeight: 700, color: a.primaryText },
+      };
+    case "badge":
+      return {
+        ...base,
+        label: { color: accent, letterSpacing: "0.22em" },
+        statCell: {
+          padding: "12px 6px",
+          borderRadius: 12,
+          border: `1.5px dashed ${alpha(a.accent, 0.45)}`,
+          background: alpha(a.accent, dark ? 0.1 : 0.05),
+        },
+      };
+    case "cyber": {
+      const neon = accentOnDark(a.accent);
+      return {
+        ...base,
+        text: "#F5F7FF",
+        sub: "rgba(235, 240, 255, 0.78)",
+        muted: "rgba(220, 228, 255, 0.6)",
+        accent: neon,
+        logoWhite: true,
+        label: { color: neon, fontFamily: MONO, letterSpacing: "0.24em", textShadow: `0 0 12px ${alpha(a.accent, 0.8)}` },
+        name: { textShadow: `0 0 24px ${alpha(a.accent, 0.45)}` },
+        avatarShape: "squircle",
+        avatarRing: {
+          padding: 4,
+          background: `linear-gradient(135deg, ${neon}, ${alpha(a.accent, 0.2)})`,
+          boxShadow: `0 0 28px ${alpha(a.accent, 0.55)}`,
+        },
+        initialsBg: "#0B0E1A",
+        initialsText: neon,
+        tag: {
+          padding: "6px 14px",
+          borderRadius: 8,
+          background: "rgba(255, 255, 255, 0.05)",
+          border: `1px solid ${alpha(a.accent, 0.45)}`,
+          color: "rgba(235, 240, 255, 0.85)",
+          fontFamily: MONO,
+        },
+        statCell: {
+          padding: "12px 6px",
+          borderRadius: 12,
+          background: "rgba(255, 255, 255, 0.045)",
+          border: `1px solid ${alpha(a.accent, 0.4)}`,
+          boxShadow: `inset 0 0 18px ${alpha(a.accent, 0.12)}`,
+        },
+        statValue: { fontFamily: a.headingFont, fontWeight: 800, color: "#FFFFFF", textShadow: `0 0 14px ${alpha(a.accent, 0.85)}` },
+        statLabel: { color: neon, fontFamily: MONO },
+        qrTile: { borderRadius: 12, boxShadow: `0 0 0 2px ${neon}, 0 0 26px ${alpha(a.accent, 0.6)}` },
+        url: { color: neon, fontFamily: MONO },
+      };
+    }
+    case "editorial":
+      return {
+        ...base,
+        heading: SERIF,
+        weight: 600,
+        nameMax: 42,
+        label: { color: a.secondaryText, fontFamily: SERIF, letterSpacing: "0.32em", fontWeight: 600 },
+        name: { letterSpacing: "-0.015em" },
+        avatarShape: "arch",
+        avatarRing: { padding: 6, background: "transparent", border: `1.5px solid ${alpha(a.accent, 0.6)}` },
+        tag: { padding: 0, background: "transparent", border: "none", color: accent, fontStyle: "italic", fontFamily: SERIF, fontWeight: 500 },
+        statWrap: { borderTop: `1px solid ${a.primaryText}`, borderBottom: `1px solid ${a.primaryText}`, padding: "14px 0" },
+        statCell: { padding: "2px 6px" },
+        statDivider: alpha(a.primaryText, 0.25) as string,
+        statValue: { fontFamily: SERIF, fontWeight: 600, fontStyle: "italic", color: a.primaryText },
+        statLabel: { color: a.mutedText, letterSpacing: "0.12em", textTransform: "uppercase" },
+        qrTile: { borderRadius: 4, boxShadow: `0 0 0 1px ${a.border}` },
+        url: { fontFamily: SERIF, fontStyle: "italic" },
+        tagline: { fontFamily: SERIF, fontStyle: "italic", fontWeight: 500 },
+      };
+    default:
+      return base;
+  }
 }
 
 // ─────────────────────────────────────────────────────────────
-// Shared Micro Components
+// Shared content blocks (identical content in every style)
 // ─────────────────────────────────────────────────────────────
 
-function VerifiedCheckBadge({ color = "#7A2253", size = 26 }: { color?: string; size?: number }) {
+const P: CSSProperties = { margin: 0 };
+
+function Header({ skin, assets, compact }: { skin: Skin; assets: CreatorCardAssets; compact?: boolean }) {
+  const logo = skin.logoWhite ? assets.wordmarkWhite : assets.wordmark;
+  const h = compact ? 24 : 28;
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ display: "block" }}>
-      <circle cx="12" cy="12" r="11" fill={color} />
-      <path d="M7.5 12.2L10.5 15.2L16.5 9.2" stroke="#FFFFFF" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14 }}>
+      {logo ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={logo} alt="Inflixo" style={{ height: h, width: "auto", display: "block" }} />
+      ) : (
+        <span style={{ fontFamily: skin.heading, fontWeight: 800, fontSize: h * 0.8, color: skin.text }}>Inflixo</span>
+      )}
+      <span style={{ width: 1.5, height: h * 0.7, background: skin.muted, opacity: 0.45 }} />
+      <span
+        style={{
+          fontSize: 14,
+          fontWeight: 700,
+          letterSpacing: "0.2em",
+          textTransform: "uppercase",
+          whiteSpace: "nowrap",
+          color: skin.accent,
+          ...skin.label,
+        }}
+      >
+        My Creator Journey
+      </span>
+    </div>
   );
 }
 
-function BarcodeStripe({ width = 180, height = 32, color = "#0F172A" }: { width?: number; height?: number; color?: string }) {
-  const bars = [3, 1, 2, 4, 1, 2, 1, 3, 2, 1, 4, 2, 1, 2, 3, 1, 4, 1, 2, 3, 2, 1, 2, 4, 1, 3, 2, 1];
+function Avatar({ skin, photoSrc, name, size, verified }: { skin: Skin; photoSrc: string | null; name: string; size: number; verified: boolean }) {
+  const height = skin.avatarShape === "arch" ? Math.round(size * 1.18) : size;
+  const radius =
+    skin.avatarShape === "circle" ? "50%" : skin.avatarShape === "squircle" ? size * 0.3 : `${size / 2}px ${size / 2}px 14px 14px`;
+  const ringPad = Number(skin.avatarRing.padding ?? 0);
+  const outerRadius =
+    skin.avatarShape === "circle"
+      ? "50%"
+      : skin.avatarShape === "squircle"
+        ? size * 0.3 + ringPad
+        : `${size / 2 + ringPad}px ${size / 2 + ringPad}px ${14 + ringPad}px ${14 + ringPad}px`;
+  const tick = Math.round(size * 0.24);
+
   return (
-    <div style={{ display: "flex", gap: "2px", height, alignItems: "stretch", width, opacity: 0.8 }}>
-      {bars.map((w, i) => (
-        <div key={i} style={{ width: w * 2, background: color, borderRadius: 1 }} />
+    <div style={{ position: "relative", flexShrink: 0 }}>
+      <div style={{ borderRadius: outerRadius, ...skin.avatarRing }}>
+        <div style={{ width: size, height, borderRadius: radius, overflow: "hidden", background: skin.initialsBg }}>
+          {photoSrc ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={photoSrc} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          ) : (
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontFamily: skin.heading,
+                fontWeight: 800,
+                fontSize: Math.round(size * 0.36),
+                color: skin.initialsText,
+              }}
+            >
+              {getInitials(name)}
+            </div>
+          )}
+        </div>
+      </div>
+      {verified && (
+        <span
+          aria-label="Verified creator"
+          style={{
+            position: "absolute",
+            right: skin.avatarShape === "circle" ? Math.round(size * 0.02) : -Math.round(tick * 0.25),
+            bottom: skin.avatarShape === "circle" ? Math.round(size * 0.02) : -Math.round(tick * 0.25),
+            width: tick + 6,
+            height: tick + 6,
+            borderRadius: "50%",
+            background: "#FFFFFF",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 2px 6px rgba(0, 0, 0, 0.18)",
+          }}
+        >
+          <BadgeCheck width={tick} height={tick} fill="#1877F2" color="#FFFFFF" strokeWidth={2.2} />
+        </span>
+      )}
+    </div>
+  );
+}
+
+function Socials({ platforms, color, size = 22, justify = "center" }: { platforms: CardPlatform[]; color: string; size?: number; justify?: CSSProperties["justifyContent"] }) {
+  if (platforms.length === 0) return null;
+  return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: justify, gap: 16, color, flexWrap: "wrap" }}>
+      {platforms.map((p) => (
+        <span key={p} style={{ display: "flex" }}>
+          {PLATFORM_ICONS[p]({ width: size, height: size })}
+        </span>
       ))}
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────
-// Layout 1: Classic Story
-// ─────────────────────────────────────────────────────────────
-
-const CLASSIC_COVER_HEIGHT = 196;
-const CLASSIC_SHEET_OVERLAP = 36;
-const CLASSIC_AVATAR_SIZE = 132;
-const CLASSIC_QR_SIZE = 256;
-
-function ClassicLayout({
-  displayName,
-  username,
-  category,
-  photoSrc,
-  fanbase,
-  profileUrl,
-  appearance: a,
-  customMessage,
-}: CreatorCardProps) {
-  const name = displayName.trim() || username;
-  const handleSize = username.length > 22 ? 17 : 20;
-
-  return (
-    <div
-      style={{
-        position: "relative",
-        width: CARD_WIDTH,
-        height: CARD_HEIGHT,
-        overflow: "hidden",
-        background: a.coverBackground,
-        color: a.primaryText,
-        fontFamily: a.bodyFont,
-        boxSizing: "border-box",
-        WebkitFontSmoothing: "antialiased",
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          inset: `${CLASSIC_COVER_HEIGHT - CLASSIC_SHEET_OVERLAP}px 0 0 0`,
-          background: a.bodyBackground,
-          borderRadius: "36px 36px 0 0",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          textAlign: "center",
-          padding: `${CLASSIC_AVATAR_SIZE / 2 + 18}px 40px 26px`,
-        }}
-      >
-        <h1
-          style={{
-            margin: 0,
-            maxWidth: "100%",
-            fontFamily: a.headingFont,
-            fontWeight: Number(a.headingWeight) || 700,
-            fontSize: nameFontSize(name),
-            lineHeight: 1.18,
-            letterSpacing: "-0.01em",
-            color: a.primaryText,
-            overflowWrap: "anywhere",
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-            paddingBottom: 2,
-          }}
-        >
-          {name}
-        </h1>
-
-        <p
-          style={{
-            margin: "6px 0 0",
-            maxWidth: "100%",
-            fontSize: handleSize,
-            fontWeight: 600,
-            color: a.secondaryText,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          @{username}
-        </p>
-
-        {category && (
-          <span
-            style={{
-              marginTop: 14,
-              maxWidth: "88%",
-              padding: "7px 16px",
-              borderRadius: 999,
-              background: a.chipBackground,
-              border: `1px solid ${a.border}`,
-              color: a.secondaryText,
-              fontSize: 15,
-              fontWeight: 600,
-              lineHeight: 1.35,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {category}
-          </span>
-        )}
-
-        <div style={{ flex: 1, minHeight: 16 }} />
-
-        {fanbase && (
-          <>
-            <p
-              style={{
-                margin: 0,
-                fontSize: 13,
-                fontWeight: 700,
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                color: a.mutedText,
-              }}
-            >
-              Total Fanbase
-            </p>
-            <p
-              style={{
-                margin: "4px 0 0",
-                fontFamily: a.headingFont,
-                fontSize: 54,
-                fontWeight: 800,
-                lineHeight: 1.05,
-                letterSpacing: "-0.02em",
-                color: a.primaryText,
-              }}
-            >
-              {fanbase}
-            </p>
-            <div style={{ flex: 1, minHeight: 16 }} />
-          </>
-        )}
-
-        <div
-          style={{
-            padding: 10,
-            borderRadius: a.radius,
-            background: "#FFFFFF",
-            boxShadow: a.isDark ? "none" : "0 10px 30px rgba(15, 23, 42, 0.08)",
-            border: a.isDark ? "none" : "1px solid rgba(15, 23, 42, 0.06)",
-          }}
-        >
-          <QRCode value={profileUrl} size={CLASSIC_QR_SIZE} />
-        </div>
-
-        <p style={{ margin: "16px 0 0", fontSize: 16, fontWeight: 600, color: a.secondaryText }}>
-          {customMessage || "Scan to explore my world"}
-        </p>
-        <p
-          style={{
-            margin: "4px 0 0",
-            maxWidth: "100%",
-            fontSize: username.length > 22 ? 17 : 19,
-            fontWeight: 700,
-            color: a.primaryText,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          @{username}
-        </p>
-
-        <div style={{ flex: 1, minHeight: 14 }} />
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 4,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 7,
-              fontSize: 14,
-              fontWeight: 800,
-              color: a.primaryText,
-              letterSpacing: "0.02em",
-            }}
-          >
-            <InflixoLogoIcon color="color" className="h-4.5 w-4.5" />
-            <span>Made with Inflixo</span>
-          </div>
-          <p
-            style={{
-              margin: 0,
-              fontSize: 11,
-              fontWeight: 600,
-              color: a.mutedText,
-              letterSpacing: "0.03em",
-            }}
-          >
-            Create your free Creator Card at <strong style={{ color: a.accent }}>inflixo.com</strong>
-          </p>
-        </div>
-      </div>
-
-      <div
-        style={{
-          position: "absolute",
-          top: CLASSIC_COVER_HEIGHT - CLASSIC_SHEET_OVERLAP - CLASSIC_AVATAR_SIZE / 2,
-          left: (CARD_WIDTH - CLASSIC_AVATAR_SIZE) / 2,
-          width: CLASSIC_AVATAR_SIZE,
-          height: CLASSIC_AVATAR_SIZE,
-          borderRadius: "50%",
-          padding: 5,
-          background: a.bodyBackground,
-          boxSizing: "border-box",
-        }}
-      >
-        <CreatorAvatar
-          src={photoSrc}
-          name={name}
-          className="h-full w-full rounded-full"
-          textClassName="font-extrabold text-white"
-          textStyle={{ fontSize: 44 }}
-          style={{ background: a.accent, boxShadow: "none", borderColor: "transparent" }}
-        />
-      </div>
-    </div>
-  );
+interface IdentityProps {
+  skin: Skin;
+  props: CreatorCardProps;
+  avatarSize: number;
+  compact?: boolean;
 }
 
-// ─────────────────────────────────────────────────────────────
-// Layout 2: Minimal Spotlight
-// ─────────────────────────────────────────────────────────────
-
-function MinimalLayout({
-  displayName,
-  username,
-  category,
-  photoSrc,
-  fanbase,
-  profileUrl,
-  appearance: a,
-  customMessage,
-}: CreatorCardProps) {
-  const name = displayName.trim() || username;
-  const avatarSize = 142;
-
-  return (
-    <div
-      style={{
-        position: "relative",
-        width: CARD_WIDTH,
-        height: CARD_HEIGHT,
-        overflow: "hidden",
-        background: a.bodyBackground,
-        color: a.primaryText,
-        fontFamily: a.bodyFont,
-        boxSizing: "border-box",
-        WebkitFontSmoothing: "antialiased",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        textAlign: "center",
-        padding: "44px 36px 36px",
-      }}
-    >
-      {/* Top Header Tag */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          fontSize: 12,
-          fontWeight: 700,
-          letterSpacing: "0.22em",
-          textTransform: "uppercase",
-          color: a.mutedText,
-        }}
-      >
-        <InflixoLogoIcon color="current" className="h-4 w-4" style={{ color: a.accent }} />
-        <span>Inflixo Creator Profile</span>
-      </div>
-
-      <div style={{ height: 26 }} />
-
-      {/* Avatar with double ring and verified badge */}
-      <div style={{ position: "relative", width: avatarSize, height: avatarSize }}>
-        <div
-          style={{
-            width: avatarSize,
-            height: avatarSize,
-            borderRadius: "50%",
-            padding: 5,
-            background: a.isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.04)",
-            border: `2px solid ${a.border}`,
-            boxSizing: "border-box",
-          }}
-        >
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              borderRadius: "50%",
-              padding: 3,
-              background: `linear-gradient(135deg, ${a.accent} 0%, rgba(255,255,255,0) 100%)`,
-              boxSizing: "border-box",
-            }}
-          >
-            <CreatorAvatar
-              src={photoSrc}
-              name={name}
-              className="h-full w-full rounded-full"
-              textClassName="font-extrabold text-white"
-              textStyle={{ fontSize: 48 }}
-              style={{ background: a.accent, boxShadow: "none", borderColor: "transparent" }}
-            />
-          </div>
-        </div>
-        <div style={{ position: "absolute", bottom: 2, right: 2 }}>
-          <VerifiedCheckBadge color={a.accent} size={30} />
-        </div>
-      </div>
-
-      {/* Creator Info */}
-      <div style={{ marginTop: 20, maxWidth: "100%" }}>
-        <h1
-          style={{
-            margin: 0,
-            fontFamily: a.headingFont,
-            fontWeight: Number(a.headingWeight) || 700,
-            fontSize: nameFontSize(name, 38),
-            lineHeight: 1.15,
-            letterSpacing: "-0.02em",
-            color: a.primaryText,
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {name}
-        </h1>
-
-        <p
-          style={{
-            margin: "6px 0 0",
-            fontSize: 18,
-            fontWeight: 600,
-            color: a.accent,
-          }}
-        >
-          @{username}
-        </p>
-
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
-          {category && (
-            <span
-              style={{
-                padding: "6px 14px",
-                borderRadius: 999,
-                background: a.chipBackground,
-                border: `1px solid ${a.border}`,
-                color: a.secondaryText,
-                fontSize: 13,
-                fontWeight: 600,
-              }}
-            >
-              {category}
-            </span>
-          )}
-          {fanbase && (
-            <span
-              style={{
-                padding: "6px 14px",
-                borderRadius: 999,
-                background: a.isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(122, 34, 83, 0.08)",
-                border: `1px solid ${a.border}`,
-                color: a.primaryText,
-                fontSize: 13,
-                fontWeight: 700,
-              }}
-            >
-              ✦ {fanbase} Fanbase
-            </span>
-          )}
-        </div>
-      </div>
-
-      <div style={{ flex: 1, minHeight: 14 }} />
-
-      {/* Floating Centerpiece QR Card */}
-      <div
-        style={{
-          width: 320,
-          padding: "24px 20px 20px",
-          borderRadius: 28,
-          background: "#FFFFFF",
-          boxShadow: a.isDark
-            ? "0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)"
-            : "0 22px 60px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.05)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          boxSizing: "border-box",
-        }}
-      >
-        <QRCode value={profileUrl} size={236} />
-        <div style={{ height: 14 }} />
-        <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "#0F172A" }}>
-          {customMessage || "Point camera to scan"}
-        </p>
-        <p style={{ margin: "3px 0 0", fontSize: 12, fontWeight: 600, color: "#64748B" }}>
-          inflixo.com/@{username}
-        </p>
-      </div>
-
-      <div style={{ flex: 1, minHeight: 14 }} />
-
-      {/* Minimal Footer */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 4,
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 7,
-            fontSize: 14,
-            fontWeight: 800,
-            color: a.primaryText,
-          }}
-        >
-          <InflixoLogoIcon color="color" className="h-4.5 w-4.5" />
-          <span>Inflixo Creator</span>
-        </div>
-        <p style={{ margin: 0, fontSize: 11, fontWeight: 600, color: a.mutedText }}>
-          Claim your free card at <strong style={{ color: a.accent }}>inflixo.com</strong>
-        </p>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// Layout 3: VIP Pass / Event Badge
-// ─────────────────────────────────────────────────────────────
-
-function BadgeLayout({
-  displayName,
-  username,
-  category,
-  photoSrc,
-  fanbase,
-  profileUrl,
-  appearance: a,
-  customMessage,
-}: CreatorCardProps) {
-  const name = displayName.trim() || username;
-  const avatarSize = 124;
-
-  return (
-    <div
-      style={{
-        position: "relative",
-        width: CARD_WIDTH,
-        height: CARD_HEIGHT,
-        overflow: "hidden",
-        background: a.isDark ? "#070B12" : "#F1F5F9",
-        color: a.primaryText,
-        fontFamily: a.bodyFont,
-        boxSizing: "border-box",
-        WebkitFontSmoothing: "antialiased",
-        padding: "20px 24px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      {/* The Pass Frame */}
-      <div
-        style={{
-          position: "relative",
-          width: 492,
-          height: 920,
-          background: a.bodyBackground,
-          borderRadius: 28,
-          border: `2px solid ${a.border}`,
-          boxShadow: a.isDark
-            ? "0 25px 60px rgba(0, 0, 0, 0.7)"
-            : "0 25px 60px rgba(15, 23, 42, 0.14)",
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {/* Top Lanyard Slot Cutout */}
-        <div style={{ display: "flex", justifyContent: "center", paddingTop: 14, paddingBottom: 10 }}>
-          <div
-            style={{
-              width: 76,
-              height: 12,
-              borderRadius: 999,
-              background: a.isDark ? "#03060A" : "#CBD5E1",
-              border: `2px solid ${a.isDark ? "rgba(255,255,255,0.15)" : "#94A3B8"}`,
-            }}
-          />
-        </div>
-
-        {/* VIP Pass Header Ribbon */}
-        <div
-          style={{
-            background: a.coverBackground,
-            padding: "12px 24px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            borderBottom: `2px solid ${a.border}`,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-            <InflixoLogoIcon color="white" className="h-4 w-4" />
-            <span style={{ fontSize: 12, fontWeight: 800, letterSpacing: "0.2em", color: "#FFFFFF" }}>
-              ALL ACCESS PASS
-            </span>
-          </div>
-          <span
-            style={{
-              fontSize: 11,
-              fontWeight: 800,
-              padding: "3px 10px",
-              borderRadius: 999,
-              background: "#FFFFFF",
-              color: "#0F172A",
-              letterSpacing: "0.08em",
-            }}
-          >
-            VIP 2026
-          </span>
-        </div>
-
-        {/* Upper Pass Section */}
-        <div
-          style={{
-            padding: "24px 32px 18px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            textAlign: "center",
-          }}
-        >
-          {/* Avatar with VIP Squircle Frame */}
-          <div
-            style={{
-              position: "relative",
-              width: avatarSize,
-              height: avatarSize,
-              borderRadius: 32,
-              padding: 4,
-              background: `linear-gradient(135deg, ${a.accent} 0%, rgba(255,255,255,0.4) 100%)`,
-              boxShadow: `0 10px 24px ${a.accentGlow || "rgba(0,0,0,0.15)"}`,
-            }}
-          >
-            <div style={{ width: "100%", height: "100%", borderRadius: 28, overflow: "hidden" }}>
-              <CreatorAvatar
-                src={photoSrc}
-                name={name}
-                className="h-full w-full rounded-2xl"
-                textClassName="font-extrabold text-white"
-                textStyle={{ fontSize: 44 }}
-                style={{ background: a.accent, boxShadow: "none", borderColor: "transparent" }}
-              />
-            </div>
-            <div
-              style={{
-                position: "absolute",
-                top: -8,
-                right: -8,
-                padding: "3px 8px",
-                borderRadius: 8,
-                background: a.accent,
-                color: "#FFFFFF",
-                fontSize: 10,
-                fontWeight: 900,
-                letterSpacing: "0.1em",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.25)",
-              }}
-            >
-              VIP
-            </div>
-          </div>
-
-          {/* Name & Handle */}
-          <h1
-            style={{
-              margin: "18px 0 0",
-              fontFamily: a.headingFont,
-              fontWeight: Number(a.headingWeight) || 800,
-              fontSize: nameFontSize(name, 36),
-              lineHeight: 1.15,
-              color: a.primaryText,
-              letterSpacing: "-0.01em",
-            }}
-          >
-            {name}
-          </h1>
-
-          <p
-            style={{
-              margin: "4px 0 0",
-              fontSize: 17,
-              fontWeight: 700,
-              color: a.secondaryText,
-            }}
-          >
-            @{username}
-          </p>
-
-          {/* Side by side spec boxes */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 12,
-              width: "100%",
-              marginTop: 18,
-            }}
-          >
-            <div
-              style={{
-                padding: "10px 14px",
-                borderRadius: 14,
-                background: a.chipBackground,
-                border: `1px solid ${a.border}`,
-                textAlign: "left",
-              }}
-            >
-              <div style={{ fontSize: 10, fontWeight: 700, color: a.mutedText, letterSpacing: "0.15em" }}>
-                CATEGORY
-              </div>
-              <div style={{ marginTop: 2, fontSize: 14, fontWeight: 700, color: a.primaryText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                {category || "Creator"}
-              </div>
-            </div>
-
-            <div
-              style={{
-                padding: "10px 14px",
-                borderRadius: 14,
-                background: a.chipBackground,
-                border: `1px solid ${a.border}`,
-                textAlign: "left",
-              }}
-            >
-              <div style={{ fontSize: 10, fontWeight: 700, color: a.mutedText, letterSpacing: "0.15em" }}>
-                FANBASE REACH
-              </div>
-              <div style={{ marginTop: 2, fontSize: 14, fontWeight: 800, color: a.accent }}>
-                {fanbase || "Creator"}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Perforated Ticket Divider with side notches */}
-        <div style={{ position: "relative", width: "100%", height: 32, display: "flex", alignItems: "center" }}>
-          <div
-            style={{
-              position: "absolute",
-              left: -16,
-              width: 32,
-              height: 32,
-              borderRadius: "50%",
-              background: a.isDark ? "#070B12" : "#F1F5F9",
-              border: `2px solid ${a.border}`,
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              right: -16,
-              width: 32,
-              height: 32,
-              borderRadius: "50%",
-              background: a.isDark ? "#070B12" : "#F1F5F9",
-              border: `2px solid ${a.border}`,
-            }}
-          />
-          <div
-            style={{
-              width: "100%",
-              margin: "0 28px",
-              borderTop: `2px dashed ${a.border}`,
-            }}
-          />
-        </div>
-
-        {/* Bottom Ticket Stub (QR + Barcode) */}
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "8px 32px 22px",
-            textAlign: "center",
-          }}
-        >
-          <div
-            style={{
-              padding: 10,
-              borderRadius: 20,
-              background: "#FFFFFF",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-              border: "1px solid rgba(0,0,0,0.06)",
-            }}
-          >
-            <QRCode value={profileUrl} size={190} />
-          </div>
-
-          <p style={{ margin: "8px 0 0", fontSize: 13, fontWeight: 700, color: a.primaryText }}>
-            {customMessage || "SCAN FOR LIVE BIO & PORTFOLIO"}
-          </p>
-
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, marginTop: 8 }}>
-            <BarcodeStripe width={220} height={26} color={a.isDark ? "#FFFFFF" : "#0F172A"} />
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.18em", color: a.mutedText }}>
-              PASS ID: #INF-{username.slice(0, 5).toUpperCase()}-2026
-            </div>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 3,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                fontSize: 12,
-                fontWeight: 800,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: a.primaryText,
-              }}
-            >
-              <InflixoLogoIcon color="color" className="h-4 w-4" />
-              <span>Official Inflixo Creator Pass</span>
-            </div>
-            <p style={{ margin: 0, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: a.mutedText }}>
-              CLAIM YOUR PASS AT INFLIXO.COM
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// Layout 4: Cyber Neon Glass
-// ─────────────────────────────────────────────────────────────
-
-function CyberCornerBrackets({ color = "#06B6D4" }: { color?: string }) {
-  const s = 14;
-  const b = "2.5px solid " + color;
+function NameBlock({ skin, props, align, maxSize }: { skin: Skin; props: CreatorCardProps; align: "center" | "left"; maxSize: number }) {
+  const name = props.displayName.trim() || props.username;
   return (
     <>
-      <div style={{ position: "absolute", top: -2, left: -2, width: s, height: s, borderTop: b, borderLeft: b, pointerEvents: "none" }} />
-      <div style={{ position: "absolute", top: -2, right: -2, width: s, height: s, borderTop: b, borderRight: b, pointerEvents: "none" }} />
-      <div style={{ position: "absolute", bottom: -2, left: -2, width: s, height: s, borderBottom: b, borderLeft: b, pointerEvents: "none" }} />
-      <div style={{ position: "absolute", bottom: -2, right: -2, width: s, height: s, borderBottom: b, borderRight: b, pointerEvents: "none" }} />
+      <h1
+        style={{
+          ...P,
+          maxWidth: "100%",
+          fontFamily: skin.heading,
+          fontWeight: skin.weight,
+          fontSize: nameFontSize(name, maxSize),
+          lineHeight: 1.15,
+          letterSpacing: "-0.01em",
+          color: skin.text,
+          overflowWrap: "anywhere",
+          textAlign: align,
+          ...skin.name,
+        }}
+      >
+        {name}
+      </h1>
+      <p
+        style={{
+          ...P,
+          marginTop: 8,
+          maxWidth: "100%",
+          lineHeight: 1.3,
+          fontSize: props.username.length > 22 ? 16 : 18,
+          fontWeight: 600,
+          color: skin.sub,
+          overflowWrap: "anywhere",
+          textAlign: align,
+        }}
+      >
+        @{props.username}
+      </p>
     </>
   );
 }
 
-function CyberLayout({
-  displayName,
-  username,
-  category,
-  photoSrc,
-  fanbase,
-  profileUrl,
-  appearance: a,
-  customMessage,
-}: CreatorCardProps) {
-  const name = displayName.trim() || username;
-  const avatarSize = 136;
-  const cyan = "#06B6D4";
-  const magenta = "#EC4899";
+function Tags({ skin, tags }: { skin: Skin; tags: string }) {
+  if (!tags) return null;
+  return (
+    <span style={{ display: "inline-block", maxWidth: "100%", fontSize: 15, fontWeight: 600, lineHeight: 1.35, overflowWrap: "anywhere", ...skin.tag }}>
+      {tags}
+    </span>
+  );
+}
 
+function StoryIdentity({ skin, props, avatarSize }: IdentityProps) {
+  const name = props.displayName.trim() || props.username;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", width: "100%" }}>
+      <Avatar skin={skin} photoSrc={props.photoSrc} name={name} size={avatarSize} verified={props.verified} />
+      <div style={{ height: 14 }} />
+      <NameBlock skin={skin} props={props} align="center" maxSize={skin.nameMax} />
+      {props.platforms.length > 0 && <div style={{ height: 12 }} />}
+      <Socials platforms={props.platforms} color={skin.text} />
+      {props.tags && <div style={{ height: 12 }} />}
+      <Tags skin={skin} tags={props.tags} />
+    </div>
+  );
+}
+
+function CompactIdentity({ skin, props, avatarSize }: IdentityProps) {
+  const name = props.displayName.trim() || props.username;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 18, width: "100%", minWidth: 0 }}>
+      <Avatar skin={skin} photoSrc={props.photoSrc} name={name} size={avatarSize} verified={props.verified} />
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", minWidth: 0, flex: 1, gap: 8 }}>
+        <div>
+          <NameBlock skin={skin} props={props} align="left" maxSize={Math.round(skin.nameMax * 0.72)} />
+        </div>
+        <Socials platforms={props.platforms} color={skin.text} size={20} justify="flex-start" />
+        <Tags skin={skin} tags={props.tags} />
+      </div>
+    </div>
+  );
+}
+
+function EraChip({ era }: { era: CreatorCardEra | null }) {
+  if (!era) return null;
+  const c = ERA_COLORS[era.stage] ?? ERA_COLORS.Gold;
   return (
     <div
       style={{
-        position: "relative",
-        width: CARD_WIDTH,
-        height: CARD_HEIGHT,
-        overflow: "hidden",
-        background: "#080614",
-        color: "#FAF5FF",
-        fontFamily: a.bodyFont,
-        boxSizing: "border-box",
-        WebkitFontSmoothing: "antialiased",
-        padding: "28px 24px",
-        display: "flex",
+        display: "inline-flex",
         alignItems: "center",
-        justifyContent: "center",
+        gap: 8,
+        padding: "8px 18px 8px 14px",
+        borderRadius: 999,
+        background: c.bg,
+        border: `1.5px solid ${c.border}`,
+        color: c.text,
+        fontSize: 16,
+        fontWeight: 700,
+        lineHeight: 1.2,
+        whiteSpace: "nowrap",
+        boxShadow: "0 4px 14px rgba(0, 0, 0, 0.08)",
       }}
     >
-      {/* Ambient Glowing Orbs */}
-      <div
-        style={{
-          position: "absolute",
-          top: -40,
-          right: -40,
-          width: 360,
-          height: 360,
-          borderRadius: "50%",
-          background: `radial-gradient(circle, ${cyan} 0%, rgba(6,182,212,0) 70%)`,
-          opacity: 0.35,
-          pointerEvents: "none",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          bottom: -40,
-          left: -40,
-          width: 380,
-          height: 380,
-          borderRadius: "50%",
-          background: `radial-gradient(circle, ${magenta} 0%, rgba(236,72,153,0) 70%)`,
-          opacity: 0.35,
-          pointerEvents: "none",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          top: 300,
-          left: 100,
-          width: 300,
-          height: 300,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, #7C3AED 0%, rgba(124,58,237,0) 70%)",
-          opacity: 0.25,
-          pointerEvents: "none",
-        }}
-      />
+      <Award width={20} height={20} color={c.icon} strokeWidth={2.2} />
+      <span>{era.badge}</span>
+    </div>
+  );
+}
 
-      {/* Cyber Glass HUD Card */}
-      <div
-        style={{
-          position: "relative",
-          width: 484,
-          height: 904,
-          borderRadius: 30,
-          background: "rgba(15, 23, 42, 0.78)",
-          border: "1px solid rgba(255, 255, 255, 0.16)",
-          boxShadow: `0 0 50px rgba(6, 182, 212, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.25)`,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          textAlign: "center",
-          padding: "28px 32px 26px",
-          boxSizing: "border-box",
-        }}
-      >
-        {/* Top Cyber System Bar */}
+function statItems(stats: CreatorCardStats) {
+  return [
+    { label: "Total Fans", n: stats.fans, value: formatFans(stats.fans) },
+    { label: "Series", n: stats.series, value: String(stats.series) },
+    { label: "Products", n: stats.products, value: String(stats.products) },
+    { label: "Links", n: stats.links, value: String(stats.links) },
+  ].filter((s) => s.n > 0);
+}
+
+/** Single-row grid of the non-zero stats; value size shrinks to fit the column width. */
+function Stats({ skin, stats, width, compact }: { skin: Skin; stats: CreatorCardStats; width: number; compact?: boolean }) {
+  const items = statItems(stats);
+  if (items.length === 0) return null;
+  const gap = skin.statDivider ? 0 : 8;
+  const cellW = (width - gap * (items.length - 1)) / items.length;
+  const base = compact ? 30 : items.length >= 4 ? 30 : items.length === 3 ? 34 : 40;
+  const longest = Math.max(...items.map((i) => i.value.length));
+  const valueSize = Math.max(18, Math.min(base, Math.floor((cellW - 14) / (longest * 0.64))));
+
+  return (
+    <div style={{ width, display: "grid", gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))`, gap, ...skin.statWrap }}>
+      {items.map((item, i) => (
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-            fontSize: 11,
-            fontFamily: "monospace",
-            letterSpacing: "0.16em",
-            color: cyan,
-            borderBottom: "1px solid rgba(6, 182, 212, 0.25)",
-            paddingBottom: 12,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#10B981", boxShadow: "0 0 8px #10B981" }} />
-            <span>CYBER ID // CREATOR</span>
-          </div>
-          <span>SYS.ONLINE</span>
-        </div>
-
-        <div style={{ height: 26 }} />
-
-        {/* Neon Halo Avatar */}
-        <div
-          style={{
-            position: "relative",
-            width: avatarSize,
-            height: avatarSize,
-            borderRadius: "50%",
-            padding: 4,
-            background: `linear-gradient(135deg, ${cyan} 0%, ${magenta} 100%)`,
-            boxShadow: `0 0 30px rgba(6, 182, 212, 0.5), 0 0 15px rgba(236, 72, 153, 0.5)`,
-          }}
-        >
-          <div style={{ width: "100%", height: "100%", borderRadius: "50%", overflow: "hidden" }}>
-            <CreatorAvatar
-              src={photoSrc}
-              name={name}
-              className="h-full w-full rounded-full"
-              textClassName="font-extrabold text-white"
-              textStyle={{ fontSize: 44 }}
-              style={{ background: "#1E1035", boxShadow: "none", borderColor: "transparent" }}
-            />
-          </div>
-        </div>
-
-        {/* Identity */}
-        <h1
-          style={{
-            margin: "20px 0 0",
-            fontFamily: a.headingFont,
-            fontWeight: 800,
-            fontSize: nameFontSize(name, 38),
-            lineHeight: 1.15,
-            color: "#FFFFFF",
-            letterSpacing: "-0.01em",
-            textShadow: "0 0 20px rgba(255, 255, 255, 0.3)",
-          }}
-        >
-          {name}
-        </h1>
-
-        <p
-          style={{
-            margin: "6px 0 0",
-            fontSize: 18,
-            fontWeight: 700,
-            color: cyan,
-            letterSpacing: "0.04em",
-          }}
-        >
-          @{username}
-        </p>
-
-        {/* Cyber Badges */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 14, flexWrap: "wrap", justifyContent: "center" }}>
-          {category && (
-            <span
-              style={{
-                padding: "6px 14px",
-                borderRadius: 999,
-                background: "rgba(6, 182, 212, 0.12)",
-                border: "1px solid rgba(6, 182, 212, 0.4)",
-                color: "#E0F2FE",
-                fontSize: 12,
-                fontWeight: 700,
-                letterSpacing: "0.05em",
-              }}
-            >
-              {category}
-            </span>
-          )}
-          {fanbase && (
-            <span
-              style={{
-                padding: "6px 14px",
-                borderRadius: 999,
-                background: "rgba(236, 72, 153, 0.15)",
-                border: "1px solid rgba(236, 72, 153, 0.4)",
-                color: "#FCE7F3",
-                fontSize: 12,
-                fontWeight: 800,
-                letterSpacing: "0.05em",
-              }}
-            >
-              [ REACH: {fanbase} ]
-            </span>
-          )}
-        </div>
-
-        <div style={{ flex: 1, minHeight: 14 }} />
-
-        {/* QR Section with Cyber Brackets */}
-        <div style={{ position: "relative" }}>
-          <CyberCornerBrackets color={cyan} />
-          <div
-            style={{
-              padding: 12,
-              borderRadius: 20,
-              background: "#FFFFFF",
-              boxShadow: "0 0 30px rgba(6, 182, 212, 0.3)",
-            }}
-          >
-            <QRCode value={profileUrl} size={210} />
-          </div>
-        </div>
-
-        <p
-          style={{
-            margin: "16px 0 0",
-            fontSize: 13,
-            fontWeight: 700,
-            letterSpacing: "0.14em",
-            fontFamily: "monospace",
-            color: cyan,
-          }}
-        >
-          {customMessage ? `// ${customMessage.toUpperCase()}` : "INITIALIZING SCAN // EXPLORE BIO"}
-        </p>
-
-        <div style={{ flex: 1, minHeight: 14 }} />
-
-        {/* Cyber Footer */}
-        <div
+          key={item.label}
           style={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: 3,
+            justifyContent: "center",
+            minWidth: 0,
+            ...skin.statCell,
+            ...(skin.statDivider && i > 0 ? { borderLeft: `1px solid ${skin.statDivider}` } : null),
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 7,
-              fontSize: 12,
-              fontWeight: 800,
-              letterSpacing: "0.14em",
-              color: cyan,
-            }}
-          >
-            <InflixoLogoIcon color="current" className="h-4 w-4" style={{ color: cyan }} />
-            <span>INFLIXO CYBER CREATOR NETWORK</span>
-          </div>
-          <p style={{ margin: 0, fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: "rgba(255, 255, 255, 0.6)" }}>
-            LAUNCH YOUR CREATOR HUB AT INFLIXO.COM
-          </p>
+          <span style={{ fontSize: valueSize, lineHeight: 1.1, letterSpacing: "-0.01em", whiteSpace: "nowrap", ...skin.statValue }}>{item.value}</span>
+          <span style={{ marginTop: 4, fontSize: 14, fontWeight: 600, lineHeight: 1.2, whiteSpace: "nowrap", ...skin.statLabel }}>{item.label}</span>
         </div>
+      ))}
+    </div>
+  );
+}
+
+const QR_SIZE = Math.round(CARD_WIDTH * 0.25);
+
+function QrTile({ skin, profileUrl }: { skin: Skin; profileUrl: string }) {
+  return (
+    <div style={{ flexShrink: 0, overflow: "hidden", background: "#FFFFFF", lineHeight: 0, ...skin.qrTile }}>
+      <QRCode value={profileUrl} size={QR_SIZE} />
+    </div>
+  );
+}
+
+function Tagline({ skin, text, align }: { skin: Skin; text: string; align: "left" | "center" }) {
+  if (!text) return null;
+  return (
+    <p style={{ ...P, fontSize: 18, fontWeight: 600, lineHeight: 1.35, color: skin.text, overflowWrap: "anywhere", textAlign: align, ...skin.tagline }}>
+      {text}
+    </p>
+  );
+}
+
+function UrlLine({ skin, username, align, size = 16 }: { skin: Skin; username: string; align: "left" | "center"; size?: number }) {
+  return (
+    <p style={{ ...P, fontSize: size, fontWeight: 700, lineHeight: 1.3, color: skin.accent, overflowWrap: "anywhere", textAlign: align, ...skin.url }}>
+      inflixo.com/
+      <wbr />
+      {username}
+    </p>
+  );
+}
+
+/** Tagline (5) + QR & profile URL (6) as one row in the 9:16 layouts. */
+function QrRow({ skin, props }: { skin: Skin; props: CreatorCardProps }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 20, width: "100%" }}>
+      <QrTile skin={skin} profileUrl={props.profileUrl} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, minWidth: 0, flex: 1 }}>
+        <Tagline skin={skin} text={props.tagline} align="left" />
+        <UrlLine skin={skin} username={props.username} align="left" />
       </div>
     </div>
   );
 }
 
+function Footer({ skin, assets }: { skin: Skin; assets: CreatorCardAssets }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, color: skin.muted, fontSize: 14, fontWeight: 600, whiteSpace: "nowrap" }}>
+      {assets.icon && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={assets.icon} alt="" style={{ width: 22, height: 22, borderRadius: 6, display: "block" }} />
+      )}
+      <span>
+        Create yours at <span style={{ color: skin.text, fontWeight: 800 }}>inflixo.com</span>
+      </span>
+    </div>
+  );
+}
+
+const Spacer = ({ min = 12 }: { min?: number }) => <div style={{ flex: 1, minHeight: min }} />;
+
 // ─────────────────────────────────────────────────────────────
-// Layout 5: Editorial Luxe (High-Fashion Magazine)
+// Composition: 9:16 story stack and 1:1 compact grid
 // ─────────────────────────────────────────────────────────────
 
-function EditorialLayout({
-  displayName,
-  username,
-  category,
-  photoSrc,
-  fanbase,
-  profileUrl,
-  appearance: a,
-  customMessage,
-  platforms = ["instagram", "youtube"],
-}: CreatorCardProps) {
-  const name = displayName.trim() || username;
-  const avatarSize = 124;
+interface StackOptions {
+  width: number;
+  avatarSize: number;
+  /** Wraps the header (e.g. Classic's white pill). */
+  header?: (node: ReactNode) => ReactNode;
+  /** Extra decoration rendered directly under the header (e.g. Editorial rules). */
+  afterHeader?: ReactNode;
+  headerGap?: number;
+  qrWrap?: CSSProperties;
+}
 
+function StoryStack({ skin, props, o }: { skin: Skin; props: CreatorCardProps; o: StackOptions }) {
+  const header = <Header skin={skin} assets={props.assets} />;
+  return (
+    <>
+      {o.header ? o.header(header) : header}
+      {o.afterHeader}
+      <div style={{ height: o.headerGap ?? 28, flexShrink: 0 }} />
+      <StoryIdentity skin={skin} props={props} avatarSize={o.avatarSize} />
+      {props.era && <div style={{ height: 16, flexShrink: 0 }} />}
+      <EraChip era={props.era} />
+      <Spacer min={16} />
+      <Stats skin={skin} stats={props.stats} width={o.width} />
+      <Spacer min={16} />
+      <div style={{ width: "100%", ...o.qrWrap }}>
+        <QrRow skin={skin} props={props} />
+      </div>
+      <Spacer min={14} />
+      <Footer skin={skin} assets={props.assets} />
+    </>
+  );
+}
+
+function SquareStack({ skin, props, width, header }: { skin: Skin; props: CreatorCardProps; width: number; header?: (n: ReactNode) => ReactNode }) {
+  const h = <Header skin={skin} assets={props.assets} compact />;
+  return (
+    <>
+      {header ? header(h) : h}
+      <Spacer min={12} />
+      <div style={{ display: "flex", gap: 22, width: "100%", alignItems: "center" }}>
+        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 12 }}>
+          <CompactIdentity skin={skin} props={props} avatarSize={84} compact />
+          <EraChip era={props.era} />
+          <Tagline skin={skin} text={props.tagline} align="left" />
+        </div>
+        <div style={{ width: QR_SIZE, flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+          <QrTile skin={skin} profileUrl={props.profileUrl} />
+          <UrlLine skin={skin} username={props.username} align="center" size={14} />
+        </div>
+      </div>
+      <Spacer min={10} />
+      <Stats skin={skin} stats={props.stats} width={width} compact />
+      <Spacer min={8} />
+      <Footer skin={skin} assets={props.assets} />
+    </>
+  );
+}
+
+function contentBox(square: boolean, padX: number, extra?: CSSProperties): CSSProperties {
+  return {
+    position: "absolute",
+    left: padX,
+    right: padX,
+    top: square ? 26 : CARD_SAFE_ZONE,
+    bottom: square ? 24 : CARD_SAFE_ZONE,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    ...extra,
+  };
+}
+
+function Shell({ a, height, background, children }: { a: CardAppearance; height: number; background: string; children: ReactNode }) {
   return (
     <div
       style={{
         position: "relative",
         width: CARD_WIDTH,
-        height: CARD_HEIGHT,
+        height,
         overflow: "hidden",
-        backgroundColor: "#FAF7F2",
-        color: "#0F172A",
+        background,
+        color: a.primaryText,
         fontFamily: a.bodyFont,
         boxSizing: "border-box",
         WebkitFontSmoothing: "antialiased",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        padding: "36px 32px 28px",
       }}
     >
-      {/* Decorative Organic Beige Shapes */}
-      <div
-        style={{
-          position: "absolute",
-          top: -80,
-          right: -80,
-          width: 380,
-          height: 380,
-          borderRadius: "45% 55% 60% 40% / 50% 45% 55% 50%",
-          backgroundColor: "#EFE5D8",
-          opacity: 0.85,
-          pointerEvents: "none",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          top: 260,
-          left: -120,
-          width: 320,
-          height: 380,
-          borderRadius: "55% 45% 40% 60% / 45% 55% 45% 55%",
-          backgroundColor: "#F2E8DC",
-          opacity: 0.75,
-          pointerEvents: "none",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          bottom: -60,
-          right: -60,
-          width: 340,
-          height: 340,
-          borderRadius: "60% 40% 55% 45% / 50% 60% 40% 50%",
-          backgroundColor: "#EBE0D2",
-          opacity: 0.8,
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* 1. Header */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 2,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <InflixoLogoIcon color="color" className="h-6 w-6" />
-          <span style={{ fontWeight: 900, fontSize: 17, color: "#7A2253", letterSpacing: "0.04em" }}>
-            INFLIXO
-          </span>
-        </div>
-        <span
-          style={{
-            fontSize: 11,
-            fontWeight: 800,
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            color: "#64748B",
-          }}
-        >
-          CREATOR CARD
-        </span>
-      </div>
-
-      {/* 2. Middle Hero */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 2,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          textAlign: "center",
-          marginTop: 6,
-        }}
-      >
-        {/* Avatar with white border and verified check */}
-        <div style={{ position: "relative", width: avatarSize, height: avatarSize, margin: "0 auto" }}>
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              borderRadius: "50%",
-              padding: 4,
-              backgroundColor: "#FFFFFF",
-              boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
-            }}
-          >
-            <CreatorAvatar
-              src={photoSrc}
-              name={name}
-              className="h-full w-full rounded-full object-cover"
-              textClassName="font-extrabold text-white"
-              textStyle={{ fontSize: 44 }}
-              style={{ background: "#7A2253", boxShadow: "none", borderColor: "transparent" }}
-            />
-          </div>
-          {/* Blue Verified Checkmark */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: 4,
-              right: 4,
-              width: 28,
-              height: 28,
-              borderRadius: "50%",
-              backgroundColor: "#2563EB",
-              border: "2.5px solid #FFFFFF",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0 2px 6px rgba(37,99,235,0.35)",
-            }}
-          >
-            <svg width={14} height={14} viewBox="0 0 24 24" fill="none">
-              <path d="M5 13l4 4L19 7" stroke="#FFFFFF" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-        </div>
-
-        {/* Name & Handle */}
-        <h1
-          style={{
-            margin: "14px 0 0",
-            fontFamily: a.headingFont,
-            fontWeight: 800,
-            fontSize: 32,
-            lineHeight: 1.15,
-            letterSpacing: "-0.02em",
-            color: "#0F172A",
-          }}
-        >
-          {name}
-        </h1>
-        <p style={{ margin: "2px 0 0", fontSize: 14, fontWeight: 600, color: "#64748B" }}>
-          @{username}
-        </p>
-
-        {/* Social Icons Row */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12 }}>
-          {/* Instagram */}
-          {(platforms.includes("instagram") || platforms.length === 0) && (
-            <div
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: 5,
-                background: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#FFFFFF",
-              }}
-            >
-              <InstagramIcon className="w-4 h-4 text-white" />
-            </div>
-          )}
-          {/* YouTube */}
-          {platforms.includes("youtube") && (
-            <div
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: 5,
-                backgroundColor: "#FF0000",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#FFFFFF",
-              }}
-            >
-              <YoutubeIcon className="w-4 h-4 text-white" />
-            </div>
-          )}
-          {/* Facebook */}
-          {platforms.includes("facebook") && (
-            <div
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: 5,
-                backgroundColor: "#1877F2",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#FFFFFF",
-              }}
-            >
-              <FacebookIcon className="w-4 h-4 text-white" />
-            </div>
-          )}
-        </div>
-
-        {/* Category tag */}
-        {category && (
-          <p
-            style={{
-              margin: "12px 0 0",
-              fontSize: 11,
-              fontWeight: 800,
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              color: "#0F172A",
-            }}
-          >
-            {category.replace(/•/g, "·")}
-          </p>
-        )}
-
-        {/* Total Fanbase Pill */}
-        <div
-          style={{
-            marginTop: 10,
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 7,
-            backgroundColor: "#FFFFFF",
-            border: "1px solid #E2E8F0",
-            borderRadius: 999,
-            padding: "5px 14px",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
-          }}
-        >
-          <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="#0F172A" strokeWidth={2}>
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-          </svg>
-          <span style={{ fontSize: 13, fontWeight: 800, color: "#0F172A" }}>
-            {fanbase || "14.3K"}
-          </span>
-          <span style={{ fontSize: 11, fontWeight: 600, color: "#64748B" }}>
-            Total Fanbase
-          </span>
-          <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth={2.5}>
-            <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-
-        {/* QR Code Container */}
-        <div
-          style={{
-            marginTop: 14,
-            padding: 10,
-            borderRadius: 18,
-            backgroundColor: "#FFFFFF",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.06)",
-            border: "1px solid #E2E8F0",
-          }}
-        >
-          <QRCode value={profileUrl} size={156} />
-        </div>
-
-        {/* Emotional Tagline */}
-        <p
-          style={{
-            margin: "12px 0 0",
-            fontSize: 13,
-            fontWeight: 700,
-            color: "#0F172A",
-          }}
-        >
-          {customMessage || "Support my creative journey ❤️"}
-        </p>
-
-        {/* Action Quick Pills */}
-        <div style={{ display: "flex", alignItems: "center", gap: 7, marginTop: 12 }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 5,
-              padding: "6px 12px",
-              borderRadius: 999,
-              backgroundColor: "#FFFFFF",
-              border: "1px solid #E2E8F0",
-              boxShadow: "0 2px 5px rgba(0,0,0,0.03)",
-              fontSize: 10,
-              fontWeight: 700,
-              color: "#0F172A",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <span style={{ color: "#E11D48", fontSize: 11 }}>▷</span>
-            <div style={{ lineHeight: 1.15, textAlign: "left" }}>
-              <span>Watch My</span>
-              <br />
-              <span style={{ fontSize: 9, color: "#64748B" }}>Series</span>
-            </div>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 5,
-              padding: "6px 12px",
-              borderRadius: 999,
-              backgroundColor: "#FFFFFF",
-              border: "1px solid #E2E8F0",
-              boxShadow: "0 2px 5px rgba(0,0,0,0.03)",
-              fontSize: 10,
-              fontWeight: 700,
-              color: "#0F172A",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <span style={{ color: "#7A2253", fontSize: 11 }}>🛍</span>
-            <div style={{ lineHeight: 1.15, textAlign: "left" }}>
-              <span>Explore My</span>
-              <br />
-              <span style={{ fontSize: 9, color: "#64748B" }}>Shop</span>
-            </div>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 5,
-              padding: "6px 14px",
-              borderRadius: 999,
-              backgroundColor: "#FFFFFF",
-              border: "1px solid #E2E8F0",
-              boxShadow: "0 2px 5px rgba(0,0,0,0.03)",
-              fontSize: 10,
-              fontWeight: 700,
-              color: "#0F172A",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <span style={{ color: "#0F172A", fontSize: 11 }}>🔗</span>
-            <span>My Links</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 3. Footer */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 2,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-          paddingTop: 12,
-          borderTop: "1px solid rgba(0,0,0,0.06)",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <InflixoLogoIcon color="color" className="h-4 w-4" />
-          <span style={{ fontWeight: 800, fontSize: 13, color: "#7A2253" }}>INFLIXO</span>
-        </div>
-        <div style={{ fontSize: 10, fontWeight: 600, color: "#64748B" }}>
-          Create yours at <strong style={{ color: "#7A2253", fontWeight: 700 }}>inflixo.com</strong>
-        </div>
-      </div>
+      {children}
     </div>
   );
 }
 
+const layer = (style: CSSProperties) => <div aria-hidden style={{ position: "absolute", pointerEvents: "none", ...style }} />;
+
 // ─────────────────────────────────────────────────────────────
-// Master CreatorCard Component
+// 1. Classic Story — cover band, overlapping sheet
+// ─────────────────────────────────────────────────────────────
+
+function ClassicLayout(props: CreatorCardProps & { height: number; square: boolean }) {
+  const a = props.appearance;
+  const skin = buildSkin("classic", a);
+  const pad = props.square ? 28 : 40;
+  const sheetTop = props.square ? 82 : 250;
+  const pill = (node: ReactNode) => (
+    <div style={{ padding: "8px 18px", borderRadius: 999, background: "rgba(255, 255, 255, 0.95)", boxShadow: "0 6px 20px rgba(0, 0, 0, 0.12)" }}>
+      {node}
+    </div>
+  );
+  const pillSkin: Skin = { ...skin, logoWhite: false, text: "#0F172A", muted: "#64748B", accent: accentOnLight(a.accent) };
+  const header = (_: ReactNode) => pill(<Header skin={pillSkin} assets={props.assets} compact={props.square} />);
+
+  return (
+    <Shell a={a} height={props.height} background={a.bodyBackground}>
+      {layer({ inset: `0 0 auto 0`, height: sheetTop + 40, background: a.coverBackground })}
+      {layer({ top: -120, right: -90, width: 300, height: 300, borderRadius: "50%", background: "rgba(255, 255, 255, 0.10)" })}
+      {layer({ top: 60, left: -70, width: 180, height: 180, borderRadius: "50%", background: "rgba(255, 255, 255, 0.07)" })}
+      {layer({ inset: `${sheetTop}px 0 0 0`, background: a.bodyBackground, borderRadius: "34px 34px 0 0" })}
+      <div style={contentBox(props.square, pad)}>
+        {props.square ? (
+          <SquareStack skin={skin} props={props} width={CARD_WIDTH - pad * 2} header={header} />
+        ) : (
+          <StoryStack
+            skin={skin}
+            props={props}
+            o={{
+              width: CARD_WIDTH - pad * 2,
+              avatarSize: 118,
+              header,
+              headerGap: 22,
+              qrWrap: { padding: 16, borderRadius: 22, background: a.chipBackground, border: `1px solid ${a.border}`, boxSizing: "border-box" },
+            }}
+          />
+        )}
+      </div>
+    </Shell>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// 2. Minimal Spotlight — airy, soft accent halo, hairlines
+// ─────────────────────────────────────────────────────────────
+
+function MinimalLayout(props: CreatorCardProps & { height: number; square: boolean }) {
+  const a = props.appearance;
+  const skin = buildSkin("minimal", a);
+  const pad = props.square ? 30 : 48;
+  return (
+    <Shell a={a} height={props.height} background={a.bodyBackground}>
+      {layer({
+        top: props.square ? -160 : -80,
+        left: "50%",
+        width: 560,
+        height: 560,
+        marginLeft: -280,
+        borderRadius: "50%",
+        background: `radial-gradient(circle, ${alpha(a.accent, a.isDark ? 0.32 : 0.18)} 0%, transparent 65%)`,
+      })}
+      {layer({
+        bottom: -220,
+        left: "50%",
+        width: 620,
+        height: 420,
+        marginLeft: -310,
+        borderRadius: "50%",
+        background: `radial-gradient(circle, ${alpha(a.accent, a.isDark ? 0.2 : 0.1)} 0%, transparent 70%)`,
+      })}
+      <div style={contentBox(props.square, pad)}>
+        {props.square ? (
+          <SquareStack skin={skin} props={props} width={CARD_WIDTH - pad * 2} />
+        ) : (
+          <StoryStack skin={skin} props={props} o={{ width: CARD_WIDTH - pad * 2, avatarSize: 124, headerGap: 34 }} />
+        )}
+      </div>
+    </Shell>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// 3. VIP Pass — lanyard, pass body + tear-off stub
+// ─────────────────────────────────────────────────────────────
+
+function VipLayout(props: CreatorCardProps & { height: number; square: boolean }) {
+  const a = props.appearance;
+  const skin = buildSkin("badge", a);
+  const passBg = a.bodyBackground;
+  const passShadow = "0 24px 60px rgba(0, 0, 0, 0.28)";
+  const stripes = "repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0 2px, transparent 2px 16px)";
+  const outer = (children: ReactNode) => (
+    <Shell a={a} height={props.height} background={a.coverBackground}>
+      {layer({ inset: 0, background: stripes })}
+      {children}
+    </Shell>
+  );
+
+  if (props.square) {
+    const pad = 18;
+    const inner = CARD_WIDTH - pad * 2 - 40;
+    return outer(
+      <div
+        style={{
+          position: "absolute",
+          inset: pad,
+          borderRadius: 26,
+          background: passBg,
+          boxShadow: passShadow,
+          padding: "20px 20px 14px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          boxSizing: "border-box",
+        }}
+      >
+        {layer({ top: 0, left: 26, right: 26, height: 5, borderRadius: "0 0 6px 6px", background: alpha(a.accent, 0.8) })}
+        <SquareStack skin={skin} props={props} width={inner} />
+      </div>
+    );
+  }
+
+  const side = 30;
+  const passTop = CARD_SAFE_ZONE - 6;
+  const inner = CARD_WIDTH - side * 2 - 52;
+  return outer(
+    <>
+      {/* Lanyard strap + clip, decoration only in the safe zone */}
+      {layer({ top: 0, left: "50%", width: 58, marginLeft: -29, height: passTop - 6, background: "rgba(255, 255, 255, 0.22)", borderLeft: "1px solid rgba(255,255,255,0.35)", borderRight: "1px solid rgba(255,255,255,0.35)" })}
+      {layer({ top: passTop - 26, left: "50%", width: 34, height: 34, marginLeft: -17, borderRadius: "50%", border: "5px solid #D4D4D8", background: "transparent", boxShadow: "0 2px 6px rgba(0,0,0,0.25)" })}
+      <div style={{ position: "absolute", left: side, right: side, top: passTop, bottom: CARD_SAFE_ZONE - 6, display: "flex", flexDirection: "column", gap: 8 }}>
+        <div
+          style={{
+            position: "relative",
+            flex: 1,
+            borderRadius: "26px 26px 16px 16px",
+            background: passBg,
+            boxShadow: passShadow,
+            padding: "34px 26px 22px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          {layer({ top: 14, left: "50%", width: 64, height: 10, marginLeft: -32, borderRadius: 6, background: alpha(a.primaryText, 0.14) })}
+          <Header skin={skin} assets={props.assets} />
+          <div style={{ height: 24 }} />
+          <StoryIdentity skin={skin} props={props} avatarSize={112} />
+          {props.era && <div style={{ height: 14 }} />}
+          <EraChip era={props.era} />
+          <Spacer min={14} />
+          <Stats skin={skin} stats={props.stats} width={inner} />
+        </div>
+        <div
+          style={{
+            position: "relative",
+            borderRadius: "16px 16px 26px 26px",
+            background: passBg,
+            boxShadow: passShadow,
+            padding: "18px 26px 16px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 14,
+          }}
+        >
+          {layer({ top: -5, left: 18, right: 18, borderTop: `2px dashed ${alpha(a.primaryText, 0.18)}` })}
+          <QrRow skin={skin} props={props} />
+          <Footer skin={skin} assets={props.assets} />
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// 4. Cyber Neon — dark base, neon glow from theme accent, HUD frame
+// ─────────────────────────────────────────────────────────────
+
+function HudCorners({ color, inset }: { color: string; inset: CSSProperties }) {
+  const arm = 26;
+  const s = (pos: CSSProperties, borders: CSSProperties) =>
+    layer({ width: arm, height: arm, ...pos, ...borders, filter: `drop-shadow(0 0 6px ${color})` });
+  const b = `2px solid ${color}`;
+  return (
+    <div aria-hidden style={{ position: "absolute", ...inset, pointerEvents: "none" }}>
+      {s({ top: 0, left: 0 }, { borderTop: b, borderLeft: b })}
+      {s({ top: 0, right: 0 }, { borderTop: b, borderRight: b })}
+      {s({ bottom: 0, left: 0 }, { borderBottom: b, borderLeft: b })}
+      {s({ bottom: 0, right: 0 }, { borderBottom: b, borderRight: b })}
+    </div>
+  );
+}
+
+function CyberLayout(props: CreatorCardProps & { height: number; square: boolean }) {
+  const a = props.appearance;
+  const skin = buildSkin("cyber", a);
+  const base = a.isDark ? a.bodyBackground : `linear-gradient(180deg, #070912 0%, #0B0D1C 100%)`;
+  const pad = props.square ? 30 : 40;
+  const grid = `linear-gradient(${alpha(a.accent, 0.09)} 1px, transparent 1px), linear-gradient(90deg, ${alpha(a.accent, 0.09)} 1px, transparent 1px)`;
+  const hudInset: CSSProperties = props.square
+    ? { top: 12, left: 12, right: 12, bottom: 12 }
+    : { top: CARD_SAFE_ZONE - 16, left: 18, right: 18, bottom: CARD_SAFE_ZONE - 16 };
+
+  return (
+    <Shell a={a} height={props.height} background={`radial-gradient(120% 60% at 0% 0%, ${alpha(a.accent, 0.38)} 0%, transparent 55%), radial-gradient(110% 55% at 100% 100%, ${alpha(a.accent, 0.3)} 0%, transparent 55%), ${base}`}>
+      {layer({ inset: 0, backgroundImage: grid, backgroundSize: "36px 36px", opacity: 0.9 })}
+      {layer({ inset: 0, background: "repeating-linear-gradient(180deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 4px)" })}
+      <HudCorners color={skin.accent} inset={hudInset} />
+      <div style={contentBox(props.square, pad)}>
+        {props.square ? (
+          <SquareStack skin={skin} props={props} width={CARD_WIDTH - pad * 2} />
+        ) : (
+          <StoryStack
+            skin={skin}
+            props={props}
+            o={{
+              width: CARD_WIDTH - pad * 2,
+              avatarSize: 118,
+              headerGap: 26,
+              qrWrap: {
+                padding: 16,
+                borderRadius: 16,
+                background: "rgba(255, 255, 255, 0.04)",
+                border: `1px solid ${alpha(a.accent, 0.35)}`,
+                boxSizing: "border-box",
+              },
+            }}
+          />
+        )}
+      </div>
+    </Shell>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// 5. Editorial Luxe — magazine masthead, serif, hairline rules
+// ─────────────────────────────────────────────────────────────
+
+function EditorialLayout(props: CreatorCardProps & { height: number; square: boolean }) {
+  const a = props.appearance;
+  const skin = buildSkin("editorial", a);
+  const pad = props.square ? 30 : 44;
+  const rule = (mt: number) => (
+    <div style={{ width: "100%", marginTop: mt, flexShrink: 0 }}>
+      <div style={{ height: 1, background: a.primaryText }} />
+      <div style={{ height: 3 }} />
+      <div style={{ height: 1, background: alpha(a.primaryText, 0.35) }} />
+    </div>
+  );
+  return (
+    <Shell a={a} height={props.height} background={a.bodyBackground}>
+      {layer({ inset: 0, background: `linear-gradient(180deg, ${alpha(a.accent, a.isDark ? 0.16 : 0.08)} 0%, transparent 30%, transparent 72%, ${alpha(a.accent, a.isDark ? 0.14 : 0.07)} 100%)` })}
+      {!props.square && layer({ top: 48, left: pad, right: pad, height: 1, background: alpha(a.primaryText, 0.25) })}
+      {!props.square && layer({ bottom: 48, left: pad, right: pad, height: 1, background: alpha(a.primaryText, 0.25) })}
+      {layer({ top: props.square ? -60 : 70, right: -80, width: 240, height: 240, borderRadius: "50%", border: `1px solid ${alpha(a.accent, 0.25)}` })}
+      <div style={contentBox(props.square, pad)}>
+        {props.square ? (
+          <SquareStack skin={skin} props={props} width={CARD_WIDTH - pad * 2} />
+        ) : (
+          <StoryStack skin={skin} props={props} o={{ width: CARD_WIDTH - pad * 2, avatarSize: 112, afterHeader: rule(14), headerGap: 24 }} />
+        )}
+      </div>
+    </Shell>
+  );
+}
+
 // ─────────────────────────────────────────────────────────────
 
 export const CreatorCard = forwardRef<HTMLDivElement, CreatorCardProps>(function CreatorCard(
-  props,
+  { layout = "classic", aspect = "portrait", ...rest },
   ref
 ) {
-  const layout = props.layout || "classic";
-
+  const height = cardHeightFor(aspect);
+  const props = { ...rest, layout, aspect, height, square: aspect === "square" };
   return (
-    <div
-      ref={ref}
-      style={{
-        width: CARD_WIDTH,
-        height: CARD_HEIGHT,
-        overflow: "hidden",
-        position: "relative",
-      }}
-    >
+    <div ref={ref} style={{ width: CARD_WIDTH, height }}>
       {layout === "minimal" && <MinimalLayout {...props} />}
-      {layout === "badge" && <BadgeLayout {...props} />}
+      {layout === "badge" && <VipLayout {...props} />}
       {layout === "cyber" && <CyberLayout {...props} />}
       {layout === "editorial" && <EditorialLayout {...props} />}
       {layout === "classic" && <ClassicLayout {...props} />}

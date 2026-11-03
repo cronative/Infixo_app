@@ -5,15 +5,15 @@ import { CARD_EXPORT_PIXEL_RATIO, CARD_HEIGHT, CARD_WIDTH } from "@/components/c
 const isWebKit = () =>
   typeof navigator !== "undefined" && /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
 
-/** Renders the card DOM node to a 1080 × 1920 PNG blob. */
-export async function renderCardPng(node: HTMLElement): Promise<Blob> {
+/** Renders the card DOM node to a PNG blob: 1080 × 1920 (9:16) or 1080 × 1080 (1:1). */
+export async function renderCardPng(node: HTMLElement, height: number = CARD_HEIGHT): Promise<Blob> {
   // Loaded on demand so the export library isn't part of the page's initial bundle.
   const { getFontEmbedCSS, toBlob } = await import("html-to-image");
   await document.fonts?.ready;
   const fontEmbedCSS = await getFontEmbedCSS(node);
   const options = {
     width: CARD_WIDTH,
-    height: CARD_HEIGHT,
+    height,
     pixelRatio: CARD_EXPORT_PIXEL_RATIO,
     fontEmbedCSS,
     // The preview is scaled by its parent; make sure the clone never inherits that.
@@ -26,8 +26,8 @@ export async function renderCardPng(node: HTMLElement): Promise<Blob> {
   return blob;
 }
 
-export function cardFileName(username: string) {
-  return `inflixo-creator-card-${username || "creator"}.png`;
+export function cardFileName(username: string, aspect: "portrait" | "square" = "portrait") {
+  return `inflixo-creator-journey-${username || "creator"}-${aspect === "square" ? "1x1" : "9x16"}.png`;
 }
 
 export function downloadBlob(blob: Blob, fileName: string) {

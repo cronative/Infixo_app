@@ -125,7 +125,7 @@ export const PAGE_COPY = {
   },
   creatorCard: {
     title: "Creator Card",
-    subtitle: "A shareable card for Stories and Status.",
+    subtitle: "Share your Creator Journey on Stories, Status and posts.",
     help: [
       "Choose a layout, colours and a tagline.",
       "Download or share it to your story.",

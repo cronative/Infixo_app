@@ -301,3 +301,35 @@ export function useExportableImage(url: string | null | undefined, maxSize: numb
   if (state.for !== url) return { src: null, ready: false };
   return { src: state.src, ready: state.ready };
 }
+
+/**
+ * Loads a same-origin asset (e.g. the Inflixo logo PNGs) as a data URL, keeping
+ * its original format/transparency, so html-to-image can embed it on export.
+ * Returns undefined while loading and null on failure.
+ */
+export function useExportableAsset(url: string): string | null | undefined {
+  const [state, setState] = useState<{ for: string; src: string | null } | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(url)
+      .then((res) => (res.ok ? res.blob() : Promise.reject(new Error(String(res.status)))))
+      .then(
+        (blob) =>
+          new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(String(reader.result));
+            reader.onerror = () => reject(reader.error);
+            reader.readAsDataURL(blob);
+          })
+      )
+      .then((src) => !cancelled && setState({ for: url, src }))
+      .catch(() => !cancelled && setState({ for: url, src: null }));
+    return () => {
+      cancelled = true;
+    };
+  }, [url]);
+
+  // undefined while loading; null if it couldn't be read (callers fall back to text).
+  return state?.for === url ? state.src : undefined;
+}

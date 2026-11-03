@@ -17,11 +17,20 @@ import {
 import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { ThemeService } from "@/services/ThemeService";
-import { buildProfileUrl, formatCount, formatCategoryDots } from "@/utils/format";
-import { CARD_HEIGHT, CARD_WIDTH, CreatorCard } from "@/components/creator-card/CreatorCard";
+import { buildProfileUrl, formatCategoryDots } from "@/utils/format";
+import { calculateTotalFanbase, getCreatorEra } from "@/lib/creatorEra";
+import { LinkService } from "@/services/LinkService";
+import { ProductService } from "@/services/ProductService";
+import {
+  CARD_WIDTH,
+  CardPlatform,
+  CreatorCard,
+  cardHeightFor,
+} from "@/components/creator-card/CreatorCard";
 import {
   CardLayoutType,
   resolveCardAppearance,
+  useExportableAsset,
   useExportableImage,
 } from "@/components/creator-card/cardAppearance";
 import { cardFileName, downloadBlob, renderCardPng } from "@/components/creator-card/cardExport";
@@ -82,6 +91,7 @@ export default function CreatorCardPage() {
   const {
     profile,
     socials,
+    series,
     totalAudience,
     theme,
     loading,
@@ -96,20 +106,47 @@ export default function CreatorCardPage() {
   const [customTagline, setCustomTagline] = useState<string>("");
   const [aspectRatio, setAspectRatio] = useState<"portrait" | "square">("portrait");
 
-  const primaryPlatforms = useMemo<("instagram" | "youtube" | "facebook")[]>(() => {
-    const list: ("instagram" | "youtube" | "facebook")[] = [];
-    if (socials.instagram?.username || (socials.instagram?.followers ?? 0) > 0) list.push("instagram");
-    if (socials.youtube?.username || (socials.youtube?.subscribers ?? 0) > 0) list.push("youtube");
-    if (socials.facebook?.username || (socials.facebook?.followers ?? 0) > 0) list.push("facebook");
-    return list.length > 0 ? list : ["instagram", "youtube"];
+  // Connected social accounts, in the same order as the public profile header.
+  const platforms = useMemo<CardPlatform[]>(() => {
+    const keys: CardPlatform[] = [
+      "instagram", "youtube", "facebook", "tiktok", "twitter", "linkedin",
+      "threads", "snapchat", "pinterest", "twitch", "spotify",
+    ];
+    return keys.filter((key) => {
+      const acc = (socials as unknown as Record<string, { username?: string; url?: string; followers?: number; subscribers?: number } | undefined>)[key];
+      if (!acc) return false;
+      return Boolean(acc.username || (acc.url && acc.url !== "#") || (acc.followers ?? acc.subscribers ?? 0) > 0);
+    });
   }, [socials]);
+
+  // Product & link counts for the stats grid (zero-value stats are hidden on the card).
+  const [productCount, setProductCount] = useState(0);
+  const [linkCount, setLinkCount] = useState(0);
+  useEffect(() => {
+    const ctrl = new AbortController();
+    ProductService.list(ctrl.signal)
+      .then((items) => setProductCount(Array.isArray(items) ? items.length : 0))
+      .catch(() => {});
+    LinkService.list(ctrl.signal)
+      .then((data) => setLinkCount(Array.isArray(data?.items) ? data.items.filter((l) => !l.expired).length : 0))
+      .catch(() => {});
+    return () => ctrl.abort();
+  }, []);
 
   const username = (profile.username || "").replace(/^@/, "");
   const profileUrl = username ? buildProfileUrl(username) : "";
   const themeMeta = ThemeService.getThemeMeta(theme);
 
   const avatar = useExportableImage(profile.photoDataUrl, 480);
-  const assetsReady = avatar.ready;
+  const wordmark = useExportableAsset("/images/inflixo-wordmark-title.png");
+  const wordmarkWhite = useExportableAsset("/images/inflixo-wordmark-title-white.png");
+  const logoIcon = useExportableAsset("/images/inflixo-logo-icon-brand.png");
+  const assetsReady =
+    avatar.ready && wordmark !== undefined && wordmarkWhite !== undefined && logoIcon !== undefined;
+  const cardAssets = useMemo(
+    () => ({ wordmark: wordmark ?? null, wordmarkWhite: wordmarkWhite ?? null, icon: logoIcon ?? null }),
+    [wordmark, wordmarkWhite, logoIcon]
+  );
 
   const appearance = useMemo(
     () => resolveCardAppearance(selectedThemeId, themeMeta),
@@ -117,7 +154,17 @@ export default function CreatorCardPage() {
   );
 
   const category = formatCategoryDots(profile.category, profile.customCategory);
-  const fanbase = totalAudience > 0 ? formatCount(totalAudience) : null;
+  // Fans + Creator Era exactly as the public profile computes them (formatFans is applied in the card).
+  const fanbaseForEra = calculateTotalFanbase(socials) ?? (typeof profile.peakFanbase === "number" ? profile.peakFanbase : null);
+  const creatorEra = getCreatorEra(fanbaseForEra);
+  const totalFans = totalAudience || creatorEra?.min || 0;
+  const era = creatorEra ? { badge: creatorEra.badge, stage: creatorEra.stage } : null;
+  const stats = useMemo(
+    () => ({ fans: totalFans, series: series.length, products: productCount, links: linkCount }),
+    [totalFans, series.length, productCount, linkCount]
+  );
+  const verified = profile.isVerified !== false;
+  const cardHeight = cardHeightFor(aspectRatio);
 
   // Active message & sharing text
   const activePreset = QUICK_TAGS.find((p) => p.id === selectedPresetId) ?? QUICK_TAGS[0];
@@ -143,13 +190,18 @@ export default function CreatorCardPage() {
     username,
     profile.displayName,
     category,
-    fanbase,
+    JSON.stringify(stats),
+    era?.badge,
+    platforms.join(","),
+    verified,
+    aspectRatio,
     profileUrl,
     theme,
     selectedLayout,
     selectedThemeId,
     activeTagline,
     avatar.src?.length,
+    Boolean(cardAssets.wordmark && cardAssets.icon),
   ].join("|");
   const cached = useRef<{ key: string; blob: Blob } | null>(null);
   const [busy, setBusy] = useState<"download" | null>(null);
@@ -158,10 +210,10 @@ export default function CreatorCardPage() {
     if (cached.current?.key === renderKey) return cached.current.blob;
     if (!cardRef.current) throw new Error("Card not mounted");
     const key = renderKey;
-    const blob = await renderCardPng(cardRef.current);
+    const blob = await renderCardPng(cardRef.current, cardHeight);
     cached.current = { key, blob };
     return blob;
-  }, [renderKey]);
+  }, [renderKey, cardHeight]);
 
   useEffect(() => {
     if (!username || !assetsReady || loading) return;
@@ -179,8 +231,8 @@ export default function CreatorCardPage() {
     }
     setBusy("download");
     try {
-      downloadBlob(await getBlob(), cardFileName(username));
-      showToast("Creator Card downloaded ✨");
+      downloadBlob(await getBlob(), cardFileName(username, aspectRatio));
+      showToast("Creator Journey card downloaded ✨");
     } catch (err) {
       console.error("Creator Card export failed:", err);
       showToast("Could not create the card image. Please try again.", "error");
@@ -241,14 +293,14 @@ export default function CreatorCardPage() {
                 className="relative mx-auto overflow-hidden rounded-[5px] shadow-[0_20px_50px_rgba(0,0,0,0.12)] ring-1 ring-black/5"
                 style={{
                   width: CARD_WIDTH * scale,
-                  height: aspectRatio === "portrait" ? CARD_HEIGHT * scale : CARD_WIDTH * scale,
+                  height: cardHeight * scale,
                   transition: "height 0.25s ease-in-out",
                 }}
               >
                 <div
                   style={{
                     width: CARD_WIDTH,
-                    height: CARD_HEIGHT,
+                    height: cardHeight,
                     transform: `scale(${scale})`,
                     transformOrigin: "top left",
                   }}
@@ -257,14 +309,18 @@ export default function CreatorCardPage() {
                     ref={cardRef}
                     displayName={profile.displayName}
                     username={username}
-                    category={category}
+                    tags={category}
                     photoSrc={avatar.src}
-                    fanbase={fanbase}
                     profileUrl={profileUrl}
                     appearance={appearance}
                     layout={selectedLayout}
-                    customMessage={activeTagline}
-                    platforms={primaryPlatforms}
+                    aspect={aspectRatio}
+                    tagline={activeTagline}
+                    platforms={platforms}
+                    verified={verified}
+                    era={era}
+                    stats={stats}
+                    assets={cardAssets}
                   />
                 </div>
                 {!assetsReady && (
@@ -551,7 +607,7 @@ export default function CreatorCardPage() {
                 </div>
 
                 <p className="text-[12px] text-[#6B6B76]">
-                  Appears under the QR code on your card and in your shared Story caption.
+                  Appears next to the QR code on your Creator Journey card.
                 </p>
               </div>
             </div>
@@ -568,7 +624,7 @@ export default function CreatorCardPage() {
               ) : (
                 <Download className="h-4 w-4" />
               )}
-              <span>Download Card (1080 × 1920 HD)</span>
+              <span>Download Card ({aspectRatio === "square" ? "1080 × 1080" : "1080 × 1920"} HD)</span>
             </button>
           </div>
         </div>
