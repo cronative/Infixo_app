@@ -105,7 +105,8 @@ export function CollabEnquirySheet({
       phone: phone.trim() || undefined,
       packageId: selectedPkgId === "custom" ? null : selectedPkgId,
       packageName,
-      budget: budget || undefined,
+      // Budget only applies to custom requests; packages already carry a price.
+      budget: selectedPkgId === "custom" ? budget || undefined : undefined,
       message: message.trim(),
       websiteOrSocial: websiteOrSocial.trim() || undefined,
       hp: honeypot || undefined,
@@ -221,7 +222,7 @@ export function CollabEnquirySheet({
                   Request sent!
                 </h3>
                 <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 max-w-sm mx-auto leading-relaxed">
-                  {creatorDisplayName} will reply on email.
+                  {creatorDisplayName || "The creator"} will reply soon.
                 </p>
               </div>
 
@@ -348,8 +349,8 @@ export function CollabEnquirySheet({
                 </div>
               </div>
 
-              {/* Row 3: Package Select + Budget */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Row 3: Package Select + Budget (budget only for a custom request) */}
+              <div className={`grid grid-cols-1 gap-3 ${selectedPkgId === "custom" ? "sm:grid-cols-2" : ""}`}>
                 <div className="space-y-1">
                   <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200">
                     Package
@@ -375,6 +376,7 @@ export function CollabEnquirySheet({
                   </select>
                 </div>
 
+                {selectedPkgId === "custom" && (
                 <div className="space-y-1">
                   <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200">
                     Budget <span className="text-zinc-400 font-normal">(optional)</span>
@@ -391,6 +393,7 @@ export function CollabEnquirySheet({
                     ))}
                   </select>
                 </div>
+                )}
               </div>
 
               {/* Row 4: Website / Instagram Handle */}

@@ -155,6 +155,7 @@ import {
 import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
 import { CreatorEraBottomSheet } from "@/components/shared/CreatorEraBottomSheet";
 import { AboutMeBlock, FanbaseByPlatform, SocialAccountsBlock } from "@/components/public/about/AboutSections";
+import { AudienceSnapshot, CustomCollaboration, WhatBrandsSay, WorkWithMe } from "@/components/public/collab/CollabSections";
 
 
 function formatIndianPackagePrice(pkg: MediaKitPackage): string {
@@ -3046,9 +3047,63 @@ export function LivePreviewCard({
 
         {/* 6b. Collaboration Packages Section (Restored classic Collab tab design) */}
         {!isListingPage && (isPremiumLayout || (!isTabsLayout || activeNavTab === "collab" || activeNavTab === "work")) && (() => {
-          if (effectiveVisibilitySettings.showCollabGigs === false) return null;
-
           const activePackages = (mediaKitPackages || []).filter((p) => p.isActive);
+
+          // Tabs / stacked layouts: About-style sections (Audience → Packages → Reviews → Custom).
+          if (!isPremiumLayout) {
+            const showPackages = effectiveVisibilitySettings.showCollabGigs !== false;
+            const reviewsList = effectiveVisibilitySettings.showReviews === false ? [] : approvedReviews;
+            const brandNames = [
+              ...(brandsList || []).filter((b) => b.isActive !== false).map((b) => b.brandName || ""),
+              ...(mediaKitSettings?.pastBrands || []).map((b) => b.name || ""),
+            ].filter(Boolean);
+            const hasContent = (showPackages && activePackages.length > 0) || reviewsList.length > 0 || brandNames.length > 0;
+            if (!isTabsLayout && !isDashboardPreview && !hasContent) return null;
+            const topPlatform = [...fanbaseSocialCards]
+              .filter((s) => (Number(s.count) || 0) > 0)
+              .sort((a, b) => (Number(b.count) || 0) - (Number(a.count) || 0))[0];
+            const openEnquiry = (pkg: MediaKitPackage | null) => {
+              setSelectedEnquiryPackage(pkg);
+              setIsEnquirySheetOpen(true);
+            };
+            return (
+              <div
+                id="collab-section"
+                className={`relative z-10 ${isTabsLayout ? "order-[20] mt-1 sm:mt-1.5" : "order-[20] mt-4 sm:mt-5"} w-full space-y-2 text-left animate-fade-in`}
+              >
+                <AudienceSnapshot
+                  totalFans={totalAudience}
+                  topPlatform={topPlatform ? { platform: topPlatform.platform, handle: topPlatform.handle, count: Number(topPlatform.count) || 0, unit: topPlatform.unit } : null}
+                  tags={formattedCategories ? formattedCategories.split(" · ") : []}
+                  mediaKitHref={cleanHandle && cleanHandle !== "demo_creator" ? `/${cleanHandle}/mediakit` : undefined}
+                  onMediaKitClick={(e) => {
+                    if (isInformationalMode) {
+                      e.preventDefault();
+                      showToast("Opens your public media kit on the live profile ✨");
+                    }
+                  }}
+                  colors={aboutColors}
+                />
+                {showPackages && <WorkWithMe packages={activePackages} colors={aboutColors} onEnquire={(pkg) => openEnquiry(pkg)} />}
+                <WhatBrandsSay reviews={reviewsList} brands={brandNames} colors={aboutColors} />
+                {showPackages && <CustomCollaboration colors={aboutColors} onRequest={() => openEnquiry(null)} />}
+                <CollabEnquirySheet
+                  isOpen={isEnquirySheetOpen}
+                  onClose={() => setIsEnquirySheetOpen(false)}
+                  creatorId={profile.id || profile.username || "creator"}
+                  creatorDisplayName={profile.displayName || profile.username}
+                  creatorEmail={profile.email}
+                  creatorWhatsapp={(profile as any).whatsappNumber}
+                  packages={activePackages}
+                  preselectedPackage={selectedEnquiryPackage}
+                  settings={mediaKitSettings}
+                  brandPrimary="var(--accent)"
+                />
+              </div>
+            );
+          }
+
+          if (effectiveVisibilitySettings.showCollabGigs === false) return null;
           if (!isDashboardPreview && activePackages.length === 0 && !isTabsLayout) return null;
 
           return (
@@ -3239,6 +3294,7 @@ export function LivePreviewCard({
 
         {/* 7. Reviews Section */}
         {!isListingPage && (isPremiumLayout || (!isTabsLayout || activeNavTab === "collab" || activeNavTab === "work" || activeNavTab === "reviews")) && (() => {
+          if (!isPremiumLayout) return null; // tabs/stacked: shown in the Collab sections
           if (effectiveVisibilitySettings.showReviews === false) return null;
           if (approvedReviews.length === 0) return null;
 
@@ -3407,7 +3463,7 @@ export function LivePreviewCard({
         })()}
 
         {/* 10. Trusted Brands Section */}
-        {!isListingPage && (isPremiumLayout || !isTabsLayout) && (() => {
+        {!isListingPage && isPremiumLayout && (() => {
           const activeBrands = (brandsList || []).filter((b) => b.isActive !== false);
           if (activeBrands.length === 0) return null;
 
