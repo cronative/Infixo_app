@@ -137,11 +137,7 @@ export function LinkGroupRow({
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
         className={`w-full min-h-[48px] h-[48px] px-3.5 py-2 flex items-center justify-between gap-3 text-left cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 ${themeConfig.focusRing} focus-visible:ring-offset-1 select-none ${
-          flat
-            ? isOpen
-              ? "bg-[color-mix(in_srgb,var(--accent)_5%,transparent)]"
-              : "hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)]"
-            : themeConfig.headerBg
+          flat ? "hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)]" : themeConfig.headerBg
         }`}
       >
         <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -202,19 +198,17 @@ export function LinkGroupRow({
 
       {/* Expanded inner links (light & compact with thin dividers, no nested boxes) */}
       {isOpen && flat && (
-        /* Flat (Section) layout: children on a soft tint, hanging off a guide line under the folder icon */
-        <div className="bg-[color-mix(in_srgb,var(--accent)_3%,transparent)] pb-1.5 pt-0.5 animate-in fade-in duration-200">
-          <div className="ml-[30px] mr-2 border-l-2 border-[color-mix(in_srgb,var(--accent)_22%,transparent)] divide-y divide-(--surface-border)">
-            {items.map((item) => (
-              <LinkRow
-                key={item.id}
-                link={item}
-                compact
-                className="pl-4 pr-1.5"
-                onClick={() => onLinkClick?.(item)}
-              />
-            ))}
-          </div>
+        /* Flat (Section) layout: plain indented rows, icons line up with the folder title */
+        <div className="border-t border-(--surface-border) divide-y divide-(--surface-border) animate-in fade-in duration-200">
+          {items.map((item) => (
+            <LinkRow
+              key={item.id}
+              link={item}
+              compact
+              className="pl-[58px]"
+              onClick={() => onLinkClick?.(item)}
+            />
+          ))}
         </div>
       )}
       {isOpen && !flat && (
