@@ -27,7 +27,6 @@ import {
   Check,
   MapPin,
   MessageCircle,
-  MessageSquare,
   Mail,
   Link as LinkIcon,
   ArrowRight,
@@ -36,7 +35,6 @@ import {
   Star,
   Settings,
   Globe,
-  Handshake,
   Award,
   Building2,
   User,
@@ -60,7 +58,6 @@ import {
   Info,
 } from "lucide-react";
 import { TabSectionHeader, TabSectionBody } from "@/components/profile/TabSectionHeader";
-import { PackageCard } from "@/components/collab/PackageCard";
 import { MediaKitSnapshotCard } from "@/components/collab/MediaKitSnapshotCard";
 import { BrandLogosWrap } from "@/components/collab/BrandLogosWrap";
 import { CollabEnquirySheet } from "@/components/collab/CollabEnquirySheet";
@@ -741,7 +738,6 @@ export function LivePreviewCard({
     return false;
   });
   const [selectedEnquiryPackage, setSelectedEnquiryPackage] = useState<MediaKitPackage | null>(null);
-  const [showAllReviews, setShowAllReviews] = useState(false);
   const [activeNavTab, setActiveNavTab] = useState<CreatorNavTabId>(() => {
     let urlTab: string | null = null;
     if (typeof window !== "undefined") {
@@ -3049,8 +3045,7 @@ export function LivePreviewCard({
         {!isListingPage && (isPremiumLayout || (!isTabsLayout || activeNavTab === "collab" || activeNavTab === "work")) && (() => {
           const activePackages = (mediaKitPackages || []).filter((p) => p.isActive);
 
-          // Tabs / stacked layouts: About-style sections (Audience → Packages → Reviews → Custom).
-          if (!isPremiumLayout) {
+          // All layouts: About-style sections (Audience → Packages → Reviews → Custom).
             const showPackages = effectiveVisibilitySettings.showCollabGigs !== false;
             const reviewsList = effectiveVisibilitySettings.showReviews === false ? [] : approvedReviews;
             const brandNames = [
@@ -3069,7 +3064,7 @@ export function LivePreviewCard({
             return (
               <div
                 id="collab-section"
-                className={`relative z-10 ${isTabsLayout ? "order-[20] mt-1 sm:mt-1.5" : "order-[20] mt-4 sm:mt-5"} w-full space-y-2 text-left animate-fade-in`}
+                className={`relative z-10 ${isPremiumLayout ? "order-[6] mt-5 sm:mt-6" : isTabsLayout ? "order-[20] mt-1 sm:mt-1.5" : "order-[20] mt-4 sm:mt-5"} w-full space-y-2 text-left animate-fade-in`}
               >
                 <AudienceSnapshot
                   totalFans={totalAudience}
@@ -3101,435 +3096,9 @@ export function LivePreviewCard({
                 />
               </div>
             );
-          }
-
-          if (effectiveVisibilitySettings.showCollabGigs === false) return null;
-          if (!isDashboardPreview && activePackages.length === 0 && !isTabsLayout) return null;
-
-          return (
-            <div
-              id="collab-section"
-              style={
-                isPremiumLayout
-                  ? {
-                      backgroundColor: "color-mix(in srgb, var(--accent) 4.5%, var(--surface))",
-                      borderColor: "var(--surface-border)",
-                    }
-                  : undefined
-              }
-              className={`relative z-10 ${
-                isPremiumLayout
-                  ? "order-[6] mt-5 sm:mt-6 p-3.5 sm:p-4 rounded-[5px] border shadow-xs space-y-3"
-                  : isTabsLayout
-                  ? "order-[20] mt-1 sm:mt-1.5 space-y-2"
-                  : "order-[20] mt-4 sm:mt-5 space-y-2"
-              } w-full text-left animate-fade-in`}
-            >
-              {!isTabsLayout && (
-                <TabSectionHeader
-                  title={isPremiumLayout ? "Collaboration Packages" : "Work with me"}
-                  subtitle="Collab packages & custom brand inquiries."
-                  action={
-                    isPremiumLayout && activePackages.length > 0 ? (
-                      <span
-                        style={{
-                          color: "var(--accent-text)",
-                          backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
-                          borderColor: "var(--surface-border)",
-                        }}
-                        className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
-                      >
-                        {activePackages.length} {activePackages.length === 1 ? "Package" : "Packages"}
-                      </span>
-                    ) : activePackages.length > 0 ? (
-                      <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
-                        {activePackages.length} {activePackages.length === 1 ? "package" : "packages"}
-                      </span>
-                    ) : undefined
-                  }
-                  primaryTextColor={c.primaryText}
-                  secondaryTextColor={c.secondaryText}
-                  headingFontFamily={typ.headingFontFamily}
-                />
-              )}
-
-              {/* 1. WORK WITH ME SECTION (Matching Reviews Section outer card structure) */}
-              <div
-                id="collab-packages-section"
-                style={{
-                  backgroundColor: isPremiumLayout ? "var(--surface)" : "transparent",
-                  borderColor: "var(--surface-border)",
-                }}
-                className="rounded-[5px] border overflow-hidden text-left shadow-none"
-              >
-                {/* Section Header (shown in tabs layout to avoid duplicate header in premium) */}
-                {!isPremiumLayout && (
-                  <div
-                    style={{
-                      backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
-                      borderColor: "var(--surface-border)",
-                    }}
-                    className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <Handshake className="h-4 w-4 text-(--accent-text) shrink-0" />
-                        <h2
-                          style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                          className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
-                        >
-                          {isPremiumLayout ? "Packages" : "Work With Me"}
-                        </h2>
-                      </div>
-                      <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
-                        I&apos;d love to bring your brand into my content. Explore my collab packages below.
-                      </p>
-                    </div>
-                    {activePackages.length > 0 && (
-                      <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
-                        {activePackages.length} {activePackages.length === 1 ? "package" : "packages"}
-                      </span>
-                    )}
-                  </div>
-                )}
-
-                {/* Packages List: Single vertical column inside the main section container */}
-                {activePackages.length > 0 ? (
-                  <div className="p-2 sm:p-2.5">
-                    <div className="flex flex-col space-y-2 w-full">
-                      {activePackages.map((pkg) => (
-                        <PackageCard
-                          key={pkg.id}
-                          pkg={pkg}
-                          onEnquire={(selected) => {
-                            setSelectedEnquiryPackage(selected);
-                            setIsEnquirySheetOpen(true);
-                          }}
-                          brandPrimary="var(--accent)"
-                          isDark={usesDarkControls}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="px-4 py-8 text-center">
-                    <p style={{ color: c.mutedText }} className="text-xs font-medium">
-                      No packages available at the moment.
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* 4. Custom Collaboration Card */}
-              <div
-                style={{
-                  backgroundColor: "transparent",
-                  borderColor: "var(--surface-border)",
-                }}
-                className="rounded-[5px] border overflow-hidden text-left shadow-none"
-              >
-                {/* Header */}
-                <div
-                  style={{
-                    backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
-                    borderColor: "var(--surface-border)",
-                  }}
-                  className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b"
-                >
-                  <div className="flex items-center gap-2">
-                    <Send className="h-4 w-4 text-(--accent-text) shrink-0" />
-                    <h3
-                      style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                      className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
-                    >
-                      Custom Collaboration
-                    </h3>
-                  </div>
-                  <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
-                    Have something different in mind? I&apos;d love to hear your idea.
-                  </p>
-                </div>
-
-                {/* Body */}
-                <div className="p-3 sm:p-3.5">
-                  <p style={{ color: c.secondaryText }} className="text-xs sm:text-[12.5px] font-normal leading-relaxed text-(--text-muted)">
-                    Looking for a custom campaign, long-term ambassadorship, or a bespoke creative package? Send a custom brief and I&apos;ll get back to you with a tailor-made proposal.
-                  </p>
-                </div>
-
-                {/* Edge-to-edge CTA */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedEnquiryPackage(null);
-                    setIsEnquirySheetOpen(true);
-                  }}
-                  style={{
-                    backgroundColor: "var(--accent)",
-                    color: "var(--on-accent)",
-                  }}
-                  className="w-full min-h-[44px] py-2.5 px-3 rounded-none border-t border-(--surface-border) font-medium text-[13px] leading-[18px] flex items-center justify-center gap-1.5 transition-all hover:opacity-95 shadow-none cursor-pointer select-none active:scale-[0.99]"
-                >
-                  <span>Send a Custom Request</span>
-                  <ArrowUpRight className="h-3.5 w-3.5 stroke-[2.5]" />
-                </button>
-              </div>
-
-              {/* 5. ENQUIRY SHEET */}
-              <CollabEnquirySheet
-                isOpen={isEnquirySheetOpen}
-                onClose={() => setIsEnquirySheetOpen(false)}
-                creatorId={profile.id || profile.username || "creator"}
-                creatorDisplayName={profile.displayName || profile.username}
-                creatorEmail={profile.email}
-                creatorWhatsapp={(profile as any).whatsappNumber}
-                packages={activePackages}
-                preselectedPackage={selectedEnquiryPackage}
-                settings={mediaKitSettings}
-                brandPrimary="var(--accent)"
-              />
-            </div>
-          );
         })()}
 
-        {/* 7. Reviews Section */}
-        {!isListingPage && (isPremiumLayout || (!isTabsLayout || activeNavTab === "collab" || activeNavTab === "work" || activeNavTab === "reviews")) && (() => {
-          if (!isPremiumLayout) return null; // tabs/stacked: shown in the Collab sections
-          if (effectiveVisibilitySettings.showReviews === false) return null;
-          if (approvedReviews.length === 0) return null;
-
-          const visibleReviews = showAllReviews ? approvedReviews : approvedReviews.slice(0, 4);
-          const hasMoreReviews = approvedReviews.length > 4;
-
-          return (
-            <div id="reviews-section" className={`relative z-10 ${isPremiumLayout ? "order-[7] mt-5 sm:mt-6 space-y-3" : isTabsLayout ? "order-[21] mt-1 sm:mt-1.5 space-y-2" : "order-[21] mt-4 sm:mt-5 space-y-2"} w-full text-left animate-fade-in`}>
-              {isPremiumLayout && (
-                <TabSectionHeader
-                  title="Reviews"
-                  subtitle="Verified feedback and testimonials from leading brands & collaboration partners."
-                  action={
-                    approvedReviews.length > 0 ? (
-                      <span
-                        style={{
-                          color: "var(--accent-text)",
-                          backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
-                          borderColor: "var(--surface-border)",
-                        }}
-                        className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
-                      >
-                        {approvedReviews.length} {approvedReviews.length === 1 ? "Review" : "Reviews"}
-                      </span>
-                    ) : undefined
-                  }
-                  primaryTextColor={c.primaryText}
-                  secondaryTextColor={c.secondaryText}
-                  headingFontFamily={typ.headingFontFamily}
-                />
-              )}
-
-              <div
-                id="collab-reviews-section"
-                style={{
-                  backgroundColor: "transparent",
-                  borderColor: "var(--surface-border)",
-                }}
-                className="rounded-[5px] border overflow-hidden text-left shadow-none"
-              >
-                {/* Card Header (for tabs layout) */}
-                {!isPremiumLayout && (
-                  <div
-                    style={{
-                      backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--surface))",
-                      borderColor: "var(--surface-border)",
-                    }}
-                    className="px-3 py-2 sm:px-3.5 sm:py-2.5 border-b flex items-center justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <MessageSquare className="h-4 w-4 text-(--accent-text) shrink-0" />
-                        <h3
-                          style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                          className="text-sm font-semibold tracking-tight leading-5 text-(--text)"
-                        >
-                          What Brands Say
-                        </h3>
-                      </div>
-                      <p style={{ color: c.mutedText }} className="text-xs font-normal leading-[18px] text-(--text-muted) mt-0.5">
-                        Here&apos;s what brands I&apos;ve worked with have to say about our collaborations.
-                      </p>
-                    </div>
-                    <span style={{ color: c.mutedText }} className="text-[11px] font-normal shrink-0 text-(--text-muted)">
-                      {approvedReviews.length} {approvedReviews.length === 1 ? "review" : "reviews"}
-                    </span>
-                  </div>
-                )}
-
-                {/* Reviews List: Single vertical column across all breakpoints */}
-                <div className="p-2 sm:p-2.5">
-                  <div className="flex flex-col space-y-2 w-full">
-                    {visibleReviews.map((rev) => {
-                      const ratingNum = Number(rev.rating) || 5;
-                      const initial = getInitials(rev.clientName, "B");
-
-                      return (
-                        <div
-                          key={rev.id}
-                          style={{
-                            backgroundColor: "transparent",
-                            borderColor: "var(--surface-border)",
-                          }}
-                          className="rounded-[5px] border overflow-hidden text-left shadow-none flex flex-col justify-between"
-                        >
-                          {/* Client Header */}
-                          <div className="px-2.5 py-2 sm:px-3 sm:py-2 flex items-center gap-2">
-                            <div
-                              style={{
-                                borderColor: "var(--surface-border)",
-                                backgroundColor: "color-mix(in srgb, var(--accent) 8%, var(--surface))",
-                                color: "var(--accent-text)",
-                              }}
-                              className="h-7 w-7 rounded-[4px] border font-bold text-xs flex items-center justify-center shrink-0"
-                            >
-                              {initial}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <div className="flex items-center gap-1">
-                                <p style={{ color: c.primaryText }} className="text-[13px] font-medium text-(--text) truncate leading-[18px]">
-                                  {rev.clientName}
-                                </p>
-                                {rev.isVerified && (
-                                  <CheckCircle2 className="h-3 w-3 text-(--accent-text) shrink-0" />
-                                )}
-                              </div>
-                              {rev.projectTitle && (
-                                <p style={{ color: c.mutedText }} className="text-[10.5px] font-normal truncate">
-                                  {rev.projectTitle}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Quote Content */}
-                          {rev.comment && (
-                            <div
-                              style={{ borderColor: "var(--surface-border)" }}
-                              className="px-2.5 py-2 sm:px-3 sm:py-2 border-t flex-1"
-                            >
-                              <p style={{ color: c.primaryText }} className="text-xs leading-relaxed font-normal">
-                                &ldquo;{rev.comment.trim()}&rdquo;
-                              </p>
-                            </div>
-                          )}
-
-                          {/* Star Rating Footer */}
-                          <div
-                            style={{ borderColor: "var(--surface-border)" }}
-                            className="px-2.5 py-1.5 sm:px-3 sm:py-1.5 border-t flex items-center justify-between text-xs"
-                          >
-                            <div className="flex items-center gap-0.5 text-amber-500">
-                              {Array.from({ length: 5 }).map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`h-3 w-3 ${i < ratingNum ? "fill-amber-400 text-amber-500" : "text-slate-300 dark:text-zinc-600"}`}
-                                />
-                              ))}
-                            </div>
-                            <span style={{ color: c.mutedText }} className="text-[11px] font-semibold tabular-nums">
-                              {ratingNum.toFixed(1)} / 5
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Show All / Show Less Toggle */}
-                {hasMoreReviews && (
-                  <div style={{ borderColor: "var(--surface-border)" }} className="border-t py-2 sm:py-2.5 text-center">
-                    <button
-                      type="button"
-                      onClick={() => setShowAllReviews(!showAllReviews)}
-                      style={{ color: c.accentText || "var(--accent-text)" }}
-                      className="text-xs font-semibold hover:underline cursor-pointer"
-                    >
-                      {showAllReviews ? "Show less" : `Show all ${approvedReviews.length} reviews`}
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })()}
-
-        {/* 10. Trusted Brands Section */}
-        {!isListingPage && isPremiumLayout && (() => {
-          const activeBrands = (brandsList || []).filter((b) => b.isActive !== false);
-          if (activeBrands.length === 0) return null;
-
-          return (
-            <div
-              id="brands-section"
-              style={
-                isPremiumLayout
-                  ? {
-                      backgroundColor: "color-mix(in srgb, var(--accent) 4.5%, var(--surface))",
-                      borderColor: "var(--surface-border)",
-                    }
-                  : undefined
-              }
-              className={`relative z-10 ${
-                isPremiumLayout
-                  ? "order-[10] mt-5 sm:mt-6 p-3.5 sm:p-4 rounded-[5px] border shadow-xs space-y-3"
-                  : isTabsLayout
-                  ? "order-[24] mt-1.5 sm:mt-2 space-y-2"
-                  : "order-[24] mt-6 sm:mt-7 space-y-2"
-              } w-full text-left animate-fade-in`}
-            >
-              <TabSectionHeader
-                title="Trusted By Brands"
-                subtitle="Brands partnered with for podcasts, campaigns & keynotes."
-                action={
-                  <span
-                    style={{
-                      color: "var(--accent-text)",
-                      backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
-                      borderColor: "var(--surface-border)",
-                    }}
-                    className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
-                  >
-                    {activeBrands.length} {activeBrands.length === 1 ? "Brand" : "Brands"}
-                  </span>
-                }
-                primaryTextColor={c.primaryText}
-                secondaryTextColor={c.secondaryText}
-                headingFontFamily={typ.headingFontFamily}
-              />
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {activeBrands.map((brand) => (
-                  <a
-                    key={brand.id}
-                    href={brand.websiteUrl || "#"}
-                    target={brand.websiteUrl ? "_blank" : undefined}
-                    rel={brand.websiteUrl ? "noopener noreferrer" : undefined}
-                    style={{
-                      backgroundColor: "var(--surface)",
-                      borderColor: "var(--surface-border)",
-                    }}
-                    className="flex flex-col items-center justify-center p-3 rounded-[5px] border text-center transition-transform hover:-translate-y-0.5 cursor-pointer group shadow-none"
-                  >
-                    <span
-                      style={{ color: c.primaryText, fontFamily: typ.headingFontFamily }}
-                      className="text-xs sm:text-[13px] font-bold group-hover:text-(--accent-text) transition-colors"
-                    >
-                      {brand.brandName}
-                    </span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          );
-        })()}
+        {/* Reviews and trusted brands now live in the Collab sections above. */}
 
         {/* 6. Standalone Reviews Only Mode (when accessing dedicated reviews tab directly) */}
         {reviewsOnlyMode && (
