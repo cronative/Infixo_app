@@ -32,7 +32,7 @@ export async function POST(
     }
 
     const body = await req.json();
-    let rawItems: Array<{ url: string; title?: string }> = [];
+    let rawItems: Array<{ url: string; title?: string; episodeNumber?: number }> = [];
 
     if (Array.isArray(body.urls)) {
       rawItems = body.urls
@@ -42,9 +42,14 @@ export async function POST(
       rawItems = body.episodes.map((ep: any) => ({
         url: ep.externalUrl || ep.url || "",
         title: ep.title || "",
+        episodeNumber: ep.episodeNumber !== undefined ? Number(ep.episodeNumber) : undefined,
       }));
     } else if (body.url) {
-      rawItems = [{ url: String(body.url).trim(), title: body.title || "" }];
+      rawItems = [{
+        url: String(body.url).trim(),
+        title: body.title || "",
+        episodeNumber: body.episodeNumber !== undefined ? Number(body.episodeNumber) : undefined,
+      }];
     }
 
     if (rawItems.length === 0) {
@@ -58,6 +63,7 @@ export async function POST(
       url: string;
       title: string;
       platform: string;
+      episodeNumber?: number;
     }> = [];
 
     const { validateUrlForSeriesPlatform } = await import("@/lib/videoUrl");
@@ -77,6 +83,7 @@ export async function POST(
         url: validation.normalizedUrl,
         title: (item.title || "").trim(),
         platform: validation.detectedPlatform,
+        episodeNumber: item.episodeNumber,
       });
     }
 
@@ -129,22 +136,25 @@ export async function POST(
       }
 
       const epId = `ep_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      const epNum = ep.episodeNumber !== undefined && !isNaN(ep.episodeNumber) && ep.episodeNumber >= 1
+        ? ep.episodeNumber
+        : nextEpisodeNumber;
 
       await db.query(
         `INSERT INTO episodes (id, series_id, episode_number, title, external_url, platform)
          VALUES (?, ?, ?, ?, ?, ?)`,
-        [epId, seriesId, nextEpisodeNumber, epTitle, ep.url, ep.platform]
+        [epId, seriesId, epNum, epTitle, ep.url, ep.platform]
       );
 
       insertedEpisodes.push({
         id: epId,
-        episodeNumber: nextEpisodeNumber,
+        episodeNumber: epNum,
         title: epTitle,
         externalUrl: ep.url,
         platform: ep.platform,
       });
 
-      nextEpisodeNumber++;
+      nextEpisodeNumber = Math.max(nextEpisodeNumber, epNum) + 1;
     }
 
     return apiSuccess(

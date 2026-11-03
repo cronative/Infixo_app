@@ -155,7 +155,7 @@ export const SeriesService = {
 
   async bulkAddEpisodes(
     seriesId: string,
-    episodes: Array<{ url: string; title?: string }>
+    episodes: Array<{ url: string; title?: string; episodeNumber?: number }>
   ): Promise<Episode[]> {
     const res = await fetch(`/api/series/${encodeURIComponent(seriesId)}/episodes`, {
       method: "POST",

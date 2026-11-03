@@ -1,32 +1,41 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Film, Loader2 } from "lucide-react";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { useToast } from "@/contexts/ToastContext";
 import { SeriesService } from "@/services/SeriesService";
-import { validateUrlForSeriesPlatform, normalizeVideoUrl } from "@/lib/videoUrl";
+import { validateUrlForSeriesPlatform, normalizeVideoUrl, validateVideoUrl } from "@/lib/videoUrl";
+import { YoutubeIcon, InstagramIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import type { Episode } from "@/types";
 
-interface EpisodeEditModalProps {
+export interface EpisodeEditModalProps {
   isOpen: boolean;
   onClose: () => void;
-  episode: Episode | null;
+  mode?: "edit" | "add";
+  episode?: Episode | null;
   seriesId: string;
+  seriesTitle?: string;
   seriesPlatform?: string;
-  onSaved: (updatedEpisode: Episode) => void;
+  nextEpisodeNumber?: number;
+  onSaved: (savedEpisode: Episode, isNew?: boolean) => void;
 }
 
 export function EpisodeEditModal({
   isOpen,
   onClose,
+  mode = "edit",
   episode,
   seriesId,
+  seriesTitle,
   seriesPlatform = "YouTube",
+  nextEpisodeNumber = 1,
   onSaved,
 }: EpisodeEditModalProps) {
   const { showToast } = useToast();
-  const [number, setNumber] = useState<number | string>(1);
+  const isAddMode = mode === "add" || !episode;
+
+  const [number, setNumber] = useState<number | string>(nextEpisodeNumber || 1);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [saving, setSaving] = useState(false);
@@ -41,7 +50,18 @@ export function EpisodeEditModal({
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
-    if (episode) {
+    if (!isOpen) return;
+
+    if (isAddMode) {
+      setNumber(nextEpisodeNumber || 1);
+      setTitle("");
+      setUrl("");
+      setNumberError(null);
+      setTitleError(null);
+      setUrlError(null);
+      setTouched({});
+      setSubmitted(false);
+    } else if (episode) {
       setNumber(episode.episodeNumber || 1);
       setTitle(episode.title || "");
       setUrl(episode.externalUrl || "");
@@ -51,7 +71,15 @@ export function EpisodeEditModal({
       setTouched({});
       setSubmitted(false);
     }
-  }, [episode, isOpen]);
+  }, [isOpen, isAddMode, episode, nextEpisodeNumber]);
+
+  // Detected platform from current URL
+  const detectedPlatform = useMemo(() => {
+    const clean = url.trim();
+    if (!clean) return null;
+    const val = validateVideoUrl(clean);
+    return val.platform;
+  }, [url]);
 
   // Validate number
   const validateNumber = (val: number | string): string | null => {
@@ -124,7 +152,8 @@ export function EpisodeEditModal({
     }
   };
 
-  if (!isOpen || !episode) return null;
+  if (!isOpen) return null;
+  if (!isAddMode && !episode) return null;
 
   const currentNumberErr = validateNumber(number);
   const currentTitleErr = validateTitle(title);
@@ -154,28 +183,70 @@ export function EpisodeEditModal({
 
     setSaving(true);
 
-    try {
-      await SeriesService.updateEpisode(episode.id, {
-        title: cleanTitle,
-        url: cleanUrl,
-        episodeNumber: cleanNumber,
-      });
+    if (isAddMode) {
+      try {
+        const addedEpisodes = await SeriesService.bulkAddEpisodes(seriesId, [
+          {
+            url: cleanUrl,
+            title: cleanTitle,
+            episodeNumber: cleanNumber,
+          },
+        ]);
 
-      showToast("Episode updated! ✨", "success");
-      onSaved({
-        ...episode,
-        title: cleanTitle,
-        externalUrl: cleanUrl,
-        episodeNumber: cleanNumber,
-      });
-      onClose();
-    } catch (err: any) {
-      console.error("Episode update failed:", err);
-      showToast(err.message || "Couldn't save. Please try again.", "error");
-    } finally {
-      setSaving(false);
+        const newEp: Episode = addedEpisodes[0] || {
+          id: `ep_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+          episodeNumber: cleanNumber,
+          title: cleanTitle,
+          externalUrl: cleanUrl,
+          platform: (detectedPlatform as any) || seriesPlatform,
+          thumbnailDataUrl: null,
+          description: "",
+        };
+
+        showToast(`Episode "${cleanTitle}" added! ✨`, "success");
+        onSaved(newEp, true);
+        onClose();
+      } catch (err: any) {
+        console.error("Episode add failed:", err);
+        showToast(err.message || "Couldn't add episode. Please check the link.", "error");
+      } finally {
+        setSaving(false);
+      }
+    } else {
+      try {
+        await SeriesService.updateEpisode(episode!.id, {
+          title: cleanTitle,
+          url: cleanUrl,
+          episodeNumber: cleanNumber,
+        });
+
+        showToast("Episode updated! ✨", "success");
+        onSaved(
+          {
+            ...episode!,
+            title: cleanTitle,
+            externalUrl: cleanUrl,
+            episodeNumber: cleanNumber,
+          },
+          false
+        );
+        onClose();
+      } catch (err: any) {
+        console.error("Episode update failed:", err);
+        showToast(err.message || "Couldn't save. Please try again.", "error");
+      } finally {
+        setSaving(false);
+      }
     }
   };
+
+  const modalTitle = isAddMode
+    ? "Add Episode"
+    : `Edit Episode ${episode?.episodeNumber || ""}`.trim();
+
+  const modalDescription = isAddMode
+    ? seriesTitle || "Add a new episode to your series."
+    : "Update episode details, video link and order number.";
 
   return (
     <Modal
@@ -184,14 +255,14 @@ export function EpisodeEditModal({
         if (!saving) onClose();
       }}
       size="md"
-      title={`Edit Episode ${episode.episodeNumber || ""}`.trim()}
-      description="Update episode details."
+      title={modalTitle}
+      description={modalDescription}
       icon={<Film className="h-5 w-5" />}
       showCloseButton={!saving}
     >
       <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden text-left">
         <ModalBody className="p-5 sm:p-6 space-y-4 flex-1 min-h-0 overflow-y-auto">
-          {/* 1. Episode No. (number input, default = position) */}
+          {/* 1. Episode No. (number input, auto-filled, editable) */}
           <div>
             <label className="block text-xs font-semibold text-[#0f172a] mb-1">
               Episode No. <span className="text-rose-500">*</span>
@@ -220,7 +291,7 @@ export function EpisodeEditModal({
             {showNumberErr && <p className="mt-1 text-xs text-rose-500 font-medium">{showNumberErr}</p>}
           </div>
 
-          {/* 2. Title (text, required, max 100) */}
+          {/* 2. Title (text, required, max 100, with char counter) */}
           <div>
             <div className="flex items-center justify-between mb-1">
               <label className="block text-xs font-semibold text-[#0f172a]">
@@ -260,41 +331,61 @@ export function EpisodeEditModal({
             {showTitleErr && <p className="mt-1 text-xs text-rose-500 font-medium">{showTitleErr}</p>}
           </div>
 
-          {/* 3. Video link (url, required) */}
+          {/* 3. Video link (url, required, platform icon detection) */}
           <div>
             <label className="block text-xs font-semibold text-[#0f172a] mb-1">
               Video link <span className="text-rose-500">*</span>
             </label>
-            <input
-              type="url"
-              value={url}
-              disabled={saving}
-              onChange={(e) => {
-                const val = e.target.value;
-                setUrl(val);
-                setUrlError(validateUrl(val));
-              }}
-              onPaste={(e) => {
-                const pasteText = e.clipboardData.getData("text").trim();
-                const stripped = normalizeVideoUrl(pasteText);
-                setUrl(stripped);
-                setUrlError(validateUrl(stripped));
-                handleUrlPrefill(stripped, number);
-              }}
-              onBlur={() => {
-                setTouched((prev) => ({ ...prev, url: true }));
-                setUrlError(validateUrl(url));
-                if (url.trim()) {
-                  handleUrlPrefill(url, number);
-                }
-              }}
-              placeholder={`https://${seriesPlatform.toLowerCase() === "instagram" ? "instagram.com/reel/..." : seriesPlatform.toLowerCase() === "facebook" ? "facebook.com/watch/..." : "youtube.com/watch?v=..."}`}
-              className={`w-full rounded-[4px] border bg-white px-3 py-2 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none transition-colors ${
-                showUrlErr
-                  ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-edit-error"
-                  : "border-[#e2e8f0] focus:border-[#7A2253]"
-              }`}
-            />
+            <div className="relative">
+              <input
+                type="url"
+                value={url}
+                disabled={saving}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setUrl(val);
+                  setUrlError(validateUrl(val));
+                }}
+                onPaste={(e) => {
+                  const pasteText = e.clipboardData.getData("text").trim();
+                  const stripped = normalizeVideoUrl(pasteText);
+                  setUrl(stripped);
+                  setUrlError(validateUrl(stripped));
+                  handleUrlPrefill(stripped, number);
+                }}
+                onBlur={() => {
+                  setTouched((prev) => ({ ...prev, url: true }));
+                  setUrlError(validateUrl(url));
+                  if (url.trim()) {
+                    handleUrlPrefill(url, number);
+                  }
+                }}
+                placeholder={`https://${seriesPlatform.toLowerCase() === "instagram" ? "instagram.com/reel/..." : seriesPlatform.toLowerCase() === "facebook" ? "facebook.com/watch/..." : "youtube.com/watch?v=..."}`}
+                className={`w-full rounded-[4px] border bg-white pl-3 ${
+                  detectedPlatform && detectedPlatform !== "Other" ? "pr-9" : "pr-3"
+                } py-2 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none transition-colors ${
+                  showUrlErr
+                    ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-edit-error"
+                    : "border-[#e2e8f0] focus:border-[#7A2253]"
+                }`}
+              />
+              {detectedPlatform && detectedPlatform !== "Other" && (
+                <div
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none"
+                  title={detectedPlatform}
+                >
+                  {detectedPlatform === "YouTube" && (
+                    <YoutubeIcon className="h-4 w-4 text-red-500" />
+                  )}
+                  {detectedPlatform === "Instagram" && (
+                    <InstagramIcon className="h-4 w-4 text-pink-500" />
+                  )}
+                  {detectedPlatform === "Facebook" && (
+                    <FacebookIcon className="h-4 w-4 text-blue-600" />
+                  )}
+                </div>
+              )}
+            </div>
             {showUrlErr && <p className="mt-1 text-xs text-rose-500 font-medium">{showUrlErr}</p>}
           </div>
         </ModalBody>
@@ -314,7 +405,15 @@ export function EpisodeEditModal({
             className="h-9 px-4 rounded-[5px] bg-[#7A2253] text-xs font-semibold text-white shadow-xs hover:bg-[#601a41] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-1.5"
           >
             {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-            <span>{saving ? "Saving..." : "Save Changes"}</span>
+            <span>
+              {isAddMode
+                ? saving
+                  ? "Adding..."
+                  : "Add Episode"
+                : saving
+                ? "Saving..."
+                : "Save Changes"}
+            </span>
           </button>
         </ModalFooter>
       </form>

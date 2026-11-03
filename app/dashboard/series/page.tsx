@@ -47,7 +47,7 @@ function formatEpisodeNumber(num: number): string {
 }
 
 export default function MySeriesPage() {
-  const { profile, subscription } = useCreator();
+  const { profile, subscription, refresh } = useCreator();
   const { showToast } = useToast();
 
   const [loading, setLoading] = useState(true);
@@ -72,8 +72,16 @@ export default function MySeriesPage() {
   const [upsertModalOpen, setUpsertModalOpen] = useState(false);
   const [seriesToEdit, setSeriesToEdit] = useState<Series | null>(null);
 
-  const [episodeEditModalOpen, setEpisodeEditModalOpen] = useState(false);
-  const [episodeToEdit, setEpisodeToEdit] = useState<{ episode: Episode; seriesId: string } | null>(null);
+  // Add / Edit Episode Modal state
+  const [episodeModalState, setEpisodeModalState] = useState<{
+    isOpen: boolean;
+    mode: "add" | "edit";
+    seriesId: string;
+    seriesTitle: string;
+    seriesPlatform: string;
+    episode: Episode | null;
+    nextEpisodeNumber: number;
+  } | null>(null);
 
   const [csvModalOpen, setCsvModalOpen] = useState(false);
   const [csvSeriesId, setCsvSeriesId] = useState<string | undefined>(undefined);
@@ -88,10 +96,6 @@ export default function MySeriesPage() {
   // Active popovers (Share & Action Menu)
   const [activeShareId, setActiveShareId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
-
-  // Inline episode quick-add inputs per series
-  const [inlineInputs, setInlineInputs] = useState<Record<string, string>>({});
-  const [addingInline, setAddingInline] = useState<Record<string, boolean>>({});
 
   // Inline episode title editing
   const [inlineEditingEpId, setInlineEditingEpId] = useState<string | null>(null);
@@ -315,83 +319,71 @@ export default function MySeriesPage() {
     }
   };
 
-  // Inline Quick Add Episode (Paste link & press Enter)
-  const handleInlineQuickAdd = async (seriesId: string) => {
-    const text = (inlineInputs[seriesId] || "").trim();
-    if (!text) return;
-
-    const urls = text
-      .split(/\s+/)
-      .map((u) => normalizeVideoUrl(u.trim()))
-      .filter(Boolean);
-
-    if (urls.length === 0) return;
-
-    const targetSeries = seriesList.find((s) => s.id === seriesId);
-    const seriesPlat = targetSeries?.platform || "YouTube";
-    const currentEps = targetSeries?.seasons?.[0]?.episodes || [];
-
-    // Plan limit check
+  // Open Add Episode Modal
+  const handleOpenAddEpisode = (series: Series) => {
+    const currentEps = series.seasons?.[0]?.episodes || [];
     if (
       planData.limits.episodesPerSeries !== Infinity &&
-      currentEps.length + urls.length > planData.limits.episodesPerSeries
+      currentEps.length >= planData.limits.episodesPerSeries
     ) {
-      showToast(`Max ${planData.limits.episodesPerSeries} episodes on your plan`, "error");
+      setLimitModalOpen(true);
       return;
     }
+    const maxNum =
+      currentEps.length > 0
+        ? Math.max(...currentEps.map((e) => Number(e.episodeNumber) || 0))
+        : 0;
 
-    const existingNormUrls = new Set(
-      currentEps.map((e) => normalizeVideoUrl(e.externalUrl || "").toLowerCase())
+    setEpisodeModalState({
+      isOpen: true,
+      mode: "add",
+      seriesId: series.id,
+      seriesTitle: series.title,
+      seriesPlatform: series.platform || "YouTube",
+      episode: null,
+      nextEpisodeNumber: maxNum + 1,
+    });
+  };
+
+  // Open Edit Episode Modal
+  const handleOpenEditEpisode = (series: Series, ep: Episode) => {
+    setEpisodeModalState({
+      isOpen: true,
+      mode: "edit",
+      seriesId: series.id,
+      seriesTitle: series.title,
+      seriesPlatform: series.platform || "YouTube",
+      episode: ep,
+      nextEpisodeNumber: ep.episodeNumber || 1,
+    });
+  };
+
+  // On Add/Edit Episode Success
+  const handleEpisodeModalSaved = (savedEpisode: Episode, isNew?: boolean) => {
+    if (!episodeModalState) return;
+    const { seriesId } = episodeModalState;
+
+    setSeriesList((prev) =>
+      prev.map((s) => {
+        if (s.id !== seriesId) return s;
+        const eps = s.seasons?.[0]?.episodes || [];
+        const updatedEps = isNew
+          ? [...eps, savedEpisode].sort(
+              (a, b) => (a.episodeNumber || 0) - (b.episodeNumber || 0)
+            )
+          : eps
+              .map((e) => (e.id === savedEpisode.id ? savedEpisode : e))
+              .sort((a, b) => (a.episodeNumber || 0) - (b.episodeNumber || 0));
+
+        return {
+          ...s,
+          seasons: [{ ...s.seasons[0], episodes: updatedEps }],
+        };
+      })
     );
 
-    const seenInBatch = new Set<string>();
-
-    for (let i = 0; i < urls.length; i++) {
-      const u = urls[i];
-      const check = validateUrlForSeriesPlatform(u, seriesPlat);
-      if (!check.allowed) {
-        showToast(
-          check.reason || `Only ${seriesPlat} links are allowed in a ${seriesPlat} series.`,
-          "error"
-        );
-        return;
-      }
-
-      const lower = u.toLowerCase();
-      if (existingNormUrls.has(lower) || seenInBatch.has(lower)) {
-        showToast("This episode is already added.", "error");
-        return;
-      }
-      seenInBatch.add(lower);
-    }
-
-    setAddingInline((prev) => ({ ...prev, [seriesId]: true }));
-
-    try {
-      const addedEpisodes = await SeriesService.bulkAddEpisodes(
-        seriesId,
-        urls.map((u) => ({ url: u }))
-      );
-
-      // Optimistically append episodes
-      setSeriesList((prev) =>
-        prev.map((s) => {
-          if (s.id !== seriesId) return s;
-          const eps = s.seasons?.[0]?.episodes || [];
-          return {
-            ...s,
-            seasons: [{ ...s.seasons[0], episodes: [...eps, ...addedEpisodes] }],
-          };
-        })
-      );
-
-      setInlineInputs((prev) => ({ ...prev, [seriesId]: "" }));
-      showToast(`Added ${addedEpisodes.length} episode(s)! ✨`, "success");
-    } catch (err: any) {
-      showToast(err.message || "Couldn't add episodes. Please check the links.", "error");
-    } finally {
-      setAddingInline((prev) => ({ ...prev, [seriesId]: false }));
-    }
+    setEpisodeModalState(null);
+    refresh();
   };
 
   // Inline Title Edit save
@@ -675,12 +667,9 @@ export default function MySeriesPage() {
                 </div>
 
                 {/* Right: Only 2 visible actions (Share + ⋮ menu) + Expand Chevron */}
-                <div
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex items-center gap-1.5 shrink-0"
-                >
+                <div className="flex items-center gap-1.5 shrink-0">
                   {/* Share Popover Button */}
-                  <div className="relative">
+                  <div className="relative" onClick={(e) => e.stopPropagation()}>
                     <button
                       type="button"
                       onClick={() => {
@@ -702,7 +691,7 @@ export default function MySeriesPage() {
                   </div>
 
                   {/* ⋮ Menu Button */}
-                  <div className="relative">
+                  <div className="relative" onClick={(e) => e.stopPropagation()}>
                     <button
                       type="button"
                       onClick={() => {
@@ -728,14 +717,23 @@ export default function MySeriesPage() {
                     />
                   </div>
 
-                  {/* Expand Chevron visual indicator */}
-                  <div className="p-1 text-slate-400">
+                  {/* Expand Chevron button */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleToggleExpand(series.id);
+                    }}
+                    className="p-1 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer rounded-[4px] hover:bg-slate-100"
+                    aria-label={isExpanded ? "Collapse series" : "Expand series"}
+                    title={isExpanded ? "Collapse episodes" : "Expand episodes"}
+                  >
                     {isExpanded ? (
                       <ChevronUp className="h-4 w-4" />
                     ) : (
                       <ChevronDown className="h-4 w-4" />
                     )}
-                  </div>
+                  </button>
                 </div>
               </div>
 
@@ -745,7 +743,7 @@ export default function MySeriesPage() {
                   {/* Episode Rows */}
                   {episodes.length === 0 ? (
                     <p className="text-xs text-[#94a3b8] italic py-2 text-center">
-                      No episodes added yet. Paste video links below to add episodes.
+                      No episodes added yet. Click &quot;+ Add Episode&quot; below to get started.
                     </p>
                   ) : (
                     <div className="space-y-1.5">
@@ -847,10 +845,7 @@ export default function MySeriesPage() {
                                   {/* Edit details */}
                                   <button
                                     type="button"
-                                    onClick={() => {
-                                      setEpisodeToEdit({ episode: ep, seriesId: series.id });
-                                      setEpisodeEditModalOpen(true);
-                                    }}
+                                    onClick={() => handleOpenEditEpisode(series, ep)}
                                     className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#6B6B76] hover:text-[#7A2253] hover:bg-white border border-transparent hover:border-[#ECECF0] cursor-pointer transition-colors"
                                     title="Edit title and link"
                                   >
@@ -887,7 +882,7 @@ export default function MySeriesPage() {
                     </div>
                   )}
 
-                  {/* Bottom: Inline Paste input to add episodes right away */}
+                  {/* Bottom: "+ Add Episode" button */}
                   <div className="pt-1">
                     {isFull ? (
                       <div className="flex items-center justify-between rounded-[5px] border border-amber-200 bg-amber-50/60 px-3 py-2 text-xs text-amber-800">
@@ -906,37 +901,14 @@ export default function MySeriesPage() {
                         </button>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={inlineInputs[series.id] || ""}
-                          onChange={(e) =>
-                            setInlineInputs((prev) => ({ ...prev, [series.id]: e.target.value }))
-                          }
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              e.preventDefault();
-                              handleInlineQuickAdd(series.id);
-                            }
-                          }}
-                          placeholder="Paste video link(s) to add episodes… (press Enter)"
-                          disabled={addingInline[series.id]}
-                          className="flex-1 rounded-[5px] border border-[#e2e8f0] bg-white px-3 py-1.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20"
-                        />
-                        <button
-                          type="button"
-                          disabled={addingInline[series.id] || !inlineInputs[series.id]?.trim()}
-                          onClick={() => handleInlineQuickAdd(series.id)}
-                          className="inline-flex h-8 items-center gap-1 rounded-[5px] bg-[#7A2253] px-3 text-xs font-semibold text-white shadow-xs hover:bg-[#601a41] transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[#7A2253]"
-                        >
-                          {addingInline[series.id] ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          ) : (
-                            <Plus className="h-3.5 w-3.5" />
-                          )}
-                          <span>Add</span>
-                        </button>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenAddEpisode(series)}
+                        className="w-full flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-[5px] border-2 border-dashed border-[#7A2253]/30 bg-[#7A2253]/[0.02] hover:bg-[#7A2253]/[0.06] hover:border-[#7A2253]/60 text-xs font-semibold text-[#7A2253] transition-colors cursor-pointer group"
+                      >
+                        <Plus className="h-4 w-4 text-[#7A2253] group-hover:scale-110 transition-transform" />
+                        <span>+ Add Episode</span>
+                      </button>
                     )}
                   </div>
                 </div>
@@ -965,35 +937,20 @@ export default function MySeriesPage() {
         onSuccess={handleSeriesUpsertSuccess}
       />
 
-      {/* Edit Episode Modal */}
-      <EpisodeEditModal
-        isOpen={episodeEditModalOpen}
-        onClose={() => {
-          setEpisodeEditModalOpen(false);
-          setEpisodeToEdit(null);
-        }}
-        episode={episodeToEdit?.episode || null}
-        seriesId={episodeToEdit?.seriesId || ""}
-        seriesPlatform={
-          seriesList.find((s) => s.id === episodeToEdit?.seriesId)?.platform || "YouTube"
-        }
-        onSaved={(updated) => {
-          if (!episodeToEdit) return;
-          const { seriesId } = episodeToEdit;
-          setSeriesList((prev) =>
-            prev.map((s) => {
-              if (s.id !== seriesId) return s;
-              const eps = (s.seasons?.[0]?.episodes || []).map((e) =>
-                e.id === updated.id ? updated : e
-              );
-              return {
-                ...s,
-                seasons: [{ ...s.seasons[0], episodes: eps }],
-              };
-            })
-          );
-        }}
-      />
+      {/* Add / Edit Episode Modal */}
+      {episodeModalState && (
+        <EpisodeEditModal
+          isOpen={episodeModalState.isOpen}
+          onClose={() => setEpisodeModalState(null)}
+          mode={episodeModalState.mode}
+          episode={episodeModalState.episode}
+          seriesId={episodeModalState.seriesId}
+          seriesTitle={episodeModalState.seriesTitle}
+          seriesPlatform={episodeModalState.seriesPlatform}
+          nextEpisodeNumber={episodeModalState.nextEpisodeNumber}
+          onSaved={handleEpisodeModalSaved}
+        />
+      )}
 
       {/* CSV Import Modal (from ⋮ menu) */}
       {csvModalOpen && (
