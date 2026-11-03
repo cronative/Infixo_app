@@ -608,7 +608,7 @@ export function ProfileHeader({
           <button
             type="button"
             onClick={() => setEraSheetOpen(true)}
-            className="tap-scale inline-flex h-9 min-w-0 max-w-[62%] items-center gap-1.5 rounded-full border pl-1.5 pr-3 shadow-[0_1px_2px_rgba(0,0,0,0.06)] transition-[filter] hover:brightness-[1.03] cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
+            className="tap-scale inline-flex h-9 min-w-0 max-w-[62%] items-center gap-1.5 rounded-[5px] border pl-1.5 pr-3 shadow-[0_1px_2px_rgba(0,0,0,0.06)] transition-[filter] hover:brightness-[1.03] cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
             style={{
               background: tier?.bg ?? "var(--surface)",
               borderColor: tier?.border ?? "var(--surface-border)",
