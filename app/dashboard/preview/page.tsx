@@ -75,13 +75,11 @@ export default function DashboardPreviewPage() {
 
   // Layout mode state: "tabs" or "premium"
   const [previewLayout, setPreviewLayout] = useState<"tabs" | "premium">(() =>
-    profile?.publicProfileLayout === "premium" ? "premium" : "tabs"
+    profile?.publicProfileLayout === "tabs" ? "tabs" : "premium"
   );
 
   useEffect(() => {
-    if (profile?.publicProfileLayout === "premium") {
-      setPreviewLayout("premium");
-    }
+    setPreviewLayout(profile?.publicProfileLayout === "tabs" ? "tabs" : "premium");
   }, [profile?.publicProfileLayout]);
 
   const [visibilitySettings, setVisibilitySettings] = useState<VisibilitySettings>(() => {

@@ -291,7 +291,7 @@ export function PhonePreview({
             totalAudience={totalAudience}
             themeKey={resolvedThemeKey}
             variant="full"
-            layoutMode={profile.publicProfileLayout === "premium" ? "premium" : "tabs"}
+            layoutMode={profile.publicProfileLayout === "tabs" ? "tabs" : "premium"}
             seriesOnlyMode={cleanSubpath === "series"}
             productsOnlyMode={cleanSubpath === "products" || cleanSubpath === "shop"}
             linksOnlyMode={cleanSubpath === "links"}

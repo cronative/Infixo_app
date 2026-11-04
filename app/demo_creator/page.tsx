@@ -30,7 +30,7 @@ export function DemoCreatorContent({ forcedLayout }: { forcedLayout?: "tabs" | "
   const queryLayout = searchParams?.get("layout");
   const effectiveLayout: "tabs" | "premium" =
     forcedLayout ||
-    (queryLayout === "premium" ? "premium" : "tabs");
+    (queryLayout === "tabs" || queryLayout === "simple" ? "tabs" : "premium");
   const testMode = searchParams?.get("testMode");
   const rawTab = searchParams?.get("tab");
   const initialTab =

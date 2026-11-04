@@ -4,12 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Check, CheckCircle2, Clock, Star, Tv } from "lucide-react";
 import type { CreatorReview, MediaKitPackage } from "@/types";
-import { AboutHeader, BrandPlatformIcon, PLATFORM_BRAND, type AboutColors } from "@/components/public/about/AboutSections";
+import { AboutHeader, BrandPlatformIcon, PLATFORM_BRAND, SECTION_CARD, type AboutColors } from "@/components/public/about/AboutSections";
 import { formatFans } from "@/lib/creatorEra";
 import { getInitials } from "@/lib/avatar";
 
-const CARD = "rounded-[5px] border border-(--surface-border) overflow-hidden text-left";
-const ROW = "px-3 py-3 sm:px-3.5";
+const CARD = SECTION_CARD;
+const ROW = "px-4 py-3";
 const OUTLINE_BTN =
   "inline-flex h-9 items-center justify-center gap-1.5 rounded-[5px] border border-(--accent) px-3.5 text-[13px] font-medium text-(--accent-text) transition-colors hover:bg-(--accent-soft) cursor-pointer";
 
@@ -44,14 +44,14 @@ function packagePlatformKey(platform: string) {
 // ── 1. Audience snapshot ──────────────────────────────────────
 
 export function AudienceSnapshot({
-  totalFans,
   topPlatform,
   tags,
   mediaKitHref,
   colors,
   onMediaKitClick,
 }: {
-  totalFans: number;
+  /** @deprecated Total Fans is shown in the profile header. */
+  totalFans?: number;
   topPlatform?: { platform: string; handle?: string; count: number; unit?: string } | null;
   tags: string[];
   mediaKitHref?: string;
@@ -67,12 +67,7 @@ export function AudienceSnapshot({
     <div className={CARD}>
       <AboutHeader title="Audience snapshot" subtitle="Why brands work with me" colors={colors} />
       <ul className="divide-y divide-(--surface-border)">
-        {totalFans > 0 && (
-          <li className={`flex min-h-11 items-center gap-3 ${ROW} py-2`}>
-            {label("Total Fans")}
-            <span style={{ color: colors.primary }} className="text-[15px] font-semibold tabular-nums text-(--text)">{formatFans(totalFans)}</span>
-          </li>
-        )}
+        {/* Total Fans lives in the profile header, so it is not repeated here. */}
         {topPlatform && topPlatform.count > 0 && (
           <li className={`flex min-h-11 items-center gap-3 ${ROW} py-2`}>
             {label("Top platform")}
@@ -104,17 +99,17 @@ export function AudienceSnapshot({
             </span>
           </li>
         )}
-        {mediaKitHref && (
-          <li className={`flex flex-wrap items-center justify-between gap-2 ${ROW}`}>
+        <li className={`flex min-h-11 flex-wrap items-center justify-between gap-2 ${ROW}`}>
+          {mediaKitHref && (
             <Link href={mediaKitHref} onClick={onMediaKitClick} className={OUTLINE_BTN}>
               View Media Kit
               <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
-            <span style={{ color: colors.muted }} className="text-xs text-(--text-muted)">
-              Usually replies within 24 hours
-            </span>
-          </li>
-        )}
+          )}
+          <span style={{ color: colors.muted }} className="text-xs text-(--text-muted)">
+            Usually replies within 24 hours
+          </span>
+        </li>
       </ul>
     </div>
   );

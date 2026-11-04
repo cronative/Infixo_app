@@ -1,8 +1,8 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Globe, Languages, MapPin, PenLine } from "lucide-react";
+import { ArrowUpRight, ChevronDown, Globe, Languages, MapPin, PenLine } from "lucide-react";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -80,17 +80,23 @@ export function BrandPlatformIcon({ platform, size = 32 }: { platform: string; s
   );
 }
 
-// ── Light section header ──────────────────────────────────────
+// ── Section (one style for every public block) ───────────────
 
-/** Title + subtitle + count on a subtle theme tint, 1px divider below; body stays plain. */
+/** Bordered 5px card on the theme card surface; clips its rows. */
+export const SECTION_CARD = "overflow-hidden rounded-[5px] border border-(--surface-border) bg-(--card-bg) text-left";
+/** A body row: 12px 16px padding, ≥44px tap height, primary @ 4% hover. */
+export const SECTION_ROW = "min-h-11 px-4 py-3";
+export const SECTION_ROW_HOVER = "transition-colors hover:bg-[color-mix(in_srgb,var(--accent)_4%,transparent)]";
+
+/** Header row: primary @ 7% tint, 12px 16px padding, 15px title + 12px subtitle left, 12px count right, 1px divider. */
 export function AboutHeader({ title, subtitle, count, colors }: { title: string; subtitle?: string; count?: ReactNode; colors: AboutColors }) {
   return (
     <div
-      className="flex items-end justify-between gap-3 border-b border-(--surface-border) px-3 pb-2 pt-2.5 sm:px-3.5"
+      className="flex items-end justify-between gap-3 border-b border-(--surface-border) px-4 py-3"
       style={{ backgroundColor: "color-mix(in srgb, var(--accent) 7%, transparent)" }}
     >
       <div className="min-w-0">
-        <h2 style={{ color: colors.primary, fontFamily: colors.headingFont }} className="text-sm font-semibold leading-5 tracking-tight text-(--text)">
+        <h2 style={{ color: colors.primary, fontFamily: colors.headingFont }} className="text-[15px] font-semibold leading-5 tracking-tight text-(--text)">
           {title}
         </h2>
         {subtitle && (
@@ -100,7 +106,7 @@ export function AboutHeader({ title, subtitle, count, colors }: { title: string;
         )}
       </div>
       {count != null && (
-        <span style={{ color: colors.muted }} className="shrink-0 pb-0.5 text-[11px] text-(--text-muted)">
+        <span style={{ color: colors.muted }} className="shrink-0 pb-px text-xs text-(--text-muted)">
           {count}
         </span>
       )}
@@ -108,11 +114,11 @@ export function AboutHeader({ title, subtitle, count, colors }: { title: string;
   );
 }
 
-const CARD = "rounded-[5px] border border-(--surface-border) overflow-hidden text-left";
+const CARD = SECTION_CARD;
 
 /**
- * Shared public-page Section: tinted header (title + subtitle left, count/actions right, 1px divider)
- * and one connected bordered body. Use `divided` for 1px-divided rows.
+ * The one public-page Section: tinted header + connected body on the card surface.
+ * `divided` puts 1px lines between body rows.
  */
 export function Section({
   title,
@@ -186,8 +192,8 @@ export function AboutMeBlock({
   const chips = (tags ?? []).filter(Boolean);
   return (
     <div className={CARD}>
-      {showHeader && <AboutHeader title="About me" subtitle="A little about me and what I love creating." colors={colors} />}
-      <div className="space-y-2.5 p-3 sm:p-3.5">
+      {showHeader && <AboutHeader title="About me" subtitle="Get to know me" colors={colors} />}
+      <div className="space-y-2.5 px-4 py-3">
         {bio}
         {(location || langs.length > 0) && (
           <div style={{ color: colors.muted }} className="flex flex-wrap items-center gap-x-3.5 gap-y-1 text-xs text-(--text-muted)">
@@ -249,7 +255,7 @@ export function FanbaseByPlatform({
           const p = r.platform.toLowerCase();
           const handle = (r.handle || "").replace(/^@/, "");
           return (
-            <li key={p} className="flex min-h-12 items-center gap-2.5 px-3 py-1.5 sm:px-3.5">
+            <li key={p} className={`flex items-center gap-2.5 ${SECTION_ROW} py-2.5 ${SECTION_ROW_HOVER}`}>
               <BrandPlatformIcon platform={p} size={28} />
               <div className="min-w-0 flex-1">
                 <p style={{ color: colors.primary }} className="truncate text-[13px] font-medium leading-[18px] text-(--text)">
@@ -283,14 +289,13 @@ export interface AboutSocialItem {
   label?: string;
 }
 
-const COUNTED = new Set(["instagram", "youtube", "facebook"]);
-
 export function SocialAccountsBlock({
   groups,
   total,
   colors,
   onLinkClick,
   showHeader = true,
+  collapsedCount = 3,
 }: {
   groups: { groupTitle: string | null; items: AboutSocialItem[] }[];
   total: number;
@@ -298,7 +303,10 @@ export function SocialAccountsBlock({
   /** Return false to cancel navigation (e.g. dashboard preview). */
   onLinkClick?: (item: AboutSocialItem) => boolean;
   showHeader?: boolean;
+  /** Rows shown before "Show all". */
+  collapsedCount?: number;
 }) {
+  const [expanded, setExpanded] = useState(false);
   const handleOf = (item: AboutSocialItem) => {
     const raw = (item.handle || item.label || "").replace(/^@/, "");
     return item.platform === "spotify" && raw.toLowerCase() === "spotify" ? "Spotify Artist" : `@${raw}`;
@@ -307,72 +315,67 @@ export function SocialAccountsBlock({
     if (onLinkClick && onLinkClick(item) === false) e.preventDefault();
   };
 
+  // One flat divided list: a small muted "INSTAGRAM · 3" label row per platform, then its accounts.
+  type Row = { kind: "label"; key: string; text: string } | { kind: "item"; key: string; item: AboutSocialItem };
+  const rows: Row[] = [];
+  let shownItems = 0;
+  for (const [gi, group] of groups.entries()) {
+    const items = group.items;
+    if (items.length === 0) continue;
+    if (!expanded && shownItems >= collapsedCount) break;
+    const p = items[0].platform;
+    const name = PLATFORM_BRAND[p]?.label ?? (group.groupTitle || p);
+    rows.push({ kind: "label", key: `l-${gi}`, text: `${name} · ${items.length}` });
+    for (const [i, item] of items.entries()) {
+      if (!expanded && shownItems >= collapsedCount) break;
+      rows.push({ kind: "item", key: String(item.id ?? `${item.platform}-${item.handle}-${i}`), item });
+      shownItems += 1;
+    }
+  }
+  const totalItems = groups.reduce((n, g) => n + g.items.length, 0);
+
   return (
     <div className={CARD}>
-      {showHeader && <AboutHeader title="Find me elsewhere" subtitle="My other channels & profiles — come say hi!" count={`${total} more`} colors={colors} />}
-      <div className="space-y-3 p-2.5 sm:p-3">
-        {groups.map((group, gi) => {
-          // One connected list per group: primary first, then the rest.
-          const ordered = [...group.items].sort((a, b) => Number(Boolean(b.isPrimary)) - Number(Boolean(a.isPrimary)));
-          return (
-            <div key={group.groupTitle ?? `g-${gi}`} className="space-y-1.5">
-              {group.groupTitle && (
-                <div className="flex items-center justify-between px-1 pt-0.5">
-                  <span style={{ color: colors.secondary, fontFamily: colors.headingFont }} className="text-[11px] font-bold uppercase tracking-wider text-(--text-secondary)">
-                    {group.groupTitle}
-                  </span>
-                  <span style={{ color: colors.muted }} className="text-[10.5px] text-(--text-muted)">
-                    {group.items.length} {group.items.length === 1 ? "account" : "accounts"}
-                  </span>
-                </div>
-              )}
-              <ul className="divide-y divide-(--surface-border) overflow-hidden rounded-[8px] border border-(--surface-border)">
-                {ordered.map((item, i) => {
-                  const count = item.isPrimary && COUNTED.has(item.platform) && (item.count ?? 0) > 0 ? item.count! : null;
-                  return (
-                    <li key={item.id ?? `${item.platform}-${item.handle}-${i}`}>
-                      <a
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={click(item)}
-                        className="group flex h-11 items-center gap-2 sm:gap-2.5 px-3 transition-colors hover:bg-(--surface)"
-                        aria-label={`${handleOf(item)}${count ? `, ${formatFans(count)} ${unitFor(item.platform, item.unit)}` : ""}`}
-                        title={`Open ${handleOf(item)} on ${PLATFORM_BRAND[item.platform]?.label ?? item.platform}`}
-                      >
-                        <BrandPlatformIcon platform={item.platform} size={22} />
-                        <span style={{ color: colors.primary }} className="min-w-0 truncate text-[13px] font-medium text-(--text)">
-                          {handleOf(item)}
-                        </span>
-                        {item.isPrimary && COUNTED.has(item.platform) && (
-                          <span
-                            style={{
-                              backgroundColor: "color-mix(in srgb, var(--accent) 12%, transparent)",
-                              color: "var(--accent-text)",
-                              borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)",
-                            }}
-                            className="shrink-0 rounded-[3px] border px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider"
-                          >
-                            Primary
-                          </span>
-                        )}
-                        <span className="flex-1" />
-                        {count && (
-                          <span style={{ color: colors.muted }} className="shrink-0 text-xs tabular-nums text-(--text-muted)">
-                            <span style={{ color: colors.primary }} className="font-semibold text-(--text)">{formatFans(count)}</span>
-                            <span className="hidden sm:inline"> {unitFor(item.platform, item.unit)}</span>
-                          </span>
-                        )}
-                        <ArrowUpRight style={{ color: colors.muted }} className="h-4 w-4 shrink-0 text-(--text-muted) transition-colors group-hover:text-(--text)" />
-                      </a>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          );
-        })}
-      </div>
+      {showHeader && <AboutHeader title="Find me elsewhere" subtitle="My other channels & profiles" count={`${total} more`} colors={colors} />}
+      <ul className="divide-y divide-(--surface-border)">
+        {rows.map((row) =>
+          row.kind === "label" ? (
+            <li key={row.key} style={{ color: colors.muted }} className="px-4 pb-1 pt-2.5 text-[11px] font-semibold uppercase tracking-wider text-(--text-muted)">
+              {row.text}
+            </li>
+          ) : (
+            <li key={row.key}>
+              <a
+                href={row.item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={click(row.item)}
+                className={`group flex items-center gap-2.5 ${SECTION_ROW} py-2.5 ${SECTION_ROW_HOVER}`}
+                title={`Open ${handleOf(row.item)} on ${PLATFORM_BRAND[row.item.platform]?.label ?? row.item.platform}`}
+              >
+                <BrandPlatformIcon platform={row.item.platform} size={22} />
+                <span style={{ color: colors.primary }} className="min-w-0 flex-1 truncate text-[13px] font-medium text-(--text)">
+                  {handleOf(row.item)}
+                </span>
+                <ArrowUpRight style={{ color: colors.muted }} className="h-4 w-4 shrink-0 text-(--text-muted) transition-colors group-hover:text-(--text)" />
+              </a>
+            </li>
+          )
+        )}
+        {totalItems > collapsedCount && (
+          <li>
+            <button
+              type="button"
+              onClick={() => setExpanded((v) => !v)}
+              aria-expanded={expanded}
+              className={`flex w-full items-center justify-center gap-1 ${SECTION_ROW} py-2.5 text-[13px] font-semibold text-(--accent-text) ${SECTION_ROW_HOVER} cursor-pointer`}
+            >
+              {expanded ? "Show less" : `Show all (${totalItems})`}
+              <ChevronDown className={`h-3.5 w-3.5 transition-transform ${expanded ? "rotate-180" : ""}`} />
+            </button>
+          </li>
+        )}
+      </ul>
     </div>
   );
 }

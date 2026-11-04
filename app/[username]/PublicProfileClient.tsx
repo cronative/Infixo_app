@@ -521,9 +521,9 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
   const fullUrl = buildProfileUrl(handleStr);
 
   const queryLayout = searchParams?.get("layout");
-  const requestedPremium =
-    profile.publicProfileLayout === "premium" ||
-    (profile as any)?.visibilitySettings?.publicProfileLayout === "premium";
+  // Premium single page is the default; only an explicit "tabs" choice keeps the tabbed layout.
+  const savedLayout = profile.publicProfileLayout || (profile as any)?.visibilitySettings?.publicProfileLayout;
+  const requestedPremium = savedLayout !== "tabs";
 
   const effectiveLayoutMode: "tabs" | "premium" =
     forcedLayout ||
