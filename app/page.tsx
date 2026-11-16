@@ -30,6 +30,7 @@ import {
   Minus,
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
+import { HeroPhoneMockup } from "@/components/landing/HeroPhoneMockup";
 import { AuthService } from "@/services/AuthService";
 import { OnboardingService } from "@/services/OnboardingService";
 import { ProfileService } from "@/services/ProfileService";
@@ -65,23 +66,22 @@ const NAV_LINKS = [
   { id: "demo", href: "#demo", label: "View Demo" },
   { id: "features", href: "#features", label: "Creator Tools" },
   { id: "pricing", href: "#pricing", label: "Pricing" },
-  { id: "summit", href: "#summit", label: "Summit 2027" },
   { id: "faq", href: "#faq", label: "FAQ" },
 ];
 
 const SECTION_IDS = [
   "top",
   "problem",
-  "our-story",
   "demo",
   "how-it-works",
   "why-inflixo",
   "features",
   "for-creators",
+  "our-story",
   "founding",
   "testimonials",
-  "summit",
   "pricing",
+  "summit",
   "faq",
 ];
 
@@ -90,12 +90,6 @@ const HERO_CHECKS = [
   "Your total fans across IG, YT & FB",
   "Tour, tickets & show links",
   "Brand reviews & your gear setup",
-];
-
-const HERO_STRIP = [
-  { big: "Series", label: "Watch in order", sub: "Part 1 → Part 10, no hunting" },
-  { big: "1 Number", label: "Your total fanbase", sub: "Instagram + YouTube + Facebook" },
-  { big: "1 Link", label: "Your whole creator world", sub: "Links, collabs, setup & shop" },
 ];
 
 const PROBLEMS: { icon: typeof Film; title: string; text: ReactNode }[] = [
@@ -568,82 +562,74 @@ export default function LandingHomePage() {
       <section className="relative overflow-hidden pt-32 pb-16 sm:pt-40 sm:pb-24">
         {/* Subtle Ambient Floating Icons (Max 3, CSS transform only, prefers-reduced-motion safe) */}
         <div className="pointer-events-none absolute inset-x-0 top-0 h-[480px] overflow-hidden" aria-hidden="true">
-          <div className="landing-float absolute left-[6%] top-36 hidden sm:flex h-12 w-12 items-center justify-center rounded-2xl border border-[#E4E4E7] bg-white text-[#7A2253] shadow-xs">
+          <div className="landing-float absolute left-[6%] top-36 hidden sm:flex lg:hidden h-12 w-12 items-center justify-center rounded-2xl border border-[#E4E4E7] bg-white text-[#7A2253] shadow-xs">
             <Camera className="h-6 w-6" />
           </div>
-          <div className="landing-float absolute right-[8%] top-40 hidden sm:flex h-12 w-12 items-center justify-center rounded-2xl border border-[#E4E4E7] bg-white text-[#7A2253] shadow-xs">
+          <div className="landing-float absolute right-[8%] top-40 hidden sm:flex lg:hidden h-12 w-12 items-center justify-center rounded-2xl border border-[#E4E4E7] bg-white text-[#7A2253] shadow-xs">
             <Video className="h-6 w-6" />
           </div>
-          <div className="landing-float absolute left-[14%] bottom-12 hidden sm:flex h-12 w-12 items-center justify-center rounded-2xl border border-[#E4E4E7] bg-white text-[#7A2253] shadow-xs">
+          <div className="landing-float absolute left-[14%] bottom-12 hidden sm:flex lg:hidden h-12 w-12 items-center justify-center rounded-2xl border border-[#E4E4E7] bg-white text-[#7A2253] shadow-xs">
             <ShoppingBag className="h-6 w-6" />
           </div>
         </div>
 
-        <div className="relative mx-auto max-w-[1120px] px-4 text-center sm:px-6">
-          {/* Static Hero Headline (Single H1 on the page) */}
-          <div className="mx-auto max-w-3xl space-y-4">
-            <h1 className="landing-text-hero font-extrabold tracking-tight text-[#18181B]">
-              Your videos, in order. <span className="text-[#7A2253]">Like a show.</span>
-            </h1>
-            <p className="landing-text-18 font-normal text-[#52525B] max-w-2xl mx-auto">
-              Your Part 1 is buried under 200 reels. Inflixo turns your YouTube, Instagram &amp; Facebook videos into bingeable series, and brings your links, total fanbase, brand reviews and creator setup into one link in bio.
-            </p>
-          </div>
-
-          {/* Username Claim Form */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleClaim(username);
-            }}
-            className="mx-auto mt-8 flex max-w-md items-center rounded-xl border border-[#E4E4E7] bg-white p-1.5 shadow-sm transition-all focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/20"
-          >
-            <span className="shrink-0 pl-3 text-[14px] font-semibold text-[#52525B]">inflixo.com/</span>
-            <input
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="yourname"
-              aria-label="Your desired handle"
-              className="min-w-0 flex-1 bg-transparent px-2 text-[14px] font-semibold text-[#18181B] outline-none placeholder:text-zinc-400"
-            />
-            <button
-              type="submit"
-              className="inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] hover:bg-[#631841] px-5 text-[14px] font-bold text-white shadow-md shadow-[#7A2253]/25 transition-all cursor-pointer"
-            >
-              <span>Claim</span>
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </form>
-          <p className="mt-2.5 text-[12px] text-[#71717A]">
-            Takes 2 minutes. Your fans don&apos;t need any app or signup.
-          </p>
-
-          {/* Trust Highlights Row */}
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[12px] font-semibold text-[#52525B]">
-            {HERO_CHECKS.map((item) => (
-              <span key={item}>✓ {item}</span>
-            ))}
-          </div>
-
-          {/* Made in India Badge */}
-          <div className="mt-8 flex justify-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#E4E4E7] bg-white px-4 py-2 text-[14px] font-semibold text-[#18181B] shadow-xs">
-              <span className="text-base" role="img" aria-label="Indian Flag">🇮🇳</span>
+        <div className="relative mx-auto grid max-w-[1120px] items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
+          <div className="min-w-0 text-center lg:text-left">
+            {/* Made in India Badge */}
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#E4E4E7] bg-white px-3.5 py-1.5 text-[12px] font-semibold text-[#18181B] shadow-xs">
+              <span role="img" aria-label="Indian Flag">🇮🇳</span>
               <span>Made in India, by a creator, for creators</span>
             </div>
-          </div>
 
-          {/* What you can do strip */}
-          <div className="mx-auto mt-8 max-w-3xl rounded-2xl border border-[#E4E4E7] bg-white p-5 shadow-xs">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 divide-y divide-zinc-100 sm:divide-y-0 sm:divide-x sm:divide-zinc-100">
-              {HERO_STRIP.map((item, i) => (
-                <div key={item.big} className={`sm:px-3 text-center ${i === 0 ? "pt-2 sm:pt-0" : "pt-4 sm:pt-0"}`}>
-                  <p className="text-[24px] font-extrabold text-[#7A2253]">{item.big}</p>
-                  <p className="text-[14px] font-bold text-[#18181B]">{item.label}</p>
-                  <p className="text-[12px] text-[#52525B]">{item.sub}</p>
-                </div>
+            {/* Static Hero Headline (Single H1 on the page) */}
+            <div className="mx-auto max-w-3xl space-y-4 lg:mx-0">
+              <h1 className="landing-text-hero font-extrabold tracking-tight text-[#18181B]">
+                Your videos, in order. <span className="text-[#7A2253]">Like a show.</span>
+              </h1>
+              <p className="landing-text-18 font-normal text-[#52525B] max-w-xl mx-auto lg:mx-0">
+                Your Part 1 is buried under 200 reels. Inflixo turns your YouTube, Instagram &amp; Facebook videos into bingeable series, in one link in bio.
+              </p>
+            </div>
+
+            {/* Username Claim Form */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleClaim(username);
+              }}
+              className="mx-auto lg:mx-0 mt-8 flex max-w-md items-center rounded-xl border border-[#E4E4E7] bg-white p-1.5 shadow-sm transition-all focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/20"
+            >
+              <span className="shrink-0 pl-3 text-[14px] font-semibold text-[#52525B]">inflixo.com/</span>
+              <input
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="yourname"
+                aria-label="Your desired handle"
+                className="min-w-0 flex-1 bg-transparent px-2 text-[14px] font-semibold text-[#18181B] outline-none placeholder:text-zinc-400"
+              />
+              <button
+                type="submit"
+                className="inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] hover:bg-[#631841] px-5 text-[14px] font-bold text-white shadow-md shadow-[#7A2253]/25 transition-all cursor-pointer"
+              >
+                <span>Claim</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </form>
+            <p className="mt-2.5 text-[12px] text-[#71717A]">
+              Takes 2 minutes. Your fans don&apos;t need any app or signup.
+            </p>
+
+            {/* Trust Highlights Row */}
+            <div className="mt-4 flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 text-[12px] font-semibold text-[#52525B]">
+              {HERO_CHECKS.map((item) => (
+                <span key={item}>✓ {item}</span>
               ))}
             </div>
+          </div>
+
+          {/* Phone mockup: what a fan sees */}
+          <div className="flex justify-center lg:justify-end">
+            <HeroPhoneMockup />
           </div>
         </div>
       </section>
@@ -675,49 +661,6 @@ export default function LandingHomePage() {
           <p className="mt-10 text-center text-[18px] sm:text-[20px] font-bold text-[#7A2253]">
             Inflixo is built to solve all six, in one link.
           </p>
-        </div>
-      </section>
-
-      {/* ── OUR STORY SECTION (`#our-story`) ── */}
-      <section id="our-story" className="scroll-mt-24 border-t border-[#E4E4E7] bg-white py-16 sm:py-24">
-        <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-          <div className="mx-auto max-w-[640px] text-left">
-            <p className="text-[12px] font-bold uppercase tracking-wider text-[#7A2253]">Our Story</p>
-            <h2 className="mt-2 text-[32px] sm:text-[44px] font-extrabold leading-tight tracking-tight text-[#18181B]">
-              Your fans want Part 2. They just can&apos;t find it.
-            </h2>
-
-            <div className="mt-6 space-y-4 text-[16px] leading-relaxed text-[#52525B]">
-              <p>
-                Before building Inflixo, we sat down with creators across India — food vloggers, comedians, educators, travellers. Almost all of them already had a link-in-bio tool. And almost all of them said the same thing: &ldquo;Our videos get lost.&rdquo;
-              </p>
-              <p>
-                Here&apos;s what happens. A viewer is scrolling Instagram, YouTube or Facebook. Your Part 3 shows up in their feed. They love it. They open your profile to find Part 1 or Part 4… and can&apos;t. Five minutes later they leave — or DM you, and the DM gets buried too. A potential fan, lost.
-              </p>
-            </div>
-
-            {/* Pull Quote */}
-            <div className="my-8 border-l-4 border-[#7A2253] bg-[#F7EDEF]/50 py-4 pl-5 pr-4 rounded-r-xl">
-              <p className="text-[20px] sm:text-[24px] font-extrabold text-[#7A2253] leading-snug tracking-tight">
-                &ldquo;Great content shouldn&apos;t get lost in the feed.&rdquo;
-              </p>
-            </div>
-
-            <p className="text-[16px] leading-relaxed text-[#52525B]">
-              So we built Inflixo: one link where your series play in order, like a show. When fans can easily binge your work, viewers become fans — and fans become your biggest supporters.
-            </p>
-
-            {/* Founder Avatar & Name */}
-            <div className="mt-8 pt-6 border-t border-[#E4E4E7] flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#7A2253] text-white font-bold text-sm shadow-xs select-none">
-                D
-              </div>
-              <div>
-                <p className="text-[15px] font-bold text-[#18181B] leading-tight">Devom</p>
-                <p className="text-[12px] font-medium text-[#71717A]">Founder, Inflixo</p>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -925,8 +868,46 @@ export default function LandingHomePage() {
         </div>
       </section>
 
+      {/* ── OUR STORY SECTION (`#our-story`) ── */}
+      <section id="our-story" className="scroll-mt-24 border-t border-[#E4E4E7] bg-[#FFFCFB] py-16 sm:py-24">
+        <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
+          <div className="mx-auto max-w-[640px] text-left">
+            <p className="text-[12px] font-bold uppercase tracking-wider text-[#7A2253]">Our Story</p>
+            <h2 className="mt-2 text-[32px] sm:text-[44px] font-extrabold leading-tight tracking-tight text-[#18181B]">
+              Your fans want Part 2. They just can&apos;t find it.
+            </h2>
+
+            <p className="mt-6 text-[16px] leading-relaxed text-[#52525B]">
+              We spoke to creators across India: food vloggers, comedians, educators, travellers. Almost all of them said the same thing: a fan finds Part 3 in their feed, opens the profile to find Part 1… and can&apos;t. Five minutes later they&apos;re gone.
+            </p>
+
+            {/* Pull Quote */}
+            <div className="my-8 border-l-4 border-[#7A2253] bg-[#F7EDEF]/50 py-4 pl-5 pr-4 rounded-r-xl">
+              <p className="text-[20px] sm:text-[24px] font-extrabold text-[#7A2253] leading-snug tracking-tight">
+                &ldquo;Great content shouldn&apos;t get lost in the feed.&rdquo;
+              </p>
+            </div>
+
+            <p className="text-[16px] leading-relaxed text-[#52525B]">
+              So we built Inflixo: one link where your series play in order, like a show. When fans can easily binge your work, viewers become fans — and fans become your biggest supporters.
+            </p>
+
+            {/* Founder Avatar & Name */}
+            <div className="mt-8 pt-6 border-t border-[#E4E4E7] flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#7A2253] text-white font-bold text-sm shadow-xs select-none">
+                D
+              </div>
+              <div>
+                <p className="text-[15px] font-bold text-[#18181B] leading-tight">Devom</p>
+                <p className="text-[12px] font-medium text-[#71717A]">Founder, Inflixo</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── FOUNDING CREATORS SECTION (`#founding`) ── */}
-      <section id="founding" className="scroll-mt-24 border-t border-[#E4E4E7] bg-[#FFFCFB] py-16 sm:py-24">
+      <section id="founding" className="scroll-mt-24 border-t border-[#E4E4E7] bg-white py-16 sm:py-24">
         <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
           <SectionHeading
             eyebrow="Founding Creators"
@@ -1020,64 +1001,6 @@ export default function LandingHomePage() {
           </div>
         </section>
       )}
-
-      {/* ── CREATOR SUMMIT 2027 VISION (`#summit`) ── */}
-      <section id="summit" className="scroll-mt-24 border-t border-[#E4E4E7] bg-[#7A2253] py-16 sm:py-24 text-white">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
-          <p className="text-[12px] font-bold uppercase tracking-wider text-white/70">Our Vision</p>
-          <h2 className="mt-2 text-[32px] sm:text-[48px] font-extrabold leading-tight tracking-tight text-white">
-            Made by a creator, for creators.
-          </h2>
-          <p className="mt-4 text-[16px] leading-relaxed text-white/90">
-            Inflixo wasn&apos;t built in a boardroom. It was built by a creator who faced the same problems you do: scattered series, endless DMs, and no single place to show the work. It&apos;s our way of supporting the Indian creator industry, one creator at a time.
-          </p>
-
-          <div className="mt-10 rounded-2xl border border-white/20 bg-white/10 p-6 text-left sm:p-8">
-            <h3 className="text-[24px] sm:text-[32px] font-extrabold tracking-tight text-white">
-              Inflixo Creator Summit 2027
-            </h3>
-            <p className="mt-3 text-[16px] leading-relaxed text-white/90">
-              Our dream: bring <strong className="font-bold text-white">10,000 Indian creators</strong> together in one place in 2027 to learn, collaborate and grow together. Every creator who builds their home on Inflixo is part of that journey.
-            </p>
-
-            {/* Road to 10,000 creators: static illustration, no live count */}
-            <div className="mt-6" role="img" aria-label="Road to 10,000 creators">
-              <div className="flex items-center justify-between text-[12px] font-bold uppercase tracking-wider text-white/70">
-                <span>Road to 10,000 creators</span>
-                <span>10,000</span>
-              </div>
-              <div className="mt-3 flex items-center gap-2">
-                <span className="h-3 w-3 shrink-0 rounded-full bg-white" />
-                <span className="h-0 flex-1 border-t-2 border-dashed border-white/40" />
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[#7A2253]">
-                  <Users className="h-4 w-4" />
-                </span>
-              </div>
-              <div className="mt-2 flex items-center justify-between text-[12px] text-white/70">
-                <span>Your first step</span>
-                <span>The vision</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <button
-              onClick={() => handleClaim(username)}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white px-6 text-[14px] font-bold text-[#7A2253] shadow-md hover:bg-zinc-50 transition-colors cursor-pointer"
-            >
-              Be part of the journey →
-            </button>
-            <a
-              href="https://instagram.com/inflixo_app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[14px] font-semibold text-white underline underline-offset-4 hover:no-underline"
-            >
-              Follow updates on Instagram @inflixo_app
-            </a>
-          </div>
-        </div>
-      </section>
 
       {/* ── PRICING SECTION (`#pricing`) ── */}
       <section id="pricing" className="scroll-mt-24 border-t border-[#E4E4E7] bg-[#FFFCFB] py-16 sm:py-24">
@@ -1176,6 +1099,64 @@ export default function LandingHomePage() {
                 Claim your link
               </button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CREATOR SUMMIT 2027 VISION (`#summit`) ── */}
+      <section id="summit" className="scroll-mt-24 border-t border-[#E4E4E7] bg-[#7A2253] py-16 sm:py-24 text-white">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
+          <p className="text-[12px] font-bold uppercase tracking-wider text-white/70">Our Vision</p>
+          <h2 className="mt-2 text-[32px] sm:text-[48px] font-extrabold leading-tight tracking-tight text-white">
+            Made by a creator, for creators.
+          </h2>
+          <p className="mt-4 text-[16px] leading-relaxed text-white/90">
+            Inflixo wasn&apos;t built in a boardroom. It was built by a creator who faced the same problems you do: scattered series, endless DMs, and no single place to show the work. It&apos;s our way of supporting the Indian creator industry, one creator at a time.
+          </p>
+
+          <div className="mt-10 rounded-2xl border border-white/20 bg-white/10 p-6 text-left sm:p-8">
+            <h3 className="text-[24px] sm:text-[32px] font-extrabold tracking-tight text-white">
+              Inflixo Creator Summit 2027
+            </h3>
+            <p className="mt-3 text-[16px] leading-relaxed text-white/90">
+              Our dream: bring <strong className="font-bold text-white">10,000 Indian creators</strong> together in one place in 2027 to learn, collaborate and grow together. Every creator who builds their home on Inflixo is part of that journey.
+            </p>
+
+            {/* Road to 10,000 creators: static illustration, no live count */}
+            <div className="mt-6" role="img" aria-label="Road to 10,000 creators">
+              <div className="flex items-center justify-between text-[12px] font-bold uppercase tracking-wider text-white/70">
+                <span>Road to 10,000 creators</span>
+                <span>10,000</span>
+              </div>
+              <div className="mt-3 flex items-center gap-2">
+                <span className="h-3 w-3 shrink-0 rounded-full bg-white" />
+                <span className="h-0 flex-1 border-t-2 border-dashed border-white/40" />
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[#7A2253]">
+                  <Users className="h-4 w-4" />
+                </span>
+              </div>
+              <div className="mt-2 flex items-center justify-between text-[12px] text-white/70">
+                <span>Your first step</span>
+                <span>The vision</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <button
+              onClick={() => handleClaim(username)}
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white px-6 text-[14px] font-bold text-[#7A2253] shadow-md hover:bg-zinc-50 transition-colors cursor-pointer"
+            >
+              Be part of the journey →
+            </button>
+            <a
+              href="https://instagram.com/inflixo_app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[14px] font-semibold text-white underline underline-offset-4 hover:no-underline"
+            >
+              Follow updates on Instagram @inflixo_app
+            </a>
           </div>
         </div>
       </section>
