@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Check, CheckCircle2, Clock, Star, Tv } from "lucide-react";
+import { ArrowUpRight, Check, CheckCircle2, ChevronRight, Clock, Star, Tv } from "lucide-react";
 import type { CreatorReview, MediaKitPackage } from "@/types";
 import { AboutHeader, BrandPlatformIcon, PLATFORM_BRAND, SECTION_CARD, type AboutColors } from "@/components/public/about/AboutSections";
 import { formatFans } from "@/lib/creatorEra";
@@ -29,7 +29,7 @@ function packagePrice(pkg: MediaKitPackage) {
   const value = !raw ? "Contact for pricing" : Number.isFinite(numeric) ? `₹${numeric.toLocaleString("en-IN")}` : `₹${raw}`;
   const isMonthly = pkg.title.toLowerCase().includes("monthly");
   const unitKey = pkg.priceUnit || (isMonthly ? "per_month" : "per_package");
-  const unit = !raw ? "" : UNIT_LABELS[unitKey] || (unitKey.startsWith("/") ? unitKey : `/ ${unitKey}`);
+  const unit = !raw ? "" : UNIT_LABELS[unitKey] || (unitKey.startsWith("/") ? unitKey : `/ ${unitKey.replace(/^per_/, "").replace(/_/g, " ")}`);
   return { value: pkg.isStartingPrice && raw ? `From ${value}` : value, unit, isMonthly: unitKey === "per_month" || isMonthly };
 }
 
@@ -196,7 +196,84 @@ function PackageRow({ pkg, colors, onEnquire }: { pkg: MediaKitPackage; colors: 
   );
 }
 
-export function WorkWithMe({ packages, colors, onEnquire }: { packages: MediaKitPackage[]; colors: AboutColors; onEnquire: (pkg: MediaKitPackage) => void }) {
+function CompactPackageRow({ pkg, colors, onEnquire }: { pkg: MediaKitPackage; colors: AboutColors; onEnquire: (pkg: MediaKitPackage) => void }) {
+  const { value, unit } = packagePrice(pkg);
+  const pKey = packagePlatformKey(pkg.platform);
+  const sub = pkg.description?.trim() || [pkg.platform, pkg.turnaroundDays ? `${pkg.turnaroundDays} days delivery` : ""].filter(Boolean).join(" · ");
+  return (
+    <li>
+      <button
+        type="button"
+        onClick={() => onEnquire(pkg)}
+        className="group flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[color-mix(in_srgb,var(--accent)_4%,transparent)] cursor-pointer"
+      >
+        {pKey ? (
+          <BrandPlatformIcon platform={pKey} size={32} />
+        ) : (
+          <span
+            style={{ backgroundColor: "color-mix(in srgb, var(--accent) 10%, var(--surface))", color: "var(--accent-text)" }}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[6px]"
+          >
+            <Tv className="h-4 w-4" />
+          </span>
+        )}
+        <span className="min-w-0 flex-1">
+          <span style={{ color: colors.primary }} className="line-clamp-2 text-[13px] font-semibold leading-[17px] text-(--text)">{pkg.title}</span>
+          {sub && <span style={{ color: colors.muted }} className="line-clamp-1 text-xs text-(--text-muted)">{sub}</span>}
+        </span>
+        <span className="shrink-0 text-right leading-tight">
+          <span style={{ color: colors.primary }} className="block text-[13px] font-semibold tabular-nums text-(--text)">{value}</span>
+          {unit && <span style={{ color: colors.muted }} className="text-[11px] text-(--text-muted)">{unit.replace(/^\/\s*/, "per ")}</span>}
+        </span>
+        <ChevronRight className="h-4 w-4 shrink-0 text-(--text-muted) group-hover:text-(--text)" />
+      </button>
+    </li>
+  );
+}
+
+export function WorkWithMe({
+  packages,
+  colors,
+  onEnquire,
+  compact = false,
+  onCustomRequest,
+}: {
+  packages: MediaKitPackage[];
+  colors: AboutColors;
+  onEnquire: (pkg: MediaKitPackage) => void;
+  /** Premium profile: one-line rows (tap opens the enquiry) + a single "Get in touch" button. */
+  compact?: boolean;
+  onCustomRequest?: () => void;
+}) {
+  if (compact) {
+    return (
+      <div className={CARD}>
+        <AboutHeader title="Work With Me" subtitle="Collaborations, brand features & more." colors={colors}
+          count={packages.length > 0 ? `${packages.length} ${packages.length === 1 ? "package" : "packages"}` : undefined}
+        />
+        {packages.length > 0 && (
+          <ul className="divide-y divide-(--surface-border)">
+            {packages.map((pkg) => (
+              <CompactPackageRow key={pkg.id} pkg={pkg} colors={colors} onEnquire={onEnquire} />
+            ))}
+          </ul>
+        )}
+        {onCustomRequest && (
+          <div className="border-t border-(--surface-border) p-3">
+            <button
+              type="button"
+              onClick={onCustomRequest}
+              style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
+              className="inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-[5px] px-4 text-[13px] font-semibold transition-opacity hover:opacity-95 cursor-pointer"
+            >
+              Get in touch for collaboration
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
   return (
     <div className={CARD}>
       <AboutHeader
@@ -220,16 +297,29 @@ export function WorkWithMe({ packages, colors, onEnquire }: { packages: MediaKit
 
 // ── 3. What brands say ────────────────────────────────────────
 
-export function WhatBrandsSay({ reviews, brands, colors }: { reviews: CreatorReview[]; brands: string[]; colors: AboutColors }) {
+export function WhatBrandsSay({
+  reviews,
+  brands,
+  colors,
+  limit = 4,
+  title = "What Brands Say",
+}: {
+  reviews: CreatorReview[];
+  brands: string[];
+  colors: AboutColors;
+  /** Reviews shown before "Show all"; brand chips are hidden when limit is 1 (compact). */
+  limit?: number;
+  title?: string;
+}) {
   const [showAll, setShowAll] = useState(false);
-  const visible = showAll ? reviews : reviews.slice(0, 4);
-  const uniqueBrands = Array.from(new Set(brands.map((b) => b.trim()).filter(Boolean)));
+  const visible = showAll ? reviews : reviews.slice(0, limit);
+  const uniqueBrands = limit === 1 && reviews.length > 0 ? [] : Array.from(new Set(brands.map((b) => b.trim()).filter(Boolean)));
   if (reviews.length === 0 && uniqueBrands.length === 0) return null;
 
   return (
     <div className={CARD}>
       <AboutHeader
-        title="What Brands Say"
+        title={title}
         subtitle="Feedback from brands I've worked with."
         count={reviews.length > 0 ? `${reviews.length} ${reviews.length === 1 ? "review" : "reviews"}` : undefined}
         colors={colors}
@@ -296,7 +386,7 @@ export function WhatBrandsSay({ reviews, brands, colors }: { reviews: CreatorRev
             </li>
           );
         })}
-        {reviews.length > 4 && (
+        {reviews.length > limit && (
           <li className="py-2 text-center">
             <button type="button" onClick={() => setShowAll((v) => !v)} className="text-xs font-semibold text-(--accent-text) hover:underline cursor-pointer">
               {showAll ? "Show less" : `Show all ${reviews.length} reviews`}

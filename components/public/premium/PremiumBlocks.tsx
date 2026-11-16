@@ -109,91 +109,6 @@ export function SectionNav({ items, className = "" }: { items: SectionNavItem[];
   );
 }
 
-// ── Shop: flat product rows ────────────────────────────────────
-
-export interface ProductRowItem {
-  id: string | number;
-  name: string;
-  imageUrl?: string;
-  href?: string;
-  price?: string | null;
-  isAffiliate?: boolean;
-}
-
-export function ProductRows({
-  products,
-  colors,
-  limit = 5,
-  allHref,
-  onProductClick,
-  onViewAll,
-}: {
-  products: ProductRowItem[];
-  colors: AboutColors;
-  limit?: number;
-  allHref?: string;
-  onProductClick?: (e: React.MouseEvent, p: ProductRowItem) => void;
-  onViewAll?: (e: React.MouseEvent) => void;
-}) {
-  const shown = products.slice(0, limit);
-  const hasAffiliate = products.some((p) => p.isAffiliate);
-  return (
-    <ul className="divide-y divide-(--surface-border)">
-      {shown.map((p) => (
-        <li key={p.id}>
-          <a
-            href={p.href || "#"}
-            target="_blank"
-            rel="noopener noreferrer sponsored"
-            onClick={(e) => onProductClick?.(e, p)}
-            className={`group flex items-center gap-3 ${SECTION_ROW} ${SECTION_ROW_HOVER}`}
-          >
-            <span className={THUMB}>
-              {p.imageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element -- remote product thumbnails of any host
-                <img src={p.imageUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
-              ) : (
-                <Package className="h-5 w-5 text-(--icon)" />
-              )}
-            </span>
-            <span className="min-w-0 flex-1">
-              <span style={{ color: colors.primary }} className="line-clamp-2 text-[13px] font-medium leading-[18px] text-(--text)">
-                {p.name}
-              </span>
-              <span className="mt-1 flex flex-wrap items-center gap-1.5">
-                {p.price && (
-                  <span style={{ color: colors.primary }} className="text-[13px] font-semibold tabular-nums text-(--text)">
-                    {p.price}
-                  </span>
-                )}
-                {p.isAffiliate && (
-                  <span className="rounded-[3px] border border-(--surface-border) px-1.5 py-px text-[10px] font-semibold uppercase tracking-wider text-(--text-muted)">
-                    Affiliate
-                  </span>
-                )}
-              </span>
-            </span>
-            <ArrowUpRight className="h-4 w-4 shrink-0 text-(--text-muted) transition-colors group-hover:text-(--text)" />
-          </a>
-        </li>
-      ))}
-      {products.length > limit && allHref && (
-        <li>
-          <Link href={allHref} onClick={onViewAll} className={MORE_ROW}>
-            View all products ({products.length})
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </li>
-      )}
-      {hasAffiliate && (
-        <li style={{ color: colors.muted }} className="px-4 py-2.5 text-xs text-(--text-muted)">
-          Some links are affiliate links.
-        </li>
-      )}
-    </ul>
-  );
-}
-
 // ── My Setup ───────────────────────────────────────────────────
 
 export function SetupSection({
@@ -205,6 +120,7 @@ export function SetupSection({
   onItemClick,
   id,
   className,
+  variant = "rows",
 }: {
   items: CreatorSetupItem[];
   subtitle?: string | null;
@@ -214,8 +130,63 @@ export function SetupSection({
   onItemClick?: (e: React.MouseEvent, item: CreatorSetupItem) => void;
   id?: string;
   className?: string;
+  /** "strip": one row of square gear tiles (premium profile). */
+  variant?: "rows" | "strip";
 }) {
   if (items.length === 0) return null;
+  if (variant === "strip") {
+    const shown = items.slice(0, limit);
+    return (
+      <Section
+        id={id}
+        className={className}
+        title="My Setup"
+        subtitle={subtitle?.trim() || "The gear & software behind my content."}
+        count={`${items.length} ${items.length === 1 ? "item" : "items"}`}
+        action={items.length > limit ? { label: "View all", href: allHref } : undefined}
+        colors={colors}
+        divided={false}
+      >
+        <ul className="grid grid-cols-5 gap-2 p-3">
+          {shown.map((item) => {
+            const tile = (
+              <>
+                <span className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-[5px] border border-(--surface-border) bg-(--surface)">
+                  {item.imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- remote gear thumbnails of any host
+                    <img src={item.imageUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
+                  ) : (
+                    <Package className="h-5 w-5 text-(--icon)" />
+                  )}
+                </span>
+                <span style={{ color: colors.primary }} className="mt-1.5 line-clamp-2 text-center text-[10.5px] font-medium leading-[13px] text-(--text)">
+                  {item.brand && !item.name.toLowerCase().startsWith(item.brand.toLowerCase()) ? `${item.brand} ${item.name}` : item.name}
+                </span>
+              </>
+            );
+            return (
+              <li key={item.id} className="min-w-0">
+                {item.linkUrl ? (
+                  <a
+                    href={item.linkUrl}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                    title={item.name}
+                    onClick={(e) => onItemClick?.(e, item)}
+                    className="flex flex-col items-stretch transition-opacity hover:opacity-85"
+                  >
+                    {tile}
+                  </a>
+                ) : (
+                  <div title={item.name} className="flex flex-col items-stretch">{tile}</div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </Section>
+    );
+  }
   return (
     <Section
       id={id}
@@ -280,6 +251,7 @@ export function CrewSection({
   colors,
   id,
   className,
+  variant = "rows",
 }: {
   title?: string | null;
   subtitle?: string | null;
@@ -287,8 +259,45 @@ export function CrewSection({
   colors: AboutColors;
   id?: string;
   className?: string;
+  /** "grid": compact avatar tiles in one swipeable row (premium profile). */
+  variant?: "rows" | "grid";
 }) {
   if (members.length === 0) return null;
+  if (variant === "grid") {
+    return (
+      <Section
+        id={id}
+        className={className}
+        title={title?.trim() || "The Crew"}
+        subtitle={subtitle?.trim() || "Creative production crew, editors & management team."}
+        count={`${members.length} ${members.length === 1 ? "member" : "members"}`}
+        colors={colors}
+        divided={false}
+      >
+        <ul className="flex snap-x gap-2 overflow-x-auto p-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {members.map((m) => (
+            <li key={m.id} className="flex w-[92px] shrink-0 snap-start flex-col items-center rounded-[5px] border border-(--surface-border) px-1.5 py-2.5 text-center">
+              {m.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element -- small avatar
+                <img src={m.avatarUrl} alt="" loading="lazy" className="h-9 w-9 rounded-full object-cover" />
+              ) : (
+                <span
+                  style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-[11px] font-semibold"
+                >
+                  {getInitials(m.name)}
+                </span>
+              )}
+              <span style={{ color: colors.primary }} className="mt-1.5 w-full line-clamp-2 text-[11px] font-semibold leading-[13px] text-(--text)">{m.name}</span>
+              {m.role && (
+                <span style={{ color: colors.muted }} className="w-full line-clamp-2 text-[10px] leading-[12px] text-(--text-muted)">{m.role}</span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </Section>
+    );
+  }
   const socials = (m: TeamMember) =>
     [
       m.instagramUrl && { href: m.instagramUrl, label: "Instagram", icon: <InstagramIcon className="h-4 w-4" /> },

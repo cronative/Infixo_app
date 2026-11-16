@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ArrowUpRight, ChevronDown, Globe, Languages, MapPin, PenLine } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ChevronDown, Globe, Languages, MapPin, PenLine } from "lucide-react";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -89,7 +89,7 @@ export const SECTION_ROW = "min-h-11 px-4 py-3";
 export const SECTION_ROW_HOVER = "transition-colors hover:bg-[color-mix(in_srgb,var(--accent)_4%,transparent)]";
 
 /** Header row: primary @ 7% tint, 12px 16px padding, 15px title + 12px subtitle left, 12px count right, 1px divider. */
-export function AboutHeader({ title, subtitle, count, colors }: { title: string; subtitle?: string; count?: ReactNode; colors: AboutColors }) {
+export function AboutHeader({ title, subtitle, count, action, colors }: { title: string; subtitle?: string; count?: ReactNode; action?: { label: string; href: string; onClick?: (e: React.MouseEvent) => void }; colors: AboutColors }) {
   return (
     <div
       className="flex items-end justify-between gap-3 border-b border-(--surface-border) px-4 py-3"
@@ -105,7 +105,16 @@ export function AboutHeader({ title, subtitle, count, colors }: { title: string;
           </p>
         )}
       </div>
-      {count != null && (
+      {action ? (
+        <Link
+          href={action.href}
+          onClick={action.onClick}
+          className="inline-flex shrink-0 items-center gap-1 pb-px text-xs font-semibold text-(--accent-text) hover:underline"
+        >
+          {action.label}
+          <ArrowRight className="h-3 w-3" />
+        </Link>
+      ) : count != null && (
         <span style={{ color: colors.muted }} className="shrink-0 pb-px text-xs text-(--text-muted)">
           {count}
         </span>
@@ -124,6 +133,7 @@ export function Section({
   title,
   subtitle,
   count,
+  action,
   colors,
   divided = true,
   bodyClassName = "",
@@ -134,6 +144,7 @@ export function Section({
   title: string;
   subtitle?: string;
   count?: ReactNode;
+  action?: { label: string; href: string; onClick?: (e: React.MouseEvent) => void };
   colors: AboutColors;
   divided?: boolean;
   bodyClassName?: string;
@@ -143,7 +154,7 @@ export function Section({
 }) {
   return (
     <section id={id} className={`${CARD} ${className}`}>
-      <AboutHeader title={title} subtitle={subtitle} count={count} colors={colors} />
+      <AboutHeader title={title} subtitle={subtitle} count={count} action={action} colors={colors} />
       <div className={`${divided ? "divide-y divide-(--surface-border)" : ""} ${bodyClassName}`}>{children}</div>
     </section>
   );

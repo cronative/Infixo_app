@@ -136,7 +136,7 @@ import { CollaborationInquiryModal } from "@/components/mediakit/CollaborationIn
 import { EpisodeQuickDrawer } from "@/components/series/EpisodeQuickDrawer";
 import { VisibilitySettingsModal } from "@/components/shared/VisibilitySettingsModal";
 import { ShareProfileModal } from "@/components/public/ShareProfileModal";
-import { CrewSection, ProductRows, SectionNav, SetupSection, type SectionNavItem } from "@/components/public/premium/PremiumBlocks";
+import { CrewSection, SectionNav, SetupSection, type SectionNavItem } from "@/components/public/premium/PremiumBlocks";
 import { ProfileHeader } from "@/components/public/ProfileHeader";
 import { STORAGE_KEYS, storage } from "@/utils/storage";
 import { LinkRow } from "@/components/links/LinkRow";
@@ -144,6 +144,7 @@ import { LinkGroupRow } from "@/components/links/LinkGroupRow";
 import { getInitials } from "@/lib/avatar";
 import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
 import { trackPublicEvent } from "@/lib/publicTrack";
+import { PremiumSeriesCard } from "@/components/public/premium/PremiumSeries";
 import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
 import { ThemeService, getThemeCssVariables } from "@/services/ThemeService";
 import {
@@ -2084,12 +2085,12 @@ export function LivePreviewCard({
           <SectionNav
             className="order-[0] -mt-1.5 sm:-mt-2"
             items={[
-              hasWatchTab && { id: "watch", label: "Watch", target: "series-section" },
+              hasWatchTab && { id: "watch", label: "Series", target: "series-section" },
               hasLinksTab && { id: "links", label: "Links", target: "links-section" },
               hasShopTab && { id: "shop", label: "Shop", target: "shop-section" },
-              hasSetupTab && { id: "setup", label: "Setup", target: "setup-section" },
-              hasAboutTab && { id: "about", label: "About", target: ["about-section", "socials-section", "team-section"] },
               hasWorkTab && { id: "collab", label: "Collab", target: "collab-section" },
+              hasSetupTab && { id: "setup", label: "Setup", target: "setup-section" },
+              hasAboutTab && { id: "about", label: "About", target: ["about-section", "socials-section"] },
             ].filter(Boolean) as SectionNavItem[]}
           />
         )}
@@ -2110,7 +2111,7 @@ export function LivePreviewCard({
             id="about-section"
             className={`relative z-10 w-full text-left animate-fade-in ${
               isPremiumLayout
-                ? "order-[5] mt-3 space-y-3 scroll-mt-14"
+                ? "order-[7] mt-3 space-y-3 scroll-mt-14"
                 : isTabsLayout
                 ? "order-[4] mt-1 sm:mt-1.5"
                 : "order-[4] mt-4 sm:mt-5 space-y-2"
@@ -2219,7 +2220,8 @@ export function LivePreviewCard({
             return (
               <SetupSection
                 id="setup-section"
-                className="relative z-10 order-[4] mt-3 w-full scroll-mt-14 animate-fade-in"
+                className="relative z-10 order-[6] mt-3 w-full scroll-mt-14 animate-fade-in"
+                variant="strip"
                 items={activeSetupItems}
                 subtitle={setupSettings?.whereIStarted}
                 colors={aboutColors}
@@ -2360,7 +2362,7 @@ export function LivePreviewCard({
 
         {/* 10. Social Accounts Section */}
         {!isListingPage && effectiveVisibilitySettings.showFanbase !== false && (isPremiumLayout || (!isTabsLayout ? true : (activeNavTab === "about" || activeNavTab === "fanbase"))) && extraSocialCards.length > 0 && (
-          <div id="socials-section" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[6] mt-3 scroll-mt-14" : isTabsLayout ? "order-[4] mt-1 sm:mt-1.5 space-y-2" : "order-[10] mt-6 sm:mt-7 space-y-2"}`}>
+          <div id="socials-section" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[8] mt-3 scroll-mt-14" : isTabsLayout ? "order-[4] mt-1 sm:mt-1.5 space-y-2" : "order-[10] mt-6 sm:mt-7 space-y-2"}`}>
             {false && (
               <TabSectionHeader
                 title="Find me elsewhere"
@@ -2577,9 +2579,23 @@ export function LivePreviewCard({
         {(seriesOnlyMode || (!isListingPage && (isPremiumLayout || !isTabsLayout || activeNavTab === "watch" || activeNavTab === "series"))) && effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || seriesOnlyMode || isDashboardPreview) && (
           <div id="series-section" className={`relative z-10 w-full text-left ${isPremiumLayout ? "order-[1] mt-3 space-y-2.5 scroll-mt-14" : seriesOnlyMode ? "order-[10] mt-1.5 sm:mt-2 pb-4" : isTabsLayout ? `order-[10] mt-1.5 sm:mt-2 ${isDashboardPreview ? "pb-2" : "pb-12"}` : `order-[10] mt-6 sm:mt-7 space-y-2.5 ${isDashboardPreview ? "pb-2" : "pb-12"}`}`}>
             <Section
-              title={isPremiumLayout ? "Series & Playlists" : "Series"}
-              subtitle={landingDemo ? "Start from Episode 1." : "Watch episodes in the right order."}
+              title={isPremiumLayout ? "My Series" : "Series"}
+              subtitle={landingDemo ? "Start from Episode 1." : isPremiumLayout ? "Watch every story in the right order." : "Watch episodes in the right order."}
               count={`${series.length} series`}
+              action={
+                isPremiumLayout && !seriesOnlyMode && allSeriesHref && series.length > displayedSeries.length
+                  ? {
+                      label: "View all",
+                      href: allSeriesHref,
+                      onClick: (e) => {
+                        if (isInformationalMode) {
+                          e.preventDefault();
+                          showToast("Opens all creator series on live profile ✨");
+                        }
+                      },
+                    }
+                  : undefined
+              }
               colors={aboutColors}
               divided={false}
             >
@@ -2650,6 +2666,38 @@ export function LivePreviewCard({
                     const allEps = getSeriesEpisodes(s);
                     const epCount = allEps.length;
                     const detectedPlatform = getCanonicalSeriesPlatform(s);
+
+                    if (isPremiumLayout) {
+                      return (
+                        <PremiumSeriesCard
+                          key={s.id}
+                          series={s}
+                          featured={idx === 0}
+                          seriesHref={`/${cleanHandle || "creator"}/series/${s.id}`}
+                          onOpenSeries={(e, selected) => {
+                            if (onSeriesPreviewOpen) {
+                              e.preventDefault();
+                              onSeriesPreviewOpen(selected);
+                            } else if (isInformationalMode) {
+                              e.preventDefault();
+                              showToast(`Opens ${selected.title} dedicated series page ✨`);
+                            } else if (seriesOpenMode === "internal") {
+                              e.preventDefault();
+                              setDrawerSeries(selected);
+                              setIsDrawerOpen(true);
+                            }
+                          }}
+                          onEpisodeClick={(e, selected, ep) => {
+                            if (isInformationalMode) {
+                              e.preventDefault();
+                              showToast(`Opens Ep ${ep.episodeNumber} on ${ep.platform || "the original platform"} ✨`);
+                              return;
+                            }
+                            trackPublicEvent("episode_click", `${selected.id}:${ep.id || ep.episodeNumber}`);
+                          }}
+                        />
+                      );
+                    }
 
                     if (idx === 0) {
                       return (
@@ -2739,9 +2787,23 @@ export function LivePreviewCard({
         {((productsOnlyMode || (!isListingPage && (isPremiumLayout || !isTabsLayout || activeNavTab === "shop"))) && ((products && products.length > 0) || productsOnlyMode || isDashboardPreview)) && (
           <section id="shop-section" aria-label="Shop" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[3] mt-3 scroll-mt-14" : productsOnlyMode ? "order-[15] mt-1.5 sm:mt-2" : isTabsLayout ? "order-[15] mt-1.5 sm:mt-2" : "order-[15] mt-6 sm:mt-7 space-y-2.5"}`}>
             <Section
-              title={landingDemo ? "Digital products" : isPremiumLayout ? "Products" : "Shop"}
+              title={landingDemo ? "Digital products" : isPremiumLayout ? "Creator Shop" : "Shop"}
               subtitle="Products I use and recommend."
               count={products && products.length > 0 ? `${products.length} ${products.length === 1 ? "product" : "products"}` : undefined}
+              action={
+                isPremiumLayout && sortedProducts.length > 4
+                  ? {
+                      label: "View all",
+                      href: allProductsHref || `/${cleanHandle || "creator"}/products`,
+                      onClick: (e) => {
+                        if (isInformationalMode) {
+                          e.preventDefault();
+                          showToast("Opens all creator products ✨");
+                        }
+                      },
+                    }
+                  : undefined
+              }
               colors={aboutColors}
               divided={false}
             >
@@ -2804,37 +2866,10 @@ export function LivePreviewCard({
                   Products will appear here once added.
                 </p>
               </div>
-            ) : isPremiumLayout ? (
-              <ProductRows
-                products={sortedProducts.map((product: CreatorProduct) => ({
-                  id: product.id,
-                  name: product.name,
-                  imageUrl: product.imageUrl || (product as any).image || "",
-                  href: product.productUrl || (product as any).url || "",
-                  price: formatProductPrice(product.pricePaise),
-                  isAffiliate: Boolean(product.isAffiliate),
-                }))}
-                colors={aboutColors}
-                allHref={allProductsHref || `/${cleanHandle || "creator"}/products`}
-                onProductClick={(e, p) => {
-                  if (isInformationalMode) {
-                    e.preventDefault();
-                    showToast(`Opens ${p.name} external product page ✨`);
-                    return;
-                  }
-                  trackPublicEvent("product_click", String(p.id));
-                }}
-                onViewAll={(e) => {
-                  if (isInformationalMode) {
-                    e.preventDefault();
-                    showToast("Opens all creator products ✨");
-                  }
-                }}
-              />
             ) : (
               <div className="p-3">
               <ProductGrid>
-                {(isPremiumLayout ? sortedProducts.slice(0, 3) : (isProductsExpanded || productsOnlyMode ? sortedProducts : sortedProducts.slice(0, 6))).map((product: CreatorProduct, idx: number) => (
+                {(isPremiumLayout ? sortedProducts.slice(0, 4) : (isProductsExpanded || productsOnlyMode ? sortedProducts : sortedProducts.slice(0, 6))).map((product: CreatorProduct, idx: number) => (
                   <ProductGridCard
                     key={product.id}
                     name={product.name}
@@ -2857,25 +2892,6 @@ export function LivePreviewCard({
                   />
                 ))}
               </ProductGrid>
-              </div>
-            )}
-
-            {false && isPremiumLayout && sortedProducts.length > 3 && (
-              <div className="border-t border-(--surface-border)">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (isInformationalMode) {
-                      showToast("Opens all creator products ✨");
-                      return;
-                    }
-                    router.push(allProductsHref || `/${cleanHandle || "creator"}/products`);
-                  }}
-                  className="flex h-11 w-full items-center justify-center gap-1.5 text-xs sm:text-[13px] font-semibold text-(--accent-text) hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)] transition-colors cursor-pointer"
-                >
-                  <span>{`View all products (${sortedProducts.length})`}</span>
-                  <ArrowRight className="h-3.5 w-3.5 shrink-0 text-(--icon)" />
-                </button>
               </div>
             )}
 
@@ -2906,7 +2922,8 @@ export function LivePreviewCard({
         {!isListingPage && (isPremiumLayout || (isTabsLayout && activeNavTab === "about")) && activeTeamMembers.length > 0 && (
           <CrewSection
             id="team-section"
-            className={`relative z-10 w-full scroll-mt-14 animate-fade-in ${isPremiumLayout ? "order-[7] mt-3" : "order-[25] mt-2"}`}
+            className={`relative z-10 w-full scroll-mt-14 animate-fade-in ${isPremiumLayout ? "order-[5] mt-3" : "order-[25] mt-2"}`}
+            variant={isPremiumLayout ? "grid" : "rows"}
             title={teamData.team?.teamName}
             subtitle={teamData.team?.teamDescription}
             members={activeTeamMembers}
@@ -3083,9 +3100,9 @@ export function LivePreviewCard({
             return (
               <div
                 id="collab-section"
-                className={`relative z-10 ${isPremiumLayout ? "order-[8] mt-3 space-y-3 scroll-mt-14" : isTabsLayout ? "order-[20] mt-1 sm:mt-1.5 space-y-2" : "order-[20] mt-4 sm:mt-5 space-y-2"} w-full text-left animate-fade-in`}
+                className={`relative z-10 ${isPremiumLayout ? "order-[4] mt-3 space-y-3 scroll-mt-14" : isTabsLayout ? "order-[20] mt-1 sm:mt-1.5 space-y-2" : "order-[20] mt-4 sm:mt-5 space-y-2"} w-full text-left animate-fade-in`}
               >
-                <AudienceSnapshot
+                {!isPremiumLayout && <AudienceSnapshot
                   totalFans={totalAudience}
                   topPlatform={topPlatform ? { platform: topPlatform.platform, handle: topPlatform.handle, count: Number(topPlatform.count) || 0, unit: topPlatform.unit } : null}
                   tags={formattedCategories ? formattedCategories.split(" · ") : []}
@@ -3102,10 +3119,24 @@ export function LivePreviewCard({
                     }
                   }}
                   colors={aboutColors}
+                />}
+                {showPackages && (
+                  <WorkWithMe
+                    packages={activePackages}
+                    colors={aboutColors}
+                    onEnquire={(pkg) => openEnquiry(pkg)}
+                    compact={isPremiumLayout}
+                    onCustomRequest={isPremiumLayout ? () => openEnquiry(null) : undefined}
+                  />
+                )}
+                <WhatBrandsSay
+                  reviews={reviewsList}
+                  brands={brandNames}
+                  colors={aboutColors}
+                  limit={isPremiumLayout ? 1 : 4}
+                  title={isPremiumLayout ? "Work Reviews" : undefined}
                 />
-                {showPackages && <WorkWithMe packages={activePackages} colors={aboutColors} onEnquire={(pkg) => openEnquiry(pkg)} />}
-                <WhatBrandsSay reviews={reviewsList} brands={brandNames} colors={aboutColors} />
-                {showPackages && <CustomCollaboration colors={aboutColors} onRequest={() => openEnquiry(null)} />}
+                {showPackages && !isPremiumLayout && <CustomCollaboration colors={aboutColors} onRequest={() => openEnquiry(null)} />}
                 <CollabEnquirySheet
                   isOpen={isEnquirySheetOpen}
                   onClose={() => setIsEnquirySheetOpen(false)}
