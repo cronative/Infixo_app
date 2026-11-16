@@ -1,5 +1,6 @@
 "use client";
 
+import { createPortal } from "react-dom";
 import type { CreatorProduct } from "@/types";
 import { formatProductPrice } from "@/components/products/ProductImage";
 import { ProductGrid, ProductGridCard } from "@/components/products/ProductGridCard";
@@ -401,6 +402,8 @@ export interface LivePreviewCardProps {
   initialTab?: CreatorNavTabId;
   /** Marketing landing page demo: shows fan-count breakdown, "My Setup & Shop" in the Shop tab and verified-collab badges. */
   landingDemo?: boolean;
+  /** Limited (plan ended) profile: per-section count of items hidden server-side (shown as one locked row). */
+  lockedCounts?: Record<string, number> | null;
 }
 
 export type CreatorNavTabId =
@@ -654,7 +657,9 @@ export function LivePreviewCard({
   allSetupHref,
   initialTab,
   landingDemo = false,
+  lockedCounts = null,
 }: LivePreviewCardProps) {
+  const locked = (key: string) => (lockedCounts && lockedCounts[key]) || 0;
   const router = useRouter();
   const profile: CreatorProfile = incomingProfile || EMPTY_PROFILE_FALLBACK;
   const socials: SocialAccounts = incomingSocials || EMPTY_SOCIAL_ACCOUNTS;
@@ -1905,7 +1910,8 @@ export function LivePreviewCard({
         onTouchStart={handleHeaderTouchStart}
         onTouchMove={handleHeaderTouchMove}
         onTouchEnd={handleHeaderTouchEnd}
-        className="shrink-0 w-full z-20"
+        // Page scroll: no box of its own, so the Inflixo nav inside stays sticky for the whole card.
+        className={containedScroll ? "shrink-0 w-full z-20" : "contents"}
       >
         <ProfileHeader
           navScrolled={navScrolled}
@@ -2241,6 +2247,7 @@ export function LivePreviewCard({
           if (isPremiumLayout) {
             return (
               <SetupSection
+                lockedCount={locked("setup")}
                 id="setup-section"
                 className="relative z-10 order-[6] mt-2 w-full scroll-mt-14 animate-fade-in"
                 items={activeSetupItems}
@@ -2407,6 +2414,7 @@ export function LivePreviewCard({
               />
             )}
             <SocialAccountsBlock
+              lockedCount={locked("moreOfMe")}
               groups={groupedSocials.map((g) => ({ groupTitle: g.groupTitle, items: g.items }))}
               total={extraSocialCards.length}
               colors={aboutColors}
@@ -2513,6 +2521,7 @@ export function LivePreviewCard({
               >
                 <Section
                   icon={Link2}
+                  lockedCount={locked("links")}
                   solid={linksOnlyMode}
                   title={isPremiumLayout || linksOnlyMode ? "My Links" : "Links"}
                   subtitle={isPremiumLayout || linksOnlyMode ? "Things I want you to see." : "Links, tickets & websites"}
@@ -2604,6 +2613,7 @@ export function LivePreviewCard({
           <div id="series-section" className={`relative z-10 w-full text-left ${isPremiumLayout ? "order-[1] mt-2 space-y-2.5 scroll-mt-14" : seriesOnlyMode ? "order-[10] mt-1.5 sm:mt-2 pb-4" : isTabsLayout ? `order-[10] mt-1.5 sm:mt-2 ${isDashboardPreview ? "pb-2" : "pb-12"}` : `order-[10] mt-6 sm:mt-7 space-y-2.5 ${isDashboardPreview ? "pb-2" : "pb-12"}`}`}>
             <Section
               icon={Clapperboard}
+              lockedCount={locked("series")}
               solid={seriesOnlyMode}
               title={isPremiumLayout || seriesOnlyMode ? "My Series" : "Series"}
               subtitle={landingDemo ? "Start from Episode 1." : isPremiumLayout || seriesOnlyMode ? "Start at Ep 1 & binge in order." : "Watch episodes in the right order."}
@@ -2700,6 +2710,12 @@ export function LivePreviewCard({
                           series={s}
                           seriesHref={`/${cleanHandle || "creator"}/series/${s.id}`}
                           onOpenSeries={(e, selected) => {
+                            if (lockedCounts) {
+                              // Limited profile: series detail pages are locked.
+                              e.preventDefault();
+                              showToast("Episodes are locked on this profile right now 🔒");
+                              return;
+                            }
                             if (onSeriesPreviewOpen) {
                               e.preventDefault();
                               onSeriesPreviewOpen(selected);
@@ -2805,6 +2821,7 @@ export function LivePreviewCard({
           <section id="shop-section" aria-label="Shop" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[3] mt-2 scroll-mt-14" : productsOnlyMode ? "order-[15] mt-1.5 sm:mt-2" : isTabsLayout ? "order-[15] mt-1.5 sm:mt-2" : "order-[15] mt-6 sm:mt-7 space-y-2.5"}`}>
             <Section
               icon={ShoppingBag}
+              lockedCount={locked("products")}
               solid={productsOnlyMode}
               title={landingDemo ? "Digital products" : isPremiumLayout || productsOnlyMode ? "My Shop" : "Shop"}
               subtitle={isPremiumLayout || productsOnlyMode ? "Products I proudly recommend." : "Products I use and recommend."}
@@ -2978,6 +2995,7 @@ export function LivePreviewCard({
         {/* 8. Creator Team */}
         {!isListingPage && (isPremiumLayout || (isTabsLayout && activeNavTab === "about")) && activeTeamMembers.length > 0 && (
           <CrewSection
+            lockedCount={locked("team")}
             id="team-section"
             className={`relative z-10 w-full scroll-mt-14 animate-fade-in ${isPremiumLayout ? "order-[5] mt-2" : "order-[25] mt-2"}`}
             title={teamData.team?.teamName}
@@ -3180,6 +3198,7 @@ export function LivePreviewCard({
                 />}
                 {showPackages && (
                   <WorkWithMe
+                    lockedCount={locked("packages")}
                     packages={activePackages}
                     colors={aboutColors}
                     onEnquire={(pkg) => openEnquiry(pkg)}
@@ -3188,6 +3207,7 @@ export function LivePreviewCard({
                   />
                 )}
                 <WhatBrandsSay
+                  lockedCount={locked("reviews")}
                   reviews={reviewsList}
                   brands={brandNames}
                   colors={aboutColors}
@@ -3370,22 +3390,20 @@ export function LivePreviewCard({
         )}
       </div>
 
-      {showMoveToTop && (
+      {/* Portalled to <body>: the card's backdrop-filter would otherwise make "fixed" relative to the card. */}
+      {showMoveToTop && typeof document !== "undefined" && createPortal(
         <button
           type="button"
           onClick={handleMoveToTop}
-          style={{
-            backgroundColor: c.accent,
-            color: "var(--on-accent)",
-            boxShadow: eff.shadow,
-            ["--mt-lift" as string]: `${moveTopLift}px`,
-          }}
-          className="tap-scale fixed bottom-[calc(1rem+env(safe-area-inset-bottom)+var(--mt-lift,0px))] right-4 sm:right-[max(1rem,calc((100vw-580px)/2-3.75rem))] z-40 inline-flex h-10 w-10 sm:h-11 sm:w-11 opacity-90 hover:opacity-100 items-center justify-center rounded-[5px]  transition-all hover:scale-110 cursor-pointer"
+          style={{ ...themeTokenStyle(themeMeta.key), backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
+          // Fixed bottom-right, 10px in from the card's right edge (the card is centred, max 480px).
+          className="tap-scale fixed bottom-[calc(10px+env(safe-area-inset-bottom))] right-[max(10px,calc((100vw-480px)/2+10px))] z-40 inline-flex h-11 w-11 items-center justify-center rounded-[5px] opacity-90 transition-opacity hover:opacity-100 cursor-pointer"
           aria-label="Scroll to top"
           title="Scroll to top"
         >
           <ChevronUp className="h-5 w-5 sm:h-6 sm:w-6 stroke-[2.5]" />
-        </button>
+        </button>,
+        document.body,
       )}
     </div>
   );

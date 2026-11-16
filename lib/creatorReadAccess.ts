@@ -43,8 +43,30 @@ export async function isCreatorPublic(creatorId: string) {
   return Boolean(activated && Date.now() <= activated + 7 * 24 * 60 * 60 * 1000);
 }
 
+/**
+ * Requests the public-profile aggregator builds in-process for a creator whose plan/trial has
+ * ended. Their sections may be read (the aggregator then trims each list to a short preview);
+ * a client can't add a Request object to this set, so direct API calls stay private.
+ */
+const limitedPreviewReads = new WeakSet<Request>();
+
+export function markLimitedPreviewRead(req: Request) {
+  limitedPreviewReads.add(req);
+  return req;
+}
+
+export function isLimitedPreviewRead(req: Request) {
+  return limitedPreviewReads.has(req);
+}
+
+/** Whether an existing creator's public page is "full" (active plan/trial) or a "limited" preview. */
+export async function getCreatorPublicAccess(creatorId: string): Promise<"full" | "limited"> {
+  return (await isCreatorPublic(creatorId)) ? "full" : "limited";
+}
+
 export async function authorizeCreatorRead(req: Request, creatorId: string, isPublicLookup: boolean) {
   if (isPublicLookup) {
+    if (isLimitedPreviewRead(req)) return null;
     return (await isCreatorPublic(creatorId))
       ? null
       : apiError("Creator profile is private", 404);

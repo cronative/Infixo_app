@@ -70,6 +70,7 @@ export function SetupSection({
   colors,
   allHref,
   limit = 5,
+  lockedCount = 0,
   onItemClick,
   id,
   className,
@@ -80,6 +81,7 @@ export function SetupSection({
   colors: AboutColors;
   allHref: string;
   limit?: number;
+  lockedCount?: number;
   onItemClick?: (e: React.MouseEvent, item: CreatorSetupItem) => void;
   id?: string;
   className?: string;
@@ -145,6 +147,7 @@ export function SetupSection({
     <Section
       id={id}
       className={className}
+      lockedCount={lockedCount}
       icon={Monitor}
       title="My Setup"
       subtitle={subtitle?.trim() || "The gear behind my videos."}
@@ -206,6 +209,7 @@ export function CrewSection({
   colors,
   limit,
   allHref,
+  lockedCount = 0,
   id,
   className,
 }: {
@@ -215,6 +219,7 @@ export function CrewSection({
   colors: AboutColors;
   /** Members shown before the "See all" footer (all when omitted). */
   limit?: number;
+  lockedCount?: number;
   allHref?: string;
   id?: string;
   className?: string;
@@ -235,6 +240,7 @@ export function CrewSection({
     <Section
       id={id}
       className={className}
+      lockedCount={lockedCount}
       icon={Users}
       title={title?.trim() || "My Crew"}
       subtitle={subtitle?.trim() || "The people behind my videos."}

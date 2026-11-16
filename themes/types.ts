@@ -48,6 +48,8 @@ export interface ThemeCardProps {
   reviewsOnlyMode?: boolean;
   linksOnlyMode?: boolean;
   allLinksHref?: string;
+  /** Limited (plan ended) profile: per-section count of items hidden server-side. */
+  lockedCounts?: Record<string, number> | null;
   mediaKitOnlyMode?: boolean;
   teamOnlyMode?: boolean;
   setupOnlyMode?: boolean;

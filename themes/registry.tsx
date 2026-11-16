@@ -46,6 +46,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
     layoutMode,
     initialTab,
     hideFooter,
+    lockedCounts,
   } = props;
   return (
     <LivePreviewCard
@@ -91,6 +92,7 @@ export function ThemeCard(props: ThemeCardProps & { themeKey: ThemeKey }) {
       onShare={onShare}
       layoutMode={layoutMode}
       initialTab={initialTab}
+      lockedCounts={lockedCounts}
     />
   );
 }

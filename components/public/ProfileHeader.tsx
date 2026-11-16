@@ -343,6 +343,19 @@ export function ProfileHeader({
   showPlatformBreakdown = false,
   onWorkWithMe,
 }: ProfileHeaderProps) {
+  // Once the big name scrolls under the sticky nav, the nav shows it centred.
+  const nameRef = useRef<HTMLHeadingElement>(null);
+  const [nameUnderNav, setNameUnderNav] = useState(false);
+  useEffect(() => {
+    const el = nameRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([entry]) => setNameUnderNav(!entry.isIntersecting && entry.boundingClientRect.top < 48), {
+      rootMargin: "-48px 0px 0px 0px",
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   const formattedTagline = useMemo(() => {
     if (!tagline) return null;
     const parts = tagline.split(/\s*[,•·.]\s*/).filter(Boolean);
@@ -437,7 +450,8 @@ export function ProfileHeader({
   }, [socialList, platformBreakdown]);
 
   return (
-    <header className="w-full shrink-0 select-none pb-0">
+    // display: contents lets the nav below stick to the whole card (not just this header box).
+    <header className="contents select-none">
       {/* ============================================================== */}
       {/* ROW 1: APP-STYLE NAV BAR (Compact 44px/48px, full card width)  */}
       {/* Bleeds over the card's 20px top / 16-20px side padding. It sits */}
@@ -445,8 +459,15 @@ export function ProfileHeader({
       {/* scrolls underneath (z above content).                          */}
       {/* ============================================================== */}
       <div
-        className="relative z-30 -mx-[var(--card-px,16px)] -mt-5 mb-2 flex h-12 items-center justify-between gap-2 px-3 rounded-none border-b border-(--divider) bg-(--card-bg)"
+        className="sticky top-0 z-30 -mx-[var(--card-px,16px)] -mt-5 mb-2 flex h-12 items-center justify-between gap-2 px-3 rounded-none border-b border-(--divider) bg-(--card-bg)"
       >
+        {/* Creator name, centred, once the profile name has scrolled under the nav */}
+        <span
+          aria-hidden={!nameUnderNav}
+          className={`pointer-events-none absolute left-1/2 top-1/2 max-w-[44%] -translate-x-1/2 -translate-y-1/2 truncate text-[14px] font-semibold text-(--text) transition-opacity duration-150 ${nameUnderNav ? "opacity-100" : "opacity-0"}`}
+        >
+          {displayName || "Creator"}
+        </span>
         {/* Left: Back button (on subpages) OR Small Inflixo Logo (no tagline) */}
         <div className="shrink-0 flex items-center">
           {pageHeader ? (
@@ -542,7 +563,7 @@ export function ProfileHeader({
         {/* DETAILS (centered under the photo): Name / @username / Category */}
         <div className="min-w-0 w-full text-center space-y-0.5">
           {/* 1. Title / Name */}
-          <h1 className="text-lg sm:text-xl font-bold tracking-tight text-(--text) break-words leading-tight">
+          <h1 ref={nameRef} className="text-lg sm:text-xl font-bold tracking-tight text-(--text) break-words leading-tight">
             {displayName || "Creator"}
           </h1>
 

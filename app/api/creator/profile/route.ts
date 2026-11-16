@@ -4,7 +4,7 @@ import { recordOnboardingStep } from "@/lib/onboardingStepDb";
 import { ensureCreatorSettingsTable } from "@/lib/settingsDb";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 import { requireSession, ownsResource, getSessionFromRequest, createSessionToken, setSessionCookie } from "@/lib/session";
-import { isCreatorPublic } from "@/lib/creatorReadAccess";
+import { isCreatorPublic, isLimitedPreviewRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 import { isReservedUsername } from "@/lib/constants";
 import { DEFAULT_THEME_KEY, isThemeKey, resolveThemeKey } from "@/lib/themeKeys";
@@ -87,7 +87,7 @@ export async function GET(req: Request) {
       return apiError("Creator not found", 404);
     }
 
-    if (username && !(await isCreatorPublic(creator.id))) {
+    if (username && !isLimitedPreviewRead(req) && !(await isCreatorPublic(creator.id))) {
       return apiError("Creator profile is private", 403, {
         isPrivate: true,
         reason: "trial_expired",

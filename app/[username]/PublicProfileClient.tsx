@@ -104,6 +104,8 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
   const [loaded, setLoaded] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [profilePrivate, setProfilePrivate] = useState(false);
+  // Plan / free trial ended: a short preview (server-trimmed) with one locked row per section.
+  const [lockedCounts, setLockedCounts] = useState<Record<string, number> | null>(null);
   const [copied, setCopied] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
   const [viewerIsOwner, setViewerIsOwner] = useState(false);
@@ -197,6 +199,8 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
         const otherSocRes = section("otherSocials");
         const secRes = section("sections");
         const productsRes = section("products");
+        const isLimitedPreview = all?.access?.level === "limited";
+        setLockedCounts(isLimitedPreview ? (all.access.locked as Record<string, number>) || {} : null);
 
         const isProfOk = profRes.status === 1 || profRes.success === true;
         const profile = profRes.data?.profile || profRes.profile;
@@ -234,7 +238,7 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
         setProducts(visibleProducts);
 
         if (isProfOk && profile && profile.username) {
-          if (isFreeTrialExpired(subscription)) {
+          if (!isLimitedPreview && isFreeTrialExpired(subscription)) {
             setProfile(profile);
             setProfilePrivate(true);
             setNotFound(false);
@@ -776,6 +780,7 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
           reviewsPreviewLimit={3}
           allReviewsHref={`/${handleStr.replace(/^@/, "")}/reviews`}
           allLinksHref={`/${handleStr.replace(/^@/, "")}/links`}
+          lockedCounts={lockedCounts}
         />
     </CreatorPublicShell>
   );

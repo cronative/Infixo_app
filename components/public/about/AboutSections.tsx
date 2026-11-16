@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, AtSign, ChevronDown, User, UsersRound, type LucideIcon, Globe, Languages, MapPin, PenLine } from "lucide-react";
+import { ArrowRight, ArrowUpRight, AtSign, ChevronDown, Lock, User, UsersRound, type LucideIcon, Globe, Languages, MapPin, PenLine } from "lucide-react";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -315,6 +315,7 @@ export function SectionCard({
   className = "",
   icon,
   solid: solidProp = false,
+  lockedCount = 0,
   children,
 }: {
   title: string;
@@ -324,6 +325,8 @@ export function SectionCard({
   colors: AboutColors;
   showHeader?: boolean;
   icon?: LucideIcon;
+  /** Limited (plan ended) profile: items hidden server-side; one blurred placeholder row stands in for them. */
+  lockedCount?: number;
   /** Static "open" look (solid accent header + accent frame) for listing / detail pages. */
   solid?: boolean;
   as?: "div" | "section";
@@ -376,12 +379,41 @@ export function SectionCard({
       )}
       <div id={bodyId} hidden={collapsible && !open}>
         {children}
+        {lockedCount > 0 && <LockedRow count={lockedCount} />}
       </div>
     </Tag>
   );
 }
 
 const CARD = SECTION_CARD;
+
+/**
+ * Placeholder for items a limited (plan ended) profile doesn't show. Purely decorative bars under a
+ * blur: the real items are never sent to the browser, so there is nothing to reveal in DevTools.
+ */
+export function LockedRow({ count }: { count: number }) {
+  return (
+    <div
+      role="note"
+      aria-label={`${count} more ${count === 1 ? "item" : "items"} locked`}
+      className="relative flex min-h-14 items-center gap-3 overflow-hidden border-t border-(--surface-border) px-4 py-3 select-none"
+    >
+      <div aria-hidden className="flex w-full items-center gap-3 blur-[3px]">
+        <span className="h-9 w-9 shrink-0 rounded-[5px] bg-(--accent-soft)" />
+        <span className="flex-1 space-y-1.5">
+          <span className="block h-2.5 w-3/4 rounded-[5px] bg-(--surface-border)" />
+          <span className="block h-2 w-1/2 rounded-[5px] bg-(--surface-border)" />
+        </span>
+      </div>
+      <span className="absolute inset-0 flex items-center justify-center">
+        <span className="inline-flex items-center gap-1.5 rounded-[5px] border border-(--surface-border) bg-(--card-bg) px-2.5 py-1 text-[12px] font-semibold text-(--text)">
+          <Lock className="h-3.5 w-3.5 text-(--accent-text)" aria-hidden />
+          {count} more locked
+        </span>
+      </span>
+    </div>
+  );
+}
 
 /**
  * The one public-page Section: tinted header + connected body on the card surface.
@@ -400,6 +432,7 @@ export function Section({
   className = "",
   icon,
   solid,
+  lockedCount,
 }: {
   title: string;
   subtitle?: string;
@@ -413,9 +446,10 @@ export function Section({
   id?: string;
   className?: string;
   icon?: LucideIcon;
+  lockedCount?: number;
 }) {
   return (
-    <SectionCard as="section" id={id} className={className} icon={icon} solid={solid} title={title} subtitle={subtitle} count={count} action={action} colors={colors}>
+    <SectionCard as="section" id={id} className={className} icon={icon} solid={solid} lockedCount={lockedCount} title={title} subtitle={subtitle} count={count} action={action} colors={colors}>
       <div className={`${divided ? "divide-y divide-(--surface-border)" : ""} ${bodyClassName}`}>{children}</div>
     </SectionCard>
   );
@@ -566,8 +600,10 @@ export function SocialAccountsBlock({
   onLinkClick,
   showHeader = true,
   collapsedCount = 3,
+  lockedCount = 0,
 }: {
   groups: { groupTitle: string | null; items: AboutSocialItem[] }[];
+  lockedCount?: number;
   total: number;
   colors: AboutColors;
   /** Return false to cancel navigation (e.g. dashboard preview). */
@@ -605,7 +641,7 @@ export function SocialAccountsBlock({
   const totalItems = groups.reduce((n, g) => n + g.items.length, 0);
 
   return (
-    <SectionCard icon={AtSign} title="More of Me" subtitle="My other channels & pages." count={`${total} more`} colors={colors} showHeader={showHeader}>
+    <SectionCard icon={AtSign} title="More of Me" subtitle="My other channels & pages." count={`${total} more`} colors={colors} showHeader={showHeader} lockedCount={lockedCount}>
       <ul className="divide-y divide-(--surface-border)">
         {rows.map((row) =>
           row.kind === "label" ? (

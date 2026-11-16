@@ -1,6 +1,6 @@
 import type { RowDataPacket } from "mysql2";
 import { db } from "@/lib/db";
-import { isCreatorPublic } from "@/lib/creatorReadAccess";
+import { isCreatorPublic, isLimitedPreviewRead } from "@/lib/creatorReadAccess";
 import { apiError, apiSuccess } from "@/lib/apiResponse";
 import { getCreatorProducts } from "@/lib/productsDb";
 import { getPlanQuota } from "@/services/subscriptionLimits";
@@ -12,7 +12,7 @@ export async function GET(req: Request) {
     const username = new URL(req.url).searchParams.get("username")?.trim().replace(/^@/, "").toLowerCase();
     if (!username || username.length > 50) return apiError("A valid creator username is required.", 400);
     const [rows] = await db.query<(RowDataPacket & { id: string })[]>("SELECT id FROM creators WHERE LOWER(username) IN (?, ?) LIMIT 1", [username, `@${username}`]);
-    if (!rows[0] || !(await isCreatorPublic(rows[0].id))) return apiError("Creator profile not found.", 404);
+    if (!rows[0] || (!isLimitedPreviewRead(req) && !(await isCreatorPublic(rows[0].id)))) return apiError("Creator profile not found.", 404);
 
     const creatorId = rows[0].id;
 

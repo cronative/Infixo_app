@@ -237,7 +237,9 @@ export function WorkWithMe({
   onEnquire,
   compact = false,
   onCustomRequest,
+  lockedCount = 0,
 }: {
+  lockedCount?: number;
   packages: MediaKitPackage[];
   colors: AboutColors;
   onEnquire: (pkg: MediaKitPackage) => void;
@@ -251,6 +253,7 @@ export function WorkWithMe({
     return (
       <SectionCard
         icon={Handshake}
+        lockedCount={lockedCount}
         title="Work With Me"
         subtitle="Brands, let's create together."
         count={packages.length > 0 ? `${packages.length} ${packages.length === 1 ? "package" : "packages"}` : undefined}
@@ -315,7 +318,9 @@ export function WhatBrandsSay({
   title = "What Brands Say",
   compact = false,
   allHref,
+  lockedCount = 0,
 }: {
+  lockedCount?: number;
   reviews: CreatorReview[];
   brands: string[];
   colors: AboutColors;
@@ -335,6 +340,7 @@ export function WhatBrandsSay({
   return (
     <SectionCard
       icon={Star}
+      lockedCount={lockedCount}
       title={title}
       subtitle={compact ? "Kind words from my collabs." : "Feedback from brands I've worked with."}
       count={reviews.length > 0 ? `${reviews.length} ${reviews.length === 1 ? "review" : "reviews"}` : undefined}

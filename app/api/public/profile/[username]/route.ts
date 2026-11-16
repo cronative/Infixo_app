@@ -1,4 +1,8 @@
 import { NextResponse } from "next/server";
+import type { RowDataPacket } from "mysql2";
+import { db } from "@/lib/db";
+import { getCreatorPublicAccess, markLimitedPreviewRead } from "@/lib/creatorReadAccess";
+import { trimToPreview } from "@/lib/limitedPreview";
 import { GET as getProfile } from "@/app/api/creator/profile/route";
 import { GET as getSocials } from "@/app/api/creator/socials/route";
 import { GET as getSeries } from "@/app/api/series/route";
@@ -38,11 +42,13 @@ const SECTIONS: Record<string, [Reader, string]> = {
 const CACHE_TTL_MS = 60_000;
 const cache = new Map<string, { at: number; body: Record<string, unknown> }>();
 
-async function readSection(reader: Reader, path: string, username: string, req: Request) {
+async function readSection(reader: Reader, path: string, username: string, req: Request, limited = false) {
   try {
     const url = new URL(path, req.url);
     url.searchParams.set("username", username);
-    const response = await reader(new Request(url, { headers: req.headers }));
+    const sectionReq = new Request(url, { headers: req.headers });
+    if (limited) markLimitedPreviewRead(sectionReq);
+    const response = await reader(sectionReq);
     return await response.json();
   } catch (error) {
     console.error("Public profile section unavailable", path, error);
@@ -64,10 +70,18 @@ export async function GET(req: Request, { params }: { params: Promise<{ username
     return NextResponse.json(hit.body, { headers: { "Cache-Control": "public, max-age=0, s-maxage=60" } });
   }
 
-  const entries = await Promise.all(
-    Object.entries(SECTIONS).map(async ([key, [reader, path]]) => [key, await readSection(reader, path, username, req)] as const),
+  // Plan or free trial ended: the profile stays visible as a short preview (see trimToPreview).
+  const [creatorRows] = await db.query<(RowDataPacket & { id: string })[]>(
+    "SELECT id FROM creators WHERE LOWER(username) IN (?, ?) LIMIT 1",
+    [username, `@${username}`],
   );
-  const body = Object.fromEntries(entries);
+  const limited = Boolean(creatorRows[0]) && (await getCreatorPublicAccess(creatorRows[0].id)) === "limited";
+
+  const entries = await Promise.all(
+    Object.entries(SECTIONS).map(async ([key, [reader, path]]) => [key, await readSection(reader, path, username, req, limited)] as const),
+  );
+  const body: Record<string, unknown> = Object.fromEntries(entries);
+  if (limited) trimToPreview(body);
 
   if (anonymous) {
     if (cache.size > 1000) cache.delete(cache.keys().next().value as string);

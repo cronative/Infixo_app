@@ -1,3 +1,4 @@
+import { isCreatorPublic } from "@/lib/creatorReadAccess";
 import { db } from "@/lib/db";
 import type { RowDataPacket } from "mysql2";
 import { Series, VisibilitySettings } from "@/types";
@@ -189,7 +190,13 @@ export async function getPublicSeriesData(
     }
 
     const visibilitySettings = parseVisibilitySettings(creator.settings_visibility || creator.visibility_settings);
-    if (visibilitySettings?.showSeries === false || visibilitySettings?.showInSearchEngines === false || isTrialPrivate(creator)) {
+    // Plan or free trial ended (any plan): series detail pages don't open, the profile shows a short preview only.
+    if (
+      visibilitySettings?.showSeries === false ||
+      visibilitySettings?.showInSearchEngines === false ||
+      isTrialPrivate(creator) ||
+      !(await isCreatorPublic(String(creator.id)))
+    ) {
       return { series: null, creator: null };
     }
 
