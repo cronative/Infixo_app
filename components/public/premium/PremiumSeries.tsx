@@ -67,7 +67,7 @@ export function PremiumSeriesRow({ series, seriesHref, onOpenSeries }: PremiumSe
             blurDataURL={BLUR}
             onError={() => setCoverFailed(true)}
             style={{ objectPosition: focal }}
-            className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+            className="object-cover"
           />
         ) : (
           <span aria-hidden className="absolute inset-0 bg-gradient-to-br from-(--cover-from) to-(--cover-to)">
@@ -76,7 +76,7 @@ export function PremiumSeriesRow({ series, seriesHref, onOpenSeries }: PremiumSe
         )}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block break-words text-[13.5px] font-semibold leading-[18px] text-(--text)">{series.title}</span>
+        <span title={series.title} className="line-clamp-2 break-words text-[14px] font-semibold leading-[18px] text-(--text)">{series.title}</span>
         <span className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-1.5 text-xs text-(--text-muted)">
           <span className="shrink-0">{meta}</span>
           {platform && <span className="inline-flex items-center gap-1">{platform.icon}{platform.label}</span>}

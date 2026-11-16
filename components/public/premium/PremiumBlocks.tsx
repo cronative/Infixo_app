@@ -24,32 +24,35 @@ export interface ProductTileItem {
 export function ProductTiles({
   products,
   onProductClick,
+  previewFour = false,
 }: {
   products: ProductTileItem[];
+  /** Profile preview of 4: the 4th tile hides once the grid is 3 across. */
+  previewFour?: boolean;
   onProductClick?: (e: React.MouseEvent, p: ProductTileItem) => void;
 }) {
   return (
     <ul className="grid grid-cols-2 gap-2 p-2.5 min-[400px]:grid-cols-3">
       {products.map((p, i) => (
-        <li key={p.id} className={`min-w-0 ${i === 3 ? "min-[400px]:hidden" : ""}`}>
+        <li key={p.id} className={`min-w-0 ${previewFour && i === 3 ? "min-[400px]:hidden" : ""}`}>
           <a
             href={p.href || "#"}
             target="_blank"
             rel="noopener noreferrer sponsored"
             onClick={(e) => onProductClick?.(e, p)}
-            className="group flex h-full flex-col rounded-[6px] border border-(--surface-border) bg-(--surface) p-1.5 transition-colors hover:border-(--accent)"
+            className="group flex h-full flex-col rounded-[5px] bg-(--surface) p-1.5 transition-colors hover:bg-(--accent-soft)"
           >
-            <span className="flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-[4px] bg-(--card-bg)">
+            <span className="flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-[5px] bg-(--card-bg)">
               {p.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element -- remote product images of any host
-                <img src={p.imageUrl} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
+                <img src={p.imageUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
               ) : (
                 <Package className="h-6 w-6 text-(--icon)" />
               )}
             </span>
-            <span className="mt-1.5 block break-words px-0.5 text-[11.5px] font-medium leading-[14px] text-(--text)">{p.name}</span>
+            <span title={p.name} className="mt-1.5 line-clamp-2 break-words px-0.5 text-[12px] font-medium leading-4 text-(--text)">{p.name}</span>
             <span className="mt-auto flex items-center justify-between gap-1 px-0.5 pt-1.5">
-              <span className="text-[12px] font-bold tabular-nums leading-none text-(--text)">{p.price || ""}</span>
+              <span className="whitespace-nowrap text-[12px] font-bold tabular-nums leading-none text-(--text)">{p.price || ""}</span>
               <ExternalLink aria-hidden className="h-3.5 w-3.5 shrink-0 text-(--accent-text)" />
             </span>
           </a>
@@ -110,7 +113,7 @@ export function SetupSection({
                     <Package className="h-5 w-5 text-(--icon)" />
                   )}
                 </span>
-                <span style={{ color: colors.primary }} className="mt-1.5 line-clamp-2 text-center text-[10.5px] font-medium leading-[13px] text-(--text)">
+                <span style={{ color: colors.primary }} className="mt-1.5 line-clamp-2 text-center text-[11px] font-medium leading-[13px] text-(--text)">
                   {item.brand && !item.name.toLowerCase().startsWith(item.brand.toLowerCase()) ? `${item.brand} ${item.name}` : item.name}
                 </span>
               </>
@@ -273,10 +276,10 @@ export function CrewSection({
                   {...(s.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   aria-label={`Open ${m.name}'s ${s.label} profile`}
                   title={`${m.name} on ${s.label}`}
-                  className="flex h-8 w-8 items-center justify-center rounded-[6px] transition-transform hover:scale-105 active:scale-95"
+                  className="tap-44 flex h-8 w-8 items-center justify-center rounded-[5px] transition-transform hover:scale-105 active:scale-95"
                 >
                   {s.platform === "inflixo" ? (
-                    <span className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-[6px] border border-(--surface-border) bg-white">
+                    <span className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-[5px] border border-(--surface-border) bg-white">
                       {/* eslint-disable-next-line @next/next/no-img-element -- local brand mark */}
                       <img src="/logo-icon.svg" alt="" className="h-4 w-4 object-contain" />
                     </span>

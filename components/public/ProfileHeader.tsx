@@ -33,9 +33,8 @@ import { formatCount, initials } from "@/utils/format";
 import { BRAND_BG, BRAND_VERIFIED_FILL } from "@/lib/brandColors";
 import { InflixoWordmark } from "@/components/brand/InflixoLogo";
 import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
-import { CreatorEraBottomSheet } from "@/components/shared/CreatorEraBottomSheet";
-import { EraBadge } from "@/components/shared/EraBadge";
-import { eraRing, getEraConfig } from "@/lib/eraConfig";
+import { EraAwardMedal, EraBadge } from "@/components/shared/EraBadge";
+import { eraInk, eraRing, getEraConfig } from "@/lib/eraConfig";
 import { platformRank } from "@/components/public/about/AboutSections";
 import {
   type CreatorEra,
@@ -43,6 +42,7 @@ import {
   getMedalGradient,
   getCreatorEra,
   getEraProgress,
+  MAIN_ERAS,
 } from "@/lib/creatorEra";
 
 function getEraBadgeColors(stage?: string) {
@@ -184,27 +184,27 @@ function getPlatformMiniBadge(platform: string) {
   const p = platform.toLowerCase();
   if (p === "instagram") {
     return (
-      <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-[3px] bg-gradient-to-tr from-[#fd5949] via-[#d6249f] to-[#285AEB] text-white shrink-0">
+      <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-[5px] bg-gradient-to-tr from-[#fd5949] via-[#d6249f] to-[#285AEB] text-white shrink-0">
         <InstagramIcon className="h-2.5 w-2.5 text-white" />
       </span>
     );
   }
   if (p === "youtube") {
     return (
-      <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-[3px] bg-[#FF0000] text-white shrink-0">
+      <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-[5px] bg-[#FF0000] text-white shrink-0">
         <YoutubeIcon className="h-2.5 w-2.5 text-white" />
       </span>
     );
   }
   if (p === "facebook") {
     return (
-      <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-[3px] bg-[#1877F2] text-white shrink-0">
+      <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-[5px] bg-[#1877F2] text-white shrink-0">
         <FacebookIcon className="h-2.5 w-2.5 text-white" />
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-[3px] bg-[#18181B] text-white shrink-0">
+    <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-[5px] bg-[#18181B] text-white shrink-0">
       {getPlatformIcon(p)}
     </span>
   );
@@ -349,7 +349,6 @@ export function ProfileHeader({
     if (parts.length === 0) return null;
     return parts.join(" • ");
   }, [tagline]);
-  const [eraSheetOpen, setEraSheetOpen] = useState(false);
   // Track the failed URL (not a boolean) so a new photoUrl gets a fresh attempt; expired Instagram URLs fall back to initials.
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const cleanHandle = username.replace(/^@/, "");
@@ -361,6 +360,34 @@ export function ProfileHeader({
   const currentEra = creatorEra || (effectiveFanbase > 0 ? getCreatorEra(effectiveFanbase) : null);
   const eraProgress = getEraProgress(effectiveFanbase);
   const eraCfg = currentEra ? getEraConfig(currentEra.era) : null;
+
+  // Creator Era popover: current badge, what it means, progress to the next tier.
+  const [eraOpen, setEraOpen] = useState(false);
+  const eraRef = useRef<HTMLDivElement>(null);
+  const eraListRef = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    if (!eraOpen) return;
+    // After paint: bring the current era into view, one row below the top of the list.
+    const id = requestAnimationFrame(() => {
+      const list = eraListRef.current;
+      const cur = list?.querySelector<HTMLElement>("[data-current]");
+      if (list && cur) list.scrollTop += cur.getBoundingClientRect().top - list.getBoundingClientRect().top - 44;
+    });
+    return () => cancelAnimationFrame(id);
+  }, [eraOpen]);
+  useEffect(() => {
+    if (!eraOpen) return;
+    const onDown = (e: PointerEvent) => {
+      if (eraRef.current && !eraRef.current.contains(e.target as Node)) setEraOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setEraOpen(false);
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [eraOpen]);
 
   // Total Fans popover: per-platform counts (primary accounts only, same as the total).
   const [fansOpen, setFansOpen] = useState(false);
@@ -418,15 +445,14 @@ export function ProfileHeader({
       {/* scrolls underneath (z above content).                          */}
       {/* ============================================================== */}
       <div
-        className="relative z-30 -mx-4 sm:-mx-5 -mt-[20px] mb-2 sm:mb-2.5 flex h-11 sm:h-12 items-center justify-between gap-2 px-4 sm:px-5 rounded-none border-b border-(--divider) bg-(--card-bg) transition-shadow duration-200"
-        style={{ boxShadow: navScrolled ? "var(--nav-shadow-scrolled)" : "var(--nav-shadow)" }}
+        className="relative z-30 -mx-[var(--card-px,16px)] -mt-5 mb-2 flex h-12 items-center justify-between gap-2 px-3 rounded-none border-b border-(--divider) bg-(--card-bg)"
       >
         {/* Left: Back button (on subpages) OR Small Inflixo Logo (no tagline) */}
         <div className="shrink-0 flex items-center">
           {pageHeader ? (
             <Link
               href={pageHeader.backHref}
-              className="tap-scale flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] border border-(--surface-border)/[0.08] bg-(--card-bg)/80 text-(--text)  shadow-2xs hover:bg-(--surface)  transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
+              className="tap-scale flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] border border-(--surface-border)/[0.08] bg-(--card-bg)/80 text-(--text)   hover:bg-(--surface)  transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
               title={pageHeader.backLabel}
               aria-label={pageHeader.backLabel}
             >
@@ -435,7 +461,7 @@ export function ProfileHeader({
           ) : (
             <Link
               href="/"
-              className="tap-scale flex items-center gap-1.5 group cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden rounded-[4px] p-0.5"
+              className="tap-44 tap-scale flex items-center gap-1.5 group cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden rounded-[5px] p-0.5"
               title="Inflixo"
               aria-label="Inflixo home"
             >
@@ -449,7 +475,7 @@ export function ProfileHeader({
           {mediaKitHref && (
             <Link
               href={mediaKitHref}
-              className="tap-scale inline-flex items-center gap-1 px-2.5 py-1 rounded-[5px] border border-(--surface-border)/[0.08] bg-(--card-bg)/80 hover:bg-(--surface)  text-[11px] sm:text-xs font-semibold text-(--text)  transition-all shadow-2xs cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
+              className="tap-scale inline-flex items-center gap-1 px-2.5 py-1 rounded-[5px] border border-(--surface-border)/[0.08] bg-(--card-bg)/80 hover:bg-(--surface)  text-[11px] sm:text-xs font-semibold text-(--text)  transition-all  cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
               title="View media kit"
               aria-label="View media kit"
             >
@@ -463,7 +489,7 @@ export function ProfileHeader({
             onClick={onShareClick}
             title="Share profile"
             aria-label="Share profile"
-            className="tap-scale relative inline-flex h-9 min-w-9 items-center justify-center gap-1.5 rounded-[8px] border border-(--surface-border) bg-[color-mix(in_srgb,var(--accent)_8%,transparent)] px-0 text-(--accent) transition-colors cursor-pointer hover:bg-[color-mix(in_srgb,var(--accent)_14%,transparent)] focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden after:absolute after:-inset-1 after:content-[''] min-[360px]:px-3"
+            className="tap-scale relative inline-flex h-9 min-w-9 items-center justify-center gap-1.5 rounded-[5px] border border-(--surface-border) bg-[color-mix(in_srgb,var(--accent)_8%,transparent)] px-0 text-(--accent-text) transition-colors cursor-pointer hover:bg-[color-mix(in_srgb,var(--accent)_14%,transparent)] focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden after:absolute after:-inset-1 after:content-[''] min-[360px]:px-3"
           >
             <Share2 className="h-[18px] w-[18px] shrink-0" />
             <span className="hidden text-[13px] font-semibold min-[360px]:inline">Share</span>
@@ -477,7 +503,7 @@ export function ProfileHeader({
       <div className="flex w-full flex-col items-center gap-2.5 mt-1 sm:mt-1.5 mx-auto text-center">
         {/* LEFT: Creator Avatar (reduced slightly as requested: 68px on mobile, 76px on sm) */}
         <div className="relative shrink-0">
-          <div className="p-[2px] sm:p-[2.5px] rounded-full shadow-xs" style={{ background: eraCfg ? eraRing(eraCfg) : "var(--avatar-ring)" }}>
+          <div className="p-[2px] sm:p-[2.5px] rounded-full " style={{ background: eraCfg ? eraRing(eraCfg) : "var(--avatar-ring)" }}>
             <div className="p-[1.5px] bg-(--card-bg) rounded-full">
               <div className="relative h-[76px] w-[76px] sm:h-[84px] sm:w-[84px] rounded-full overflow-hidden bg-(--card-bg) ">
                 {hasAvatar && photoUrl ? (
@@ -504,7 +530,7 @@ export function ProfileHeader({
           {/* Proportional Verified Badge at Bottom-Right */}
           {isVerified && (
             <span
-              className="absolute bottom-0 right-0 flex h-[22px] w-[22px] sm:h-6 sm:w-6 items-center justify-center rounded-full bg-white shadow-[0_2px_6px_rgba(0,0,0,0.18)]"
+              className="absolute bottom-0 right-0 flex h-[22px] w-[22px] sm:h-6 sm:w-6 items-center justify-center rounded-full bg-white "
               title="Verified Creator"
               aria-label="Verified creator"
             >
@@ -539,7 +565,7 @@ export function ProfileHeader({
                 const hasUrl = Boolean(item.url && item.url !== "#");
 
                 const iconContent = (
-                  <span className="flex h-7 w-7 items-center justify-center rounded-[6px] border border-(--surface-border) bg-(--card-bg) text-(--text) transition-colors hover:border-(--accent) hover:text-(--accent) sm:h-8 sm:w-8">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-(--surface-border) bg-(--card-bg) text-(--text) transition-colors hover:border-(--accent-text) hover:text-(--accent-text) sm:h-8 sm:w-8">
                     {getPlatformIcon(item.platform, "h-4 w-4 sm:h-[18px] sm:w-[18px] text-current")}
                   </span>
                 );
@@ -552,7 +578,7 @@ export function ProfileHeader({
                     rel="noopener noreferrer"
                     title={`Visit ${item.label || item.platform}`}
                     aria-label={`Visit ${item.label || item.platform}`}
-                    className="tap-scale inline-flex items-center justify-center transition-transform cursor-pointer"
+                    className="tap-44 tap-scale inline-flex items-center justify-center transition-transform cursor-pointer"
                   >
                     {iconContent}
                   </a>
@@ -569,10 +595,10 @@ export function ProfileHeader({
                     type="button"
                     onClick={onWorkWithMe}
                     style={{
-                      backgroundColor: "color-mix(in srgb, var(--accent) 9%, var(--card-bg))",
-                      borderColor: "color-mix(in srgb, var(--accent) 22%, transparent)",
+                      backgroundColor: "var(--accent-soft)",
+                      borderColor: "color-mix(in srgb, var(--accent-text) 30%, transparent)",
                     }}
-                    className="tap-scale inline-flex h-7 items-center gap-1.5 rounded-[6px] border px-2.5 text-[11.5px] font-semibold text-(--accent-text) transition-opacity hover:opacity-90 cursor-pointer whitespace-nowrap focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden sm:h-8 sm:text-[13px]"
+                    className="tap-44 tap-scale inline-flex h-7 items-center gap-1.5 rounded-[5px] border px-2.5 text-[12px] font-semibold text-(--accent-text) transition-opacity hover:opacity-90 cursor-pointer whitespace-nowrap focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden sm:h-8 sm:text-[13px]"
                     title="See collab packages"
                   >
                     <Handshake className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
@@ -594,20 +620,101 @@ export function ProfileHeader({
             backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--card-bg))",
             borderColor: "color-mix(in srgb, var(--accent) 16%, var(--surface-border))",
           }}
-          className="mt-3 flex w-full items-center justify-evenly gap-1 rounded-[8px] border px-1 py-1"
+          className="mt-3 flex w-full items-center justify-evenly gap-1 rounded-[5px] border px-1 py-1"
         >
           {/* Creator Era (era colour + tier medal); opens the Era sheet */}
           {currentEra ? (
-            <div className="flex min-w-0 shrink justify-center">
+            <div ref={eraRef} className="relative flex min-w-0 shrink justify-center">
               <EraBadge
                 era={currentEra.era}
                 stage={currentEra.stage}
                 label={currentEra.badge}
                 showInfo
-                onClick={() => setEraSheetOpen(true)}
-                style={{ background: "transparent", borderColor: "transparent" }}
+                expanded={eraOpen}
+                onClick={() => {
+                  setFansOpen(false);
+                  setEraOpen((v) => !v);
+                }}
+                style={{
+                  background: "transparent",
+                  borderColor: "transparent",
+                  // Era ink pulled toward the theme text: deeper on light cards, lighter on dark ones.
+                  color: `color-mix(in srgb, ${eraInk(getEraConfig(currentEra.era).color)} 60%, var(--text))`,
+                }}
                 className="shrink-0"
               />
+              {eraOpen && <span data-popover-arrow aria-hidden className="absolute left-1/2 top-[calc(100%+3px)] z-50 h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-l border-t border-[color-mix(in_srgb,var(--accent-text)_45%,transparent)] bg-(--card-bg)" />}
+              {eraOpen && (
+                <div
+                  role="dialog"
+                  aria-label="Creator Era"
+                  className="absolute left-0 top-[calc(100%+8px)] z-40 w-[260px] overflow-hidden rounded-[5px] border border-[color-mix(in_srgb,var(--accent-text)_45%,transparent)] bg-(--card-bg) p-2 text-left backdrop-blur-md"
+                >
+                  <div className="flex items-center gap-2 px-1.5 pb-2">
+                    <EraAwardMedal era={currentEra.era} stage={currentEra.stage} size={28} />
+                    <span className="min-w-0">
+                      <span className="block text-[13px] font-semibold leading-[18px] text-(--text)">{currentEra.badge}</span>
+                      <span className="block text-[11px] leading-4 text-(--text-muted)">{getEraConfig(currentEra.era).award} award</span>
+                    </span>
+                  </div>
+                  <p className="px-1.5 pb-2 text-[12px] leading-snug text-(--text-secondary)">
+                    Every fan is a step forward. Creator Era is made by Inflixo&apos;s AI to celebrate a creator&apos;s journey, from the first spark to legend. It grows with the fans on their Instagram, YouTube &amp; Facebook, so every milestone feels like a win worth chasing.
+                  </p>
+                  <div className="border-t border-(--surface-border) px-1.5 pt-2">
+                    {eraProgress.nextBadge ? (
+                      <>
+                        <div className="flex items-center justify-between gap-2 text-[12px]">
+                          <span className="text-(--text-muted)">Next: <span className="font-semibold text-(--text)">{eraProgress.nextBadge}</span></span>
+                          <span className="shrink-0 font-semibold tabular-nums text-(--text)">{eraProgress.progressPercent}%</span>
+                        </div>
+                        <div
+                          role="progressbar"
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                          aria-valuenow={eraProgress.progressPercent}
+                          aria-label={`Progress to ${eraProgress.nextBadge}`}
+                          className="mt-1.5 h-1.5 w-full overflow-hidden rounded-[5px] bg-(--surface)"
+                        >
+                          <div className="h-full rounded-[5px] bg-(--accent-text)" style={{ width: `${eraProgress.progressPercent}%` }} />
+                        </div>
+                        <p className="mt-1.5 text-[11px] text-(--text-muted)">
+                          <span className="font-semibold tabular-nums text-(--text)">{formatFans(eraProgress.fansNeeded)}</span> more fans to go
+                        </p>
+                      </>
+                    ) : (
+                      <p className="text-[12px] text-(--text-muted)">Top era reached. Legendary! 👑</p>
+                    )}
+                  </div>
+                  {/* All eras, scrollable inside the popover (current era scrolled into view). */}
+                  <div className="-mx-2 -mb-2 mt-2 border-t border-(--surface-border) pt-2">
+                    <p className="px-3.5 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-(--text-muted)">All eras</p>
+                    {/* Full-width 1px dividers between eras (edge to edge of the popover). */}
+                    <ul ref={eraListRef} className="max-h-[188px] divide-y divide-(--surface-border) overflow-y-auto overscroll-contain border-t border-(--surface-border)">
+                      {MAIN_ERAS.map((e, i) => {
+                        const isCurrent = e.name === currentEra.era;
+                        const reached = i <= MAIN_ERAS.findIndex((x) => x.name === currentEra.era);
+                        return (
+                          <li
+                            key={e.name}
+                            data-current={isCurrent || undefined}
+                            aria-current={isCurrent ? "true" : undefined}
+                            className={`flex items-center gap-2 px-3.5 py-2 ${isCurrent ? "bg-(--accent-soft)" : ""}`}
+                          >
+                            <EraAwardMedal era={e.name} stage={isCurrent ? currentEra.stage : "Gold"} size={22} className={reached ? "" : "opacity-50"} />
+                            <span className="min-w-0 flex-1">
+                              <span className={`block text-[12px] font-semibold leading-4 ${isCurrent ? "text-(--accent-text)" : reached ? "text-(--text)" : "text-(--text-muted)"}`}>
+                                {e.name}
+                              </span>
+                              <span className="block text-[11px] leading-4 text-(--text-muted)">{getEraConfig(e.name).award}</span>
+                            </span>
+                            {isCurrent && <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-(--accent-text)">Now</span>}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                </div>
+              )}
             </div>
           ) : null}
 
@@ -617,43 +724,47 @@ export function ProfileHeader({
           <div ref={fansRef} className="relative flex shrink-0 justify-center">
             <button
               type="button"
-              onClick={() => setFansOpen((v) => !v)}
+              onClick={() => {
+                setEraOpen(false);
+                setFansOpen((v) => !v);
+              }}
               aria-expanded={fansOpen}
               aria-haspopup="dialog"
-              className="tap-scale inline-flex h-8 items-center gap-1.5 rounded-[6px] px-2 transition-colors cursor-pointer hover:bg-(--surface)/60 focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden sm:h-9"
+              className="tap-44 tap-scale inline-flex h-8 items-center gap-1.5 rounded-[5px] px-2 transition-colors cursor-pointer hover:bg-(--surface)/60 focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden sm:h-9"
               title="See fans by platform"
             >
               <Users className="h-4 w-4 shrink-0 text-(--accent-text) sm:h-[18px] sm:w-[18px]" aria-hidden />
-              <span className="text-[12.5px] sm:text-sm font-bold text-(--text) tabular-nums leading-none">{formatFans(effectiveFanbase)}</span>
-              <span className="text-[11.5px] sm:text-[13px] text-(--text-muted) leading-none whitespace-nowrap"><span className="hidden min-[400px]:inline">Total </span>Fans</span>
+              <span className="text-[13px] sm:text-sm font-bold text-(--text) tabular-nums leading-none">{formatFans(effectiveFanbase)}</span>
+              <span className="text-[12px] sm:text-[13px] text-(--text-muted) leading-none whitespace-nowrap"><span className="hidden min-[400px]:inline">Total </span>Fans</span>
               <Info className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0 text-(--text-muted)" aria-hidden />
             </button>
 
+            {fansOpen && <span data-popover-arrow aria-hidden className="absolute left-1/2 top-[calc(100%+3px)] z-50 h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-l border-t border-[color-mix(in_srgb,var(--accent-text)_45%,transparent)] bg-(--card-bg)" />}
             {fansOpen && (
               <div
                 role="dialog"
                 aria-label="Fans by platform"
-                className="absolute right-0 top-[calc(100%+6px)] z-40 w-[248px] rounded-[8px] border border-[#E4E4E7] bg-white p-2 text-left shadow-[0_10px_30px_rgba(0,0,0,0.14)]"
+                className="absolute right-0 top-[calc(100%+8px)] z-40 w-[248px] rounded-[5px] border border-[color-mix(in_srgb,var(--accent-text)_45%,transparent)] bg-(--card-bg) p-2 text-left backdrop-blur-md"
               >
-                <p className="px-1.5 pb-2 text-[12px] leading-snug text-[#52525B]">
+                <p className="px-1.5 pb-2 text-[12px] leading-snug text-(--text-secondary)">
                   Total Fans is your combined audience from your primary Instagram, YouTube &amp; Facebook accounts, calculated by Inflixo AI.
                 </p>
                 {fanPlatforms.length === 0 ? (
-                  <p className="px-1.5 py-1.5 text-xs text-[#6B6B76]">No platform counts yet.</p>
+                  <p className="px-1.5 py-1.5 text-xs text-(--text-muted)">No platform counts yet.</p>
                 ) : (
                   <ul>
                     {fanPlatforms.map((p) => (
                       <li key={p.platform} className="flex items-center gap-2 rounded-[5px] px-1.5 py-1.5">
                         {getPlatformCardIcon(p.platform)}
-                        <span className="min-w-0 flex-1 truncate text-[13px] text-[#18181B] capitalize">{p.label || p.platform}</span>
-                        <span className="text-[13px] font-semibold text-[#18181B] tabular-nums">{formatFans(p.count)}</span>
+                        <span className="min-w-0 flex-1 truncate text-[13px] text-(--text) capitalize">{p.label || p.platform}</span>
+                        <span className="text-[13px] font-semibold text-(--text) tabular-nums">{formatFans(p.count)}</span>
                       </li>
                     ))}
                   </ul>
                 )}
-                <div className="mt-1 flex items-center justify-between border-t border-[#F4F4F5] px-1.5 pt-1.5 text-[12px]">
-                  <span className="text-[#6B6B76]">Total</span>
-                  <span className="font-semibold text-[#18181B] tabular-nums">{formatFans(effectiveFanbase)}</span>
+                <div className="mt-1 flex items-center justify-between border-t border-(--surface-border) px-1.5 pt-1.5 text-[12px]">
+                  <span className="text-(--text-muted)">Total</span>
+                  <span className="font-semibold text-(--text) tabular-nums">{formatFans(effectiveFanbase)}</span>
                 </div>
               </div>
             )}
@@ -661,25 +772,6 @@ export function ProfileHeader({
         </div>
       )}
 
-      {currentEra && (
-        <CreatorEraBottomSheet
-          isOpen={eraSheetOpen}
-          onClose={() => setEraSheetOpen(false)}
-          era={currentEra}
-          totalFans={effectiveFanbase}
-          creatorName={displayName}
-          creatorUsername={cleanHandle}
-          isCreatorView={false}
-          primaryAccounts={socialList
-            .filter((s) => s.handle || (typeof s.count === "number" && s.count > 0))
-            .map((s) => ({
-              platform: s.platform,
-              username: s.handle || s.label || "",
-              count: s.count,
-              url: s.url,
-            }))}
-        />
-      )}
     </header>
   );
 }

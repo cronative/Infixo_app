@@ -80,7 +80,7 @@ export function ProductGridCard({
     <button
       type="button"
       onClick={handleCopyCoupon}
-      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] border border-dashed border-[#7A2253]/40 bg-[#FFF5F8] text-[#7A2253] text-[10.5px] font-semibold cursor-pointer hover:bg-[#FCE7F1] transition-colors shrink-0 max-w-full truncate"
+      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[5px] border border-dashed border-[#7A2253]/40 bg-[#FFF5F8] text-[#7A2253] text-[11px] font-semibold cursor-pointer hover:bg-[#FCE7F1] transition-colors shrink-0 max-w-full truncate"
       title="Click to copy coupon code"
     >
       <span className="truncate">{copied ? "Coupon copied!" : `Code: ${couponCode}`}</span>
@@ -96,7 +96,7 @@ export function ProductGridCard({
         </span>
       )}
       {discountText && (
-        <span className="text-[10.5px] sm:text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 rounded-[3px] px-1 py-0.2">
+        <span className="text-[11px] sm:text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 rounded-[5px] px-1 py-0.2">
           {price ? `· ${discountText}` : discountText}
         </span>
       )}
@@ -106,7 +106,7 @@ export function ProductGridCard({
   const body = horizontal ? (
     <div className="relative flex flex-row items-stretch w-full gap-3">
       {isTopPick && (
-        <span className="absolute -top-1 -right-1 z-10 inline-flex items-center gap-1 rounded-[4px] bg-amber-500 text-white px-1.5 py-0.5 text-[9.5px] font-bold shadow-xs">
+        <span className="absolute -top-1 -right-1 z-10 inline-flex items-center gap-1 rounded-[5px] bg-amber-500 text-white px-1.5 py-0.5 text-[10px] font-bold ">
           ⭐ Top Pick
         </span>
       )}
@@ -120,7 +120,7 @@ export function ProductGridCard({
       <div className="flex min-w-0 flex-1 flex-col justify-between gap-1">
         <div className="space-y-0.5 min-w-0">
           <h3
-            className="text-[13px] sm:text-[13.5px] font-medium text-(--text) leading-[18px] break-words"
+            className="text-[13px] sm:text-[14px] font-medium text-(--text) leading-[18px] break-words"
             title={name}
           >
             {name}
@@ -141,7 +141,7 @@ export function ProductGridCard({
 
         <div className="mt-auto flex items-center justify-between gap-1 pt-1">
           {isAffiliate ? (
-            <span className="rounded-[3px] bg-transparent border border-(--surface-border) px-1.5 py-0.5 text-[10px] font-medium text-(--text-muted)">
+            <span className="rounded-[5px] bg-transparent border border-(--surface-border) px-1.5 py-0.5 text-[10px] font-medium text-(--text-muted)">
               Affiliate
             </span>
           ) : (
@@ -159,7 +159,7 @@ export function ProductGridCard({
   ) : (
     <div className="relative flex flex-col h-full w-full">
       {isTopPick && (
-        <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 rounded-[4px] bg-amber-500 text-white px-1.5 py-0.5 text-[9.5px] font-bold shadow-xs">
+        <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 rounded-[5px] bg-amber-500 text-white px-1.5 py-0.5 text-[10px] font-bold ">
           ⭐ Top Pick
         </span>
       )}
@@ -192,7 +192,7 @@ export function ProductGridCard({
 
         <div className="mt-auto flex items-center justify-between gap-1 pt-1.5">
           {isAffiliate ? (
-            <span className="rounded-[3px] bg-transparent border border-(--surface-border) px-1.5 py-0.5 text-[10px] font-medium text-(--text-muted)">
+            <span className="rounded-[5px] bg-transparent border border-(--surface-border) px-1.5 py-0.5 text-[10px] font-medium text-(--text-muted)">
               Affiliate
             </span>
           ) : (

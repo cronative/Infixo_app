@@ -151,14 +151,14 @@ export function LinkGroupRow({
         <div className="flex items-center gap-3 min-w-0 flex-1">
           {/* Folder Icon Tile */}
           <div
-            className={`${flat ? "w-8 h-8" : "w-7 h-7"} rounded-[4px] shrink-0 flex items-center justify-center shadow-none transition-colors ${themeConfig.folderIcon}`}
+            className={`${flat ? "w-8 h-8" : "w-7 h-7"} rounded-[5px] shrink-0 flex items-center justify-center shadow-none transition-colors ${themeConfig.folderIcon}`}
           >
             <Folder className="h-4 w-4" />
           </div>
 
           {/* Group Title + Subtitle */}
           <div className="min-w-0 flex-1 flex flex-col justify-center">
-            <span className="text-[13px] font-medium text-(--text) truncate leading-[18px]">
+            <span title={group.title} className="line-clamp-2 break-words text-[13px] font-medium text-(--text) leading-[18px]">
               {group.title}
             </span>
             <span className="text-xs text-(--text-muted) font-normal truncate leading-[17px] mt-0.5">
@@ -178,7 +178,7 @@ export function LinkGroupRow({
               <div
                 key={entry.id || idx}
                 title={entry.title}
-                className={`w-5 h-5 rounded-full ring-2 ring-(--card-bg) shrink-0 flex items-center justify-center overflow-hidden shadow-xs ${
+                className={`w-5 h-5 rounded-full ring-2 ring-(--card-bg) shrink-0 flex items-center justify-center overflow-hidden  ${
  entry.bgClass
                 }`}
                 style={{ zIndex: 10 - idx }}

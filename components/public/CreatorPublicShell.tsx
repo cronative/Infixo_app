@@ -74,7 +74,7 @@ export function CreatorPublicShell({
 
       {/* 4. Centered card column with 20px top & bottom padding */}
       <main
-        className={`relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[620px] px-2.5 sm:px-3 py-[20px] animate-fade-in-up ${mainClassName}`}
+        className={`relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[496px] px-2 py-5 animate-fade-in-up ${mainClassName}`}
       >
         {children}
       </main>

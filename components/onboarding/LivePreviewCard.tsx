@@ -554,7 +554,7 @@ function ExpandableText({
           style={buttonStyle}
           className={
             buttonClassName ||
-            "ml-1 inline-flex items-center text-[11px] sm:text-xs font-bold hover:underline cursor-pointer select-none"
+            "tap-44 ml-1 inline-flex items-center text-[11px] sm:text-xs font-bold hover:underline cursor-pointer select-none"
           }
         >
           {expanded ? "Show less" : "Read more"}
@@ -582,7 +582,7 @@ function ExpandableText({
           style={buttonStyle}
           className={
             buttonClassName ||
-            "mt-0.5 inline-block text-[11px] sm:text-xs font-semibold hover:underline cursor-pointer select-none opacity-90 hover:opacity-100"
+            "tap-44 mt-0.5 inline-block text-[11px] sm:text-xs font-semibold hover:underline cursor-pointer select-none opacity-90 hover:opacity-100"
           }
         >
           {expanded ? "Show less" : "Read more"}
@@ -1271,7 +1271,7 @@ export function LivePreviewCard({
       label: "Instagram",
       name: safeSocials.instagram?.name,
       icon: <InstagramIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-gradient-to-tr from-(--accent) via-(--accent) to-(--accent) shadow-xs",
+      badgeBg: "bg-gradient-to-tr from-(--accent) via-(--accent) to-(--accent) ",
       handle: instaHandle,
       count: safeSocials.instagram?.followers || 0,
       unit: "Followers",
@@ -1284,7 +1284,7 @@ export function LivePreviewCard({
       label: "YouTube",
       name: safeSocials.youtube?.channelTitle,
       icon: <YoutubeIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-(--accent) shadow-xs",
+      badgeBg: "bg-(--accent) ",
       handle: ytHandle,
       count: safeSocials.youtube?.subscribers || 0,
       unit: "Subscribers",
@@ -1297,7 +1297,7 @@ export function LivePreviewCard({
       label: "Facebook",
       name: safeSocials.facebook?.name,
       icon: <FacebookIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-(--accent) shadow-xs",
+      badgeBg: "bg-(--accent) ",
       handle: fbHandle,
       count: safeSocials.facebook?.followers || 0,
       unit: "Followers",
@@ -1310,7 +1310,7 @@ export function LivePreviewCard({
       label: "X (Twitter)",
       name: safeSocials.twitter?.name,
       icon: <XTwitterIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-(--text) shadow-xs",
+      badgeBg: "bg-(--text) ",
       handle: twHandle,
       count: safeSocials.twitter?.followers || 0,
       unit: "Followers",
@@ -1323,7 +1323,7 @@ export function LivePreviewCard({
       label: "LinkedIn",
       name: safeSocials.linkedin?.name,
       icon: <LinkedinIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-(--accent) shadow-xs",
+      badgeBg: "bg-(--accent) ",
       handle: liHandle,
       count: safeSocials.linkedin?.followers || 0,
       unit: "Connections",
@@ -1336,7 +1336,7 @@ export function LivePreviewCard({
       label: "Threads",
       name: safeSocials.threads?.name,
       icon: <ThreadsIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-(--text) shadow-xs",
+      badgeBg: "bg-(--text) ",
       handle: thHandle,
       count: safeSocials.threads?.followers || 0,
       unit: "Followers",
@@ -1349,7 +1349,7 @@ export function LivePreviewCard({
       label: "Snapchat",
       name: safeSocials.snapchat?.name,
       icon: <SnapchatIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-(--accent) shadow-xs",
+      badgeBg: "bg-(--accent) ",
       handle: scHandle,
       count: safeSocials.snapchat?.followers || 0,
       unit: "Subscribers",
@@ -1362,7 +1362,7 @@ export function LivePreviewCard({
       label: "Pinterest",
       name: safeSocials.pinterest?.name,
       icon: <PinterestIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-(--accent) shadow-xs",
+      badgeBg: "bg-(--accent) ",
       handle: pinHandle,
       count: safeSocials.pinterest?.followers || 0,
       unit: "Followers",
@@ -1375,7 +1375,7 @@ export function LivePreviewCard({
       label: "Twitch",
       name: safeSocials.twitch?.name,
       icon: <TwitchIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-(--accent) shadow-xs",
+      badgeBg: "bg-(--accent) ",
       handle: twiHandle,
       count: safeSocials.twitch?.followers || 0,
       unit: "Followers",
@@ -1388,7 +1388,7 @@ export function LivePreviewCard({
       label: "Spotify",
       name: safeSocials.spotify?.name,
       icon: <SpotifyIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-(--accent) shadow-xs",
+      badgeBg: "bg-(--accent) ",
       handle: spHandle,
       count: safeSocials.spotify?.followers || 0,
       unit: "Listeners",
@@ -1401,7 +1401,7 @@ export function LivePreviewCard({
       label: "TikTok",
       name: safeSocials.tiktok?.name,
       icon: <TikTokIcon className="h-4 w-4 text-white" />,
-      badgeBg: "bg-black shadow-xs",
+      badgeBg: "bg-black ",
       handle: ttHandle,
       count: safeSocials.tiktok?.followers || 0,
       unit: "Followers",
@@ -1882,8 +1882,8 @@ export function LivePreviewCard({
         containedScroll ? "min-h-0 h-full max-h-full" : "min-h-full"
       } ${
         isPublicSurface
-          ? "px-4 pt-[20px] sm:px-5 sm:pt-[20px] rounded-[5px] border profile-card-glass"
-          : `${cardPadding ? cardPadding : "px-4 sm:px-5 pt-[20px]"} rounded-[5px] border shadow-none`
+          ? "px-(--card-px) pt-5 [--card-px:8px] sm:[--card-px:12px] rounded-[5px] border profile-card-glass"
+          : `${cardPadding ? cardPadding : "px-4 sm:px-5 pt-[20px]"} [--card-px:16px] sm:[--card-px:20px] rounded-[5px] border shadow-none`
       } transition-all`}
     >
       {/* Ambient Animation in Preview mode when theme supports it */}
@@ -1963,7 +1963,7 @@ export function LivePreviewCard({
 
         {/* Navigation Tabs Bar - Fixed at bottom of top header (Never scrolls) */}
         {isTabsLayout && (
-          <div className="relative z-20 mt-1.5 sm:mt-2 -mx-4 sm:-mx-5 text-left select-none border-y border-solid border-(--divider) bg-transparent">
+          <div className="relative z-20 mt-1.5 sm:mt-2 -mx-(--card-px) text-left select-none border-y border-solid border-(--divider) bg-transparent">
             <div
               ref={navScrollRef}
               role="tablist"
@@ -1984,7 +1984,7 @@ export function LivePreviewCard({
                     aria-selected={isActive}
                     onClick={() => handleTabChange(tab.id)}
                     style={{ color: isActive ? "var(--tab-active)" : "var(--tab-inactive)" }}
-                    className={`group/tab relative flex-1 min-w-0 shrink-0 flex items-center justify-center gap-1 sm:gap-1.5 px-1.5 min-[360px]:px-2 sm:px-3 py-1.5 sm:py-2 min-h-[38px] sm:min-h-[40px] rounded-none text-[11px] min-[360px]:text-[11.5px] sm:text-xs md:text-[12.5px] font-bold border-r border-solid border-(--divider) last:border-r-0 transition-colors duration-150 cursor-pointer whitespace-nowrap select-none bg-transparent ${isActive
+                    className={`group/tab relative flex-1 min-w-0 shrink-0 flex items-center justify-center gap-1 sm:gap-1.5 px-1.5 min-[360px]:px-2 sm:px-3 py-1.5 sm:py-2 min-h-[38px] sm:min-h-[40px] rounded-none text-[11px] min-[360px]:text-[12px] sm:text-xs md:text-[13px] font-bold border-r border-solid border-(--divider) last:border-r-0 transition-colors duration-150 cursor-pointer whitespace-nowrap select-none bg-transparent ${isActive
                         ? ""
                         : "hover:bg-(--surface)/80 hover:text-(--text)"
                       }`}
@@ -2011,7 +2011,7 @@ export function LivePreviewCard({
                             ? "var(--tab-active)"
                             : "var(--tab-inactive)",
                         }}
-                        className="text-[9px] sm:text-[9.5px] font-black px-1.5 py-0.5 rounded-[3px] tabular-nums shrink-0"
+                        className="text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded-[5px] tabular-nums shrink-0"
                       >
                         {tab.count}
                       </span>
@@ -2025,7 +2025,7 @@ export function LivePreviewCard({
 
         {/* Divider below ProfileHeader on Standalone Listing Pages & Dashboard Previews */}
         {isListingPage && (
-          <div className="relative z-20 mt-2.5 sm:mt-3 -mx-4 sm:-mx-5 select-none bg-(--card-bg)">
+          <div className="relative z-20 mt-2.5 sm:mt-3 -mx-(--card-px) select-none bg-(--card-bg)">
             <div style={{ backgroundColor: c.divider }} className="h-px opacity-60" aria-hidden="true" />
 
             {/* Title & Subtitle for Reviews */}
@@ -2151,7 +2151,7 @@ export function LivePreviewCard({
                         backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
                         borderColor: "var(--surface-border)",
                       }}
-                      className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
+                      className="text-[11px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[5px] border uppercase tracking-wider shrink-0"
                     >
                       Bio &amp; Reach
                     </span>
@@ -2171,7 +2171,7 @@ export function LivePreviewCard({
                     <ExpandableText
                       text={profile.bio}
                       style={{ color: c.primaryText }}
-                      className="text-xs sm:text-[12.5px] leading-relaxed font-normal break-words"
+                      className="text-xs sm:text-[13px] leading-relaxed font-normal break-words"
                       buttonStyle={{ color: c.accentText || c.primaryText }}
                       buttonClassName="mt-1 inline-flex items-center gap-0.5 text-[11px] font-bold hover:underline cursor-pointer select-none"
                     />
@@ -2283,7 +2283,7 @@ export function LivePreviewCard({
                         backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
                         borderColor: "var(--surface-border)",
                       }}
-                      className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
+                      className="text-[11px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[5px] border uppercase tracking-wider shrink-0"
                     >
                       {activeSetupItems.length} {activeSetupItems.length === 1 ? "Item" : "Items"}
                     </span>
@@ -2396,7 +2396,7 @@ export function LivePreviewCard({
                       backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
                       borderColor: "var(--surface-border)",
                     }}
-                    className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
+                    className="text-[11px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[5px] border uppercase tracking-wider shrink-0"
                   >
                     {extraSocialCards.length} More
                   </span>
@@ -2513,8 +2513,9 @@ export function LivePreviewCard({
               >
                 <Section
                   icon={Link2}
-                  title={isPremiumLayout ? "My Links" : "Links"}
-                  subtitle={isPremiumLayout ? "Things I want you to see." : "Links, tickets & websites"}
+                  solid={linksOnlyMode}
+                  title={isPremiumLayout || linksOnlyMode ? "My Links" : "Links"}
+                  subtitle={isPremiumLayout || linksOnlyMode ? "Things I want you to see." : "Links, tickets & websites"}
                   count={`${validLinks.length} ${validLinks.length === 1 ? "link" : "links"}`}
                   colors={aboutColors}
                 >
@@ -2626,7 +2627,7 @@ export function LivePreviewCard({
             >
             {availableSeriesPlatforms.length > 0 && (
               <div className="border-b border-(--surface-border) px-3 py-2 sm:px-3.5">
-                  <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                  <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto overflow-y-hidden no-scrollbar py-2 -my-1.5">
                     {["All", ...availableSeriesPlatforms].map((plat) => {
                       const isActive = seriesFilter.toLowerCase() === plat.toLowerCase();
                       return (
@@ -2634,9 +2635,9 @@ export function LivePreviewCard({
                           key={plat}
                           type="button"
                           onClick={() => setSeriesFilter(plat)}
-                          className={`tap-scale px-2.5 py-1 text-[11px] sm:text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap shrink-0 border ${
+                          className={`tap-44 tap-scale px-2.5 py-1 text-[11px] sm:text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap shrink-0 border ${
                             isActive
-                              ? "bg-(--accent) text-(--on-accent) border-(--accent) shadow-xs"
+                              ? "bg-(--accent) text-(--on-accent) border-(--accent) "
                               : "bg-(--card-bg) text-(--text-muted) border-(--surface-border) hover:text-(--text) hover:bg-(--surface)"
                           }`}
                         >
@@ -2804,8 +2805,9 @@ export function LivePreviewCard({
           <section id="shop-section" aria-label="Shop" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[3] mt-2 scroll-mt-14" : productsOnlyMode ? "order-[15] mt-1.5 sm:mt-2" : isTabsLayout ? "order-[15] mt-1.5 sm:mt-2" : "order-[15] mt-6 sm:mt-7 space-y-2.5"}`}>
             <Section
               icon={ShoppingBag}
-              title={landingDemo ? "Digital products" : isPremiumLayout ? "My Shop" : "Shop"}
-              subtitle={isPremiumLayout ? "Products I'm excited to recommend." : "Products I use and recommend."}
+              solid={productsOnlyMode}
+              title={landingDemo ? "Digital products" : isPremiumLayout || productsOnlyMode ? "My Shop" : "Shop"}
+              subtitle={isPremiumLayout || productsOnlyMode ? "Products I proudly recommend." : "Products I use and recommend."}
               count={products && products.length > 0 ? `${products.length} ${products.length === 1 ? "product" : "products"}` : undefined}
               action={
                 isPremiumLayout && sortedProducts.length > 6
@@ -2840,7 +2842,7 @@ export function LivePreviewCard({
                       </button>
 
                       {isShopSortOpen && (
-                        <div className="absolute right-0 top-full mt-1.5 z-30 min-w-[150px] rounded-[5px] border border-(--surface-border) bg-(--card-bg) p-1 shadow-lg animate-in fade-in zoom-in-95">
+                        <div className="absolute right-0 top-full mt-1.5 z-30 min-w-[150px] rounded-[5px] border border-(--surface-border) bg-(--card-bg) p-1  animate-in fade-in zoom-in-95">
                           <button
                             type="button"
                             onClick={() => { setShopSortOrder("latest"); setIsShopSortOpen(false); }}
@@ -2883,10 +2885,11 @@ export function LivePreviewCard({
                   Products will appear here once added.
                 </p>
               </div>
-            ) : isPremiumLayout ? (
+            ) : isPremiumLayout || productsOnlyMode ? (
               <ProductTiles
-                // 4 tiles: a full 2x2 on small phones; the 4th hides once the grid is 3 across.
-                products={sortedProducts.slice(0, 4).map((product: CreatorProduct) => ({
+                // Profile: 4 tiles (a full 2x2 on small phones; the 4th hides once the grid is 3 across). Shop page: all.
+                previewFour={!productsOnlyMode}
+                products={(productsOnlyMode ? sortedProducts : sortedProducts.slice(0, 4)).map((product: CreatorProduct) => ({
                   id: product.id,
                   name: product.name,
                   imageUrl: product.imageUrl || (product as any).image || "",
@@ -2964,7 +2967,7 @@ export function LivePreviewCard({
 
             {/* Affiliate Disclaimer: inside content at bottom, ONLY IF at least one product has is_affiliate = true */}
             {products && products.some((p) => p.isAffiliate) && (
-              <p className="border-t border-(--surface-border) px-3 py-2 text-center text-[10px] sm:text-[10.5px] opacity-70" style={{ color: c.mutedText }}>
+              <p className="border-t border-(--surface-border) px-3 py-2 text-center text-[10px] sm:text-[11px] opacity-70" style={{ color: c.mutedText }}>
                 Some links are affiliate links.
               </p>
             )}
@@ -3001,7 +3004,7 @@ export function LivePreviewCard({
               teamOnlyMode
                 ? "order-[5] mt-1 sm:mt-1.5"
                 : isPremiumLayout
-                ? "order-[8] mt-5 sm:mt-6 p-3.5 sm:p-4 rounded-[5px] border shadow-xs space-y-3"
+                ? "order-[8] mt-5 sm:mt-6 p-3.5 sm:p-4 rounded-[5px] border  space-y-3"
                 : isTabsLayout
                 ? "order-[25] mt-1.5 sm:mt-2"
                 : "order-[25] mt-6 sm:mt-7"
@@ -3018,7 +3021,7 @@ export function LivePreviewCard({
                       backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
                       borderColor: "var(--surface-border)",
                     }}
-                    className="text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[4px] border uppercase tracking-wider shrink-0"
+                    className="text-[11px] sm:text-[11px] font-bold px-2 py-0.5 rounded-[5px] border uppercase tracking-wider shrink-0"
                   >
                     {activeTeamMembers.length} {activeTeamMembers.length === 1 ? "Member" : "Members"}
                   </span>
@@ -3248,7 +3251,7 @@ export function LivePreviewCard({
                     >
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2 min-w-0">
-                          <div className="h-7 w-7 rounded-lg bg-(--accent)/10 text-(--accent-text) font-bold text-xs flex items-center justify-center shrink-0">
+                          <div className="h-7 w-7 rounded-[5px] bg-(--accent)/10 text-(--accent-text) font-bold text-xs flex items-center justify-center shrink-0">
                             {getInitials(rev.clientName, "B")}
                           </div>
                           <div className="min-w-0">
@@ -3356,7 +3359,7 @@ export function LivePreviewCard({
 
         {/* Normal document flow footer at bottom of scrollable area: full width spanning card borders with zero bottom padding */}
         {!hideFooter && (
-          <div ref={footerRef} className="order-[80] mt-auto pt-4 shrink-0 select-none -mx-4 sm:-mx-5 -mb-6 rounded-none rounded-b-[5px] overflow-hidden">
+          <div ref={footerRef} className="order-[80] mt-auto pt-4 shrink-0 select-none -mx-(--card-px) -mb-6 rounded-none rounded-b-[5px] overflow-hidden">
             <MadeWithInflixo
               variant="card-footer"
               disabled={isInformationalMode}
@@ -3377,7 +3380,7 @@ export function LivePreviewCard({
             boxShadow: eff.shadow,
             ["--mt-lift" as string]: `${moveTopLift}px`,
           }}
-          className="tap-scale fixed bottom-[calc(1rem+env(safe-area-inset-bottom)+var(--mt-lift,0px))] right-4 sm:right-[max(1rem,calc((100vw-580px)/2-3.75rem))] z-40 inline-flex h-10 w-10 sm:h-11 sm:w-11 opacity-90 hover:opacity-100 items-center justify-center rounded-[5px] shadow-lg transition-all hover:scale-110 cursor-pointer"
+          className="tap-scale fixed bottom-[calc(1rem+env(safe-area-inset-bottom)+var(--mt-lift,0px))] right-4 sm:right-[max(1rem,calc((100vw-580px)/2-3.75rem))] z-40 inline-flex h-10 w-10 sm:h-11 sm:w-11 opacity-90 hover:opacity-100 items-center justify-center rounded-[5px]  transition-all hover:scale-110 cursor-pointer"
           aria-label="Scroll to top"
           title="Scroll to top"
         >
@@ -3388,7 +3391,7 @@ export function LivePreviewCard({
   );
 
   return (
-    <div className={`relative w-full mx-auto flex-1 min-h-0 h-full max-h-full flex flex-col transition-all ${isFull ? "max-w-[580px]" : "max-w-[560px]"}`}>
+    <div className={`relative w-full mx-auto flex-1 min-h-0 h-full max-h-full flex flex-col transition-all ${isPublicSurface ? "max-w-[480px]" : isFull ? "max-w-[580px]" : "max-w-[560px]"}`}>
       {isPremiumLayout ? (
         <SolidSectionsProvider>{cardContent}</SolidSectionsProvider>
       ) : (
@@ -3484,7 +3487,7 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
     return {
       name: "YouTube",
       icon: <YoutubeIcon className="h-3 w-3 text-white" />,
-      badgeClass: `${BRAND_BG.youtube} text-white shadow-2xs`,
+      badgeClass: `${BRAND_BG.youtube} text-white `,
       chipClass: "bg-(--accent-soft) text-(--accent-text) border-(--surface-border)/80",
       textColor: BRAND_TEXT.youtube,
     };
@@ -3493,7 +3496,7 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
     return {
       name: "Instagram",
       icon: <InstagramIcon className="h-3 w-3 text-white" />,
-      badgeClass: "bg-(--accent) text-(--on-accent) shadow-2xs",
+      badgeClass: "bg-(--accent) text-(--on-accent) ",
       chipClass: "bg-(--accent-soft) text-(--accent-text) border-(--surface-border)/80",
       textColor: "text-(--accent-text)",
     };
@@ -3502,7 +3505,7 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
     return {
       name: "Facebook",
       icon: <FacebookIcon className="h-3 w-3 text-white" />,
-      badgeClass: `${BRAND_BG.facebook} text-white shadow-2xs`,
+      badgeClass: `${BRAND_BG.facebook} text-white `,
       chipClass: "bg-(--accent-soft) text-(--accent-text) border-(--surface-border)/80",
       textColor: BRAND_TEXT.facebook,
     };
@@ -3510,7 +3513,7 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   return {
     name: platformStr || "Web",
     icon: <Film className="h-3 w-3 text-white" />,
-    badgeClass: "bg-(--accent) text-(--on-accent) shadow-2xs",
+    badgeClass: "bg-(--accent) text-(--on-accent) ",
     chipClass: "bg-(--accent-soft) text-(--accent-text) border-(--surface-border)/80",
     textColor: "text-(--accent-text)",
   };
@@ -3585,23 +3588,23 @@ export function PreviewSeriesItem({
       <div className="flex items-center gap-3 min-w-0">
         <span
           className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] ${detectedPlatform === "YouTube"
-            ? "bg-(--accent) shadow-xs text-(--on-accent)"
+            ? "bg-(--accent)  text-(--on-accent)"
             : detectedPlatform === "Instagram"
-              ? "bg-gradient-to-tr from-(--accent) via-(--accent) to-(--accent) shadow-xs text-(--on-accent)"
+              ? "bg-gradient-to-tr from-(--accent) via-(--accent) to-(--accent)  text-(--on-accent)"
               : detectedPlatform === "Facebook"
-                ? "bg-(--accent) shadow-xs text-(--on-accent)"
+                ? "bg-(--accent)  text-(--on-accent)"
                 : detectedPlatform === "X"
-                  ? "bg-(--text) shadow-xs text-(--on-accent)"
+                  ? "bg-(--text)  text-(--on-accent)"
                   : detectedPlatform === "LinkedIn"
-                    ? "bg-(--accent) shadow-xs text-(--on-accent)"
+                    ? "bg-(--accent)  text-(--on-accent)"
                     : detectedPlatform === "Threads"
-                      ? "bg-(--text) shadow-xs text-(--on-accent)"
+                      ? "bg-(--text)  text-(--on-accent)"
                       : detectedPlatform === "Snapchat"
-                        ? "bg-(--accent) shadow-xs text-(--text)"
+                        ? "bg-(--accent)  text-(--text)"
                         : detectedPlatform === "Spotify"
-                          ? "bg-(--accent) shadow-xs text-(--on-accent)"
+                          ? "bg-(--accent)  text-(--on-accent)"
                           : detectedPlatform === "Twitch"
-                            ? "bg-(--accent) shadow-xs text-(--on-accent)"
+                            ? "bg-(--accent)  text-(--on-accent)"
                             : "bg-(--accent-soft) text-(--accent-text)"
             }`}
         >

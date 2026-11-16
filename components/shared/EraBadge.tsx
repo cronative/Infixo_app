@@ -13,7 +13,7 @@ export function EraAwardMedal({ era, stage, size = 24, className = "" }: { era: 
   return (
     <span
       className={`inline-flex shrink-0 items-center justify-center rounded-full ${className}`}
-      style={{ width: size, height: size, padding: pad, background: ring, boxShadow: "0 1px 2px rgba(0,0,0,0.12)" }}
+      style={{ width: size, height: size, padding: pad, background: ring, boxShadow: "none" }}
       aria-hidden
     >
       <span className="flex h-full w-full items-center justify-center rounded-full" style={{ background: eraFill(cfg) }}>
@@ -35,10 +35,12 @@ export interface EraBadgeProps {
   className?: string;
   style?: CSSProperties;
   title?: string;
+  /** Set when the badge toggles a popover: exposes aria-expanded / aria-haspopup. */
+  expanded?: boolean;
 }
 
 /** Premium Creator Era badge: soft era-colour gradient, era-tinted border, metal-ringed award medal. */
-export function EraBadge({ era, stage, label, onClick, showInfo = false, size = "md", className = "", style, title }: EraBadgeProps) {
+export function EraBadge({ era, stage, label, onClick, showInfo = false, size = "md", className = "", style, title, expanded }: EraBadgeProps) {
   const cfg = getEraConfig(era);
   const ink = eraInk(cfg.color);
   const md = size === "md";
@@ -52,7 +54,7 @@ export function EraBadge({ era, stage, label, onClick, showInfo = false, size = 
   const content = (
     <>
       <EraAwardMedal era={era} stage={stage} size={md ? 22 : 20} />
-      <span className={`whitespace-nowrap font-semibold leading-none tracking-[-0.01em] ${md ? "text-[11.5px] sm:text-[13px]" : "text-[11.5px]"}`}>{label}</span>
+      <span className={`whitespace-nowrap font-semibold leading-none tracking-[-0.01em] ${md ? "text-[12px] sm:text-[13px]" : "text-[12px]"}`}>{label}</span>
       {showInfo && <Info className={`${md ? "h-3.5 w-3.5" : "h-3 w-3"} shrink-0 opacity-70`} aria-hidden />}
     </>
   );
@@ -67,9 +69,11 @@ export function EraBadge({ era, stage, label, onClick, showInfo = false, size = 
     <button
       type="button"
       onClick={onClick}
-      className={`${cls} tap-scale cursor-pointer transition-[filter] hover:brightness-[1.03] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-1`}
+      className={`${cls} tap-44 tap-scale cursor-pointer transition-[filter] hover:brightness-[1.03] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-1`}
       style={css}
       title={title ?? "View Creator Era"}
+      aria-expanded={expanded}
+      aria-haspopup={expanded === undefined ? undefined : "dialog"}
       aria-label={`${label} — view Creator Era`}
     >
       {content}

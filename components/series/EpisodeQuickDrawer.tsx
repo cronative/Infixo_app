@@ -142,7 +142,7 @@ export function EpisodeQuickDrawer({
       <div
         ref={modalRef}
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-[520px] max-h-[calc(100dvh-28px)] sm:max-h-[calc(100dvh-44px)] bg-white rounded-[22px] border border-slate-200/90 shadow-2xl shadow-black/25 flex flex-col overflow-hidden text-left animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-[520px] max-h-[calc(100dvh-28px)] sm:max-h-[calc(100dvh-44px)] bg-white rounded-[5px] border border-slate-200/90 shadow-2xl shadow-black/25 flex flex-col overflow-hidden text-left animate-in zoom-in-95 duration-200"
       >
         {/* 1. Full-Width Hero Cover Header with Platform Thumbnail Fallback */}
         <div className="relative w-full overflow-hidden shrink-0 aspect-[21/10] sm:aspect-[21/9] min-h-[165px] sm:min-h-[190px]">
@@ -164,7 +164,7 @@ export function EpisodeQuickDrawer({
               type="button"
               onClick={onClose}
               aria-label="Close details"
-              className="tap-scale flex h-8.5 w-8.5 items-center justify-center rounded-[10px] bg-black/45 hover:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
+              className="tap-scale flex h-8.5 w-8.5 items-center justify-center rounded-[5px] bg-black/45 hover:bg-black/70 backdrop-blur-md border border-white/25 text-white transition-all shadow-md cursor-pointer"
             >
               <X className="h-4 w-4 stroke-[2.5]" />
             </button>
@@ -184,7 +184,7 @@ export function EpisodeQuickDrawer({
               )}
 
               <div
-                className="flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[10px] bg-black/45 backdrop-blur-md border border-white/20 text-white shadow-md select-none"
+                className="flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[5px] bg-black/45 backdrop-blur-md border border-white/20 text-white shadow-md select-none"
                 title="Inflixo Series"
               >
                 <InflixoLogoIcon light className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain" />
@@ -224,7 +224,7 @@ export function EpisodeQuickDrawer({
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 text-left scrollbar-none">
           {/* Series Description */}
           {series.description && series.description.trim() && (
-            <div className="rounded-2xl border border-slate-200/80 bg-slate-50/70 p-3.5 sm:p-4 text-xs sm:text-[13px] text-slate-600 leading-relaxed font-normal">
+            <div className="rounded-[5px] border border-slate-200/80 bg-slate-50/70 p-3.5 sm:p-4 text-xs sm:text-[13px] text-slate-600 leading-relaxed font-normal">
               <p>{series.description}</p>
             </div>
           )}
@@ -237,7 +237,7 @@ export function EpisodeQuickDrawer({
                   key={sn.id || idx}
                   type="button"
                   onClick={() => setActiveSeasonIndex(idx)}
-                  className={`tap-scale px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer border ${activeSeasonIndex === idx
+                  className={`tap-scale px-3 py-1.5 rounded-[5px] text-xs font-bold transition-all shrink-0 cursor-pointer border ${activeSeasonIndex === idx
                       ? "bg-[#7A2253] text-white border-[#7A2253] shadow-xs"
                       : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
                     }`}
@@ -260,11 +260,11 @@ export function EpisodeQuickDrawer({
 
             {/* Episodes List */}
             {currentEpisodes.length === 0 ? (
-              <div className="p-6 text-center text-xs text-slate-500 font-semibold border border-dashed border-slate-200 rounded-2xl bg-slate-50">
+              <div className="p-6 text-center text-xs text-slate-500 font-semibold border border-dashed border-slate-200 rounded-[5px] bg-slate-50">
                 No episodes uploaded for this series yet.
               </div>
             ) : (
-              <div className="rounded-2xl border border-slate-200/90 bg-white divide-y divide-slate-100 overflow-hidden shadow-xs">
+              <div className="rounded-[5px] border border-slate-200/90 bg-white divide-y divide-slate-100 overflow-hidden shadow-xs">
                 {currentEpisodes.map((ep, idx) => {
                   const partNum = ep.episodeNumber || idx + 1;
                   const partNumStr = partNum < 10 ? `0${partNum}` : `${partNum}`;

@@ -71,7 +71,7 @@ export function BrandPlatformIcon({ platform, size = 32 }: { platform: string; s
   const brand = PLATFORM_BRAND[p];
   return (
     <span
-      className="inline-flex shrink-0 items-center justify-center rounded-[6px]"
+      className="inline-flex shrink-0 items-center justify-center rounded-[5px]"
       style={{ width: size, height: size, background: brand?.bg ?? "#71717A", color: brand?.ink ?? "#FFFFFF" }}
       aria-hidden
     >
@@ -89,7 +89,13 @@ export const SECTION_ROW = "min-h-11 px-4 py-3";
 export const SECTION_ROW_HOVER = "transition-colors hover:bg-[color-mix(in_srgb,var(--accent)_4%,transparent)]";
 /** Section footer "View all" bar: same solid accent as an open collapsible header. */
 export const SECTION_FOOTER_CTA =
-  "flex h-11 w-full items-center justify-center gap-1.5 rounded-t-none! rounded-b-[4px]! bg-(--accent) text-xs sm:text-[13px] font-semibold text-(--on-accent) transition-opacity hover:opacity-90 cursor-pointer";
+  "flex h-11 w-full items-center justify-center gap-1.5 rounded-t-none! rounded-b-[5px]! border-t border-[color-mix(in_srgb,var(--accent-text)_30%,transparent)] bg-[color-mix(in_srgb,var(--accent-soft)_40%,var(--card-bg))] text-xs sm:text-[13px] font-semibold text-(--accent-text) transition-colors hover:bg-(--accent-soft) cursor-pointer";
+
+/** Section header: soft accent tint + accent text (the "Work with me" pill look, readable in every theme). The "View all" footer is a lighter tint of it. */
+export const SECTION_BG = "var(--accent-soft)";
+export const SECTION_FG = "var(--accent-text)";
+/** Header divider, count pill and open-section frame. */
+export const SECTION_LINE = "color-mix(in srgb, var(--accent-text) 30%, transparent)";
 
 type HeaderAction = { label: string; href: string; onClick?: (e: React.MouseEvent) => void };
 
@@ -147,18 +153,18 @@ export function AboutHeader({
           {title}
         </h2>
         {subtitle && (
-          <p style={{ color: colors.muted }} className="text-[11.5px] leading-4 text-(--text-muted)">
+          <p style={{ color: colors.muted }} className="text-[12px] leading-4 text-(--text-muted)">
             {subtitle}
           </p>
         )}
       </div>
       {action ? (
-        <Link href={action.href} onClick={action.onClick} className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-[11.5px] font-semibold text-(--accent-text) hover:underline">
+        <Link href={action.href} onClick={action.onClick} className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-[12px] font-semibold text-(--accent-text) hover:underline">
           {action.label}
           <ArrowRight className="h-3 w-3" />
         </Link>
       ) : count != null && (
-        <span style={{ color: colors.muted }} className="shrink-0 whitespace-nowrap text-[11.5px] text-(--text-muted)">
+        <span style={{ color: colors.muted }} className="shrink-0 whitespace-nowrap text-[12px] text-(--text-muted)">
           {count}
         </span>
       )}
@@ -192,16 +198,16 @@ function CollapsibleHeader({
   bodyId?: string;
   icon?: LucideIcon;
 }) {
-  const fg = open ? "var(--on-accent)" : undefined;
+  const fg = open ? SECTION_FG : undefined;
   const pill = (cls: string) =>
     count != null && (
       <span
         style={
           open
-            ? { color: fg, backgroundColor: "color-mix(in srgb, var(--on-accent) 16%, transparent)", borderColor: "transparent" }
+            ? { color: fg, backgroundColor: "transparent", borderColor: SECTION_LINE }
             : { color: "var(--accent-text)" }
         }
-        className={`shrink-0 whitespace-nowrap rounded-[5px] border border-(--surface-border) bg-(--card-bg) px-1.5 py-px text-[10.5px] font-medium sm:px-2 sm:py-0.5 sm:text-[11px] ${cls}`}
+        className={`shrink-0 whitespace-nowrap rounded-[5px] border border-(--surface-border) bg-(--card-bg) px-1.5 py-px text-[11px] font-medium sm:px-2 sm:py-0.5 sm:text-[11px] ${cls}`}
       >
         {count}
       </span>
@@ -211,14 +217,15 @@ function CollapsibleHeader({
       onClick={isStatic ? undefined : onToggle}
       className={`flex items-center gap-2.5 px-3 py-2.5 transition-colors ${isStatic ? "" : "cursor-pointer select-none"}`}
       style={{
-        backgroundColor: open ? "var(--accent)" : "color-mix(in srgb, var(--accent) 6%, var(--card-bg))",
+        backgroundColor: open ? SECTION_BG : "color-mix(in srgb, var(--accent) 6%, var(--card-bg))",
+        borderBottom: open ? `1px solid ${SECTION_LINE}` : undefined,
         color: fg,
       }}
     >
       {Icon && (
         <Icon
           aria-hidden
-          strokeWidth={1.9}
+          strokeWidth={2}
           style={{ color: fg ?? "var(--accent-text)" }}
           className="h-5 w-5 shrink-0"
         />
@@ -242,8 +249,8 @@ function CollapsibleHeader({
         </div>
         {subtitle && (
           <p
-            style={{ color: fg ?? colors.muted, opacity: open ? 0.85 : 1 }}
-            className="text-[11.5px] leading-4 text-(--text-muted)"
+            style={{ color: fg ?? colors.muted }}
+            className="text-[12px] leading-4 text-(--text-muted)"
           >
             {subtitle}
           </p>
@@ -350,7 +357,7 @@ export function SectionCard({
       id={id}
       className={`${CARD} scroll-mt-2 ${className}`}
       // Open section: the whole frame takes the header colour (inline so it wins over the base border).
-      style={(collapsible && open) || (solid && showHeader) ? { borderColor: "var(--accent)" } : undefined}
+      style={(collapsible && open) || (solid && showHeader) ? { borderColor: SECTION_LINE } : undefined}
     >
       {showHeader && (
         <AboutHeader
@@ -481,7 +488,7 @@ export function AboutMeBlock({
               <span
                 key={t}
                 style={{ color: colors.secondary }}
-                className="rounded-[5px] border border-(--surface-border) bg-(--surface) px-2 py-0.5 text-[11.5px] font-medium text-(--text-secondary)"
+                className="rounded-[5px] border border-(--surface-border) bg-(--surface) px-2 py-0.5 text-[12px] font-medium text-(--text-secondary)"
               >
                 {t}
               </span>

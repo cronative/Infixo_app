@@ -191,7 +191,7 @@ export function CollabEnquirySheet({
       />
 
       {/* Sheet / Modal Container */}
-      <div role="dialog" aria-modal="true" aria-label={`Collab request to ${creatorDisplayName}`} className="relative w-full sm:max-w-lg max-h-[92vh] sm:max-h-[88vh] flex flex-col rounded-t-2xl sm:rounded-2xl bg-white dark:bg-[#1E1E24] shadow-2xl overflow-hidden z-10 transition-all text-left">
+      <div role="dialog" aria-modal="true" aria-label={`Collab request to ${creatorDisplayName}`} className="relative w-full sm:max-w-lg max-h-[92vh] sm:max-h-[88vh] flex flex-col rounded-t-[5px] sm:rounded-[5px] bg-white dark:bg-[#1E1E24] shadow-2xl overflow-hidden z-10 transition-all text-left">
         {/* Mobile Pull Handle */}
         <div className="sm:hidden flex justify-center pt-2.5 pb-1">
           <div className="h-1.5 w-10 rounded-full bg-zinc-300 dark:bg-zinc-700" />
@@ -210,7 +210,7 @@ export function CollabEnquirySheet({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            className="flex h-8 w-8 items-center justify-center rounded-[5px] text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
           >
             <X className="h-4.5 w-4.5" />
           </button>
@@ -241,7 +241,7 @@ export function CollabEnquirySheet({
                   type="button"
                   onClick={handleDone}
                   style={{ backgroundColor: brandPrimary }}
-                  className="w-full h-10 rounded-lg text-white font-semibold text-xs sm:text-sm shadow-xs hover:opacity-95 transition-all cursor-pointer"
+                  className="w-full h-10 rounded-[5px] text-white font-semibold text-xs sm:text-sm shadow-xs hover:opacity-95 transition-all cursor-pointer"
                 >
                   Done
                 </button>
@@ -251,7 +251,7 @@ export function CollabEnquirySheet({
             /* Enquiry Form */
             <form onSubmit={handleSubmit} className="space-y-3.5">
               {apiErrorMsg && (
-                <div className="rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 p-3 text-xs text-rose-700 dark:text-rose-300">
+                <div className="rounded-[5px] bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 p-3 text-xs text-rose-700 dark:text-rose-300">
                   {apiErrorMsg}
                 </div>
               )}
@@ -283,7 +283,7 @@ export function CollabEnquirySheet({
                       if (errors.brandName) setErrors({ ...errors, brandName: "" });
                     }}
                     placeholder="e.g. Acme Health or Spotify"
-                    className={`w-full h-9.5 px-3 rounded-lg border bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none transition-colors ${
+                    className={`w-full h-9.5 px-3 rounded-[5px] border bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none transition-colors ${
                       errors.brandName
                         ? "border-rose-400 focus:border-rose-500 ring-1 ring-rose-400"
                         : "border-zinc-200 dark:border-zinc-700 focus:border-zinc-400"
@@ -307,7 +307,7 @@ export function CollabEnquirySheet({
                       if (errors.contactName) setErrors({ ...errors, contactName: "" });
                     }}
                     placeholder="e.g. Sarah Jenkins"
-                    className={`w-full h-9.5 px-3 rounded-lg border bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none transition-colors ${
+                    className={`w-full h-9.5 px-3 rounded-[5px] border bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none transition-colors ${
                       errors.contactName
                         ? "border-rose-400 focus:border-rose-500 ring-1 ring-rose-400"
                         : "border-zinc-200 dark:border-zinc-700 focus:border-zinc-400"
@@ -334,7 +334,7 @@ export function CollabEnquirySheet({
                       if (errors.workEmail) setErrors({ ...errors, workEmail: "" });
                     }}
                     placeholder="name@company.com"
-                    className={`w-full h-9.5 px-3 rounded-lg border bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none transition-colors ${
+                    className={`w-full h-9.5 px-3 rounded-[5px] border bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none transition-colors ${
                       errors.workEmail
                         ? "border-rose-400 focus:border-rose-500 ring-1 ring-rose-400"
                         : "border-zinc-200 dark:border-zinc-700 focus:border-zinc-400"
@@ -354,7 +354,7 @@ export function CollabEnquirySheet({
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+91 98765 43210"
-                    className="w-full h-9.5 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400"
+                    className="w-full h-9.5 px-3 rounded-[5px] border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400"
                   />
                 </div>
               </div>
@@ -368,7 +368,7 @@ export function CollabEnquirySheet({
                   <select
                     value={selectedPkgId}
                     onChange={(e) => handlePackageChange(e.target.value)}
-                    className="w-full h-9.5 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400 cursor-pointer"
+                    className="w-full h-9.5 px-3 rounded-[5px] border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400 cursor-pointer"
                   >
                     <option value="custom">Custom collab</option>
                     {preselectedPackage && !packages.some((p) => String(p.id) === String(preselectedPackage.id)) && (
@@ -394,7 +394,7 @@ export function CollabEnquirySheet({
                   <select
                     value={budget}
                     onChange={(e) => setBudget(e.target.value)}
-                    className="w-full h-9.5 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400 cursor-pointer"
+                    className="w-full h-9.5 px-3 rounded-[5px] border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400 cursor-pointer"
                   >
                     {BUDGET_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -416,7 +416,7 @@ export function CollabEnquirySheet({
                   value={websiteOrSocial}
                   onChange={(e) => setWebsiteOrSocial(e.target.value)}
                   placeholder="https://brand.com or @brandhandle"
-                  className="w-full h-9.5 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400"
+                  className="w-full h-9.5 px-3 rounded-[5px] border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400"
                 />
               </div>
 
@@ -439,7 +439,7 @@ export function CollabEnquirySheet({
                     if (errors.message) setErrors({ ...errors, message: "" });
                   }}
                   placeholder="Tell us what you have in mind: timeline, goals, key deliverables..."
-                  className={`w-full p-3 rounded-lg border bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none transition-colors resize-y min-h-[80px] ${
+                  className={`w-full p-3 rounded-[5px] border bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none transition-colors resize-y min-h-[80px] ${
                     errors.message
                       ? "border-rose-400 focus:border-rose-500 ring-1 ring-rose-400"
                       : "border-zinc-200 dark:border-zinc-700 focus:border-zinc-400"
@@ -456,7 +456,7 @@ export function CollabEnquirySheet({
                   type="submit"
                   disabled={isSubmitting}
                   style={{ backgroundColor: brandPrimary }}
-                  className="w-full h-10 rounded-lg text-white font-semibold text-xs sm:text-sm shadow-xs hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                  className="w-full h-10 rounded-[5px] text-white font-semibold text-xs sm:text-sm shadow-xs hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
                 >
                   {isSubmitting ? (
                     <>

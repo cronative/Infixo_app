@@ -506,7 +506,7 @@ export function SeriesDetailClient({
         />
       }
     >
-      <PublicCard themeKey={themeKey} className="overflow-hidden w-full max-w-[580px] mx-auto">
+      <PublicCard themeKey={themeKey} className="overflow-hidden w-full max-w-[480px] mx-auto">
         {/* Card content container */}
         <div className="flex-1 flex flex-col relative rounded-t-[5px] overflow-hidden">
           {/* Series Hero: Full width with floating controls, center play button, and bottom-left badge */}
@@ -540,7 +540,7 @@ export function SeriesDetailClient({
                     router.push(profilePath);
                   }
                 }}
-                className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer shadow-md"
+                className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer "
                 title="Back to series"
               >
                 <ArrowLeft className="h-5 w-5" />
@@ -550,7 +550,7 @@ export function SeriesDetailClient({
                 <button
                   type="button"
                   onClick={handleCopyLink}
-                  className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer shadow-md"
+                  className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer "
                   title="Copy series link"
                 >
                   <Copy className="h-4 w-4" />
@@ -559,7 +559,7 @@ export function SeriesDetailClient({
                   <button
                     type="button"
                     onClick={() => setIsSharePopoverOpen(!isSharePopoverOpen)}
-                    className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer shadow-md"
+                    className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-black/40 hover:bg-black/60 text-white backdrop-blur-md transition-all cursor-pointer "
                     title="Share series"
                   >
                     <Share2 className="h-4 w-4" />
@@ -579,7 +579,7 @@ export function SeriesDetailClient({
 
             {/* Bottom-Left Overlay Badge */}
             <div className="absolute left-3.5 bottom-3.5 z-10 pointer-events-none">
-              <div className="inline-flex items-center gap-2 rounded-[5px] bg-black/60 backdrop-blur-md px-3.5 py-1.5 text-white text-[11px] font-medium shadow-md">
+              <div className="inline-flex items-center gap-2 rounded-[5px] bg-black/60 backdrop-blur-md px-3.5 py-1.5 text-white text-[11px] font-medium ">
                 <span className="flex items-center gap-1.5">
                   <Play className="h-3 w-3 fill-white" />
                   <span>{allEpisodes.length} Episodes</span>
@@ -595,7 +595,9 @@ export function SeriesDetailClient({
           </div>
 
           {/* Content below hero */}
-          <div className="flex flex-col p-4 sm:p-5 space-y-3.5">
+          {/* Sections sit 8px from the card edge on phones (same as the profile); the text block keeps 16px. */}
+          <div className="flex flex-col px-2 py-4 sm:p-5 space-y-3.5">
+            <div className="flex flex-col space-y-3.5 px-2 sm:px-0">
             {/* 1. Series Title */}
             <h1 style={pt.headingStyle} className="text-xl sm:text-2xl font-bold tracking-tight leading-snug text-(--text) break-words">
               {series.title}
@@ -657,6 +659,8 @@ export function SeriesDetailClient({
               </div>
             )}
 
+            </div>
+
             {/* 4. Episodes — shared Section (tinted header, connected divided rows) */}
             <Section
               solid
@@ -703,16 +707,16 @@ export function SeriesDetailClient({
                     >
                       <span
                         style={{
-                          backgroundColor: index === 0 ? "var(--accent)" : "color-mix(in srgb, var(--accent) 10%, var(--card-bg))",
+                          backgroundColor: index === 0 ? "var(--accent)" : "var(--accent-soft)",
                           color: index === 0 ? "var(--on-accent)" : "var(--accent-text)",
                         }}
-                        className="flex h-9 w-9 shrink-0 flex-col items-center justify-center rounded-[6px] leading-none"
+                        className="flex h-9 w-9 shrink-0 flex-col items-center justify-center rounded-[5px] leading-none"
                       >
-                        <span className="text-[8.5px] font-semibold uppercase tracking-wider opacity-80">Ep</span>
+                        <span className="text-[9px] font-semibold uppercase tracking-wider opacity-80">Ep</span>
                         <span className="text-[13px] font-bold tabular-nums">{partNum}</span>
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span style={{ color: c.primaryText }} className="block break-words text-[13px] font-medium leading-[18px] text-(--text)">
+                        <span style={{ color: c.primaryText }} title={cleanTitle} className="line-clamp-2 break-words text-[13px] font-medium leading-[18px] text-(--text)">
                           {cleanTitle}
                         </span>
                         {index === 0 && (

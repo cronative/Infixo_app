@@ -97,7 +97,7 @@ export function SeriesPosterCard({
     <Link
       href={seriesUrl}
       onClick={handleClick}
-      className="group relative block w-full aspect-[16/7] sm:aspect-[3/1] rounded-xl overflow-hidden bg-(--accent) border border-(--surface-border)/[0.06] shadow-xs hover:shadow-md transition-all duration-300 focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden text-left select-none"
+      className="group relative block w-full aspect-[16/7] sm:aspect-[3/1] rounded-[5px] overflow-hidden bg-(--accent) border border-(--surface-border)/[0.06]   transition-all duration-300 focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden text-left select-none"
     >
       {/* Background Poster Image or Fallback */}
       {hasPoster ? (

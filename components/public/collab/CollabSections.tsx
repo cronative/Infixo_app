@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Check, ChevronDown, CheckCircle2, ChevronRight, Clock, Handshake, Star, Tv } from "lucide-react";
 import type { CreatorReview, MediaKitPackage } from "@/types";
@@ -91,7 +91,7 @@ export function AudienceSnapshot({
                 <span
                   key={t}
                   style={{ color: colors.secondary }}
-                  className="rounded-[5px] border border-(--surface-border) bg-(--surface) px-2 py-0.5 text-[11.5px] font-medium text-(--text-secondary)"
+                  className="rounded-[5px] border border-(--surface-border) bg-(--surface) px-2 py-0.5 text-[12px] font-medium text-(--text-secondary)"
                 >
                   {t}
                 </span>
@@ -140,7 +140,7 @@ function PackageRow({ pkg, colors, onEnquire }: { pkg: MediaKitPackage; colors: 
                   backgroundColor: "color-mix(in srgb, var(--accent) 12%, transparent)",
                   borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)",
                 }}
-                className="rounded-[4px] border px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider"
+                className="rounded-[5px] border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider"
               >
                 Popular
               </span>
@@ -156,7 +156,7 @@ function PackageRow({ pkg, colors, onEnquire }: { pkg: MediaKitPackage; colors: 
         </div>
         <p className="shrink-0 text-right leading-tight">
           <span style={{ color: colors.primary }} className="block text-[15px] font-semibold tabular-nums text-(--text)">{value}</span>
-          {unit && <span style={{ color: colors.muted }} className="text-[11.5px] text-(--text-muted)">{unit}</span>}
+          {unit && <span style={{ color: colors.muted }} className="text-[12px] text-(--text-muted)">{unit}</span>}
         </p>
       </div>
 
@@ -176,7 +176,7 @@ function PackageRow({ pkg, colors, onEnquire }: { pkg: MediaKitPackage; colors: 
             ))}
           </ul>
           {bullets.length > 4 && (
-            <button type="button" onClick={() => setShowAll((v) => !v)} className="mt-1 text-[11.5px] font-semibold text-(--accent-text) hover:underline cursor-pointer">
+            <button type="button" onClick={() => setShowAll((v) => !v)} className="mt-1 text-[12px] font-semibold text-(--accent-text) hover:underline cursor-pointer">
               {showAll ? "Show less" : `+${bullets.length - 4} more`}
             </button>
           )}
@@ -212,18 +212,18 @@ function CompactPackageRow({ pkg, colors, onEnquire }: { pkg: MediaKitPackage; c
         ) : (
           <span
             style={{ backgroundColor: "color-mix(in srgb, var(--accent) 10%, var(--surface))", color: "var(--accent-text)" }}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[6px]"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px]"
           >
             <Tv className="h-4 w-4" />
           </span>
         )}
         <span className="min-w-0 flex-1">
-          <span style={{ color: colors.primary }} className="block break-words text-[13px] font-semibold leading-[17px] text-(--text)">{pkg.title}</span>
-          {sub && <span style={{ color: colors.muted }} className="mt-0.5 block break-words text-xs leading-4 text-(--text-muted)">{sub}</span>}
+          <span style={{ color: colors.primary }} title={pkg.title} className="line-clamp-2 break-words text-[13px] font-semibold leading-[18px] text-(--text)">{pkg.title}</span>
+          {sub && <span style={{ color: colors.muted }} title={sub} className="mt-0.5 line-clamp-2 break-words text-xs leading-4 text-(--text-muted)">{sub}</span>}
         </span>
         <span className="shrink-0 text-right leading-tight">
-          <span style={{ color: colors.primary }} className="block text-[13px] font-semibold tabular-nums text-(--text)">{value}</span>
-          {unit && <span style={{ color: colors.muted }} className="text-[11px] text-(--text-muted)">{unit.replace(/^\/\s*/, "per ")}</span>}
+          <span style={{ color: colors.primary }} className="block whitespace-nowrap text-[13px] font-semibold tabular-nums text-(--text)">{value}</span>
+          {unit && <span style={{ color: colors.muted }} className="whitespace-nowrap text-[11px] text-(--text-muted)">{unit.replace(/^\/\s*/, "per ")}</span>}
         </span>
         <ChevronRight className="h-4 w-4 shrink-0 text-(--text-muted) group-hover:text-(--text)" />
       </button>
@@ -269,7 +269,7 @@ export function WorkWithMe({
               type="button"
               onClick={onCustomRequest}
               style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
-              className="inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-[5px] px-4 text-[13px] font-semibold transition-opacity hover:opacity-95 cursor-pointer"
+              className="inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-[5px] px-4 text-[13px] font-semibold transition-opacity hover:opacity-95 cursor-pointer"
             >
               Get in touch for collaboration
               <ArrowUpRight className="h-3.5 w-3.5" />
@@ -396,9 +396,7 @@ export function WhatBrandsSay({
                   </span>
                 </div>
               </div>
-              {rev.comment?.trim() && (
-                <p style={{ color: colors.primary }} className="text-[12.5px] leading-relaxed text-(--text)">&ldquo;{rev.comment.trim()}&rdquo;</p>
-              )}
+              {rev.comment?.trim() && <ReviewComment text={rev.comment.trim()} color={colors.primary} />}
             </li>
           );
         })}
@@ -422,6 +420,41 @@ export function WhatBrandsSay({
   );
 }
 
+/** Review quote clamped to 3 lines; "Read more" appears only when the text is actually cut. */
+function ReviewComment({ text, color }: { text: string; color?: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const [clamped, setClamped] = useState(false);
+  const ref = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || expanded) return;
+    const check = () => setClamped(el.scrollHeight > el.clientHeight + 1);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [text, expanded]);
+
+  return (
+    <div>
+      <p ref={ref} style={{ color }} className={`text-[13px] leading-relaxed text-(--text) ${expanded ? "" : "line-clamp-3"}`}>
+        &ldquo;{text}&rdquo;
+      </p>
+      {(clamped || expanded) && (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          className="tap-44 mt-0.5 text-xs font-semibold text-(--accent-text) hover:underline cursor-pointer"
+        >
+          {expanded ? "Show less" : "Read more"}
+        </button>
+      )}
+    </div>
+  );
+}
+
 // ── 4. Custom collaboration ───────────────────────────────────
 
 export function CustomCollaboration({ colors, onRequest }: { colors: AboutColors; onRequest: () => void }) {
@@ -429,7 +462,7 @@ export function CustomCollaboration({ colors, onRequest }: { colors: AboutColors
     <div className={CARD}>
       <AboutHeader title="Custom Collaboration" subtitle="Have something different in mind?" colors={colors} />
       <div className={`flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between ${ROW}`}>
-        <p style={{ color: colors.secondary }} className="text-[12.5px] leading-relaxed text-(--text-secondary)">
+        <p style={{ color: colors.secondary }} className="text-[13px] leading-relaxed text-(--text-secondary)">
           Custom campaign or long-term ambassadorship? Send a brief.
         </p>
         <button type="button" onClick={onRequest} className={`${OUTLINE_BTN} shrink-0`}>

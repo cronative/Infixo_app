@@ -66,7 +66,7 @@ export function LinkRow({
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
           {/* 24×24 Icon Tile */}
           <div
-            className={`w-6 h-6 rounded-[4px] shrink-0 flex items-center justify-center overflow-hidden ${iconBg}`}
+            className={`w-6 h-6 rounded-[5px] shrink-0 flex items-center justify-center overflow-hidden ${iconBg}`}
           >
             {thumbnail ? (
               <img
@@ -86,7 +86,7 @@ export function LinkRow({
 
           {/* Text Content */}
           <div className="min-w-0 flex-1 flex flex-col justify-center">
-            <span className="link-row-title min-w-0 text-[13px] font-medium text-(--text) group-hover:text-(--accent-text) transition-colors leading-[18px] break-words">
+            <span title={title} className="link-row-title min-w-0 text-[13px] font-medium text-(--text) group-hover:text-(--accent-text) transition-colors leading-[18px] break-words">
               {title}
             </span>
             <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5">
@@ -94,10 +94,10 @@ export function LinkRow({
                 <span
                   style={{
                     color: "var(--accent-text)",
-                    backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
+                    backgroundColor: "var(--accent-soft)",
                     borderColor: "var(--surface-border)",
                   }}
-                  className="inline-flex items-center text-[9.5px] font-bold px-1.5 py-0.2 rounded-[3px] border leading-tight shrink-0 select-none"
+                  className="inline-flex items-center text-[10px] font-bold px-1.5 py-0.2 rounded-[5px] border leading-tight shrink-0 select-none"
                 >
                   ⭐ Featured
                 </span>
@@ -126,13 +126,13 @@ export function LinkRow({
       className={`group relative flex items-center justify-between gap-3 min-h-[48px] h-auto px-3.5 py-2 ${
         flat
           ? "rounded-none hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)]!"
-          : `rounded-[5px] border ${isFeatured ? "border-(--accent) shadow-2xs" : "border-(--surface-border)"}`
+          : `rounded-[5px] border ${isFeatured ? "border-(--accent) " : "border-(--surface-border)"}`
       } bg-transparent text-left transition-all duration-150 ease-out hover:bg-(--surface)/40 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-1 cursor-pointer select-none ${className}`}
     >
       <div className="flex items-center gap-3 min-w-0 flex-1">
         {/* 32×32 Icon Tile */}
         <div
-          className={`w-8 h-8 rounded-[4px] shrink-0 flex items-center justify-center overflow-hidden shadow-none ${iconBg}`}
+          className={`w-8 h-8 rounded-[5px] shrink-0 flex items-center justify-center overflow-hidden shadow-none ${iconBg}`}
         >
           {thumbnail ? (
             <img
@@ -152,7 +152,7 @@ export function LinkRow({
 
         {/* Text Content */}
         <div className="min-w-0 flex-1 flex flex-col justify-center py-0.5">
-          <span className="link-row-title min-w-0 text-[13px] font-medium text-(--text) group-hover:text-(--accent-text) transition-colors leading-[18px] break-words">
+          <span title={title} className="link-row-title min-w-0 text-[13px] font-medium text-(--text) group-hover:text-(--accent-text) transition-colors leading-[18px] break-words">
             {title}
           </span>
           <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5">
@@ -160,10 +160,10 @@ export function LinkRow({
               <span
                 style={{
                   color: "var(--accent-text)",
-                  backgroundColor: "color-mix(in srgb, var(--accent) 12%, var(--surface))",
+                  backgroundColor: "var(--accent-soft)",
                   borderColor: "var(--surface-border)",
                 }}
-                className="inline-flex items-center text-[10px] font-bold px-1.5 py-0.2 rounded-[3px] border leading-tight shrink-0 select-none"
+                className="inline-flex items-center text-[10px] font-bold px-1.5 py-0.2 rounded-[5px] border leading-tight shrink-0 select-none"
               >
                 ⭐ Featured
               </span>

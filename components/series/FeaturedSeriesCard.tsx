@@ -122,7 +122,7 @@ export function FeaturedSeriesCard({
       <Link
         href={seriesUrl}
         onClick={handleClick}
-        className="group relative block w-full aspect-[5/2] rounded-2xl overflow-hidden bg-(--accent) shadow-md hover:shadow-xl transition-all duration-300 focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden select-none"
+        className="group relative block w-full aspect-[5/2] rounded-[5px] overflow-hidden bg-(--accent)   transition-all duration-300 focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden select-none"
       >
         {/* Background Poster Image or Fallback */}
         {hasPoster ? (
@@ -156,17 +156,17 @@ export function FeaturedSeriesCard({
           {/* Status Badge Row (solid backgrounds for contrast on bright skies) */}
           {SHOW_SERIES_BADGES && (
             <div className="flex flex-wrap items-center gap-1.5 mb-0.5 sm:mb-1">
-              <span className="inline-flex items-center gap-1 rounded-[4px] bg-(--accent) text-(--on-accent) px-1.5 sm:px-2 py-0.5 text-[9.5px] sm:text-[10.5px] font-bold tracking-wide shadow-xs">
+              <span className="inline-flex items-center gap-1 rounded-[5px] bg-(--accent) text-(--on-accent) px-1.5 sm:px-2 py-0.5 text-[9.5px] sm:text-[10.5px] font-bold tracking-wide ">
                 <Crown className="h-2.5 w-2.5 sm:h-3 sm:w-3 fill-white text-white shrink-0" />
                 <span>Featured</span>
               </span>
 
-              <span className="inline-flex items-center rounded-[4px] bg-black/60 text-white px-1.5 sm:px-2 py-0.5 text-[9.5px] sm:text-[10.5px] font-semibold shadow-xs">
+              <span className="inline-flex items-center rounded-[5px] bg-black/60 text-white px-1.5 sm:px-2 py-0.5 text-[9.5px] sm:text-[10.5px] font-semibold ">
                 {statusLabel}
               </span>
 
               {hasNewEpisode && (
-                <span className="inline-flex items-center rounded-[4px] bg-(--accent) text-(--on-accent) px-1.5 sm:px-2 py-0.5 text-[9.5px] sm:text-[10.5px] font-bold shadow-xs">
+                <span className="inline-flex items-center rounded-[5px] bg-(--accent) text-(--on-accent) px-1.5 sm:px-2 py-0.5 text-[9.5px] sm:text-[10.5px] font-bold ">
                   New episode
                 </span>
               )}

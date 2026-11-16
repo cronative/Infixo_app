@@ -23,12 +23,12 @@ export function GlobalFooter({
   const [isReportOpen, setIsReportOpen] = useState(false);
 
   const linkBtnClasses =
-    "px-2.5 py-1 rounded-[5px] text-[11px] sm:text-xs font-normal text-(--accent, #7A2253) underline underline-offset-[3px] decoration-(--accent, #7A2253) hover:bg-(--accent, #7A2253)/[0.12] active:bg-(--accent, #7A2253)/[0.18] transition-colors cursor-pointer select-none inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-(--accent, #7A2253)";
+    "tap-44 px-2.5 py-1 rounded-[5px] text-[11px] sm:text-xs font-normal text-(--accent-text, #7A2253) underline underline-offset-[3px] decoration-(--accent-text, #7A2253) hover:bg-(--accent, #7A2253)/[0.12] active:bg-(--accent, #7A2253)/[0.18] transition-colors cursor-pointer select-none inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-(--accent, #7A2253)";
 
   const linkBtnStyle = {
     backgroundColor: "color-mix(in srgb, var(--accent, #7A2253) 6%, transparent)",
-    color: "var(--accent, #7A2253)",
-    textDecorationColor: "var(--accent, #7A2253)",
+    color: "var(--accent-text, #7A2253)",
+    textDecorationColor: "var(--accent-text, #7A2253)",
   };
 
   return (
@@ -49,10 +49,10 @@ export function GlobalFooter({
             if (disabled) e.preventDefault();
           }}
           style={{
-            color: "var(--accent, #7A2253)",
-            textDecorationColor: "var(--accent, #7A2253)",
+            color: "var(--accent-text, #7A2253)",
+            textDecorationColor: "var(--accent-text, #7A2253)",
           }}
-          className="inline-flex items-center gap-1 font-semibold text-(--accent, #7A2253) hover:opacity-85 transition-opacity cursor-pointer underline underline-offset-[3px] decoration-(--accent, #7A2253)"
+          className="inline-flex items-center gap-1 font-semibold text-(--accent-text, #7A2253) hover:opacity-85 transition-opacity cursor-pointer underline underline-offset-[3px] decoration-(--accent-text, #7A2253)"
           aria-label="Inflixo Homepage"
         >
           <span>Inflixo</span>
@@ -143,7 +143,7 @@ export function GlobalFooter({
 
       {/* Row 3 — Copyright */}
       <div className="w-full px-3 py-2 sm:py-2.5">
-        <p className="text-[10.5px] sm:text-[11px] text-(--text-muted, #71717a) opacity-80 font-normal text-center select-none">
+        <p className="text-[11px] text-(--text-muted, #71717a) opacity-80 font-normal text-center select-none">
           &copy; 2026 Inflixo. All rights reserved.
         </p>
       </div>

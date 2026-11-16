@@ -88,7 +88,7 @@ export function ReportProfileModal({
         if (e.target === e.currentTarget) handleClose();
       }}
     >
-      <div className="relative w-full max-w-md overflow-hidden rounded-[10px] border border-[#E7E3DC] bg-white p-5 sm:p-6 shadow-2xl text-[#181716] animate-scale-in">
+      <div className="relative w-full max-w-md overflow-hidden rounded-[5px] border border-[#E7E3DC] bg-white p-5 sm:p-6 shadow-2xl text-[#181716] animate-scale-in">
         {/* Close Button */}
         <button
           type="button"
@@ -124,7 +124,7 @@ export function ReportProfileModal({
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Header */}
             <div className="flex items-start gap-3 pr-8">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[6px] bg-[#7A2253]/10 text-[#7A2253]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#7A2253]/10 text-[#7A2253]">
                 <Flag className="h-4.5 w-4.5" />
               </div>
               <div className="min-w-0">
@@ -139,7 +139,7 @@ export function ReportProfileModal({
             </div>
 
             {errorMessage && (
-              <div className="flex items-start gap-2 p-3 rounded-[6px] bg-rose-50 border border-rose-200 text-rose-800 text-xs">
+              <div className="flex items-start gap-2 p-3 rounded-[5px] bg-rose-50 border border-rose-200 text-rose-800 text-xs">
                 <AlertCircle className="h-4 w-4 shrink-0 text-rose-600 mt-0.5" />
                 <span>{errorMessage}</span>
               </div>
