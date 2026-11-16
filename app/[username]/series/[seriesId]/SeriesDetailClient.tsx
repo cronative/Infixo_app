@@ -11,14 +11,12 @@ import {
   ExternalLink,
   Globe,
   Play,
-  ArrowUpRight,
   ArrowLeft,
   Clock,
   ChevronDown,
   ChevronUp,
   ListVideo,
   UserRound,
-  ArrowRight,
 } from "lucide-react";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import { Series, Episode, ThemeKey, Season } from "@/types";
@@ -42,7 +40,7 @@ import {
 } from "@/components/public/publicTheme";
 import { PlatformThumbnailBox, extractYouTubeVideoId } from "@/components/shared/PlatformThumbnailBox";
 import { resolveThemeKey } from "@/lib/themeKeys";
-import { SECTION_FOOTER_CTA, Section } from "@/components/public/about/AboutSections";
+import { EpisodeRow, FooterCta, Section } from "@/components/public/ui";
 import { getCreatorEra } from "@/lib/creatorEra";
 import { eraRing, getEraConfig } from "@/lib/eraConfig";
 import { getInitials } from "@/lib/avatar";
@@ -691,45 +689,18 @@ export function SeriesDetailClient({
               {currentEpisodes.length === 0 ? (
                 <p style={{ color: c.mutedText }} className="px-4 py-6 text-center text-xs">No episodes added to this series yet.</p>
               ) : (
-                currentEpisodes.map((ep: Episode, index: number) => {
-                  const partNum = ep.episodeNumber || index + 1;
-                  const epTitleStr = ep.title?.trim() || `Episode ${partNum}`;
-                  const cleanTitle = epTitleStr.replace(/^(?:Part|Episode|Ep)\.?\s*0?\d+\s*[:.\-–—]?\s*/i, "").trim() || epTitleStr;
-                  return (
-                    <a
-                      key={ep.id || index}
-                      href={ep.externalUrl || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => trackEpisodeClick(ep)}
-                      aria-label={`Ep ${partNum} · ${cleanTitle}`}
-                      className="group/ep flex min-h-12 items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)] sm:px-3.5"
-                    >
-                      <span
-                        style={{
-                          backgroundColor: index === 0 ? "var(--accent)" : "var(--accent-soft)",
-                          color: index === 0 ? "var(--on-accent)" : "var(--accent-text)",
-                        }}
-                        className="flex h-9 w-9 shrink-0 flex-col items-center justify-center rounded-[5px] leading-none"
-                      >
-                        <span className="text-[9px] font-semibold uppercase tracking-wider opacity-80">Ep</span>
-                        <span className="text-[13px] font-bold tabular-nums">{partNum}</span>
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span style={{ color: c.primaryText }} title={cleanTitle} className="line-clamp-2 break-words text-[13px] font-medium leading-[18px] text-(--text)">
-                          {cleanTitle}
-                        </span>
-                        {index === 0 && (
-                          <span className="mt-0.5 block text-[11px] font-semibold text-(--accent-text)">Start here</span>
-                        )}
-                      </span>
-                      <span className="flex shrink-0 items-center gap-1.5">
-                        {renderPlatformIcon(ep.platform || detectedPlatform, "h-3.5 w-3.5")}
-                        <ArrowUpRight className="h-4 w-4 text-(--text-muted) transition-colors group-hover/ep:text-(--accent-text)" />
-                      </span>
-                    </a>
-                  );
-                })
+                currentEpisodes.map((ep: Episode, index: number) => (
+                  <EpisodeRow
+                    key={ep.id || index}
+                    number={ep.episodeNumber || index + 1}
+                    title={ep.title}
+                    href={ep.externalUrl}
+                    isFirst={index === 0}
+                    titleColor={c.primaryText}
+                    platformIcon={renderPlatformIcon(ep.platform || detectedPlatform, "h-3.5 w-3.5")}
+                    onClick={() => trackEpisodeClick(ep)}
+                  />
+                ))
               )}
             </Section>
 
@@ -759,17 +730,7 @@ export function SeriesDetailClient({
                   )}
                 </div>
               </div>
-              <a
-                href={profileUrl}
-                onClick={(e) => {
-                  e.preventDefault();
-                  router.push(profileUrl);
-                }}
-                className={SECTION_FOOTER_CTA}
-              >
-                View full profile
-                <ArrowRight className="h-3.5 w-3.5" />
-              </a>
+              <FooterCta href={profileUrl}>View full profile</FooterCta>
             </Section>
           </div>
         </div>

@@ -13,20 +13,16 @@ function letterIcon(_title: string, _url: string) {
 
 export interface LinkGroupRowProps {
   group: CustomLink;
-  index?: number;
   initiallyOpen?: boolean;
   onLinkClick?: (link: CustomLinkItem) => void;
-  /** Divided-row style inside a Section container (no own border; children indented). */
-  flat?: boolean;
   className?: string;
 }
 
+/** Link folder row: folder tile, 2-line title, stacked platform icons; opens to indented LinkRows. */
 export function LinkGroupRow({
   group,
-  index = 0,
   initiallyOpen = false,
   onLinkClick,
-  flat = false,
   className = "",
 }: LinkGroupRowProps) {
   const [isOpen, setIsOpen] = useState(initiallyOpen);
@@ -36,34 +32,6 @@ export function LinkGroupRow({
   );
 
   if (items.length === 0) return null;
-
-  // Alternating theme tints for group header row:
-  // Group header tint comes from the theme accent tokens.
-  const isEven = index % 2 === 1;
-
-  const themeConfig = isEven
-    ? {
-        container:
-          "border-(--accent)/25  bg-(--card-bg) ",
-        headerBg:
-          "bg-(--accent)/[0.08] hover:bg-(--accent-hover)/[0.12]  ",
-        focusRing: "focus-visible:ring-(--accent)",
-        folderIcon:
-          "bg-(--accent)/15 text-(--accent-text)  ",
-        divider:
-          "border-t border-(--divider) divide-y divide-(--divider) bg-(--card-bg)",
-      }
-    : {
-        container:
-          "border-(--accent)/25  bg-(--card-bg) ",
-        headerBg:
-          "bg-(--accent)/[0.08] hover:bg-(--accent-hover)/[0.12]  ",
-        focusRing: "focus-visible:ring-(--accent)",
-        folderIcon:
-          "bg-(--accent)/15 text-(--accent-text)  ",
-        divider:
-          "border-t border-(--divider) divide-y divide-(--divider) bg-(--card-bg)",
-      };
 
   // Map items to platforms
   const itemPlatforms = items.map((item) => {
@@ -130,11 +98,7 @@ export function LinkGroupRow({
   return (
     <div
       className={`${
-        flat
-          ? isOpen
-            ? "border-l-[3px] border-l-[color-mix(in_srgb,var(--accent)_55%,transparent)]"
-            : ""
-          : "rounded-[5px] border border-(--surface-border)"
+        isOpen ? "border-l-[3px] border-l-[color-mix(in_srgb,var(--accent)_55%,transparent)]" : ""
       } overflow-hidden transition-all duration-200 shadow-none bg-transparent ${className}`}
     >
       {/* Group Trigger Button (~48px height) */}
@@ -142,16 +106,12 @@ export function LinkGroupRow({
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
-        className={`w-full min-h-[48px] h-[48px] px-3.5 py-2 flex items-center justify-between gap-3 text-left cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 ${themeConfig.focusRing} focus-visible:ring-offset-1 select-none ${
-          flat
-            ? "bg-[color-mix(in_srgb,var(--accent)_7%,transparent)] hover:bg-[color-mix(in_srgb,var(--accent)_10%,transparent)]"
-            : themeConfig.headerBg
-        }`}
+        className={`w-full min-h-[48px] h-[48px] px-3.5 py-2 flex items-center justify-between gap-3 text-left cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-1 select-none bg-[color-mix(in_srgb,var(--accent)_7%,transparent)] hover:bg-[color-mix(in_srgb,var(--accent)_10%,transparent)]`}
       >
         <div className="flex items-center gap-3 min-w-0 flex-1">
           {/* Folder Icon Tile */}
           <div
-            className={`${flat ? "w-8 h-8" : "w-7 h-7"} rounded-[5px] shrink-0 flex items-center justify-center shadow-none transition-colors ${themeConfig.folderIcon}`}
+            className="w-8 h-8 rounded-[5px] shrink-0 flex items-center justify-center shadow-none transition-colors bg-(--accent)/15 text-(--accent-text)"
           >
             <Folder className="h-4 w-4" />
           </div>
@@ -184,6 +144,7 @@ export function LinkGroupRow({
                 style={{ zIndex: 10 - idx }}
               >
                 {entry.thumbnail ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- link thumbnails of any host
                   <img
                     src={entry.thumbnail}
                     alt=""
@@ -205,8 +166,8 @@ export function LinkGroupRow({
       </button>
 
       {/* Expanded inner links (light & compact with thin dividers, no nested boxes) */}
-      {isOpen && flat && (
-        /* Flat (Section) layout: plain indented rows, icons line up with the folder title */
+      {/* Open folder: plain indented rows, icons line up with the folder title */}
+      {isOpen && (
         <div className="border-t border-(--surface-border) divide-y divide-(--surface-border) animate-in fade-in duration-200">
           {items.map((item) => (
             <LinkRow
@@ -214,18 +175,6 @@ export function LinkGroupRow({
               link={item}
               compact
               className="pl-[52px]"
-              onClick={() => onLinkClick?.(item)}
-            />
-          ))}
-        </div>
-      )}
-      {isOpen && !flat && (
-        <div className={`${themeConfig.divider} animate-in fade-in duration-200`}>
-          {items.map((item) => (
-            <LinkRow
-              key={item.id}
-              link={item}
-              compact
               onClick={() => onLinkClick?.(item)}
             />
           ))}

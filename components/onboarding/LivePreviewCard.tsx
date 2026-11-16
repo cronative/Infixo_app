@@ -138,15 +138,12 @@ import { CollaborationInquiryModal } from "@/components/mediakit/CollaborationIn
 import { EpisodeQuickDrawer } from "@/components/series/EpisodeQuickDrawer";
 import { VisibilitySettingsModal } from "@/components/shared/VisibilitySettingsModal";
 import { ShareProfileModal } from "@/components/public/ShareProfileModal";
-import { CrewSection, ProductTiles, SetupSection } from "@/components/public/premium/PremiumBlocks";
+import { CrewSection, SetupSection } from "@/components/public/premium/PremiumBlocks";
 import { ProfileHeader } from "@/components/public/ProfileHeader";
 import { STORAGE_KEYS, storage } from "@/utils/storage";
-import { LinkRow } from "@/components/links/LinkRow";
-import { LinkGroupRow } from "@/components/links/LinkGroupRow";
 import { getInitials } from "@/lib/avatar";
 import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
 import { trackPublicEvent } from "@/lib/publicTrack";
-import { PremiumSeriesRow } from "@/components/public/premium/PremiumSeries";
 import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
 import { ThemeService, getThemeCssVariables } from "@/services/ThemeService";
 import {
@@ -157,7 +154,8 @@ import {
 } from "@/lib/creatorEra";
 import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
 import { CreatorEraBottomSheet } from "@/components/shared/CreatorEraBottomSheet";
-import { AboutMeBlock, FanbaseByPlatform, SECTION_FOOTER_CTA, Section, SocialAccountsBlock, SolidSectionsProvider } from "@/components/public/about/AboutSections";
+import { AboutMeBlock, FanbaseByPlatform, SocialAccountsBlock } from "@/components/public/about/AboutSections";
+import { FooterCta, LinkGroupRow, LinkRow, ProductTiles, Section, SeriesRow, SolidSectionsProvider } from "@/components/public/ui";
 import { AudienceSnapshot, CustomCollaboration, WhatBrandsSay, WorkWithMe } from "@/components/public/collab/CollabSections";
 
 
@@ -2531,7 +2529,6 @@ export function LivePreviewCard({
                   {/* Featured link first (⭐ chip only), then links & folders as divided rows */}
                   {pinnedLink && (
                     <LinkRow
-                      flat
                       link={pinnedLink}
                       isPinned={true}
                       onClick={(e) => {
@@ -2552,10 +2549,8 @@ export function LivePreviewCard({
                         const isExpandedByParam = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("expandGroup") === "1" && curGroupIndex === 0;
                         return (
                           <LinkGroupRow
-                            flat
                             key={item.id}
                             group={item}
-                            index={curGroupIndex}
                             initiallyOpen={isExpandedByParam}
                             onLinkClick={(innerLink) => {
                               if (isInformationalMode) {
@@ -2570,7 +2565,6 @@ export function LivePreviewCard({
                       }
                       return (
                         <LinkRow
-                          flat
                           key={item.id}
                           link={item}
                           onClick={(e) => {
@@ -2586,8 +2580,8 @@ export function LivePreviewCard({
                     });
                   })()}
                   {hasMoreLinks && (
-                    <button
-                      type="button"
+                    <FooterCta
+                      plain={!isPremiumLayout}
                       onClick={() => {
                         if (isInformationalMode) {
                           showToast("Opens all creator links ✨");
@@ -2595,11 +2589,9 @@ export function LivePreviewCard({
                         }
                         router.push(allLinksHref || `/${cleanHandle || "creator"}/links`);
                       }}
-                      className={isPremiumLayout ? SECTION_FOOTER_CTA : "flex h-11 w-full items-center justify-center gap-1.5 text-xs sm:text-[13px] font-semibold text-(--accent-text) hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)] transition-colors cursor-pointer"}
                     >
-                      <span>{`View all links (${validLinks.length})`}</span>
-                      <ArrowRight className="h-3.5 w-3.5 shrink-0" />
-                    </button>
+                      {`View all links (${validLinks.length})`}
+                    </FooterCta>
                   )}
                 </Section>
               </div>
@@ -2618,20 +2610,6 @@ export function LivePreviewCard({
               title={isPremiumLayout || seriesOnlyMode ? "My Series" : "Series"}
               subtitle={landingDemo ? "Start from Episode 1." : isPremiumLayout || seriesOnlyMode ? "Start at Ep 1 & binge in order." : "Watch episodes in the right order."}
               count={`${series.length} series`}
-              action={
-                isPremiumLayout && !seriesOnlyMode && allSeriesHref && series.length > displayedSeries.length
-                  ? {
-                      label: "View all",
-                      href: allSeriesHref,
-                      onClick: (e) => {
-                        if (isInformationalMode) {
-                          e.preventDefault();
-                          showToast("Opens all creator series on live profile ✨");
-                        }
-                      },
-                    }
-                  : undefined
-              }
               colors={aboutColors}
               divided={false}
             >
@@ -2705,7 +2683,7 @@ export function LivePreviewCard({
 
                     if (isPremiumLayout || seriesOnlyMode) {
                       return (
-                        <PremiumSeriesRow
+                        <SeriesRow
                           key={s.id}
                           series={s}
                           seriesHref={`/${cleanHandle || "creator"}/series/${s.id}`}
@@ -2790,8 +2768,8 @@ export function LivePreviewCard({
 
             {!seriesOnlyMode && allSeriesHref && series.length > displayedSeries.length && (
               <div className="border-t border-(--surface-border)">
-                <button
-                  type="button"
+                <FooterCta
+                  plain={!isPremiumLayout}
                   onPointerEnter={() => {
                     if (allSeriesHref && !isInformationalMode) {
                       router.prefetch(allSeriesHref);
@@ -2804,11 +2782,9 @@ export function LivePreviewCard({
                     }
                     router.push(allSeriesHref);
                   }}
-                  className={isPremiumLayout ? SECTION_FOOTER_CTA : "flex h-11 w-full items-center justify-center gap-1.5 text-xs sm:text-[13px] font-semibold text-(--accent-text) hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)] transition-colors cursor-pointer"}
                 >
-                  <span>{`View all series (${series.length})`}</span>
-                  <ArrowRight className="h-3.5 w-3.5 shrink-0" />
-                </button>
+                  {`View all series (${series.length})`}
+                </FooterCta>
               </div>
             )}
             </Section>
@@ -2826,20 +2802,6 @@ export function LivePreviewCard({
               title={landingDemo ? "Digital products" : isPremiumLayout || productsOnlyMode ? "My Shop" : "Shop"}
               subtitle={isPremiumLayout || productsOnlyMode ? "Products I proudly recommend." : "Products I use and recommend."}
               count={products && products.length > 0 ? `${products.length} ${products.length === 1 ? "product" : "products"}` : undefined}
-              action={
-                isPremiumLayout && sortedProducts.length > 6
-                  ? {
-                      label: "View all",
-                      href: allProductsHref || `/${cleanHandle || "creator"}/products`,
-                      onClick: (e) => {
-                        if (isInformationalMode) {
-                          e.preventDefault();
-                          showToast("Opens all creator products ✨");
-                        }
-                      },
-                    }
-                  : undefined
-              }
               colors={aboutColors}
               divided={false}
             >
@@ -2953,7 +2915,7 @@ export function LivePreviewCard({
 
             {isPremiumLayout && !productsOnlyMode && products.length > 3 && (
               <div className="border-t border-(--surface-border)">
-                <Link
+                <FooterCta
                   href={allProductsHref || `/${cleanHandle || "creator"}/products`}
                   onClick={(e) => {
                     if (isInformationalMode) {
@@ -2961,11 +2923,9 @@ export function LivePreviewCard({
                       showToast("Opens all creator products ✨");
                     }
                   }}
-                  className={SECTION_FOOTER_CTA}
                 >
-                  <span>{`View all products (${products.length})`}</span>
-                  <ArrowRight className="h-3.5 w-3.5 shrink-0" />
-                </Link>
+                  {`View all products (${products.length})`}
+                </FooterCta>
               </div>
             )}
 

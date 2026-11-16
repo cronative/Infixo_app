@@ -2,9 +2,20 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Check, ChevronDown, CheckCircle2, ChevronRight, Clock, Handshake, Star, Tv } from "lucide-react";
+import { ArrowUpRight, Check, ChevronDown, CheckCircle2, Clock, Handshake, Star, Tv } from "lucide-react";
 import type { CreatorReview, MediaKitPackage } from "@/types";
-import { AboutHeader, BrandPlatformIcon, PLATFORM_BRAND, SECTION_CARD, SECTION_FOOTER_CTA, SectionCard, type AboutColors } from "@/components/public/about/AboutSections";
+import {
+  BrandPlatformIcon,
+  FooterCta,
+  PLATFORM_BRAND,
+  PackageRow,
+  SECTION_CARD,
+  SectionCard,
+  SectionHeader,
+  packagePlatformKey,
+  packagePrice,
+  type SectionColors as AboutColors,
+} from "@/components/public/ui";
 import { formatFans } from "@/lib/creatorEra";
 import { getInitials } from "@/lib/avatar";
 
@@ -12,34 +23,6 @@ const CARD = SECTION_CARD;
 const ROW = "px-4 py-3";
 const OUTLINE_BTN =
   "inline-flex h-9 items-center justify-center gap-1.5 rounded-[5px] border border-(--accent) px-3.5 text-[13px] font-medium text-(--accent-text) transition-colors hover:bg-(--accent-soft) cursor-pointer";
-
-// ── Package price helpers (same rules as the legacy PackageCard) ──
-
-const UNIT_LABELS: Record<string, string> = {
-  per_reel: "/ reel",
-  per_post: "/ post",
-  per_video: "/ video",
-  per_package: "/ package",
-  per_month: "/ month",
-};
-
-function packagePrice(pkg: MediaKitPackage) {
-  const raw = (pkg.price || "").trim().replace(/^₹\s*/, "");
-  const numeric = /^[\d,]+(\.\d+)?$/.test(raw) ? Number(raw.replace(/,/g, "")) : NaN;
-  const value = !raw ? "Contact for pricing" : Number.isFinite(numeric) ? `₹${numeric.toLocaleString("en-IN")}` : `₹${raw}`;
-  const isMonthly = pkg.title.toLowerCase().includes("monthly");
-  const unitKey = pkg.priceUnit || (isMonthly ? "per_month" : "per_package");
-  const unit = !raw ? "" : UNIT_LABELS[unitKey] || (unitKey.startsWith("/") ? unitKey : `/ ${unitKey.replace(/^per_/, "").replace(/_/g, " ")}`);
-  return { value: pkg.isStartingPrice && raw ? `From ${value}` : value, unit, isMonthly: unitKey === "per_month" || isMonthly };
-}
-
-function packagePlatformKey(platform: string) {
-  const p = (platform || "").toLowerCase();
-  if (p.includes("instagram") || p.includes("reel")) return "instagram";
-  if (p.includes("youtube")) return "youtube";
-  if (p.includes("facebook")) return "facebook";
-  return null;
-}
 
 // ── 1. Audience snapshot ──────────────────────────────────────
 
@@ -65,7 +48,7 @@ export function AudienceSnapshot({
   );
   return (
     <div className={CARD}>
-      <AboutHeader title="Audience snapshot" subtitle="Why brands work with me" colors={colors} />
+      <SectionHeader title="Audience snapshot" subtitle="Why brands work with me" colors={colors} />
       <ul className="divide-y divide-(--surface-border)">
         {/* Total Fans lives in the profile header, so it is not repeated here. */}
         {topPlatform && topPlatform.count > 0 && (
@@ -117,7 +100,8 @@ export function AudienceSnapshot({
 
 // ── 2. Work with me ───────────────────────────────────────────
 
-function PackageRow({ pkg, colors, onEnquire }: { pkg: MediaKitPackage; colors: AboutColors; onEnquire: (pkg: MediaKitPackage) => void }) {
+/** Tabs layout: full package card row (deliverables + Enquire button). */
+function PackageDetailRow({ pkg, colors, onEnquire }: { pkg: MediaKitPackage; colors: AboutColors; onEnquire: (pkg: MediaKitPackage) => void }) {
   const [showAll, setShowAll] = useState(false);
   const { value, unit, isMonthly } = packagePrice(pkg);
   const pKey = packagePlatformKey(pkg.platform);
@@ -196,41 +180,6 @@ function PackageRow({ pkg, colors, onEnquire }: { pkg: MediaKitPackage; colors: 
   );
 }
 
-function CompactPackageRow({ pkg, colors, onEnquire }: { pkg: MediaKitPackage; colors: AboutColors; onEnquire: (pkg: MediaKitPackage) => void }) {
-  const { value, unit } = packagePrice(pkg);
-  const pKey = packagePlatformKey(pkg.platform);
-  const sub = pkg.description?.trim() || [pkg.platform, pkg.turnaroundDays ? `${pkg.turnaroundDays} days delivery` : ""].filter(Boolean).join(" · ");
-  return (
-    <li>
-      <button
-        type="button"
-        onClick={() => onEnquire(pkg)}
-        className="group flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[color-mix(in_srgb,var(--accent)_4%,transparent)] cursor-pointer"
-      >
-        {pKey ? (
-          <BrandPlatformIcon platform={pKey} size={32} />
-        ) : (
-          <span
-            style={{ backgroundColor: "color-mix(in srgb, var(--accent) 10%, var(--surface))", color: "var(--accent-text)" }}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px]"
-          >
-            <Tv className="h-4 w-4" />
-          </span>
-        )}
-        <span className="min-w-0 flex-1">
-          <span style={{ color: colors.primary }} title={pkg.title} className="line-clamp-2 break-words text-[13px] font-semibold leading-[18px] text-(--text)">{pkg.title}</span>
-          {sub && <span style={{ color: colors.muted }} title={sub} className="mt-0.5 line-clamp-2 break-words text-xs leading-4 text-(--text-muted)">{sub}</span>}
-        </span>
-        <span className="shrink-0 text-right leading-tight">
-          <span style={{ color: colors.primary }} className="block whitespace-nowrap text-[13px] font-semibold tabular-nums text-(--text)">{value}</span>
-          {unit && <span style={{ color: colors.muted }} className="whitespace-nowrap text-[11px] text-(--text-muted)">{unit.replace(/^\/\s*/, "per ")}</span>}
-        </span>
-        <ChevronRight className="h-4 w-4 shrink-0 text-(--text-muted) group-hover:text-(--text)" />
-      </button>
-    </li>
-  );
-}
-
 export function WorkWithMe({
   packages,
   colors,
@@ -262,7 +211,7 @@ export function WorkWithMe({
         {packages.length > 0 && (
           <ul className="divide-y divide-(--surface-border)">
             {shownPackages.map((pkg) => (
-              <CompactPackageRow key={pkg.id} pkg={pkg} colors={colors} onEnquire={onEnquire} />
+              <PackageRow key={pkg.id} pkg={pkg} colors={colors} onEnquire={onEnquire} />
             ))}
           </ul>
         )}
@@ -280,10 +229,14 @@ export function WorkWithMe({
           </div>
         )}
         {packages.length > 3 && (
-          <button type="button" onClick={() => setShowAllPackages((v) => !v)} className={`${SECTION_FOOTER_CTA} border-t border-(--surface-border)`}>
+          <FooterCta
+            onClick={() => setShowAllPackages((v) => !v)}
+            aria-expanded={showAllPackages}
+            className="border-t border-(--surface-border)"
+            trailing={<ChevronDown className={`h-3.5 w-3.5 transition-transform ${showAllPackages ? "rotate-180" : ""}`} />}
+          >
             {showAllPackages ? "Show less" : `View all packages (${packages.length})`}
-            <ChevronDown className={`h-3.5 w-3.5 transition-transform ${showAllPackages ? "rotate-180" : ""}`} />
-          </button>
+          </FooterCta>
         )}
       </SectionCard>
     );
@@ -298,7 +251,7 @@ export function WorkWithMe({
       {packages.length > 0 ? (
         <ul className="divide-y divide-(--surface-border)">
           {packages.map((pkg) => (
-            <PackageRow key={pkg.id} pkg={pkg} colors={colors} onEnquire={onEnquire} />
+            <PackageDetailRow key={pkg.id} pkg={pkg} colors={colors} onEnquire={onEnquire} />
           ))}
         </ul>
       ) : (
@@ -408,10 +361,7 @@ export function WhatBrandsSay({
         })}
         {reviews.length > limit && allHref && (
           <li>
-            <Link href={allHref} className={SECTION_FOOTER_CTA}>
-              View all reviews ({reviews.length})
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+            <FooterCta href={allHref}>View all reviews ({reviews.length})</FooterCta>
           </li>
         )}
         {reviews.length > limit && !allHref && (
@@ -466,7 +416,7 @@ function ReviewComment({ text, color }: { text: string; color?: string }) {
 export function CustomCollaboration({ colors, onRequest }: { colors: AboutColors; onRequest: () => void }) {
   return (
     <div className={CARD}>
-      <AboutHeader title="Custom Collaboration" subtitle="Have something different in mind?" colors={colors} />
+      <SectionHeader title="Custom Collaboration" subtitle="Have something different in mind?" colors={colors} />
       <div className={`flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between ${ROW}`}>
         <p style={{ color: colors.secondary }} className="text-[13px] leading-relaxed text-(--text-secondary)">
           Custom campaign or long-term ambassadorship? Send a brief.

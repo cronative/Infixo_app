@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 import type { Series } from "@/types";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/shared/BrandIcons";
 import { SeriesCoverLogo } from "@/components/series/SeriesCoverLogo";
 import { getSeriesCoverUrl } from "@/lib/videoUrl";
 import { getSeriesEpisodes } from "@/lib/seriesMetrics";
+import { ListRow } from "./ListRow";
 
 const BLUR =
   "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiM3QTIyNTMiLz48L3N2Zz4=";
@@ -27,7 +26,7 @@ const PLATFORM: Record<string, { label: string; icon: React.ReactNode }> = {
   facebook: { label: "Facebook", icon: <FacebookIcon className="h-3 w-3 shrink-0 text-blue-500" /> },
 };
 
-export interface PremiumSeriesRowProps {
+export interface SeriesRowProps {
   series: Series;
   /** Public series page for this series (all episodes, in order). */
   seriesHref: string;
@@ -35,10 +34,10 @@ export interface PremiumSeriesRowProps {
 }
 
 /**
- * Premium profile series row: small cover on the left, title + episode
- * count + platform, chevron to the series page (episodes live there).
+ * Series row: 16:9 cover on the left, 2-line title, episode count + language
+ * + platform, chevron to the series page (episodes live there).
  */
-export function PremiumSeriesRow({ series, seriesHref, onOpenSeries }: PremiumSeriesRowProps) {
+export function SeriesRow({ series, seriesHref, onOpenSeries }: SeriesRowProps) {
   const [coverFailed, setCoverFailed] = useState(false);
   const episodes = getSeriesEpisodes(series);
   const cover = getSeriesCoverUrl(series);
@@ -49,40 +48,42 @@ export function PremiumSeriesRow({ series, seriesHref, onOpenSeries }: PremiumSe
   const meta = [`${episodes.length} ${episodes.length === 1 ? "episode" : "episodes"}`, series.language?.trim()].filter(Boolean).join(" · ");
 
   return (
-    <Link
+    <ListRow
       href={seriesHref}
       onClick={(e) => onOpenSeries?.(e, series)}
-      className="group flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-[color-mix(in_srgb,var(--accent)_4%,transparent)] sm:px-4"
-    >
-      <span className="relative h-[54px] w-24 shrink-0 overflow-hidden rounded-[5px] border border-(--surface-border) bg-(--accent)">
-        {hasCover ? (
-          <Image
-            src={cover!}
-            alt=""
-            fill
-            sizes="96px"
-            quality={75}
-            loading="lazy"
-            placeholder="blur"
-            blurDataURL={BLUR}
-            onError={() => setCoverFailed(true)}
-            style={{ objectPosition: focal }}
-            className="object-cover"
-          />
-        ) : (
-          <span aria-hidden className="absolute inset-0 bg-gradient-to-br from-(--cover-from) to-(--cover-to)">
-            <SeriesCoverLogo />
-          </span>
-        )}
-      </span>
-      <span className="min-w-0 flex-1">
-        <span title={series.title} className="line-clamp-2 break-words text-[14px] font-semibold leading-[18px] text-(--text)">{series.title}</span>
+      className="gap-3 px-3 py-2.5 transition-colors hover:bg-[color-mix(in_srgb,var(--accent)_4%,transparent)] sm:px-4"
+      leading={
+        <span className="relative h-[54px] w-24 shrink-0 overflow-hidden rounded-[5px] border border-(--surface-border) bg-(--accent)">
+          {hasCover ? (
+            <Image
+              src={cover!}
+              alt=""
+              fill
+              sizes="96px"
+              quality={75}
+              loading="lazy"
+              placeholder="blur"
+              blurDataURL={BLUR}
+              onError={() => setCoverFailed(true)}
+              style={{ objectPosition: focal }}
+              className="object-cover"
+            />
+          ) : (
+            <span aria-hidden className="absolute inset-0 bg-gradient-to-br from-(--cover-from) to-(--cover-to)">
+              <SeriesCoverLogo />
+            </span>
+          )}
+        </span>
+      }
+      title={series.title}
+      titleClassName="text-[14px] font-semibold leading-[18px] text-(--text)"
+      subtitle={
         <span className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-1.5 text-xs text-(--text-muted)">
           <span className="shrink-0">{meta}</span>
           {platform && <span className="inline-flex items-center gap-1">{platform.icon}{platform.label}</span>}
         </span>
-      </span>
-      <ChevronRight className="h-4 w-4 shrink-0 text-(--text-muted) transition-colors group-hover:text-(--text)" />
-    </Link>
+      }
+      arrow="chevron"
+    />
   );
 }

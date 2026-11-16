@@ -36,6 +36,7 @@ import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
 import { EraAwardMedal, EraBadge } from "@/components/shared/EraBadge";
 import { eraInk, eraRing, getEraConfig } from "@/lib/eraConfig";
 import { platformRank } from "@/components/public/about/AboutSections";
+import { Popover } from "@/components/public/ui";
 import {
   type CreatorEra,
   formatFans,
@@ -376,7 +377,6 @@ export function ProfileHeader({
 
   // Creator Era popover: current badge, what it means, progress to the next tier.
   const [eraOpen, setEraOpen] = useState(false);
-  const eraRef = useRef<HTMLDivElement>(null);
   const eraListRef = useRef<HTMLUListElement>(null);
   useEffect(() => {
     if (!eraOpen) return;
@@ -388,36 +388,9 @@ export function ProfileHeader({
     });
     return () => cancelAnimationFrame(id);
   }, [eraOpen]);
-  useEffect(() => {
-    if (!eraOpen) return;
-    const onDown = (e: PointerEvent) => {
-      if (eraRef.current && !eraRef.current.contains(e.target as Node)) setEraOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setEraOpen(false);
-    document.addEventListener("pointerdown", onDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("pointerdown", onDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [eraOpen]);
 
   // Total Fans popover: per-platform counts (primary accounts only, same as the total).
   const [fansOpen, setFansOpen] = useState(false);
-  const fansRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!fansOpen) return;
-    const onDown = (e: PointerEvent) => {
-      if (fansRef.current && !fansRef.current.contains(e.target as Node)) setFansOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setFansOpen(false);
-    document.addEventListener("pointerdown", onDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("pointerdown", onDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [fansOpen]);
   const fanPlatforms = useMemo(() => {
     const main = ["instagram", "youtube", "facebook"];
     const fromBreakdown = platformBreakdown
@@ -645,151 +618,151 @@ export function ProfileHeader({
         >
           {/* Creator Era (era colour + tier medal); opens the Era sheet */}
           {currentEra ? (
-            <div ref={eraRef} className="relative flex min-w-0 shrink justify-center">
-              <EraBadge
-                era={currentEra.era}
-                stage={currentEra.stage}
-                label={currentEra.badge}
-                showInfo
-                expanded={eraOpen}
-                onClick={() => {
-                  setFansOpen(false);
-                  setEraOpen((v) => !v);
-                }}
-                style={{
-                  background: "transparent",
-                  borderColor: "transparent",
-                  // Era ink pulled toward the theme text: deeper on light cards, lighter on dark ones.
-                  color: `color-mix(in srgb, ${eraInk(getEraConfig(currentEra.era).color)} 60%, var(--text))`,
-                }}
-                className="shrink-0"
-              />
-              {eraOpen && <span data-popover-arrow aria-hidden className="absolute left-1/2 top-[calc(100%+3px)] z-50 h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-l border-t border-[color-mix(in_srgb,var(--accent-text)_45%,transparent)] bg-(--card-bg)" />}
-              {eraOpen && (
-                <div
-                  role="dialog"
-                  aria-label="Creator Era"
-                  className="absolute left-0 top-[calc(100%+8px)] z-40 w-[260px] overflow-hidden rounded-[5px] border border-[color-mix(in_srgb,var(--accent-text)_45%,transparent)] bg-(--card-bg) p-2 text-left backdrop-blur-md"
-                >
-                  <div className="flex items-center gap-2 px-1.5 pb-2">
-                    <EraAwardMedal era={currentEra.era} stage={currentEra.stage} size={28} />
-                    <span className="min-w-0">
-                      <span className="block text-[13px] font-semibold leading-[18px] text-(--text)">{currentEra.badge}</span>
-                      <span className="block text-[11px] leading-4 text-(--text-muted)">{getEraConfig(currentEra.era).award} award</span>
-                    </span>
-                  </div>
-                  <p className="px-1.5 pb-2 text-[12px] leading-snug text-(--text-secondary)">
-                    Every fan is a step forward. Creator Era is made by Inflixo&apos;s AI to celebrate a creator&apos;s journey, from the first spark to legend. It grows with the fans on their Instagram, YouTube &amp; Facebook, so every milestone feels like a win worth chasing.
-                  </p>
-                  <div className="border-t border-(--surface-border) px-1.5 pt-2">
-                    {eraProgress.nextBadge ? (
-                      <>
-                        <div className="flex items-center justify-between gap-2 text-[12px]">
-                          <span className="text-(--text-muted)">Next: <span className="font-semibold text-(--text)">{eraProgress.nextBadge}</span></span>
-                          <span className="shrink-0 font-semibold tabular-nums text-(--text)">{eraProgress.progressPercent}%</span>
-                        </div>
-                        <div
-                          role="progressbar"
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          aria-valuenow={eraProgress.progressPercent}
-                          aria-label={`Progress to ${eraProgress.nextBadge}`}
-                          className="mt-1.5 h-1.5 w-full overflow-hidden rounded-[5px] bg-(--surface)"
-                        >
-                          <div className="h-full rounded-[5px] bg-(--accent-text)" style={{ width: `${eraProgress.progressPercent}%` }} />
-                        </div>
-                        <p className="mt-1.5 text-[11px] text-(--text-muted)">
-                          <span className="font-semibold tabular-nums text-(--text)">{formatFans(eraProgress.fansNeeded)}</span> more fans to go
-                        </p>
-                      </>
-                    ) : (
-                      <p className="text-[12px] text-(--text-muted)">Top era reached. Legendary! 👑</p>
-                    )}
-                  </div>
-                  {/* All eras, scrollable inside the popover (current era scrolled into view). */}
-                  <div className="-mx-2 -mb-2 mt-2 border-t border-(--surface-border) pt-2">
-                    <p className="px-3.5 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-(--text-muted)">All eras</p>
-                    {/* Full-width 1px dividers between eras (edge to edge of the popover). */}
-                    <ul ref={eraListRef} className="max-h-[188px] divide-y divide-(--surface-border) overflow-y-auto overscroll-contain border-t border-(--surface-border)">
-                      {MAIN_ERAS.map((e, i) => {
-                        const isCurrent = e.name === currentEra.era;
-                        const reached = i <= MAIN_ERAS.findIndex((x) => x.name === currentEra.era);
-                        return (
-                          <li
-                            key={e.name}
-                            data-current={isCurrent || undefined}
-                            aria-current={isCurrent ? "true" : undefined}
-                            className={`flex items-center gap-2 px-3.5 py-2 ${isCurrent ? "bg-(--accent-soft)" : ""}`}
-                          >
-                            <EraAwardMedal era={e.name} stage={isCurrent ? currentEra.stage : "Gold"} size={22} className={reached ? "" : "opacity-50"} />
-                            <span className="min-w-0 flex-1">
-                              <span className={`block text-[12px] font-semibold leading-4 ${isCurrent ? "text-(--accent-text)" : reached ? "text-(--text)" : "text-(--text-muted)"}`}>
-                                {e.name}
-                              </span>
-                              <span className="block text-[11px] leading-4 text-(--text-muted)">{getEraConfig(e.name).award}</span>
-                            </span>
-                            {isCurrent && <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-(--accent-text)">Now</span>}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                </div>
-              )}
-            </div>
+            <Popover
+              open={eraOpen}
+              onClose={() => setEraOpen(false)}
+              label="Creator Era"
+              align="left"
+              widthClassName="w-[260px]"
+              className="flex min-w-0 shrink justify-center"
+              panelClassName="overflow-hidden"
+              trigger={
+                <EraBadge
+                  era={currentEra.era}
+                  stage={currentEra.stage}
+                  label={currentEra.badge}
+                  showInfo
+                  expanded={eraOpen}
+                  onClick={() => {
+                    setFansOpen(false);
+                    setEraOpen((v) => !v);
+                  }}
+                  style={{
+                    background: "transparent",
+                    borderColor: "transparent",
+                    // Era ink pulled toward the theme text: deeper on light cards, lighter on dark ones.
+                    color: `color-mix(in srgb, ${eraInk(getEraConfig(currentEra.era).color)} 60%, var(--text))`,
+                  }}
+                  className="shrink-0"
+                />
+              }
+            >
+              <div className="flex items-center gap-2 px-1.5 pb-2">
+                <EraAwardMedal era={currentEra.era} stage={currentEra.stage} size={28} />
+                <span className="min-w-0">
+                  <span className="block text-[13px] font-semibold leading-[18px] text-(--text)">{currentEra.badge}</span>
+                  <span className="block text-[11px] leading-4 text-(--text-muted)">{getEraConfig(currentEra.era).award} award</span>
+                </span>
+              </div>
+              <p className="px-1.5 pb-2 text-[12px] leading-snug text-(--text-secondary)">
+                Every fan is a step forward. Creator Era is made by Inflixo&apos;s AI to celebrate a creator&apos;s journey, from the first spark to legend. It grows with the fans on their Instagram, YouTube &amp; Facebook, so every milestone feels like a win worth chasing.
+              </p>
+              <div className="border-t border-(--surface-border) px-1.5 pt-2">
+                {eraProgress.nextBadge ? (
+                  <>
+                    <div className="flex items-center justify-between gap-2 text-[12px]">
+                      <span className="text-(--text-muted)">Next: <span className="font-semibold text-(--text)">{eraProgress.nextBadge}</span></span>
+                      <span className="shrink-0 font-semibold tabular-nums text-(--text)">{eraProgress.progressPercent}%</span>
+                    </div>
+                    <div
+                      role="progressbar"
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={eraProgress.progressPercent}
+                      aria-label={`Progress to ${eraProgress.nextBadge}`}
+                      className="mt-1.5 h-1.5 w-full overflow-hidden rounded-[5px] bg-(--surface)"
+                    >
+                      <div className="h-full rounded-[5px] bg-(--accent-text)" style={{ width: `${eraProgress.progressPercent}%` }} />
+                    </div>
+                    <p className="mt-1.5 text-[11px] text-(--text-muted)">
+                      <span className="font-semibold tabular-nums text-(--text)">{formatFans(eraProgress.fansNeeded)}</span> more fans to go
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-[12px] text-(--text-muted)">Top era reached. Legendary! 👑</p>
+                )}
+              </div>
+              {/* All eras, scrollable inside the popover (current era scrolled into view). */}
+              <div className="-mx-2 -mb-2 mt-2 border-t border-(--surface-border) pt-2">
+                <p className="px-3.5 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-(--text-muted)">All eras</p>
+                {/* Full-width 1px dividers between eras (edge to edge of the popover). */}
+                <ul ref={eraListRef} className="max-h-[188px] divide-y divide-(--surface-border) overflow-y-auto overscroll-contain border-t border-(--surface-border)">
+                  {MAIN_ERAS.map((e, i) => {
+                    const isCurrent = e.name === currentEra.era;
+                    const reached = i <= MAIN_ERAS.findIndex((x) => x.name === currentEra.era);
+                    return (
+                      <li
+                        key={e.name}
+                        data-current={isCurrent || undefined}
+                        aria-current={isCurrent ? "true" : undefined}
+                        className={`flex items-center gap-2 px-3.5 py-2 ${isCurrent ? "bg-(--accent-soft)" : ""}`}
+                      >
+                        <EraAwardMedal era={e.name} stage={isCurrent ? currentEra.stage : "Gold"} size={22} className={reached ? "" : "opacity-50"} />
+                        <span className="min-w-0 flex-1">
+                          <span className={`block text-[12px] font-semibold leading-4 ${isCurrent ? "text-(--accent-text)" : reached ? "text-(--text)" : "text-(--text-muted)"}`}>
+                            {e.name}
+                          </span>
+                          <span className="block text-[11px] leading-4 text-(--text-muted)">{getEraConfig(e.name).award}</span>
+                        </span>
+                        {isCurrent && <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-(--accent-text)">Now</span>}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </Popover>
           ) : null}
 
           {currentEra && effectiveFanbase > 0 && <span aria-hidden style={{ backgroundColor: "color-mix(in srgb, var(--accent) 28%, var(--surface-border))" }} className="mx-1 h-6 w-px shrink-0" />}
 
           {/* Total Fans: tap for per-platform counts */}
-          <div ref={fansRef} className="relative flex shrink-0 justify-center">
-            <button
-              type="button"
-              onClick={() => {
-                setEraOpen(false);
-                setFansOpen((v) => !v);
-              }}
-              aria-expanded={fansOpen}
-              aria-haspopup="dialog"
-              className="tap-44 tap-scale inline-flex h-8 items-center gap-1.5 rounded-[5px] px-2 transition-colors cursor-pointer hover:bg-(--surface)/60 focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden sm:h-9"
-              title="See fans by platform"
-            >
-              <Users className="h-4 w-4 shrink-0 text-(--accent-text) sm:h-[18px] sm:w-[18px]" aria-hidden />
-              <span className="text-[13px] sm:text-sm font-bold text-(--text) tabular-nums leading-none">{formatFans(effectiveFanbase)}</span>
-              <span className="text-[12px] sm:text-[13px] text-(--text-muted) leading-none whitespace-nowrap"><span className="hidden min-[400px]:inline">Total </span>Fans</span>
-              <Info className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0 text-(--text-muted)" aria-hidden />
-            </button>
-
-            {fansOpen && <span data-popover-arrow aria-hidden className="absolute left-1/2 top-[calc(100%+3px)] z-50 h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-l border-t border-[color-mix(in_srgb,var(--accent-text)_45%,transparent)] bg-(--card-bg)" />}
-            {fansOpen && (
-              <div
-                role="dialog"
-                aria-label="Fans by platform"
-                className="absolute right-0 top-[calc(100%+8px)] z-40 w-[248px] rounded-[5px] border border-[color-mix(in_srgb,var(--accent-text)_45%,transparent)] bg-(--card-bg) p-2 text-left backdrop-blur-md"
+          <Popover
+            open={fansOpen}
+            onClose={() => setFansOpen(false)}
+            label="Fans by platform"
+            align="right"
+            widthClassName="w-[248px]"
+            className="flex shrink-0 justify-center"
+            trigger={
+              <button
+                type="button"
+                onClick={() => {
+                  setEraOpen(false);
+                  setFansOpen((v) => !v);
+                }}
+                aria-expanded={fansOpen}
+                aria-haspopup="dialog"
+                className="tap-44 tap-scale inline-flex h-8 items-center gap-1.5 rounded-[5px] px-2 transition-colors cursor-pointer hover:bg-(--surface)/60 focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden sm:h-9"
+                title="See fans by platform"
               >
-                <p className="px-1.5 pb-2 text-[12px] leading-snug text-(--text-secondary)">
-                  Total Fans is your combined audience from your primary Instagram, YouTube &amp; Facebook accounts, calculated by Inflixo AI.
-                </p>
-                {fanPlatforms.length === 0 ? (
-                  <p className="px-1.5 py-1.5 text-xs text-(--text-muted)">No platform counts yet.</p>
-                ) : (
-                  <ul>
-                    {fanPlatforms.map((p) => (
-                      <li key={p.platform} className="flex items-center gap-2 rounded-[5px] px-1.5 py-1.5">
-                        {getPlatformCardIcon(p.platform)}
-                        <span className="min-w-0 flex-1 truncate text-[13px] text-(--text) capitalize">{p.label || p.platform}</span>
-                        <span className="text-[13px] font-semibold text-(--text) tabular-nums">{formatFans(p.count)}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                <div className="mt-1 flex items-center justify-between border-t border-(--surface-border) px-1.5 pt-1.5 text-[12px]">
-                  <span className="text-(--text-muted)">Total</span>
-                  <span className="font-semibold text-(--text) tabular-nums">{formatFans(effectiveFanbase)}</span>
-                </div>
-              </div>
+                <Users className="h-4 w-4 shrink-0 text-(--accent-text) sm:h-[18px] sm:w-[18px]" aria-hidden />
+                <span className="text-[13px] sm:text-sm font-bold text-(--text) tabular-nums leading-none">{formatFans(effectiveFanbase)}</span>
+                <span className="text-[12px] sm:text-[13px] text-(--text-muted) leading-none whitespace-nowrap"><span className="hidden min-[400px]:inline">Total </span>Fans</span>
+                <Info className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0 text-(--text-muted)" aria-hidden />
+              </button>
+            }
+          >
+            <p className="px-1.5 pb-2 text-[12px] leading-snug text-(--text-secondary)">
+              Total Fans is your combined audience from your primary Instagram, YouTube &amp; Facebook accounts, calculated by Inflixo AI.
+            </p>
+            {fanPlatforms.length === 0 ? (
+              <p className="px-1.5 py-1.5 text-xs text-(--text-muted)">No platform counts yet.</p>
+            ) : (
+              <ul>
+                {fanPlatforms.map((p) => (
+                  <li key={p.platform} className="flex items-center gap-2 rounded-[5px] px-1.5 py-1.5">
+                    {getPlatformCardIcon(p.platform)}
+                    <span className="min-w-0 flex-1 truncate text-[13px] text-(--text) capitalize">{p.label || p.platform}</span>
+                    <span className="text-[13px] font-semibold text-(--text) tabular-nums">{formatFans(p.count)}</span>
+                  </li>
+                ))}
+              </ul>
             )}
-          </div>
+            <div className="mt-1 flex items-center justify-between border-t border-(--surface-border) px-1.5 pt-1.5 text-[12px]">
+              <span className="text-(--text-muted)">Total</span>
+              <span className="font-semibold text-(--text) tabular-nums">{formatFans(effectiveFanbase)}</span>
+            </div>
+          </Popover>
         </div>
       )}
 
