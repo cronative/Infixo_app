@@ -591,7 +591,13 @@ export function listThemes(): ThemeDefinition[] {
 
 /** The theme's CSS variables, for the public profile root (and any preview of it). */
 export function themeTokenStyle(id: string | null | undefined): CSSProperties {
-  return getThemeDefinition(id).tokens as unknown as CSSProperties;
+  const tokens = getThemeDefinition(id).tokens as unknown as Record<string, string>;
+  return {
+    // Secondary text follows the theme (between --text and --text-muted) so it stays readable on dark cards;
+    // the global fallback (#475569) is a light-UI slate.
+    "--text-secondary": "color-mix(in srgb, var(--text) 70%, var(--text-muted))",
+    ...tokens,
+  } as unknown as CSSProperties;
 }
 
 /**

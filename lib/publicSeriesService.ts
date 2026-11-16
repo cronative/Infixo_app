@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import type { RowDataPacket } from "mysql2";
 import { Series, VisibilitySettings } from "@/types";
-import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
+import { resolveThemeKey } from "@/lib/themeKeys";
 
 export interface PublicCreatorInfo {
   displayName: string;
@@ -102,7 +102,8 @@ export async function getPublicSeriesData(
   // Check demo creator mock data
   if (cleanUsername === "demo_creator") {
     try {
-      const { EXPERT_DEMO_SERIES, EXPERT_DEMO_PROFILE } = await import("@/data/expertDemoCreator");
+      const { EXPERT_DEMO_SERIES, EXPERT_DEMO_PROFILE, EXPERT_DEMO_THEME, EXPERT_DEMO_SOCIALS } = await import("@/data/expertDemoCreator");
+      const { calculateTotalAudience } = await import("@/lib/socialAccounts");
       const found = EXPERT_DEMO_SERIES.find((s) => s.id === cleanSeriesId);
       if (found) {
         return {
@@ -113,8 +114,9 @@ export async function getPublicSeriesData(
             photoDataUrl: EXPERT_DEMO_PROFILE.photoDataUrl,
             bio: EXPERT_DEMO_PROFILE.bio,
             category: EXPERT_DEMO_PROFILE.category,
-            themeKey: DEFAULT_THEME_KEY,
-            totalFanbase: 6480000,
+            // Same theme and fan total as the demo profile page.
+            themeKey: EXPERT_DEMO_THEME,
+            totalFanbase: calculateTotalAudience(EXPERT_DEMO_SOCIALS),
           },
         };
       }

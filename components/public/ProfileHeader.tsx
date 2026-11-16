@@ -472,21 +472,21 @@ export function ProfileHeader({
       </div>
 
       {/* ============================================================== */}
-      {/* ROW 2: CENTER-ALIGNED PROFILE ROW (Avatar + Right Column)       */}
+      {/* ROW 2: STACKED PROFILE (photo on top, details centered below)       */}
       {/* ============================================================== */}
-      <div className="flex items-center justify-center gap-3 sm:gap-4 w-full mt-1 sm:mt-1.5 mx-auto">
+      <div className="flex w-full flex-col items-center gap-2.5 mt-1 sm:mt-1.5 mx-auto text-center">
         {/* LEFT: Creator Avatar (reduced slightly as requested: 68px on mobile, 76px on sm) */}
         <div className="relative shrink-0">
           <div className="p-[2px] sm:p-[2.5px] rounded-full shadow-xs" style={{ background: eraCfg ? eraRing(eraCfg) : "var(--avatar-ring)" }}>
             <div className="p-[1.5px] bg-(--card-bg) rounded-full">
-              <div className="relative h-[68px] w-[68px] sm:h-[76px] sm:w-[76px] rounded-full overflow-hidden bg-(--card-bg) ">
+              <div className="relative h-[76px] w-[76px] sm:h-[84px] sm:w-[84px] rounded-full overflow-hidden bg-(--card-bg) ">
                 {hasAvatar && photoUrl ? (
                   <Image
                     src={photoUrl}
                     alt={displayName || "Creator"}
                     width={152}
                     height={152}
-                    sizes="76px"
+                    sizes="84px"
                     priority
                     unoptimized={isDataUrl}
                     onError={() => setFailedSrc(photoUrl)}
@@ -513,34 +513,34 @@ export function ProfileHeader({
           )}
         </div>
 
-        {/* RIGHT COLUMN: Name / @username / Category (Clean layout or compact listing layout) */}
-        <div className="min-w-0 text-left space-y-0.5">
+        {/* DETAILS (centered under the photo): Name / @username / Category */}
+        <div className="min-w-0 w-full text-center space-y-0.5">
           {/* 1. Title / Name */}
-          <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-(--text) truncate leading-tight">
+          <h1 className="text-lg sm:text-xl font-bold tracking-tight text-(--text) break-words leading-tight">
             {displayName || "Creator"}
           </h1>
 
           {/* 2. @username */}
-          <p className="text-xs sm:text-[13px] font-normal text-(--text-muted) truncate leading-tight">
+          <p className="text-xs sm:text-[13px] font-normal text-(--text-muted) break-all leading-tight">
             @{cleanHandle}
           </p>
 
           {/* 3. Category / Tagline with . separator */}
           {formattedTagline && (
-            <p className="text-xs sm:text-[13px] font-normal text-(--text-secondary) truncate leading-tight">
+            <p className="text-xs sm:text-[13px] font-normal text-(--text-secondary) break-words leading-tight">
               {formattedTagline}
             </p>
           )}
 
           {/* 4. Social Icons directly under Category */}
           {(allActiveSocials.length > 0 || onWorkWithMe) && (
-            <div className="flex items-center gap-2.5 sm:gap-3 pt-1.5">
+            <div className="flex flex-wrap items-center justify-center gap-1.5 pt-2 sm:gap-2">
               {allActiveSocials.map((item) => {
                 const hasUrl = Boolean(item.url && item.url !== "#");
 
                 const iconContent = (
-                  <span className="flex items-center justify-center text-(--text) hover:text-(--accent) transition-colors">
-                    {getPlatformIcon(item.platform, "h-4 w-4 sm:h-4.5 sm:w-4.5 text-current")}
+                  <span className="flex h-7 w-7 items-center justify-center rounded-[6px] border border-(--surface-border) bg-(--card-bg) text-(--text) transition-colors hover:border-(--accent) hover:text-(--accent) sm:h-8 sm:w-8">
+                    {getPlatformIcon(item.platform, "h-4 w-4 sm:h-[18px] sm:w-[18px] text-current")}
                   </span>
                 );
 
@@ -552,7 +552,7 @@ export function ProfileHeader({
                     rel="noopener noreferrer"
                     title={`Visit ${item.label || item.platform}`}
                     aria-label={`Visit ${item.label || item.platform}`}
-                    className="tap-scale inline-flex items-center justify-center hover:scale-110 transition-transform cursor-pointer"
+                    className="tap-scale inline-flex items-center justify-center transition-transform cursor-pointer"
                   >
                     {iconContent}
                   </a>
@@ -563,15 +563,22 @@ export function ProfileHeader({
                 );
               })}
               {onWorkWithMe && (
-                <button
-                  type="button"
-                  onClick={onWorkWithMe}
-                  className="tap-scale ml-0.5 inline-flex h-6 items-center gap-1 rounded-[5px] border border-(--surface-border) bg-(--accent-soft) px-2 text-[11px] sm:text-xs font-semibold text-(--accent-text) hover:opacity-90 transition-opacity cursor-pointer whitespace-nowrap focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
-                  title="See collab packages"
-                >
-                  <Handshake className="h-3 w-3 shrink-0" />
-                  <span>Work with me</span>
-                </button>
+                <>
+                  {allActiveSocials.length > 0 && <span aria-hidden style={{ backgroundColor: "color-mix(in srgb, var(--accent) 28%, var(--surface-border))" }} className="mx-0.5 h-5 w-px" />}
+                  <button
+                    type="button"
+                    onClick={onWorkWithMe}
+                    style={{
+                      backgroundColor: "color-mix(in srgb, var(--accent) 9%, var(--card-bg))",
+                      borderColor: "color-mix(in srgb, var(--accent) 22%, transparent)",
+                    }}
+                    className="tap-scale inline-flex h-7 items-center gap-1.5 rounded-[6px] border px-2.5 text-[11.5px] font-semibold text-(--accent-text) transition-opacity hover:opacity-90 cursor-pointer whitespace-nowrap focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden sm:h-8 sm:text-[13px]"
+                    title="See collab packages"
+                  >
+                    <Handshake className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+                    <span>Work with me</span>
+                  </button>
+                </>
               )}
             </div>
           )}
@@ -582,31 +589,43 @@ export function ProfileHeader({
       {/* ROW 3: COMPACT CREATOR ERA + TOTAL FANS PILL (5px radius)      */}
       {/* ============================================================== */}
       {(currentEra || effectiveFanbase > 0) && (
-        <div className="w-full mt-2 sm:mt-2.5 flex items-center justify-center gap-1.5 sm:gap-2">
-          {/* Premium Era badge (era colour + tier metal + award); whole pill and ⓘ open the Era modal */}
+        <div
+          style={{
+            backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--card-bg))",
+            borderColor: "color-mix(in srgb, var(--accent) 16%, var(--surface-border))",
+          }}
+          className="mt-3 flex w-full items-center justify-evenly gap-1 rounded-[8px] border px-1 py-1"
+        >
+          {/* Creator Era (era colour + tier medal); opens the Era sheet */}
           {currentEra ? (
-            <EraBadge
-              era={currentEra.era}
-              stage={currentEra.stage}
-              label={currentEra.badge}
-              showInfo
-              onClick={() => setEraSheetOpen(true)}
-              className="shrink shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
-            />
+            <div className="flex min-w-0 shrink justify-center">
+              <EraBadge
+                era={currentEra.era}
+                stage={currentEra.stage}
+                label={currentEra.badge}
+                showInfo
+                onClick={() => setEraSheetOpen(true)}
+                style={{ background: "transparent", borderColor: "transparent" }}
+                className="shrink-0"
+              />
+            </div>
           ) : null}
 
+          {currentEra && effectiveFanbase > 0 && <span aria-hidden style={{ backgroundColor: "color-mix(in srgb, var(--accent) 28%, var(--surface-border))" }} className="mx-1 h-6 w-px shrink-0" />}
+
           {/* Total Fans: tap for per-platform counts */}
-          <div ref={fansRef} className="relative shrink-0">
+          <div ref={fansRef} className="relative flex shrink-0 justify-center">
             <button
               type="button"
               onClick={() => setFansOpen((v) => !v)}
               aria-expanded={fansOpen}
               aria-haspopup="dialog"
-              className="tap-scale inline-flex h-9 items-center gap-1 rounded-full border border-(--surface-border) bg-transparent px-2.5 hover:bg-(--surface)/50 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"
+              className="tap-scale inline-flex h-8 items-center gap-1.5 rounded-[6px] px-2 transition-colors cursor-pointer hover:bg-(--surface)/60 focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden sm:h-9"
               title="See fans by platform"
             >
-              <span className="text-xs sm:text-[13px] font-semibold text-(--text) tabular-nums leading-none">{formatFans(effectiveFanbase)}</span>
-              <span className="text-[11px] sm:text-xs text-(--text-muted) leading-none whitespace-nowrap">Total Fans</span>
+              <Users className="h-4 w-4 shrink-0 text-(--accent-text) sm:h-[18px] sm:w-[18px]" aria-hidden />
+              <span className="text-[12.5px] sm:text-sm font-bold text-(--text) tabular-nums leading-none">{formatFans(effectiveFanbase)}</span>
+              <span className="text-[11.5px] sm:text-[13px] text-(--text-muted) leading-none whitespace-nowrap"><span className="hidden min-[400px]:inline">Total </span>Fans</span>
               <Info className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0 text-(--text-muted)" aria-hidden />
             </button>
 

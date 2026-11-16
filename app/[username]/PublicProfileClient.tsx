@@ -771,7 +771,7 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
           seriesOpenMode="page"
           seriesPreviewLimit={effectiveLayoutMode === "premium" ? 3 : 5}
           allSeriesHref={`/${handleStr.replace(/^@/, "")}/series`}
-          productsPreviewLimit={effectiveLayoutMode === "premium" ? 3 : (handleStr.replace(/^@/, "") === "demo_creator" ? 9 : 6)}
+          productsPreviewLimit={effectiveLayoutMode === "premium" ? 4 : (handleStr.replace(/^@/, "") === "demo_creator" ? 9 : 6)}
           allProductsHref={`/${handleStr.replace(/^@/, "")}/products`}
           reviewsPreviewLimit={3}
           allReviewsHref={`/${handleStr.replace(/^@/, "")}/reviews`}

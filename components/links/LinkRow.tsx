@@ -86,10 +86,10 @@ export function LinkRow({
 
           {/* Text Content */}
           <div className="min-w-0 flex-1 flex flex-col justify-center">
-            <div className="flex items-center gap-1.5 min-w-0">
-              <span className="link-row-title text-[13px] font-medium text-(--text) group-hover:text-(--accent-text) transition-colors leading-[18px] truncate">
-                {title}
-              </span>
+            <span className="link-row-title min-w-0 text-[13px] font-medium text-(--text) group-hover:text-(--accent-text) transition-colors leading-[18px] break-words">
+              {title}
+            </span>
+            <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5">
               {isFeatured && (
                 <span
                   style={{
@@ -102,10 +102,10 @@ export function LinkRow({
                   ⭐ Featured
                 </span>
               )}
+              <span className="min-w-0 text-[11px] text-(--text-muted) font-normal break-all leading-[16px]">
+                {subtitleText}
+              </span>
             </div>
-            <span className="text-[11px] text-(--text-muted) font-normal truncate leading-[16px] mt-0.5">
-              {subtitleText}
-            </span>
           </div>
         </div>
 
@@ -123,7 +123,7 @@ export function LinkRow({
       rel="noopener noreferrer"
       aria-label={`${title} – opens ${ariaDestination}`}
       onClick={onClick}
-      className={`group relative flex items-center justify-between gap-3 min-h-[48px] h-auto min-[400px]:h-[48px] px-3.5 py-2 ${
+      className={`group relative flex items-center justify-between gap-3 min-h-[48px] h-auto px-3.5 py-2 ${
         flat
           ? "rounded-none hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)]!"
           : `rounded-[5px] border ${isFeatured ? "border-(--accent) shadow-2xs" : "border-(--surface-border)"}`
@@ -152,10 +152,10 @@ export function LinkRow({
 
         {/* Text Content */}
         <div className="min-w-0 flex-1 flex flex-col justify-center py-0.5">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span className="link-row-title text-[13px] font-medium text-(--text) group-hover:text-(--accent-text) transition-colors leading-[18px] truncate">
-              {title}
-            </span>
+          <span className="link-row-title min-w-0 text-[13px] font-medium text-(--text) group-hover:text-(--accent-text) transition-colors leading-[18px] break-words">
+            {title}
+          </span>
+          <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5">
             {isFeatured && (
               <span
                 style={{
@@ -168,10 +168,10 @@ export function LinkRow({
                 ⭐ Featured
               </span>
             )}
+            <span className="min-w-0 text-xs text-(--text-muted) font-normal break-all leading-[17px]">
+              {subtitleText}
+            </span>
           </div>
-          <span className="text-xs text-(--text-muted) font-normal truncate leading-[17px] mt-0.5">
-            {subtitleText}
-          </span>
         </div>
       </div>
 

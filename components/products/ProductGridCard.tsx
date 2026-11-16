@@ -114,13 +114,13 @@ export function ProductGridCard({
         src={imageUrl || ""}
         name={name}
         cover={false}
-        className="h-20 w-20 sm:h-24 sm:w-24 shrink-0 aspect-square rounded-[5px] border border-(--surface-border)/60 bg-[#F8FAFC]"
+        className="h-20 w-20 sm:h-24 sm:w-24 shrink-0 aspect-square rounded-[5px] border border-(--surface-border)/60 bg-(--surface)"
       />
 
       <div className="flex min-w-0 flex-1 flex-col justify-between gap-1">
         <div className="space-y-0.5 min-w-0">
           <h3
-            className="text-[13px] sm:text-[13.5px] font-medium text-(--text) line-clamp-2 leading-[18px] break-words"
+            className="text-[13px] sm:text-[13.5px] font-medium text-(--text) leading-[18px] break-words"
             title={name}
           >
             {name}
@@ -131,7 +131,7 @@ export function ProductGridCard({
           )}
           {note && (
             <p
-              className="text-xs text-(--text-muted) font-normal line-clamp-1 truncate leading-[17px]"
+              className="text-xs text-(--text-muted) font-normal break-words leading-[17px]"
               title={note}
             >
               {note}
@@ -167,12 +167,12 @@ export function ProductGridCard({
         src={imageUrl || ""}
         name={name}
         cover={false}
-        className="aspect-square w-full rounded-none border-b border-(--surface-border) bg-[#F8FAFC]"
+        className="aspect-square w-full rounded-none border-b border-(--surface-border) bg-(--surface)"
       />
 
       <div className="flex flex-1 flex-col p-2.5 sm:p-3 gap-0.5 min-w-0">
         <h3
-          className="text-[13px] font-medium text-(--text) line-clamp-2 leading-[18px] break-words"
+          className="text-[13px] font-medium text-(--text) leading-[18px] break-words"
           title={name}
         >
           {name}
@@ -183,7 +183,7 @@ export function ProductGridCard({
         )}
         {note && (
           <p
-            className="text-xs text-(--text-muted) font-normal line-clamp-1 truncate leading-[17px]"
+            className="text-xs text-(--text-muted) font-normal break-words leading-[17px]"
             title={note}
           >
             {note}

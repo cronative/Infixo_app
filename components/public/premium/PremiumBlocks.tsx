@@ -1,111 +1,61 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Package } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ExternalLink, Monitor, Package, Users } from "lucide-react";
 import type { CreatorSetupItem, TeamMember } from "@/types";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/shared/BrandIcons";
-import { SECTION_ROW, SECTION_ROW_HOVER, Section, type AboutColors } from "@/components/public/about/AboutSections";
+import { BrandPlatformIcon, SECTION_FOOTER_CTA, SECTION_ROW, SECTION_ROW_HOVER, Section, type AboutColors } from "@/components/public/about/AboutSections";
 import { getInitials } from "@/lib/avatar";
 
 const THUMB = "flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-[5px] border border-(--surface-border) bg-(--surface)";
 const MORE_ROW = `flex w-full items-center justify-center gap-1.5 ${SECTION_ROW} py-2.5 text-[13px] font-semibold text-(--accent-text) ${SECTION_ROW_HOVER} cursor-pointer`;
 
-// ── Sticky section nav with scroll-spy ─────────────────────────
+// ── Shop: compact product tiles ─────────────────────────────
 
-export interface SectionNavItem {
-  id: string;
-  label: string;
-  /** DOM id(s) of the section to scroll to / watch; the first one present in the page is used. */
-  target: string | string[];
+export interface ProductTileItem {
+  id: string | number;
+  name: string;
+  imageUrl?: string;
+  href?: string;
+  price?: string | null;
 }
 
-const findTarget = (t: string | string[]) => {
-  for (const id of Array.isArray(t) ? t : [t]) {
-    const el = document.getElementById(id);
-    if (el) return el;
-  }
-  return null;
-};
-
-export function SectionNav({ items, className = "" }: { items: SectionNavItem[]; className?: string }) {
-  const [active, setActive] = useState(items[0]?.id);
-  const barRef = useRef<HTMLDivElement>(null);
-  // While a chip-click smooth scroll runs, scroll-spy stays on the clicked chip.
-  const locked = useRef(false);
-
-  useEffect(() => {
-    if (items.length === 0) return;
-    const onScroll = () => {
-      if (locked.current) return;
-      const offset = (barRef.current?.getBoundingClientRect().bottom ?? 0) + 24;
-      let current = items[0].id;
-      for (const item of items) {
-        const el = findTarget(item.target);
-        if (el && el.getBoundingClientRect().top <= offset) current = item.id;
-      }
-      // At the very bottom the last section wins even if it's short.
-      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) current = items[items.length - 1].id;
-      setActive(current);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, [items]);
-
-  // Keep the active chip visible on narrow screens.
-  useEffect(() => {
-    const chip = barRef.current?.querySelector<HTMLElement>(`[data-nav="${active}"]`);
-    chip?.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
-  }, [active]);
-
-  if (items.length < 2) return null;
-
-  const go = (item: SectionNavItem) => {
-    const el = findTarget(item.target);
-    if (!el) return;
-    setActive(item.id);
-    locked.current = true;
-    window.setTimeout(() => {
-      locked.current = false;
-    }, 800);
-    const navH = barRef.current?.offsetHeight ?? 40;
-    window.scrollTo({ top: window.scrollY + el.getBoundingClientRect().top - navH - 12, behavior: "smooth" });
-  };
-
+/** Premium shop: compact tiles, 2 per row on small phones, max 3 (image, full name, price + open icon). */
+export function ProductTiles({
+  products,
+  onProductClick,
+}: {
+  products: ProductTileItem[];
+  onProductClick?: (e: React.MouseEvent, p: ProductTileItem) => void;
+}) {
   return (
-    <div
-      ref={barRef}
-      className={`sticky top-0 z-30 -mx-4 border-b border-(--divider) bg-(--card-bg) px-4 sm:-mx-5 sm:px-5 ${className}`}
-    >
-      <nav
-        aria-label="Profile sections"
-        className="flex h-10 items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {items.map((item) => {
-          const isActive = item.id === active;
-          return (
-            <button
-              key={item.id}
-              type="button"
-              data-nav={item.id}
-              onClick={() => go(item)}
-              aria-current={isActive ? "true" : undefined}
-              style={isActive ? { backgroundColor: "var(--accent)", color: "var(--on-accent)" } : undefined}
-              className={`h-7 shrink-0 rounded-[5px] px-3 text-[12.5px] font-semibold transition-colors cursor-pointer ${
-                isActive ? "" : "text-(--text-muted) hover:bg-[color-mix(in_srgb,var(--accent)_8%,transparent)] hover:text-(--text)"
-              }`}
-            >
-              {item.label}
-            </button>
-          );
-        })}
-      </nav>
-    </div>
+    <ul className="grid grid-cols-2 gap-2 p-2.5 min-[400px]:grid-cols-3">
+      {products.map((p, i) => (
+        <li key={p.id} className={`min-w-0 ${i === 3 ? "min-[400px]:hidden" : ""}`}>
+          <a
+            href={p.href || "#"}
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+            onClick={(e) => onProductClick?.(e, p)}
+            className="group flex h-full flex-col rounded-[6px] border border-(--surface-border) bg-(--surface) p-1.5 transition-colors hover:border-(--accent)"
+          >
+            <span className="flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-[4px] bg-(--card-bg)">
+              {p.imageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element -- remote product images of any host
+                <img src={p.imageUrl} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
+              ) : (
+                <Package className="h-6 w-6 text-(--icon)" />
+              )}
+            </span>
+            <span className="mt-1.5 block break-words px-0.5 text-[11.5px] font-medium leading-[14px] text-(--text)">{p.name}</span>
+            <span className="mt-auto flex items-center justify-between gap-1 px-0.5 pt-1.5">
+              <span className="text-[12px] font-bold tabular-nums leading-none text-(--text)">{p.price || ""}</span>
+              <ExternalLink aria-hidden className="h-3.5 w-3.5 shrink-0 text-(--accent-text)" />
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -140,8 +90,9 @@ export function SetupSection({
       <Section
         id={id}
         className={className}
+        icon={Monitor}
         title="My Setup"
-        subtitle={subtitle?.trim() || "The gear & software behind my content."}
+        subtitle={subtitle?.trim() || "The gear behind my videos."}
         count={`${items.length} ${items.length === 1 ? "item" : "items"}`}
         action={items.length > limit ? { label: "View all", href: allHref } : undefined}
         colors={colors}
@@ -191,8 +142,9 @@ export function SetupSection({
     <Section
       id={id}
       className={className}
+      icon={Monitor}
       title="My Setup"
-      subtitle={subtitle?.trim() || "The tools, gear and software behind my content."}
+      subtitle={subtitle?.trim() || "The gear behind my videos."}
       count={`${items.length} ${items.length === 1 ? "item" : "items"}`}
       colors={colors}
     >
@@ -209,8 +161,8 @@ export function SetupSection({
               )}
             </span>
             <span className="min-w-0 flex-1">
-              <span style={{ color: colors.primary }} className="block truncate text-[13px] font-medium text-(--text)">{item.name}</span>
-              {meta && <span style={{ color: colors.muted }} className="block truncate text-xs text-(--text-muted)">{meta}</span>}
+              <span style={{ color: colors.primary }} className="block break-words text-[13px] font-medium leading-[18px] text-(--text)">{item.name}</span>
+              {meta && <span style={{ color: colors.muted }} className="block break-words text-xs text-(--text-muted)">{meta}</span>}
             </span>
           </>
         );
@@ -233,7 +185,7 @@ export function SetupSection({
         );
       })}
       {items.length > limit && (
-        <Link href={allHref} className={MORE_ROW}>
+        <Link href={allHref} className={SECTION_FOOTER_CTA}>
           See full setup ({items.length})
           <ArrowRight className="h-3.5 w-3.5" />
         </Link>
@@ -249,72 +201,44 @@ export function CrewSection({
   subtitle,
   members,
   colors,
+  limit,
+  allHref,
   id,
   className,
-  variant = "rows",
 }: {
   title?: string | null;
   subtitle?: string | null;
   members: TeamMember[];
   colors: AboutColors;
+  /** Members shown before the "See all" footer (all when omitted). */
+  limit?: number;
+  allHref?: string;
   id?: string;
   className?: string;
-  /** "grid": compact avatar tiles in one swipeable row (premium profile). */
-  variant?: "rows" | "grid";
 }) {
   if (members.length === 0) return null;
-  if (variant === "grid") {
-    return (
-      <Section
-        id={id}
-        className={className}
-        title={title?.trim() || "The Crew"}
-        subtitle={subtitle?.trim() || "Creative production crew, editors & management team."}
-        count={`${members.length} ${members.length === 1 ? "member" : "members"}`}
-        colors={colors}
-        divided={false}
-      >
-        <ul className="flex snap-x gap-2 overflow-x-auto p-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {members.map((m) => (
-            <li key={m.id} className="flex w-[92px] shrink-0 snap-start flex-col items-center rounded-[5px] border border-(--surface-border) px-1.5 py-2.5 text-center">
-              {m.avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element -- small avatar
-                <img src={m.avatarUrl} alt="" loading="lazy" className="h-9 w-9 rounded-full object-cover" />
-              ) : (
-                <span
-                  style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
-                  className="flex h-9 w-9 items-center justify-center rounded-full text-[11px] font-semibold"
-                >
-                  {getInitials(m.name)}
-                </span>
-              )}
-              <span style={{ color: colors.primary }} className="mt-1.5 w-full line-clamp-2 text-[11px] font-semibold leading-[13px] text-(--text)">{m.name}</span>
-              {m.role && (
-                <span style={{ color: colors.muted }} className="w-full line-clamp-2 text-[10px] leading-[12px] text-(--text-muted)">{m.role}</span>
-              )}
-            </li>
-          ))}
-        </ul>
-      </Section>
-    );
-  }
-  const socials = (m: TeamMember) =>
-    [
-      m.instagramUrl && { href: m.instagramUrl, label: "Instagram", icon: <InstagramIcon className="h-4 w-4" /> },
-      m.youtubeUrl && { href: m.youtubeUrl, label: "YouTube", icon: <YoutubeIcon className="h-4 w-4" /> },
-      m.facebookUrl && { href: m.facebookUrl, label: "Facebook", icon: <FacebookIcon className="h-4 w-4" /> },
-    ].filter(Boolean) as { href: string; label: string; icon: React.ReactNode }[];
+  // Every account the creator added for this member, each opening that profile.
+  const socials = (m: TeamMember) => {
+    const inflixo = (m.inflixoUsername || "").trim().replace(/^@/, "");
+    return [
+      inflixo && { href: `/${inflixo}`, label: "Inflixo", platform: "inflixo", external: false },
+      m.instagramUrl && { href: m.instagramUrl, label: "Instagram", platform: "instagram", external: true },
+      m.youtubeUrl && { href: m.youtubeUrl, label: "YouTube", platform: "youtube", external: true },
+      m.facebookUrl && { href: m.facebookUrl, label: "Facebook", platform: "facebook", external: true },
+    ].filter(Boolean) as { href: string; label: string; platform: string; external: boolean }[];
+  };
 
   return (
     <Section
       id={id}
       className={className}
-      title={title?.trim() || "The Crew"}
-      subtitle={subtitle?.trim() || "Creative production crew, editors & management team."}
+      icon={Users}
+      title={title?.trim() || "My Crew"}
+      subtitle={subtitle?.trim() || "The people behind my videos."}
       count={`${members.length} ${members.length === 1 ? "member" : "members"}`}
       colors={colors}
     >
-      {members.map((m) => (
+      {(limit ? members.slice(0, limit) : members).map((m) => (
         <div key={m.id} className={`flex items-center gap-3 ${SECTION_ROW} py-2.5 ${SECTION_ROW_HOVER}`}>
           {m.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element -- small avatar
@@ -328,41 +252,49 @@ export function CrewSection({
             </span>
           )}
           <span className="min-w-0 flex-1">
-            <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
-              <span style={{ color: colors.primary }} className="text-[13px] font-semibold text-(--text)">{m.name}</span>
-              {m.role && (
-                <span
-                  style={{ color: "var(--accent-text)", backgroundColor: "color-mix(in srgb, var(--accent) 10%, transparent)" }}
-                  className="rounded-[3px] px-1.5 py-px text-[10.5px] font-semibold"
-                >
-                  {m.role}
-                </span>
-              )}
-            </span>
+            <span style={{ color: colors.primary }} className="block break-words text-[13px] font-semibold leading-[18px] text-(--text)">{m.name}</span>
+            {m.role && (
+              <span style={{ color: "var(--accent-text)" }} className="block break-words text-xs font-medium leading-4">
+                {m.role}
+              </span>
+            )}
             {m.oneLiner?.trim() && (
-              <span style={{ color: colors.muted }} className="mt-0.5 block truncate text-xs italic text-(--text-muted)">
+              <span style={{ color: colors.muted }} className="mt-0.5 block break-words text-xs italic text-(--text-muted)">
                 “{m.oneLiner.trim()}”
               </span>
             )}
           </span>
           {socials(m).length > 0 && (
-            <span className="flex shrink-0 items-center gap-0.5">
+            <span className="flex shrink-0 items-center gap-1">
               {socials(m).map((s) => (
                 <a
                   key={s.label}
                   href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${m.name} on ${s.label}`}
-                  className="flex h-8 w-8 items-center justify-center rounded-[5px] text-(--icon) hover:bg-(--surface) hover:text-(--text)"
+                  {...(s.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  aria-label={`Open ${m.name}'s ${s.label} profile`}
+                  title={`${m.name} on ${s.label}`}
+                  className="flex h-8 w-8 items-center justify-center rounded-[6px] transition-transform hover:scale-105 active:scale-95"
                 >
-                  {s.icon}
+                  {s.platform === "inflixo" ? (
+                    <span className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-[6px] border border-(--surface-border) bg-white">
+                      {/* eslint-disable-next-line @next/next/no-img-element -- local brand mark */}
+                      <img src="/logo-icon.svg" alt="" className="h-4 w-4 object-contain" />
+                    </span>
+                  ) : (
+                    <BrandPlatformIcon platform={s.platform} size={24} />
+                  )}
                 </a>
               ))}
             </span>
           )}
         </div>
       ))}
+      {limit && allHref && members.length > limit && (
+        <Link href={allHref} className={SECTION_FOOTER_CTA}>
+          See all crew ({members.length})
+          <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
+      )}
     </Section>
   );
 }

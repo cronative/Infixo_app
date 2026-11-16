@@ -10,6 +10,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   Users,
+  Link2,
   Sparkles,
   ExternalLink,
   Film,
@@ -136,7 +137,7 @@ import { CollaborationInquiryModal } from "@/components/mediakit/CollaborationIn
 import { EpisodeQuickDrawer } from "@/components/series/EpisodeQuickDrawer";
 import { VisibilitySettingsModal } from "@/components/shared/VisibilitySettingsModal";
 import { ShareProfileModal } from "@/components/public/ShareProfileModal";
-import { CrewSection, SectionNav, SetupSection, type SectionNavItem } from "@/components/public/premium/PremiumBlocks";
+import { CrewSection, ProductTiles, SetupSection } from "@/components/public/premium/PremiumBlocks";
 import { ProfileHeader } from "@/components/public/ProfileHeader";
 import { STORAGE_KEYS, storage } from "@/utils/storage";
 import { LinkRow } from "@/components/links/LinkRow";
@@ -144,7 +145,7 @@ import { LinkGroupRow } from "@/components/links/LinkGroupRow";
 import { getInitials } from "@/lib/avatar";
 import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
 import { trackPublicEvent } from "@/lib/publicTrack";
-import { PremiumSeriesCard } from "@/components/public/premium/PremiumSeries";
+import { PremiumSeriesRow } from "@/components/public/premium/PremiumSeries";
 import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
 import { ThemeService, getThemeCssVariables } from "@/services/ThemeService";
 import {
@@ -155,7 +156,7 @@ import {
 } from "@/lib/creatorEra";
 import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
 import { CreatorEraBottomSheet } from "@/components/shared/CreatorEraBottomSheet";
-import { AboutMeBlock, FanbaseByPlatform, Section, SocialAccountsBlock } from "@/components/public/about/AboutSections";
+import { AboutMeBlock, FanbaseByPlatform, SECTION_FOOTER_CTA, Section, SocialAccountsBlock, SolidSectionsProvider } from "@/components/public/about/AboutSections";
 import { AudienceSnapshot, CustomCollaboration, WhatBrandsSay, WorkWithMe } from "@/components/public/collab/CollabSections";
 
 
@@ -778,6 +779,42 @@ export function LivePreviewCard({
     if (products && products.length > 0) return "shop";
     return "about";
   });
+  // Premium is one page (no tabs): a ?tab= deep link scrolls to that section instead.
+  useEffect(() => {
+    if (!isPremiumLayout || typeof window === "undefined") return;
+    let raw: string | null = null;
+    try {
+      raw = new URLSearchParams(window.location.search).get("tab");
+    } catch {}
+    const key = (raw || initialTab || "").toLowerCase();
+    const sectionId: Record<string, string> = {
+      series: "series-section", watch: "series-section",
+      links: "links-section", explore: "links-section",
+      shop: "shop-section", products: "shop-section",
+      setup: "setup-section", gear: "setup-section",
+      about: "about-section", fanbase: "about-section",
+      team: "team-section", crew: "team-section",
+      collab: "collab-section", work: "collab-section", reviews: "collab-section",
+      socials: "socials-section",
+    };
+    const id = sectionId[key];
+    if (!id) return;
+    let tries = 0;
+    let timer: ReturnType<typeof setTimeout>;
+    const go = () => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ block: "start" });
+        return;
+      }
+      // Sections that load client-side (team, reviews) may not be in the DOM yet.
+      if (++tries < 20) timer = setTimeout(go, 150);
+    };
+    timer = setTimeout(go, 50);
+    return () => clearTimeout(timer);
+    // Only on first load: later in-page navigation is the user's own scrolling.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [isBioExpanded, setIsBioExpanded] = useState(false);
   const [expandedSeriesDescMap, setExpandedSeriesDescMap] = useState<Record<string, boolean>>({});
   const [approvedReviews, setApprovedReviews] = useState<CreatorReview[]>(passedReviews || []);
@@ -2080,21 +2117,6 @@ export function LivePreviewCard({
         } pt-1.5 sm:pt-2 pb-6`}
       >
 
-        {/* Premium single page: sticky section chips with scroll-spy (hidden chips for empty sections). */}
-        {isPremiumLayout && !isProfileEmpty && (
-          <SectionNav
-            className="order-[0] -mt-1.5 sm:-mt-2"
-            items={[
-              hasWatchTab && { id: "watch", label: "Series", target: "series-section" },
-              hasLinksTab && { id: "links", label: "Links", target: "links-section" },
-              hasShopTab && { id: "shop", label: "Shop", target: "shop-section" },
-              hasWorkTab && { id: "collab", label: "Collab", target: "collab-section" },
-              hasSetupTab && { id: "setup", label: "Setup", target: "setup-section" },
-              hasAboutTab && { id: "about", label: "About", target: ["about-section", "socials-section"] },
-            ].filter(Boolean) as SectionNavItem[]}
-          />
-        )}
-
         {/* Fresh / In-Progress Profile State: Warm emotional visitor welcome & interactive nudge */}
         {isProfileEmpty && (
           <EmptyProfileCard
@@ -2111,7 +2133,7 @@ export function LivePreviewCard({
             id="about-section"
             className={`relative z-10 w-full text-left animate-fade-in ${
               isPremiumLayout
-                ? "order-[7] mt-3 space-y-3 scroll-mt-14"
+                ? "order-[7] mt-2 space-y-2 scroll-mt-14"
                 : isTabsLayout
                 ? "order-[4] mt-1 sm:mt-1.5"
                 : "order-[4] mt-4 sm:mt-5 space-y-2"
@@ -2141,7 +2163,7 @@ export function LivePreviewCard({
               />
             )}
 
-            <div className={isPremiumLayout ? "space-y-3" : "space-y-2"}>
+            <div className="space-y-2">
               {/* 1. About me: bio + location + languages + content tags (hidden on public when no bio) */}
               <AboutMeBlock
                 bio={
@@ -2220,12 +2242,12 @@ export function LivePreviewCard({
             return (
               <SetupSection
                 id="setup-section"
-                className="relative z-10 order-[6] mt-3 w-full scroll-mt-14 animate-fade-in"
-                variant="strip"
+                className="relative z-10 order-[6] mt-2 w-full scroll-mt-14 animate-fade-in"
                 items={activeSetupItems}
                 subtitle={setupSettings?.whereIStarted}
                 colors={aboutColors}
                 allHref={setupHref}
+                limit={3}
                 onItemClick={(e, item) => {
                   if (isInformationalMode) {
                     e.preventDefault();
@@ -2362,7 +2384,7 @@ export function LivePreviewCard({
 
         {/* 10. Social Accounts Section */}
         {!isListingPage && effectiveVisibilitySettings.showFanbase !== false && (isPremiumLayout || (!isTabsLayout ? true : (activeNavTab === "about" || activeNavTab === "fanbase"))) && extraSocialCards.length > 0 && (
-          <div id="socials-section" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[8] mt-3 scroll-mt-14" : isTabsLayout ? "order-[4] mt-1 sm:mt-1.5 space-y-2" : "order-[10] mt-6 sm:mt-7 space-y-2"}`}>
+          <div id="socials-section" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[8] mt-2 scroll-mt-14" : isTabsLayout ? "order-[4] mt-1 sm:mt-1.5 space-y-2" : "order-[10] mt-6 sm:mt-7 space-y-2"}`}>
             {false && (
               <TabSectionHeader
                 title="Find me elsewhere"
@@ -2413,7 +2435,7 @@ export function LivePreviewCard({
                   <div id="links-section" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[2] mt-3 scroll-mt-14" : linksOnlyMode ? "order-[5] mt-1.5 sm:mt-2" : isTabsLayout ? "order-[5] mt-1.5 sm:mt-2" : "order-[5] mt-6 sm:mt-7"}`}>
                     <TabSectionHeader
                       title="Links"
-                      subtitle="Recommended links, tickets & websites"
+                      subtitle="Links, tickets & websites"
                       primaryTextColor={c.primaryText}
                       secondaryTextColor={c.secondaryText}
                       headingFontFamily={typ.headingFontFamily}
@@ -2474,7 +2496,7 @@ export function LivePreviewCard({
                 return true;
               });
 
-            const maxLinks = isPremiumLayout ? (pinnedLink ? 9 : 10) : undefined;
+            const maxLinks = isPremiumLayout ? (pinnedLink ? 2 : 3) : undefined;
             const displayedRemainingItems = typeof maxLinks === "number" ? remainingItems.slice(0, maxLinks) : remainingItems;
             const hasMoreLinks = validLinks.length > (pinnedLink ? displayedRemainingItems.length + 1 : displayedRemainingItems.length);
 
@@ -2483,15 +2505,16 @@ export function LivePreviewCard({
                 id="links-section"
                 className={`relative z-10 w-full text-left animate-fade-in ${
                   isPremiumLayout
-                    ? "order-[2] mt-5 sm:mt-6"
+                    ? "order-[2] mt-2"
                     : linksOnlyMode || isTabsLayout
                     ? "order-[5] mt-1.5 sm:mt-2"
                     : "order-[5] mt-6 sm:mt-7"
                 }`}
               >
                 <Section
-                  title="Links"
-                  subtitle="Recommended links, tickets & websites"
+                  icon={Link2}
+                  title={isPremiumLayout ? "My Links" : "Links"}
+                  subtitle={isPremiumLayout ? "Things I want you to see." : "Links, tickets & websites"}
                   count={`${validLinks.length} ${validLinks.length === 1 ? "link" : "links"}`}
                   colors={aboutColors}
                 >
@@ -2562,7 +2585,7 @@ export function LivePreviewCard({
                         }
                         router.push(allLinksHref || `/${cleanHandle || "creator"}/links`);
                       }}
-                      className="flex h-11 w-full items-center justify-center gap-1.5 text-xs sm:text-[13px] font-semibold text-(--accent-text) hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)] transition-colors cursor-pointer"
+                      className={isPremiumLayout ? SECTION_FOOTER_CTA : "flex h-11 w-full items-center justify-center gap-1.5 text-xs sm:text-[13px] font-semibold text-(--accent-text) hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)] transition-colors cursor-pointer"}
                     >
                       <span>{`View all links (${validLinks.length})`}</span>
                       <ArrowRight className="h-3.5 w-3.5 shrink-0" />
@@ -2577,10 +2600,12 @@ export function LivePreviewCard({
 
         {/* 1. Series Section */}
         {(seriesOnlyMode || (!isListingPage && (isPremiumLayout || !isTabsLayout || activeNavTab === "watch" || activeNavTab === "series"))) && effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || seriesOnlyMode || isDashboardPreview) && (
-          <div id="series-section" className={`relative z-10 w-full text-left ${isPremiumLayout ? "order-[1] mt-3 space-y-2.5 scroll-mt-14" : seriesOnlyMode ? "order-[10] mt-1.5 sm:mt-2 pb-4" : isTabsLayout ? `order-[10] mt-1.5 sm:mt-2 ${isDashboardPreview ? "pb-2" : "pb-12"}` : `order-[10] mt-6 sm:mt-7 space-y-2.5 ${isDashboardPreview ? "pb-2" : "pb-12"}`}`}>
+          <div id="series-section" className={`relative z-10 w-full text-left ${isPremiumLayout ? "order-[1] mt-2 space-y-2.5 scroll-mt-14" : seriesOnlyMode ? "order-[10] mt-1.5 sm:mt-2 pb-4" : isTabsLayout ? `order-[10] mt-1.5 sm:mt-2 ${isDashboardPreview ? "pb-2" : "pb-12"}` : `order-[10] mt-6 sm:mt-7 space-y-2.5 ${isDashboardPreview ? "pb-2" : "pb-12"}`}`}>
             <Section
-              title={isPremiumLayout ? "My Series" : "Series"}
-              subtitle={landingDemo ? "Start from Episode 1." : isPremiumLayout ? "Watch every story in the right order." : "Watch episodes in the right order."}
+              icon={Clapperboard}
+              solid={seriesOnlyMode}
+              title={isPremiumLayout || seriesOnlyMode ? "My Series" : "Series"}
+              subtitle={landingDemo ? "Start from Episode 1." : isPremiumLayout || seriesOnlyMode ? "Start at Ep 1 & binge in order." : "Watch episodes in the right order."}
               count={`${series.length} series`}
               action={
                 isPremiumLayout && !seriesOnlyMode && allSeriesHref && series.length > displayedSeries.length
@@ -2646,7 +2671,7 @@ export function LivePreviewCard({
                 </p>
               </div>
             ) : (
-              <div className="space-y-3 p-3">
+              <div className={isPremiumLayout || seriesOnlyMode ? "divide-y divide-(--surface-border)" : "space-y-3 p-3"}>
                 {(() => {
                   const filtered = displayedSeries.filter((s) => {
                     if (seriesFilter.toLowerCase() === "all") return true;
@@ -2667,12 +2692,11 @@ export function LivePreviewCard({
                     const epCount = allEps.length;
                     const detectedPlatform = getCanonicalSeriesPlatform(s);
 
-                    if (isPremiumLayout) {
+                    if (isPremiumLayout || seriesOnlyMode) {
                       return (
-                        <PremiumSeriesCard
+                        <PremiumSeriesRow
                           key={s.id}
                           series={s}
-                          featured={idx === 0}
                           seriesHref={`/${cleanHandle || "creator"}/series/${s.id}`}
                           onOpenSeries={(e, selected) => {
                             if (onSeriesPreviewOpen) {
@@ -2686,14 +2710,6 @@ export function LivePreviewCard({
                               setDrawerSeries(selected);
                               setIsDrawerOpen(true);
                             }
-                          }}
-                          onEpisodeClick={(e, selected, ep) => {
-                            if (isInformationalMode) {
-                              e.preventDefault();
-                              showToast(`Opens Ep ${ep.episodeNumber} on ${ep.platform || "the original platform"} ✨`);
-                              return;
-                            }
-                            trackPublicEvent("episode_click", `${selected.id}:${ep.id || ep.episodeNumber}`);
                           }}
                         />
                       );
@@ -2771,7 +2787,7 @@ export function LivePreviewCard({
                     }
                     router.push(allSeriesHref);
                   }}
-                  className="flex h-11 w-full items-center justify-center gap-1.5 text-xs sm:text-[13px] font-semibold text-(--accent-text) hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)] transition-colors cursor-pointer"
+                  className={isPremiumLayout ? SECTION_FOOTER_CTA : "flex h-11 w-full items-center justify-center gap-1.5 text-xs sm:text-[13px] font-semibold text-(--accent-text) hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)] transition-colors cursor-pointer"}
                 >
                   <span>{`View all series (${series.length})`}</span>
                   <ArrowRight className="h-3.5 w-3.5 shrink-0" />
@@ -2785,13 +2801,14 @@ export function LivePreviewCard({
         {/* Shop / Products Section */}
         {/* 3. Products Section */}
         {((productsOnlyMode || (!isListingPage && (isPremiumLayout || !isTabsLayout || activeNavTab === "shop"))) && ((products && products.length > 0) || productsOnlyMode || isDashboardPreview)) && (
-          <section id="shop-section" aria-label="Shop" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[3] mt-3 scroll-mt-14" : productsOnlyMode ? "order-[15] mt-1.5 sm:mt-2" : isTabsLayout ? "order-[15] mt-1.5 sm:mt-2" : "order-[15] mt-6 sm:mt-7 space-y-2.5"}`}>
+          <section id="shop-section" aria-label="Shop" className={`relative z-10 w-full text-left animate-fade-in ${isPremiumLayout ? "order-[3] mt-2 scroll-mt-14" : productsOnlyMode ? "order-[15] mt-1.5 sm:mt-2" : isTabsLayout ? "order-[15] mt-1.5 sm:mt-2" : "order-[15] mt-6 sm:mt-7 space-y-2.5"}`}>
             <Section
-              title={landingDemo ? "Digital products" : isPremiumLayout ? "Creator Shop" : "Shop"}
-              subtitle="Products I use and recommend."
+              icon={ShoppingBag}
+              title={landingDemo ? "Digital products" : isPremiumLayout ? "My Shop" : "Shop"}
+              subtitle={isPremiumLayout ? "Products I'm excited to recommend." : "Products I use and recommend."}
               count={products && products.length > 0 ? `${products.length} ${products.length === 1 ? "product" : "products"}` : undefined}
               action={
-                isPremiumLayout && sortedProducts.length > 4
+                isPremiumLayout && sortedProducts.length > 6
                   ? {
                       label: "View all",
                       href: allProductsHref || `/${cleanHandle || "creator"}/products`,
@@ -2866,10 +2883,29 @@ export function LivePreviewCard({
                   Products will appear here once added.
                 </p>
               </div>
+            ) : isPremiumLayout ? (
+              <ProductTiles
+                // 4 tiles: a full 2x2 on small phones; the 4th hides once the grid is 3 across.
+                products={sortedProducts.slice(0, 4).map((product: CreatorProduct) => ({
+                  id: product.id,
+                  name: product.name,
+                  imageUrl: product.imageUrl || (product as any).image || "",
+                  href: product.productUrl || (product as any).url || "",
+                  price: formatProductPrice(product.pricePaise),
+                }))}
+                onProductClick={(e, p) => {
+                  if (isInformationalMode) {
+                    e.preventDefault();
+                    showToast(`Opens ${p.name} external product page ✨`);
+                    return;
+                  }
+                  trackPublicEvent("product_click", String(p.id));
+                }}
+              />
             ) : (
               <div className="p-3">
               <ProductGrid>
-                {(isPremiumLayout ? sortedProducts.slice(0, 4) : (isProductsExpanded || productsOnlyMode ? sortedProducts : sortedProducts.slice(0, 6))).map((product: CreatorProduct, idx: number) => (
+                {(isProductsExpanded || productsOnlyMode ? sortedProducts : sortedProducts.slice(0, 6)).map((product: CreatorProduct, idx: number) => (
                   <ProductGridCard
                     key={product.id}
                     name={product.name}
@@ -2892,6 +2928,24 @@ export function LivePreviewCard({
                   />
                 ))}
               </ProductGrid>
+              </div>
+            )}
+
+            {isPremiumLayout && !productsOnlyMode && products.length > 3 && (
+              <div className="border-t border-(--surface-border)">
+                <Link
+                  href={allProductsHref || `/${cleanHandle || "creator"}/products`}
+                  onClick={(e) => {
+                    if (isInformationalMode) {
+                      e.preventDefault();
+                      showToast("Opens all creator products ✨");
+                    }
+                  }}
+                  className={SECTION_FOOTER_CTA}
+                >
+                  <span>{`View all products (${products.length})`}</span>
+                  <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+                </Link>
               </div>
             )}
 
@@ -2922,12 +2976,13 @@ export function LivePreviewCard({
         {!isListingPage && (isPremiumLayout || (isTabsLayout && activeNavTab === "about")) && activeTeamMembers.length > 0 && (
           <CrewSection
             id="team-section"
-            className={`relative z-10 w-full scroll-mt-14 animate-fade-in ${isPremiumLayout ? "order-[5] mt-3" : "order-[25] mt-2"}`}
-            variant={isPremiumLayout ? "grid" : "rows"}
+            className={`relative z-10 w-full scroll-mt-14 animate-fade-in ${isPremiumLayout ? "order-[5] mt-2" : "order-[25] mt-2"}`}
             title={teamData.team?.teamName}
             subtitle={teamData.team?.teamDescription}
             members={activeTeamMembers}
             colors={aboutColors}
+            limit={isPremiumLayout ? 3 : undefined}
+            allHref={`/${cleanHandle || "creator"}/team`}
           />
         )}
         {!isPremiumLayout && (teamOnlyMode || (!isListingPage && !isTabsLayout)) &&
@@ -3100,7 +3155,7 @@ export function LivePreviewCard({
             return (
               <div
                 id="collab-section"
-                className={`relative z-10 ${isPremiumLayout ? "order-[4] mt-3 space-y-3 scroll-mt-14" : isTabsLayout ? "order-[20] mt-1 sm:mt-1.5 space-y-2" : "order-[20] mt-4 sm:mt-5 space-y-2"} w-full text-left animate-fade-in`}
+                className={`relative z-10 ${isPremiumLayout ? "order-[4] mt-2 space-y-2 scroll-mt-14" : isTabsLayout ? "order-[20] mt-1 sm:mt-1.5 space-y-2" : "order-[20] mt-4 sm:mt-5 space-y-2"} w-full text-left animate-fade-in`}
               >
                 {!isPremiumLayout && <AudienceSnapshot
                   totalFans={totalAudience}
@@ -3133,8 +3188,10 @@ export function LivePreviewCard({
                   reviews={reviewsList}
                   brands={brandNames}
                   colors={aboutColors}
-                  limit={isPremiumLayout ? 1 : 4}
-                  title={isPremiumLayout ? "Work Reviews" : undefined}
+                  limit={isPremiumLayout ? 3 : 4}
+                  compact={isPremiumLayout}
+                  allHref={isPremiumLayout ? allReviewsHref || `/${cleanHandle || "creator"}/reviews` : undefined}
+                  title={isPremiumLayout ? "Brand Love" : undefined}
                 />
                 {showPackages && !isPremiumLayout && <CustomCollaboration colors={aboutColors} onRequest={() => openEnquiry(null)} />}
                 <CollabEnquirySheet
@@ -3332,7 +3389,11 @@ export function LivePreviewCard({
 
   return (
     <div className={`relative w-full mx-auto flex-1 min-h-0 h-full max-h-full flex flex-col transition-all ${isFull ? "max-w-[580px]" : "max-w-[560px]"}`}>
-      {cardContent}
+      {isPremiumLayout ? (
+        <SolidSectionsProvider>{cardContent}</SolidSectionsProvider>
+      ) : (
+        cardContent
+      )}
 
       {/* Collaboration Inquiry Modal */}
       <CollaborationInquiryModal

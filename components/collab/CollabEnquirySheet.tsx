@@ -76,6 +76,16 @@ export function CollabEnquirySheet({
     }
   }, [isOpen, preselectedPackage]);
 
+  // Escape closes the sheet, like the backdrop and the ✕ button.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isOpen, onClose]);
+
   if (!isOpen || !mounted) return null;
 
   const handlePackageChange = (val: string) => {
@@ -181,7 +191,7 @@ export function CollabEnquirySheet({
       />
 
       {/* Sheet / Modal Container */}
-      <div className="relative w-full sm:max-w-lg max-h-[92vh] sm:max-h-[88vh] flex flex-col rounded-t-2xl sm:rounded-2xl bg-white dark:bg-[#1E1E24] shadow-2xl overflow-hidden z-10 transition-all text-left">
+      <div role="dialog" aria-modal="true" aria-label={`Collab request to ${creatorDisplayName}`} className="relative w-full sm:max-w-lg max-h-[92vh] sm:max-h-[88vh] flex flex-col rounded-t-2xl sm:rounded-2xl bg-white dark:bg-[#1E1E24] shadow-2xl overflow-hidden z-10 transition-all text-left">
         {/* Mobile Pull Handle */}
         <div className="sm:hidden flex justify-center pt-2.5 pb-1">
           <div className="h-1.5 w-10 rounded-full bg-zinc-300 dark:bg-zinc-700" />

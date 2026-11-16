@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Check, CheckCircle2, ChevronRight, Clock, Star, Tv } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check, ChevronDown, CheckCircle2, ChevronRight, Clock, Handshake, Star, Tv } from "lucide-react";
 import type { CreatorReview, MediaKitPackage } from "@/types";
-import { AboutHeader, BrandPlatformIcon, PLATFORM_BRAND, SECTION_CARD, type AboutColors } from "@/components/public/about/AboutSections";
+import { AboutHeader, BrandPlatformIcon, PLATFORM_BRAND, SECTION_CARD, SECTION_FOOTER_CTA, SectionCard, type AboutColors } from "@/components/public/about/AboutSections";
 import { formatFans } from "@/lib/creatorEra";
 import { getInitials } from "@/lib/avatar";
 
@@ -218,8 +218,8 @@ function CompactPackageRow({ pkg, colors, onEnquire }: { pkg: MediaKitPackage; c
           </span>
         )}
         <span className="min-w-0 flex-1">
-          <span style={{ color: colors.primary }} className="line-clamp-2 text-[13px] font-semibold leading-[17px] text-(--text)">{pkg.title}</span>
-          {sub && <span style={{ color: colors.muted }} className="line-clamp-1 text-xs text-(--text-muted)">{sub}</span>}
+          <span style={{ color: colors.primary }} className="block break-words text-[13px] font-semibold leading-[17px] text-(--text)">{pkg.title}</span>
+          {sub && <span style={{ color: colors.muted }} className="mt-0.5 block break-words text-xs leading-4 text-(--text-muted)">{sub}</span>}
         </span>
         <span className="shrink-0 text-right leading-tight">
           <span style={{ color: colors.primary }} className="block text-[13px] font-semibold tabular-nums text-(--text)">{value}</span>
@@ -245,15 +245,20 @@ export function WorkWithMe({
   compact?: boolean;
   onCustomRequest?: () => void;
 }) {
+  const [showAllPackages, setShowAllPackages] = useState(false);
   if (compact) {
+    const shownPackages = showAllPackages ? packages : packages.slice(0, 3);
     return (
-      <div className={CARD}>
-        <AboutHeader title="Work With Me" subtitle="Collaborations, brand features & more." colors={colors}
-          count={packages.length > 0 ? `${packages.length} ${packages.length === 1 ? "package" : "packages"}` : undefined}
-        />
+      <SectionCard
+        icon={Handshake}
+        title="Work With Me"
+        subtitle="Brands, let's create together."
+        count={packages.length > 0 ? `${packages.length} ${packages.length === 1 ? "package" : "packages"}` : undefined}
+        colors={colors}
+      >
         {packages.length > 0 && (
           <ul className="divide-y divide-(--surface-border)">
-            {packages.map((pkg) => (
+            {shownPackages.map((pkg) => (
               <CompactPackageRow key={pkg.id} pkg={pkg} colors={colors} onEnquire={onEnquire} />
             ))}
           </ul>
@@ -271,17 +276,22 @@ export function WorkWithMe({
             </button>
           </div>
         )}
-      </div>
+        {packages.length > 3 && (
+          <button type="button" onClick={() => setShowAllPackages((v) => !v)} className={`${SECTION_FOOTER_CTA} border-t border-(--surface-border)`}>
+            {showAllPackages ? "Show less" : `View all packages (${packages.length})`}
+            <ChevronDown className={`h-3.5 w-3.5 transition-transform ${showAllPackages ? "rotate-180" : ""}`} />
+          </button>
+        )}
+      </SectionCard>
     );
   }
   return (
-    <div className={CARD}>
-      <AboutHeader
-        title="Work With Me"
-        subtitle="Collab packages for brands."
-        count={packages.length > 0 ? `${packages.length} ${packages.length === 1 ? "package" : "packages"}` : undefined}
-        colors={colors}
-      />
+    <SectionCard
+      title="Work With Me"
+      subtitle="Collab packages for brands."
+      count={packages.length > 0 ? `${packages.length} ${packages.length === 1 ? "package" : "packages"}` : undefined}
+      colors={colors}
+    >
       {packages.length > 0 ? (
         <ul className="divide-y divide-(--surface-border)">
           {packages.map((pkg) => (
@@ -291,7 +301,7 @@ export function WorkWithMe({
       ) : (
         <p style={{ color: colors.muted }} className="px-4 py-6 text-center text-xs text-(--text-muted)">No packages available at the moment.</p>
       )}
-    </div>
+    </SectionCard>
   );
 }
 
@@ -303,6 +313,8 @@ export function WhatBrandsSay({
   colors,
   limit = 4,
   title = "What Brands Say",
+  compact = false,
+  allHref,
 }: {
   reviews: CreatorReview[];
   brands: string[];
@@ -310,20 +322,24 @@ export function WhatBrandsSay({
   /** Reviews shown before "Show all"; brand chips are hidden when limit is 1 (compact). */
   limit?: number;
   title?: string;
+  /** Premium profile: no brand chips, short subtitle. */
+  compact?: boolean;
+  /** When set, the overflow footer links to the full reviews page instead of expanding in place. */
+  allHref?: string;
 }) {
   const [showAll, setShowAll] = useState(false);
   const visible = showAll ? reviews : reviews.slice(0, limit);
-  const uniqueBrands = limit === 1 && reviews.length > 0 ? [] : Array.from(new Set(brands.map((b) => b.trim()).filter(Boolean)));
+  const uniqueBrands = compact && reviews.length > 0 ? [] : Array.from(new Set(brands.map((b) => b.trim()).filter(Boolean)));
   if (reviews.length === 0 && uniqueBrands.length === 0) return null;
 
   return (
-    <div className={CARD}>
-      <AboutHeader
-        title={title}
-        subtitle="Feedback from brands I've worked with."
-        count={reviews.length > 0 ? `${reviews.length} ${reviews.length === 1 ? "review" : "reviews"}` : undefined}
-        colors={colors}
-      />
+    <SectionCard
+      icon={Star}
+      title={title}
+      subtitle={compact ? "Kind words from my collabs." : "Feedback from brands I've worked with."}
+      count={reviews.length > 0 ? `${reviews.length} ${reviews.length === 1 ? "review" : "reviews"}` : undefined}
+      colors={colors}
+    >
       <ul className="divide-y divide-(--surface-border)">
         {uniqueBrands.length > 0 && (
           <li className={ROW}>
@@ -343,7 +359,7 @@ export function WhatBrandsSay({
                   >
                     {getInitials(b, "B")}
                   </span>
-                  <span style={{ color: colors.primary }} className="max-w-[120px] truncate text-xs font-medium text-(--text)">{b}</span>
+                  <span style={{ color: colors.primary }} className="text-xs font-medium text-(--text)">{b}</span>
                 </span>
               ))}
             </div>
@@ -362,11 +378,11 @@ export function WhatBrandsSay({
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-1">
-                    <span style={{ color: colors.primary }} className="truncate text-[13px] font-semibold text-(--text)">{rev.clientName}</span>
+                    <span style={{ color: colors.primary }} className="break-words text-[13px] font-semibold text-(--text)">{rev.clientName}</span>
                     {rev.isVerified && <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-(--accent-text)" aria-label="Verified" />}
                   </p>
                   {rev.projectTitle && (
-                    <p style={{ color: colors.muted }} className="truncate text-xs text-(--text-muted)">{rev.projectTitle}</p>
+                    <p style={{ color: colors.muted }} className="break-words text-xs text-(--text-muted)">{rev.projectTitle}</p>
                   )}
                 </div>
                 <div className="shrink-0 text-right">
@@ -386,7 +402,15 @@ export function WhatBrandsSay({
             </li>
           );
         })}
-        {reviews.length > limit && (
+        {reviews.length > limit && allHref && (
+          <li>
+            <Link href={allHref} className={SECTION_FOOTER_CTA}>
+              View all reviews ({reviews.length})
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </li>
+        )}
+        {reviews.length > limit && !allHref && (
           <li className="py-2 text-center">
             <button type="button" onClick={() => setShowAll((v) => !v)} className="text-xs font-semibold text-(--accent-text) hover:underline cursor-pointer">
               {showAll ? "Show less" : `Show all ${reviews.length} reviews`}
@@ -394,7 +418,7 @@ export function WhatBrandsSay({
           </li>
         )}
       </ul>
-    </div>
+    </SectionCard>
   );
 }
 

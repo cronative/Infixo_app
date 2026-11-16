@@ -16,6 +16,9 @@ import {
   Clock,
   ChevronDown,
   ChevronUp,
+  ListVideo,
+  UserRound,
+  ArrowRight,
 } from "lucide-react";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 import { Series, Episode, ThemeKey, Season } from "@/types";
@@ -39,7 +42,7 @@ import {
 } from "@/components/public/publicTheme";
 import { PlatformThumbnailBox, extractYouTubeVideoId } from "@/components/shared/PlatformThumbnailBox";
 import { resolveThemeKey } from "@/lib/themeKeys";
-import { Section } from "@/components/public/about/AboutSections";
+import { SECTION_FOOTER_CTA, Section } from "@/components/public/about/AboutSections";
 import { getCreatorEra } from "@/lib/creatorEra";
 import { eraRing, getEraConfig } from "@/lib/eraConfig";
 import { getInitials } from "@/lib/avatar";
@@ -74,7 +77,7 @@ function getPlatformInfo(platformStr?: string, urlStr?: string) {
   }
   return {
     name: platformStr || "Watch",
-    icon: <Film className="h-3.5 w-3.5 text-[#7A2253]" />,
+    icon: <Film className="h-3.5 w-3.5 text-(--accent-text)" />,
   };
 }
 
@@ -201,7 +204,8 @@ export function SeriesDetailClient({
         const seriesIdParam = decodeURIComponent(seriesId || "").trim();
 
         if (usernameParam === "demo_creator") {
-          const { EXPERT_DEMO_SERIES, EXPERT_DEMO_PROFILE, EXPERT_DEMO_THEME } = await import("@/data/expertDemoCreator");
+          const { EXPERT_DEMO_SERIES, EXPERT_DEMO_PROFILE, EXPERT_DEMO_THEME, EXPERT_DEMO_SOCIALS } = await import("@/data/expertDemoCreator");
+          const { calculateTotalAudience } = await import("@/lib/socialAccounts");
           const found = EXPERT_DEMO_SERIES.find((s) => s.id === seriesIdParam);
           if (found) {
             setSeries(found);
@@ -212,7 +216,7 @@ export function SeriesDetailClient({
               bio: EXPERT_DEMO_PROFILE.bio,
               category: EXPERT_DEMO_PROFILE.category,
               themeKey: EXPERT_DEMO_THEME,
-              totalFanbase: 1345000,
+              totalFanbase: calculateTotalAudience(EXPERT_DEMO_SOCIALS),
             });
             setLoading(false);
             return;
@@ -593,12 +597,12 @@ export function SeriesDetailClient({
           {/* Content below hero */}
           <div className="flex flex-col p-4 sm:p-5 space-y-3.5">
             {/* 1. Series Title */}
-            <h1 style={pt.headingStyle} className="text-xl sm:text-2xl font-semibold tracking-tight leading-snug">
+            <h1 style={pt.headingStyle} className="text-xl sm:text-2xl font-bold tracking-tight leading-snug text-(--text) break-words">
               {series.title}
             </h1>
 
             {/* 2. Meta line: "5 episodes · Hindi · [IG icon] Instagram" */}
-            <div className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 font-medium flex-wrap pt-0.5">
+            <div className="flex items-center gap-1.5 text-sm text-(--text-muted) font-medium flex-wrap pt-0.5">
               {metaLineParts.map((part, idx) => (
                 <span key={idx} className="inline-flex items-center gap-1.5">
                   {idx > 0 && <span className="opacity-40 font-normal">·</span>}
@@ -614,7 +618,11 @@ export function SeriesDetailClient({
                 {genresList.map((g) => (
                   <span
                     key={g}
-                    className="inline-flex items-center rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 px-2.5 py-0.5 text-xs font-medium"
+                    style={{
+                      backgroundColor: "color-mix(in srgb, var(--accent) 9%, var(--card-bg))",
+                      borderColor: "color-mix(in srgb, var(--accent) 20%, transparent)",
+                    }}
+                    className="inline-flex items-center rounded-[5px] border px-2 py-0.5 text-xs font-medium text-(--accent-text)"
                   >
                     {g}
                   </span>
@@ -624,7 +632,7 @@ export function SeriesDetailClient({
 
             {/* 3. Description with Read More / Read Less (measured accurately on 2-line clamp) */}
             {series.description && (
-              <div className="relative pt-0.5 text-slate-600 dark:text-slate-300 text-[13px] leading-relaxed break-words">
+              <div className="relative pt-0.5 text-(--text-secondary) text-[13px] leading-relaxed break-words">
                 <p className={isDescExpanded ? "" : "line-clamp-2"}>
                   {series.description}
                 </p>
@@ -640,7 +648,7 @@ export function SeriesDetailClient({
                   <button
                     type="button"
                     onClick={() => setIsDescExpanded(!isDescExpanded)}
-                    className="text-[#7A2253] dark:text-pink-400 font-bold text-xs inline-flex items-center gap-1 mt-1 hover:underline cursor-pointer select-none"
+                    className="text-(--accent-text) font-bold text-xs inline-flex items-center gap-1 mt-1 hover:underline cursor-pointer select-none"
                   >
                     <span>{isDescExpanded ? "Read less" : "Read more"}</span>
                     {isDescExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
@@ -651,6 +659,8 @@ export function SeriesDetailClient({
 
             {/* 4. Episodes — shared Section (tinted header, connected divided rows) */}
             <Section
+              solid
+              icon={ListVideo}
               title="Episodes"
               subtitle={allSamePlatform ? `Episodes open on ${allSamePlatform}` : "Watch in order, from Episode 1."}
               count={`${currentEpisodes.length} ${currentEpisodes.length === 1 ? "episode" : "episodes"}`}
@@ -680,7 +690,7 @@ export function SeriesDetailClient({
                 currentEpisodes.map((ep: Episode, index: number) => {
                   const partNum = ep.episodeNumber || index + 1;
                   const epTitleStr = ep.title?.trim() || `Episode ${partNum}`;
-                  const cleanTitle = epTitleStr.replace(/^Part\s*0?\d+[:\s-]*/i, "").replace(/^Episode\s*0?\d+[:\s-]*/i, "").trim() || epTitleStr;
+                  const cleanTitle = epTitleStr.replace(/^(?:Part|Episode|Ep)\.?\s*0?\d+\s*[:.\-–—]?\s*/i, "").trim() || epTitleStr;
                   return (
                     <a
                       key={ep.id || index}
@@ -689,15 +699,30 @@ export function SeriesDetailClient({
                       rel="noopener noreferrer"
                       onClick={() => trackEpisodeClick(ep)}
                       aria-label={`Ep ${partNum} · ${cleanTitle}`}
-                      className="group/ep flex min-h-12 items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-[color-mix(in_srgb,var(--accent)_7%,transparent)] sm:px-3.5"
+                      className="group/ep flex min-h-12 items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)] sm:px-3.5"
                     >
-                      <span style={{ color: c.mutedText }} className="w-9 shrink-0 text-xs font-medium tabular-nums">
-                        Ep {partNum}
+                      <span
+                        style={{
+                          backgroundColor: index === 0 ? "var(--accent)" : "color-mix(in srgb, var(--accent) 10%, var(--card-bg))",
+                          color: index === 0 ? "var(--on-accent)" : "var(--accent-text)",
+                        }}
+                        className="flex h-9 w-9 shrink-0 flex-col items-center justify-center rounded-[6px] leading-none"
+                      >
+                        <span className="text-[8.5px] font-semibold uppercase tracking-wider opacity-80">Ep</span>
+                        <span className="text-[13px] font-bold tabular-nums">{partNum}</span>
                       </span>
-                      <span style={{ color: c.primaryText }} className="min-w-0 flex-1 text-[13px] font-medium leading-[18px] line-clamp-2 break-words">
-                        {cleanTitle}
+                      <span className="min-w-0 flex-1">
+                        <span style={{ color: c.primaryText }} className="block break-words text-[13px] font-medium leading-[18px] text-(--text)">
+                          {cleanTitle}
+                        </span>
+                        {index === 0 && (
+                          <span className="mt-0.5 block text-[11px] font-semibold text-(--accent-text)">Start here</span>
+                        )}
                       </span>
-                      <ArrowUpRight style={{ color: c.mutedText }} className="h-4 w-4 shrink-0 transition-colors group-hover/ep:text-(--accent-text)" />
+                      <span className="flex shrink-0 items-center gap-1.5">
+                        {renderPlatformIcon(ep.platform || detectedPlatform, "h-3.5 w-3.5")}
+                        <ArrowUpRight className="h-4 w-4 text-(--text-muted) transition-colors group-hover/ep:text-(--accent-text)" />
+                      </span>
                     </a>
                   );
                 })
@@ -705,8 +730,8 @@ export function SeriesDetailClient({
             </Section>
 
             {/* 5. Series by — Section-style row */}
-            <Section title="Series by" colors={sectionColors}>
-              <div className="flex items-center gap-3 px-3 py-3 sm:px-3.5">
+            <Section solid icon={UserRound} title="Series by" subtitle="The creator behind this series." colors={sectionColors}>
+              <div className="flex items-start gap-3 px-3 py-3 sm:px-3.5">
                 <span
                   className="shrink-0 rounded-full p-[2px]"
                   style={{ background: creatorEraCfg ? eraRing(creatorEraCfg) : "var(--surface-border)" }}
@@ -723,23 +748,24 @@ export function SeriesDetailClient({
                   </span>
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p style={{ color: c.primaryText }} className="truncate text-sm font-semibold">{creator?.displayName || username}</p>
-                  <p style={{ color: c.mutedText }} className="truncate text-xs">@{username.replace(/^@/, "")}</p>
+                  <p style={{ color: c.primaryText }} className="break-words text-sm font-semibold">{creator?.displayName || username}</p>
+                  <p style={{ color: c.mutedText }} className="break-all text-xs">@{username.replace(/^@/, "")}</p>
                   {creator?.bio && (
-                    <p style={{ color: c.secondaryText }} className="truncate text-xs">{creator.bio}</p>
+                    <p style={{ color: c.secondaryText }} className="mt-0.5 break-words text-xs leading-4">{creator.bio}</p>
                   )}
                 </div>
-                <a
-                  href={profileUrl}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    router.push(profileUrl);
-                  }}
-                  className="tap-scale inline-flex h-8 shrink-0 items-center rounded-[5px] border border-(--accent) px-3 text-xs font-medium text-(--accent-text) transition-colors hover:bg-(--accent-soft)"
-                >
-                  View profile →
-                </a>
               </div>
+              <a
+                href={profileUrl}
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push(profileUrl);
+                }}
+                className={SECTION_FOOTER_CTA}
+              >
+                View full profile
+                <ArrowRight className="h-3.5 w-3.5" />
+              </a>
             </Section>
           </div>
         </div>

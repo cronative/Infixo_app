@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { createContext, useContext, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, ChevronDown, Globe, Languages, MapPin, PenLine } from "lucide-react";
+import { ArrowRight, ArrowUpRight, AtSign, ChevronDown, User, UsersRound, type LucideIcon, Globe, Languages, MapPin, PenLine } from "lucide-react";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -87,39 +87,290 @@ export const SECTION_CARD = "overflow-hidden rounded-[5px] border border-(--surf
 /** A body row: 12px 16px padding, ≥44px tap height, primary @ 4% hover. */
 export const SECTION_ROW = "min-h-11 px-4 py-3";
 export const SECTION_ROW_HOVER = "transition-colors hover:bg-[color-mix(in_srgb,var(--accent)_4%,transparent)]";
+/** Section footer "View all" bar: same solid accent as an open collapsible header. */
+export const SECTION_FOOTER_CTA =
+  "flex h-11 w-full items-center justify-center gap-1.5 rounded-t-none! rounded-b-[4px]! bg-(--accent) text-xs sm:text-[13px] font-semibold text-(--on-accent) transition-opacity hover:opacity-90 cursor-pointer";
 
-/** Header row: primary @ 7% tint, 12px 16px padding, 15px title + 12px subtitle left, 12px count right, 1px divider. */
-export function AboutHeader({ title, subtitle, count, action, colors }: { title: string; subtitle?: string; count?: ReactNode; action?: { label: string; href: string; onClick?: (e: React.MouseEvent) => void }; colors: AboutColors }) {
+type HeaderAction = { label: string; href: string; onClick?: (e: React.MouseEvent) => void };
+
+/** Header row: primary @ 7% tint, compact 8px 14px padding, 14px title + 11.5px subtitle left, count right, 1px divider. */
+export function AboutHeader({
+  title,
+  subtitle,
+  count,
+  action,
+  colors,
+  collapsible = false,
+  open = true,
+  onToggle,
+  bodyId,
+  icon,
+  solid = false,
+}: {
+  title: string;
+  subtitle?: string;
+  count?: ReactNode;
+  action?: HeaderAction;
+  colors: AboutColors;
+  /** Same look as an open accordion header, but static (listing / detail pages). */
+  solid?: boolean;
+  /** Whole header toggles the body; chevron on the right. */
+  collapsible?: boolean;
+  open?: boolean;
+  onToggle?: () => void;
+  bodyId?: string;
+  /** Collapsible (premium) headers: icon on the left. */
+  icon?: LucideIcon;
+}) {
+  if (collapsible || solid) {
+    return (
+      <CollapsibleHeader
+        isStatic={!collapsible}
+        title={title}
+        subtitle={subtitle}
+        count={count}
+        colors={colors}
+        open={collapsible ? open : true}
+        onToggle={onToggle}
+        bodyId={bodyId}
+        icon={icon}
+      />
+    );
+  }
   return (
     <div
-      className="flex items-end justify-between gap-3 border-b border-(--surface-border) px-4 py-3"
+      className="flex items-center justify-between gap-2.5 border-b border-(--surface-border) px-3.5 py-2"
       style={{ backgroundColor: "color-mix(in srgb, var(--accent) 7%, transparent)" }}
     >
-      <div className="min-w-0">
-        <h2 style={{ color: colors.primary, fontFamily: colors.headingFont }} className="text-[15px] font-semibold leading-5 tracking-tight text-(--text)">
+      <div className="min-w-0 flex-1">
+        <h2 style={{ color: colors.primary, fontFamily: colors.headingFont }} className="text-[14px] font-semibold leading-[18px] tracking-tight text-(--text)">
           {title}
         </h2>
         {subtitle && (
-          <p style={{ color: colors.muted }} className="mt-0.5 text-xs leading-[18px] text-(--text-muted)">
+          <p style={{ color: colors.muted }} className="text-[11.5px] leading-4 text-(--text-muted)">
             {subtitle}
           </p>
         )}
       </div>
       {action ? (
-        <Link
-          href={action.href}
-          onClick={action.onClick}
-          className="inline-flex shrink-0 items-center gap-1 pb-px text-xs font-semibold text-(--accent-text) hover:underline"
-        >
+        <Link href={action.href} onClick={action.onClick} className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-[11.5px] font-semibold text-(--accent-text) hover:underline">
           {action.label}
           <ArrowRight className="h-3 w-3" />
         </Link>
       ) : count != null && (
-        <span style={{ color: colors.muted }} className="shrink-0 pb-px text-xs text-(--text-muted)">
+        <span style={{ color: colors.muted }} className="shrink-0 whitespace-nowrap text-[11.5px] text-(--text-muted)">
           {count}
         </span>
       )}
     </div>
+  );
+}
+
+/**
+ * App-style accordion header. Closed: soft accent tint. Open: solid accent bar
+ * with on-accent text, so the header reads clearly apart from the details below
+ * (theme tokens only, so it works on light and dark cards).
+ */
+function CollapsibleHeader({
+  title,
+  subtitle,
+  count,
+  colors,
+  open,
+  onToggle,
+  bodyId,
+  icon: Icon,
+  isStatic = false,
+}: {
+  isStatic?: boolean;
+  title: string;
+  subtitle?: string;
+  count?: ReactNode;
+  colors: AboutColors;
+  open: boolean;
+  onToggle?: () => void;
+  bodyId?: string;
+  icon?: LucideIcon;
+}) {
+  const fg = open ? "var(--on-accent)" : undefined;
+  const pill = (cls: string) =>
+    count != null && (
+      <span
+        style={
+          open
+            ? { color: fg, backgroundColor: "color-mix(in srgb, var(--on-accent) 16%, transparent)", borderColor: "transparent" }
+            : { color: "var(--accent-text)" }
+        }
+        className={`shrink-0 whitespace-nowrap rounded-[5px] border border-(--surface-border) bg-(--card-bg) px-1.5 py-px text-[10.5px] font-medium sm:px-2 sm:py-0.5 sm:text-[11px] ${cls}`}
+      >
+        {count}
+      </span>
+    );
+  return (
+    <div
+      onClick={isStatic ? undefined : onToggle}
+      className={`flex items-center gap-2.5 px-3 py-2.5 transition-colors ${isStatic ? "" : "cursor-pointer select-none"}`}
+      style={{
+        backgroundColor: open ? "var(--accent)" : "color-mix(in srgb, var(--accent) 6%, var(--card-bg))",
+        color: fg,
+      }}
+    >
+      {Icon && (
+        <Icon
+          aria-hidden
+          strokeWidth={1.9}
+          style={{ color: fg ?? "var(--accent-text)" }}
+          className="h-5 w-5 shrink-0"
+        />
+      )}
+      <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 items-center gap-2">
+          <h2
+            style={{ color: fg ?? colors.primary, fontFamily: colors.headingFont }}
+            className="min-w-0 text-[14px] font-semibold leading-[18px] tracking-tight text-(--text)"
+          >
+            {isStatic ? (
+              title
+            ) : (
+              <button type="button" aria-expanded={open} aria-controls={bodyId} className="text-left outline-none focus-visible:underline cursor-pointer">
+                {title}
+              </button>
+            )}
+          </h2>
+          {/* Phones: count beside the title so the subtitle keeps the full width. */}
+          {pill("sm:hidden")}
+        </div>
+        {subtitle && (
+          <p
+            style={{ color: fg ?? colors.muted, opacity: open ? 0.85 : 1 }}
+            className="text-[11.5px] leading-4 text-(--text-muted)"
+          >
+            {subtitle}
+          </p>
+        )}
+      </div>
+      {pill("hidden sm:inline")}
+      {!isStatic && (
+        <ChevronDown
+          aria-hidden
+          style={{ color: fg ?? "var(--text-muted)" }}
+          className={`h-4 w-4 shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Collapsible sections (premium profile) ────────────────────
+
+interface SectionCollapseValue {
+  enabled: boolean;
+  /** Title of the one open section (accordion), or null when all are closed. */
+  openTitle: string | null;
+  setOpenTitle: (title: string | null) => void;
+  /** Every section always open with the solid accent header (no toggles). */
+  solid?: boolean;
+}
+
+const SectionCollapseContext = createContext<SectionCollapseValue>({ enabled: false, openTitle: null, setOpenTitle: () => {} });
+
+const SOLID_SECTIONS: SectionCollapseValue = { enabled: false, openTitle: null, setOpenTitle: () => {}, solid: true };
+
+/** Premium profile: all sections open, solid accent headers, each showing a short preview + "View all". */
+export function SolidSectionsProvider({ children }: { children: ReactNode }) {
+  return <SectionCollapseContext.Provider value={SOLID_SECTIONS}>{children}</SectionCollapseContext.Provider>;
+}
+
+/**
+ * Turns every SectionCard header below it into an accordion toggle:
+ * only one section is open at a time (opening one closes the other).
+ */
+export function SectionCollapseProvider({ defaultOpen = null, children }: { defaultOpen?: string | null; children: ReactNode }) {
+  const [openTitle, setOpenTitle] = useState<string | null>(defaultOpen);
+  const value = useMemo(() => ({ enabled: true, openTitle, setOpenTitle }), [openTitle]);
+  return <SectionCollapseContext.Provider value={value}>{children}</SectionCollapseContext.Provider>;
+}
+
+/**
+ * Card shell shared by every public block: tinted header + body. Inside a
+ * SectionCollapseProvider the header opens/closes the body as an accordion
+ * (body kept in the DOM, just hidden, so links stay crawlable).
+ */
+export function SectionCard({
+  title,
+  subtitle,
+  count,
+  action,
+  colors,
+  showHeader = true,
+  as: Tag = "div",
+  id,
+  className = "",
+  icon,
+  solid: solidProp = false,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  count?: ReactNode;
+  action?: HeaderAction;
+  colors: AboutColors;
+  showHeader?: boolean;
+  icon?: LucideIcon;
+  /** Static "open" look (solid accent header + accent frame) for listing / detail pages. */
+  solid?: boolean;
+  as?: "div" | "section";
+  id?: string;
+  className?: string;
+  children: ReactNode;
+}) {
+  const ctx = useContext(SectionCollapseContext);
+  const solid = solidProp || Boolean(ctx.solid);
+  const collapsible = ctx.enabled && showHeader;
+  const open = !collapsible || ctx.openTitle === title;
+  const bodyId = useId();
+  const cardRef = useRef<HTMLElement | null>(null);
+
+  const toggle = () => {
+    if (open) {
+      ctx.setOpenTitle(null);
+      return;
+    }
+    ctx.setOpenTitle(title);
+    // The section that closes above can pull this one up off-screen; bring its header back into view.
+    requestAnimationFrame(() => {
+      const el = cardRef.current;
+      if (el && el.getBoundingClientRect().top < 8) el.scrollIntoView({ block: "start", behavior: "smooth" });
+    });
+  };
+
+  return (
+    <Tag
+      ref={cardRef as React.Ref<HTMLDivElement>}
+      id={id}
+      className={`${CARD} scroll-mt-2 ${className}`}
+      // Open section: the whole frame takes the header colour (inline so it wins over the base border).
+      style={(collapsible && open) || (solid && showHeader) ? { borderColor: "var(--accent)" } : undefined}
+    >
+      {showHeader && (
+        <AboutHeader
+          icon={icon}
+          solid={solid}
+          title={title}
+          subtitle={subtitle}
+          count={count}
+          action={action}
+          colors={colors}
+          collapsible={collapsible}
+          open={open}
+          onToggle={toggle}
+          bodyId={bodyId}
+        />
+      )}
+      <div id={bodyId} hidden={collapsible && !open}>
+        {children}
+      </div>
+    </Tag>
   );
 }
 
@@ -140,23 +391,26 @@ export function Section({
   children,
   id,
   className = "",
+  icon,
+  solid,
 }: {
   title: string;
   subtitle?: string;
   count?: ReactNode;
-  action?: { label: string; href: string; onClick?: (e: React.MouseEvent) => void };
+  action?: HeaderAction;
   colors: AboutColors;
+  solid?: boolean;
   divided?: boolean;
   bodyClassName?: string;
   children: ReactNode;
   id?: string;
   className?: string;
+  icon?: LucideIcon;
 }) {
   return (
-    <section id={id} className={`${CARD} ${className}`}>
-      <AboutHeader title={title} subtitle={subtitle} count={count} action={action} colors={colors} />
+    <SectionCard as="section" id={id} className={className} icon={icon} solid={solid} title={title} subtitle={subtitle} count={count} action={action} colors={colors}>
       <div className={`${divided ? "divide-y divide-(--surface-border)" : ""} ${bodyClassName}`}>{children}</div>
-    </section>
+    </SectionCard>
   );
 }
 
@@ -202,8 +456,7 @@ export function AboutMeBlock({
   const langs = (languages ?? []).filter(Boolean);
   const chips = (tags ?? []).filter(Boolean);
   return (
-    <div className={CARD}>
-      {showHeader && <AboutHeader title="About me" subtitle="Get to know me" colors={colors} />}
+    <SectionCard icon={User} title="About Me" subtitle="A little about who I am." colors={colors} showHeader={showHeader}>
       <div className="space-y-2.5 px-4 py-3">
         {bio}
         {(location || langs.length > 0) && (
@@ -211,13 +464,13 @@ export function AboutMeBlock({
             {location && (
               <span className="inline-flex min-w-0 items-center gap-1">
                 <MapPin className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate">{location}</span>
+                <span className="break-words">{location}</span>
               </span>
             )}
             {langs.length > 0 && (
               <span className="inline-flex min-w-0 items-center gap-1">
                 <Languages className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate">{langs.join(", ")}</span>
+                <span className="break-words">{langs.join(", ")}</span>
               </span>
             )}
           </div>
@@ -236,7 +489,7 @@ export function AboutMeBlock({
           </div>
         )}
       </div>
-    </div>
+    </SectionCard>
   );
 }
 
@@ -259,8 +512,7 @@ export function FanbaseByPlatform({
   const sum = rows.reduce((s, r) => s + r.count, 0);
   if (sum === 0) return null;
   return (
-    <div className={CARD}>
-      <AboutHeader title="Fanbase by platform" subtitle="Primary accounts only." count={`${formatFans(total && total > 0 ? total : sum)} total`} colors={colors} />
+    <SectionCard icon={UsersRound} title="My Community" subtitle="All of you, on every platform." count={`${formatFans(total && total > 0 ? total : sum)} total`} colors={colors}>
       <ul className="divide-y divide-(--surface-border)">
         {rows.map((r) => {
           const p = r.platform.toLowerCase();
@@ -269,11 +521,11 @@ export function FanbaseByPlatform({
             <li key={p} className={`flex items-center gap-2.5 ${SECTION_ROW} py-2.5 ${SECTION_ROW_HOVER}`}>
               <BrandPlatformIcon platform={p} size={28} />
               <div className="min-w-0 flex-1">
-                <p style={{ color: colors.primary }} className="truncate text-[13px] font-medium leading-[18px] text-(--text)">
+                <p style={{ color: colors.primary }} className="break-words text-[13px] font-medium leading-[18px] text-(--text)">
                   {PLATFORM_BRAND[p]?.label ?? r.label ?? p}
                 </p>
                 {handle && (
-                  <p style={{ color: colors.muted }} className="truncate text-xs leading-4 text-(--text-muted)">@{handle}</p>
+                  <p style={{ color: colors.muted }} className="break-all text-xs leading-4 text-(--text-muted)">@{handle}</p>
                 )}
               </div>
               <span style={{ color: colors.muted }} className="shrink-0 text-right text-xs tabular-nums text-(--text-muted)">
@@ -283,7 +535,7 @@ export function FanbaseByPlatform({
           );
         })}
       </ul>
-    </div>
+    </SectionCard>
   );
 }
 
@@ -346,8 +598,7 @@ export function SocialAccountsBlock({
   const totalItems = groups.reduce((n, g) => n + g.items.length, 0);
 
   return (
-    <div className={CARD}>
-      {showHeader && <AboutHeader title="Find me elsewhere" subtitle="My other channels & profiles" count={`${total} more`} colors={colors} />}
+    <SectionCard icon={AtSign} title="More of Me" subtitle="My other channels & pages." count={`${total} more`} colors={colors} showHeader={showHeader}>
       <ul className="divide-y divide-(--surface-border)">
         {rows.map((row) =>
           row.kind === "label" ? (
@@ -365,7 +616,7 @@ export function SocialAccountsBlock({
                 title={`Open ${handleOf(row.item)} on ${PLATFORM_BRAND[row.item.platform]?.label ?? row.item.platform}`}
               >
                 <BrandPlatformIcon platform={row.item.platform} size={22} />
-                <span style={{ color: colors.primary }} className="min-w-0 flex-1 truncate text-[13px] font-medium text-(--text)">
+                <span style={{ color: colors.primary }} className="min-w-0 flex-1 break-all text-[13px] font-medium text-(--text)">
                   {handleOf(row.item)}
                 </span>
                 <ArrowUpRight style={{ color: colors.muted }} className="h-4 w-4 shrink-0 text-(--text-muted) transition-colors group-hover:text-(--text)" />
@@ -387,6 +638,6 @@ export function SocialAccountsBlock({
           </li>
         )}
       </ul>
-    </div>
+    </SectionCard>
   );
 }

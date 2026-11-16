@@ -42,7 +42,7 @@ export function EraBadge({ era, stage, label, onClick, showInfo = false, size = 
   const cfg = getEraConfig(era);
   const ink = eraInk(cfg.color);
   const md = size === "md";
-  const cls = `inline-flex min-w-0 items-center gap-1.5 rounded-[5px] border ${md ? "h-9 pl-1 pr-2" : "h-7 pl-1 pr-2"} ${className}`;
+  const cls = `inline-flex min-w-0 items-center gap-1.5 rounded-[5px] border ${md ? "h-8 pl-1 pr-1.5 sm:h-9 sm:pr-2" : "h-7 pl-1 pr-2"} ${className}`;
   const css: CSSProperties = {
     background: eraSoftBg(cfg),
     borderColor: eraAlpha(cfg.accent ?? cfg.color, 0.45),
@@ -51,8 +51,8 @@ export function EraBadge({ era, stage, label, onClick, showInfo = false, size = 
   };
   const content = (
     <>
-      <EraAwardMedal era={era} stage={stage} size={md ? 26 : 20} />
-      <span className={`truncate font-semibold leading-none tracking-[-0.01em] ${md ? "text-[12px] sm:text-[13px]" : "text-[11.5px]"}`}>{label}</span>
+      <EraAwardMedal era={era} stage={stage} size={md ? 22 : 20} />
+      <span className={`whitespace-nowrap font-semibold leading-none tracking-[-0.01em] ${md ? "text-[11.5px] sm:text-[13px]" : "text-[11.5px]"}`}>{label}</span>
       {showInfo && <Info className={`${md ? "h-3.5 w-3.5" : "h-3 w-3"} shrink-0 opacity-70`} aria-hidden />}
     </>
   );
