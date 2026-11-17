@@ -22,25 +22,18 @@ export function GlobalFooter({
 }: GlobalFooterProps) {
   const [isReportOpen, setIsReportOpen] = useState(false);
 
+  // Always a white footer (every theme), so the colours are fixed for white, not taken from the theme.
   const linkBtnClasses =
-    "tap-44 px-2.5 py-1 rounded-[5px] text-[11px] sm:text-xs font-normal text-(--accent-text, #7A2253) underline underline-offset-[3px] decoration-(--accent-text, #7A2253) hover:bg-(--accent, #7A2253)/[0.12] active:bg-(--accent, #7A2253)/[0.18] transition-colors cursor-pointer select-none inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-(--accent, #7A2253)";
+    "tap-44 px-2 py-1 rounded-[5px] text-[12px] font-medium text-[#52525B] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer select-none inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-[#7A2253]";
 
-  const linkBtnStyle = {
-    backgroundColor: "color-mix(in srgb, var(--accent, #7A2253) 6%, transparent)",
-    color: "var(--accent-text, #7A2253)",
-    textDecorationColor: "var(--accent-text, #7A2253)",
-  };
+  const linkBtnStyle = {};
 
   return (
     <footer
-      style={{
-        borderTopColor: "var(--surface-border, #e4e4e7)",
-        backgroundColor: "color-mix(in srgb, var(--accent, #7A2253) 3%, var(--card-bg, #ffffff))",
-      }}
-      className={`w-full overflow-hidden border-t border-solid border-b-0 border-x-0 rounded-none rounded-b-[5px] text-center select-none ${className}`}
+      className={`w-full overflow-hidden border-t border-solid border-[#ECECF0] border-b-0 border-x-0 bg-white rounded-none rounded-b-[5px] text-center select-none ${className}`}
     >
       {/* Row 1 — Branding */}
-      <div className="w-full px-3 py-2.5 sm:py-3 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5 text-xs text-(--text-muted, #71717a)">
+      <div className="w-full px-3 py-2.5 sm:py-3 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5 text-xs text-[#6B6B76]">
         <span className="font-normal select-none">Powered by</span>
         <Link
           href="/"
@@ -48,11 +41,7 @@ export function GlobalFooter({
           onClick={(e) => {
             if (disabled) e.preventDefault();
           }}
-          style={{
-            color: "var(--accent-text, #7A2253)",
-            textDecorationColor: "var(--accent-text, #7A2253)",
-          }}
-          className="inline-flex items-center gap-1 font-semibold text-(--accent-text, #7A2253) hover:opacity-85 transition-opacity cursor-pointer underline underline-offset-[3px] decoration-(--accent-text, #7A2253)"
+          className="inline-flex items-center gap-1 font-semibold text-[#7A2253] hover:opacity-85 transition-opacity cursor-pointer"
           aria-label="Inflixo Homepage"
         >
           <span>Inflixo</span>
@@ -63,16 +52,12 @@ export function GlobalFooter({
       </div>
 
       {/* Full-width Divider 1 */}
-      <div
-        style={{ backgroundColor: "var(--surface-border)" }}
-        className="h-px w-full bg-(--surface-border, #e4e4e7) shrink-0"
-        aria-hidden="true"
-      />
+      <div className="h-px w-full bg-[#ECECF0] shrink-0" aria-hidden="true" />
 
       {/* Row 2 — Footer Links */}
       <nav
         aria-label="Footer"
-        className="w-full px-3 py-2.5 sm:py-3 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2"
+        className="w-full px-3 py-2 sm:py-2.5 flex flex-wrap items-center justify-center gap-1 sm:gap-1.5"
       >
         <Link
           href="/terms"
@@ -135,15 +120,11 @@ export function GlobalFooter({
       </nav>
 
       {/* Full-width Divider 2 */}
-      <div
-        style={{ backgroundColor: "var(--surface-border)" }}
-        className="h-px w-full bg-(--surface-border, #e4e4e7) shrink-0"
-        aria-hidden="true"
-      />
+      <div className="h-px w-full bg-[#ECECF0] shrink-0" aria-hidden="true" />
 
       {/* Row 3 — Copyright */}
       <div className="w-full px-3 py-2 sm:py-2.5">
-        <p className="text-[11px] text-(--text-muted, #71717a) opacity-80 font-normal text-center select-none">
+        <p className="text-[11px] text-[#A1A1AA] font-normal text-center select-none">
           &copy; 2026 Inflixo. All rights reserved.
         </p>
       </div>
