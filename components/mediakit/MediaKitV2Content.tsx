@@ -848,7 +848,7 @@ export function MediaKitV2Content({
                           <ChevronDown aria-hidden className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
                         </button>
                       )}
-                      <button type="button" onClick={() => onEnquirePackage?.(pkg)} style={accentStyle} className={`${primaryBtn} h-10 flex-1 whitespace-nowrap`}>
+                      <button type="button" onClick={() => onEnquirePackage?.(pkg)} style={accentStyle} className={`${primaryBtn} h-10 whitespace-nowrap min-[460px]:flex-1`}>
                         <Send aria-hidden className="h-4 w-4" />
                         Request This Package
                       </button>
