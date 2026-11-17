@@ -68,7 +68,6 @@ export function SectionHeader({ title, subtitle, count, colors, icon: Icon, soli
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] border border-[color-mix(in_srgb,var(--on-accent)_25%,transparent)] bg-[color-mix(in_srgb,var(--on-accent)_14%,transparent)]">
               <Icon aria-hidden strokeWidth={2} className="h-5 w-5" />
             </span>
-            <span aria-hidden className="h-7 w-px shrink-0 bg-[color-mix(in_srgb,var(--on-accent)_35%,transparent)]" />
           </>
         )}
         <div className="min-w-0 flex-1">
