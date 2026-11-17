@@ -50,7 +50,8 @@ export function SeriesRow({ series, seriesHref, onOpenSeries }: SeriesRowProps) 
     <ListRow
       href={seriesHref}
       onClick={(e) => onOpenSeries?.(e, series)}
-      className="gap-3 rounded-[5px] border border-(--surface-border) bg-(--card-bg) p-2 transition-colors hover:border-[color-mix(in_srgb,var(--accent-text)_35%,var(--surface-border))] hover:bg-[color-mix(in_srgb,var(--accent)_3%,var(--card-bg))]"
+      // White card on light themes (same --header-bg as the profile header); dark themes keep their card colour.
+      className="gap-3 rounded-[5px] border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] p-2 transition-colors hover:border-[color-mix(in_srgb,var(--accent-text)_35%,var(--surface-border))] hover:bg-[color-mix(in_srgb,var(--accent)_3%,var(--header-bg,var(--card-bg)))]"
       leading={
         <span className="relative h-[52px] w-[92px] shrink-0 overflow-hidden rounded-[5px] bg-(--accent) min-[400px]:h-[63px] min-[400px]:w-28">
           {hasCover ? (
