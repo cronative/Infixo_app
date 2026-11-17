@@ -699,6 +699,7 @@ export default function LandingHomePage() {
                 totalAudience={previewTotalFans}
                 themeKey={EXPERT_DEMO_THEME}
                 variant="full"
+                layoutMode="premium"
                 seriesOpenMode="internal"
                 landingDemo
               />

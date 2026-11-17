@@ -89,7 +89,7 @@ function ProfilePreview({ themeKey, className = "" }: { themeKey: ThemeKey; clas
           totalAudience={totalAudience}
           themeKey={themeKey}
           variant="full"
-          layoutMode="tabs"
+          layoutMode="premium"
           hideFooter={true}
           isInformational={true}
         />
