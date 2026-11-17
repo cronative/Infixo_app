@@ -10,9 +10,9 @@ function load(relative, mocks = {}) {
   const source = ts.transpileModule(fs.readFileSync(file, 'utf8'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
   }).outputText;
-  const module = { exports: {} };
-  new Function('require', 'module', 'exports', source)(name => name in mocks ? mocks[name] : require(name), module, module.exports);
-  return module.exports;
+  const mod = { exports: {} };
+  new Function('require', 'module', 'exports', source)(name => name in mocks ? mocks[name] : require(name), mod, mod.exports);
+  return mod.exports;
 }
 const csv = load('lib/seriesCsv.ts');
 const quotas = load('services/subscriptionLimits.ts');

@@ -178,6 +178,8 @@ export default function DashboardLinksPage() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const [reload, setReload] = useState(0);
+  // Snapshot of "now" for expiry badges (render must stay pure).
+  const [now] = useState(() => Date.now());
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [menuId, setMenuId] = useState<string | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
@@ -432,7 +434,7 @@ export default function DashboardLinksPage() {
           {links.map((link, index) => {
             const isGroup = link.kind === "group";
             const isOpen = expanded.has(link.id);
-            const isExpired = Boolean(link.expired || (link.expiresAt && new Date(link.expiresAt).getTime() <= Date.now()));
+            const isExpired = Boolean(link.expired || (link.expiresAt && new Date(link.expiresAt).getTime() <= now));
             return (
               <div
                 key={link.id}

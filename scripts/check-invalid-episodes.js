@@ -6,6 +6,7 @@
  * Run with: node --env-file=.env scripts/check-invalid-episodes.js
  */
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports -- plain Node script, run without a build step
 const mysql = require("mysql2/promise");
 
 function normalizeVideoUrl(rawUrl) {

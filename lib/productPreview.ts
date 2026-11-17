@@ -147,7 +147,7 @@ export function extractProductPreview(html: string, pageUrl: string): ProductPre
   const store = storeFromUrl(pageUrl);
 
   const amazonProductTitle = html.match(/<span\b[^>]*id=["']productTitle["'][^>]*>([\s\S]*?)<\/span>/i)?.[1];
-  let rawName = clean(amazonProductTitle || meta["og:title"] || meta["twitter:title"] || html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]);
+  const rawName = clean(amazonProductTitle || meta["og:title"] || meta["twitter:title"] || html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]);
   let name = cleanProductTitle(rawName, store);
 
   // Bot-check / error pages are often titled with just the store name.

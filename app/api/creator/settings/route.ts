@@ -9,9 +9,9 @@ export async function GET(req: Request) {
   try {
     await ensureCreatorSettingsTable();
 
-    let { searchParams } = new URL(req.url);
+    const { searchParams } = new URL(req.url);
     let email = searchParams.get("email");
-    let username = searchParams.get("username");
+    const username = searchParams.get("username");
 
     if (!email && !username) {
       const auth = await requireCreator(req);

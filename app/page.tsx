@@ -332,9 +332,8 @@ function SectionHeading({
 export default function LandingHomePage() {
   const router = useRouter();
   const pricingCurrency = usePricingCurrency();
-  const isLoggedIn = AuthService.isLoggedIn();
-
-  const [checkingAuth, setCheckingAuth] = useState(true);
+  // Logged-in visitors are sent to the app. Read in an effect (not during render) so server and client HTML match.
+  const [redirecting, setRedirecting] = useState(false);
   const [username, setUsername] = useState("");
   const [openFaqIndex, setOpenFaqIndex] = useState<number>(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -347,14 +346,13 @@ export default function LandingHomePage() {
   // Auth redirect check
   useEffect(() => {
     if (AuthService.isLoggedIn()) {
+      setRedirecting(true);
       const step = OnboardingService.getStep();
       if (step === "finish") {
         router.replace("/dashboard");
       } else {
         router.replace("/onboarding");
       }
-    } else {
-      setCheckingAuth(false);
     }
   }, [router]);
 
@@ -463,7 +461,7 @@ export default function LandingHomePage() {
   const outlineBtn =
     "inline-flex h-11 w-full items-center justify-center rounded-xl border border-[#E4E4E7] bg-white text-[14px] font-bold text-[#18181B] hover:bg-[#fdf2f8] hover:border-[#7A2253] transition-colors cursor-pointer";
 
-  if (checkingAuth && isLoggedIn) {
+  if (redirecting) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-[#FFFCFB]">
         <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#7A2253] border-t-transparent" />

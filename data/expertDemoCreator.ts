@@ -513,6 +513,23 @@ export const EXPERT_DEMO_GIGS: MediaKitPackage[] = [
     turnaroundDays: 21,
     isActive: true,
   },
+  {
+    id: "gig_monthly_ambassador",
+    title: "Monthly Travel Ambassador",
+    description: "3 mahine ka partnership — har mahine aapka brand mere trips ka hissa, alag-alag content mein.",
+    price: "3,50,000",
+    priceUnit: "per_month",
+    isStartingPrice: true,
+    platform: "Instagram + YouTube",
+    deliverables: [
+      "2 Reels + 6 Stories every month",
+      "1 YouTube integration every month",
+      "Brand mention in the Sunday travel letter",
+      "Monthly performance report",
+    ],
+    turnaroundDays: 30,
+    isActive: true,
+  },
 ];
 
 export const EXPERT_DEMO_MEDIA_KIT_SETTINGS: MediaKitSettings = {
@@ -549,6 +566,18 @@ export const EXPERT_DEMO_CUSTOM_LINKS: CustomLink[] = [
     title: "▶️ Naya vlog: Hampi mein 2 din, ₹3,000 mein",
     url: "https://youtube.com/@aaravkasafar",
     isEnabled: true,
+  },
+  {
+    id: "group_booking_apps",
+    kind: "collection",
+    title: "🚆 Jin apps se main book karta hoon",
+    url: "",
+    isEnabled: true,
+    items: [
+      { id: "group_booking_apps_irctc", title: "IRCTC — train tickets", url: "https://www.irctc.co.in", isEnabled: true },
+      { id: "group_booking_apps_zostel", title: "Zostel — budget hostels", url: "https://www.zostel.com", isEnabled: true },
+      { id: "group_booking_apps_redbus", title: "redBus — overnight buses", url: "https://www.redbus.in", isEnabled: true },
+    ],
   },
   {
     id: "link_maps_list",
