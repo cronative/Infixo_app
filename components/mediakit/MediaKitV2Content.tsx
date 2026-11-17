@@ -965,8 +965,8 @@ export function MediaKitV2Content({
 
       {/* 10. BEFORE YOU GO */}
       <section className={`${card} print-avoid-break p-3.5 sm:p-4`}>
-        <div className="flex flex-col gap-3 min-[460px]:flex-row min-[460px]:items-center print:flex-row print:items-center">
-          <div className="min-w-0 flex-1">
+        <div>
+          <div className="min-w-0">
             <h2 className="flex items-center gap-2 text-[16px] font-bold text-(--text)">
               <Quote aria-hidden className="h-5 w-5 shrink-0 text-(--text-muted)" strokeWidth={1.8} />
               Before You Go
@@ -976,7 +976,7 @@ export function MediaKitV2Content({
               and I keep every campaign on time and in my own voice.&rdquo;
             </p>
           </div>
-          <div className="shrink-0 border-(--surface-border) min-[460px]:border-l min-[460px]:pl-4 print:border-l print:pl-4">
+          <div className="mt-3 border-t border-(--surface-border) pt-3">
             <p className="text-[12px] text-(--text-muted)">Regards,</p>
             <p style={{ fontFamily: "'Caveat', 'Playfair Display', cursive, serif" }} className="select-none text-[26px] font-semibold italic leading-8 text-(--text)">
               {signatureName}
@@ -1111,6 +1111,13 @@ export function MediaKitV2Content({
           }
           .overflow-clip {
             overflow: visible !important;
+          }
+          /* PDF = the media kit only: no page background, ambient layers or site chrome. */
+          html, body {
+            background: #fff !important;
+          }
+          .fixed {
+            display: none !important;
           }
         }
       `}</style>

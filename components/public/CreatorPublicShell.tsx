@@ -43,7 +43,7 @@ export function CreatorPublicShell({
     <div
       {...wrapperProps}
       style={{ ...themeTokenStyle(meta.key), background: "var(--page-bg)", ...((wrapperProps as any)?.style || {}) }}
-      className="relative min-h-screen min-h-[100dvh] flex flex-col antialiased transition-colors duration-500"
+      className="relative min-h-screen min-h-[100dvh] flex flex-col antialiased transition-colors duration-500 print:min-h-0 print:bg-white! print:bg-none!"
     >
       {/* 1. Full-screen theme background (photo themes get a soft blurred backdrop) */}
       <div
@@ -74,7 +74,7 @@ export function CreatorPublicShell({
 
       {/* 4. Centered card column with 20px top & bottom padding */}
       <main
-        className={`relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[496px] px-2 py-5 animate-fade-in-up ${mainClassName}`}
+        className={`relative z-10 flex-1 flex flex-col mx-auto w-full max-w-[496px] px-2 py-5 animate-fade-in-up print:max-w-none print:p-0 ${mainClassName}`}
       >
         {children}
       </main>
