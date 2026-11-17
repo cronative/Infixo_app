@@ -176,7 +176,8 @@ export function SectionCard({
       // Solid section: the whole frame takes the header colour (inline so it wins over the base border).
       style={solid && showHeader ? { borderColor: SECTION_LINE } : undefined}
     >
-      {showHeader && <SectionHeader icon={icon} solid={solid} hero={hero} title={title} subtitle={subtitle} count={count} colors={colors} />}
+      {/* Profile / listing pages: every section uses the feature (hero) header, like My Series. */}
+      {showHeader && <SectionHeader icon={icon} solid={solid} hero={hero || fullBleed} title={title} subtitle={subtitle} count={count} colors={colors} />}
       <div>
         {children}
         {lockedCount > 0 && <LockedRow count={lockedCount} />}
