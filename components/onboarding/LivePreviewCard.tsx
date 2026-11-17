@@ -2931,8 +2931,9 @@ export function LivePreviewCard({
             )}
 
             {isPremiumLayout && !productsOnlyMode && products.length > 3 && (
-              <div className="border-t border-(--surface-border)">
+              <div className="px-2.5 pb-2.5">
                 <FooterCta
+                  boxed
                   href={allProductsHref || `/${cleanHandle || "creator"}/products`}
                   onClick={(e) => {
                     if (isInformationalMode) {
