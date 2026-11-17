@@ -77,8 +77,8 @@ export function SectionHeader({ title, subtitle, count, colors, icon: Icon, soli
           {subtitle && <p className="text-[12px] leading-4 opacity-90">{subtitle}</p>}
         </div>
         {count != null && (
-          <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[5px] bg-(--card-bg) px-2 py-1 text-[12px] font-semibold text-(--accent-text)">
-            <Layers aria-hidden className="h-3.5 w-3.5" />
+          <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-[5px] bg-(--card-bg) px-1.5 py-0.5 text-[11px] font-semibold leading-4 text-(--accent-text)">
+            <Layers aria-hidden className="h-3 w-3" />
             {count}
           </span>
         )}
