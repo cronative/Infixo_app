@@ -27,6 +27,9 @@ export const SECTION_LINE = "color-mix(in srgb, var(--accent-text) 30%, transpar
 /** Section footer "View all" bar: a lighter tint of the header. */
 export const SECTION_FOOTER_CTA =
   "flex h-11 w-full items-center justify-center gap-1.5 rounded-t-none! rounded-b-[5px]! border-t border-[color-mix(in_srgb,var(--accent-text)_30%,transparent)] bg-[color-mix(in_srgb,var(--accent-soft)_40%,var(--card-bg))] text-xs sm:text-[13px] font-semibold text-(--accent-text) transition-colors hover:bg-(--accent-soft) cursor-pointer";
+/** Boxed "View all" button inside the section padding (My Series). */
+export const BOXED_FOOTER_CTA =
+  "flex h-11 w-full items-center justify-center gap-2 rounded-[5px] border border-[color-mix(in_srgb,var(--accent-text)_30%,transparent)] bg-[color-mix(in_srgb,var(--accent-soft)_40%,var(--card-bg))] text-[14px] font-semibold text-(--accent-text) transition-colors hover:bg-(--accent-soft) cursor-pointer";
 /** Tabs layout footer: plain accent text bar (no tint). */
 export const PLAIN_FOOTER_CTA =
   "flex h-11 w-full items-center justify-center gap-1.5 text-xs sm:text-[13px] font-semibold text-(--accent-text) hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)] transition-colors cursor-pointer";

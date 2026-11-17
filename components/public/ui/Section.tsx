@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, type ReactNode } from "react";
-import type { LucideIcon } from "lucide-react";
+import { Layers, type LucideIcon } from "lucide-react";
 import { CountPill } from "./CountPill";
 import { LockedRow } from "./LockedRow";
 import { SECTION_BG, SECTION_CARD, SECTION_FG, SECTION_LINE, type SectionColors } from "./tokens";
@@ -26,6 +26,8 @@ export interface SectionHeaderProps {
   icon?: LucideIcon;
   /** Soft accent header with accent text + count pill (premium, listing and detail pages). */
   solid?: boolean;
+  /** Feature header: accent gradient bar, icon tile, bold title, light count pill (My Series). */
+  hero?: boolean;
 }
 
 /**
@@ -33,7 +35,40 @@ export interface SectionHeaderProps {
  * (beside the title on phones, right-aligned from sm). Plain (tabs layout):
  * accent @ 7% tint, title + subtitle left, muted count right.
  */
-export function SectionHeader({ title, subtitle, count, colors, icon: Icon, solid = false }: SectionHeaderProps) {
+export function SectionHeader({ title, subtitle, count, colors, icon: Icon, solid = false, hero = false }: SectionHeaderProps) {
+  if (hero) {
+    return (
+      <div
+        className="flex items-center gap-3 px-3 py-3"
+        style={{
+          // Theme tokens only: accent fading toward its soft tint.
+          background: "linear-gradient(100deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 72%, var(--accent-soft)) 100%)",
+          color: "var(--on-accent)",
+        }}
+      >
+        {Icon && (
+          <>
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] border border-[color-mix(in_srgb,var(--on-accent)_25%,transparent)] bg-[color-mix(in_srgb,var(--on-accent)_14%,transparent)]">
+              <Icon aria-hidden strokeWidth={2} className="h-6 w-6" />
+            </span>
+            <span aria-hidden className="h-9 w-px shrink-0 bg-[color-mix(in_srgb,var(--on-accent)_35%,transparent)]" />
+          </>
+        )}
+        <div className="min-w-0 flex-1">
+          <h2 style={{ fontFamily: colors.headingFont }} className="text-[18px] font-bold leading-[22px] tracking-tight">
+            {title}
+          </h2>
+          {subtitle && <p className="text-[13px] leading-[17px] opacity-90">{subtitle}</p>}
+        </div>
+        {count != null && (
+          <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[5px] bg-(--card-bg) px-2.5 py-1.5 text-[13px] font-semibold text-(--accent-text)">
+            <Layers aria-hidden className="h-4 w-4" />
+            {count}
+          </span>
+        )}
+      </div>
+    );
+  }
   if (solid) {
     return (
       <div
@@ -108,6 +143,7 @@ export function SectionCard({
   colors,
   icon,
   solid: solidProp = false,
+  hero = false,
   showHeader = true,
   lockedCount = 0,
   as: Tag = "div",
@@ -124,7 +160,7 @@ export function SectionCard({
       // Solid section: the whole frame takes the header colour (inline so it wins over the base border).
       style={solid && showHeader ? { borderColor: SECTION_LINE } : undefined}
     >
-      {showHeader && <SectionHeader icon={icon} solid={solid} title={title} subtitle={subtitle} count={count} colors={colors} />}
+      {showHeader && <SectionHeader icon={icon} solid={solid} hero={hero} title={title} subtitle={subtitle} count={count} colors={colors} />}
       <div>
         {children}
         {lockedCount > 0 && <LockedRow count={lockedCount} />}

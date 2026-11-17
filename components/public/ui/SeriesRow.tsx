@@ -3,11 +3,12 @@
 import { useState } from "react";
 import Image from "next/image";
 import type { Series } from "@/types";
-import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/shared/BrandIcons";
+import { ChevronRight, Layers } from "lucide-react";
 import { SeriesCoverLogo } from "@/components/series/SeriesCoverLogo";
 import { getSeriesCoverUrl } from "@/lib/videoUrl";
 import { getSeriesEpisodes } from "@/lib/seriesMetrics";
 import { ListRow } from "./ListRow";
+import { BrandPlatformIcon } from "./BrandPlatformIcon";
 
 const BLUR =
   "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiM3QTIyNTMiLz48L3N2Zz4=";
@@ -20,11 +21,10 @@ function platformKey(p?: string | null) {
   return null;
 }
 
-const PLATFORM: Record<string, { label: string; icon: React.ReactNode }> = {
-  youtube: { label: "YouTube", icon: <YoutubeIcon className="h-3 w-3 shrink-0 text-red-500" /> },
-  instagram: { label: "Instagram", icon: <InstagramIcon className="h-3 w-3 shrink-0 text-pink-500" /> },
-  facebook: { label: "Facebook", icon: <FacebookIcon className="h-3 w-3 shrink-0 text-blue-500" /> },
-};
+const PLATFORM_LABEL: Record<string, string> = { youtube: "YouTube", instagram: "Instagram", facebook: "Facebook" };
+
+/** Thin vertical bar between meta items. */
+const Sep = () => <span aria-hidden className="h-3 w-px shrink-0 bg-(--surface-border)" />;
 
 export interface SeriesRowProps {
   series: Series;
@@ -44,22 +44,21 @@ export function SeriesRow({ series, seriesHref, onOpenSeries }: SeriesRowProps) 
   const hasCover = Boolean(cover) && !coverFailed;
   const focal = (series as { focalPoint?: string }).focalPoint || (series as { posterPosition?: string }).posterPosition || "center";
   const pKey = platformKey(series.platform) || platformKey(episodes[0]?.platform);
-  const platform = pKey ? PLATFORM[pKey] : null;
-  const meta = [`${episodes.length} ${episodes.length === 1 ? "episode" : "episodes"}`, series.language?.trim()].filter(Boolean).join(" · ");
+  const language = series.language?.trim();
 
   return (
     <ListRow
       href={seriesHref}
       onClick={(e) => onOpenSeries?.(e, series)}
-      className="gap-3 px-3 py-2.5 transition-colors hover:bg-[color-mix(in_srgb,var(--accent)_4%,transparent)] sm:px-4"
+      className="gap-3 rounded-[5px] border border-(--surface-border) bg-(--card-bg) p-2 transition-colors hover:border-[color-mix(in_srgb,var(--accent-text)_35%,var(--surface-border))] hover:bg-[color-mix(in_srgb,var(--accent)_3%,var(--card-bg))]"
       leading={
-        <span className="relative h-[54px] w-24 shrink-0 overflow-hidden rounded-[5px] border border-(--surface-border) bg-(--accent)">
+        <span className="relative h-[52px] w-[92px] shrink-0 overflow-hidden rounded-[5px] bg-(--accent) min-[400px]:h-[63px] min-[400px]:w-28">
           {hasCover ? (
             <Image
               src={cover!}
               alt=""
               fill
-              sizes="96px"
+              sizes="112px"
               quality={75}
               loading="lazy"
               placeholder="blur"
@@ -76,14 +75,36 @@ export function SeriesRow({ series, seriesHref, onOpenSeries }: SeriesRowProps) 
         </span>
       }
       title={series.title}
-      titleClassName="text-[14px] font-semibold leading-[18px] text-(--text)"
+      titleClassName="text-[15px] font-bold leading-[19px] text-(--text)"
       subtitle={
-        <span className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-1.5 text-xs text-(--text-muted)">
-          <span className="shrink-0">{meta}</span>
-          {platform && <span className="inline-flex items-center gap-1">{platform.icon}{platform.label}</span>}
+        <span className="mt-1 flex min-w-0 items-center gap-1.5 whitespace-nowrap min-[400px]:gap-2 text-[12px] text-(--text-muted)" title={[`${episodes.length} episodes`, language, pKey && PLATFORM_LABEL[pKey]].filter(Boolean).join(" · ")}>
+          <span className="inline-flex shrink-0 items-center gap-1">
+            <Layers aria-hidden className="h-3.5 w-3.5" />
+            {episodes.length} {episodes.length === 1 ? "episode" : "episodes"}
+          </span>
+          {language && (
+            <>
+              <Sep />
+              <span className="min-w-0 truncate">{language}</span>
+            </>
+          )}
+          {pKey && (
+            <>
+              <Sep />
+              <span className="inline-flex shrink-0 items-center gap-1">
+                <BrandPlatformIcon platform={pKey} size={14} />
+                {/* Narrow phones: icon only, so the meta stays on one line. */}
+                <span className="max-[399px]:sr-only">{PLATFORM_LABEL[pKey]}</span>
+              </span>
+            </>
+          )}
         </span>
       }
-      arrow="chevron"
+      arrow={
+        <span aria-hidden className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-(--accent-soft) text-(--accent-text) transition-colors group-hover:bg-[color-mix(in_srgb,var(--accent-text)_18%,var(--accent-soft))]">
+          <ChevronRight className="h-4 w-4" />
+        </span>
+      }
     />
   );
 }

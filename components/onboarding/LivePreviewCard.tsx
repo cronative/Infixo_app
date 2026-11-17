@@ -155,7 +155,7 @@ import {
 import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
 import { CreatorEraBottomSheet } from "@/components/shared/CreatorEraBottomSheet";
 import { AboutMeBlock, FanbaseByPlatform, SocialAccountsBlock } from "@/components/public/about/AboutSections";
-import { FooterCta, LinkGroupRow, LinkRow, ProductTiles, Section, SeriesRow, SolidSectionsProvider } from "@/components/public/ui";
+import { BrandPlatformIcon, FooterCta, LinkGroupRow, LinkRow, ProductTiles, Section, SeriesRow, SolidSectionsProvider } from "@/components/public/ui";
 import { AudienceSnapshot, CustomCollaboration, WhatBrandsSay, WorkWithMe } from "@/components/public/collab/CollabSections";
 
 
@@ -2607,15 +2607,16 @@ export function LivePreviewCard({
               icon={Clapperboard}
               lockedCount={locked("series")}
               solid={seriesOnlyMode}
+              hero={isPremiumLayout || seriesOnlyMode}
               title={isPremiumLayout || seriesOnlyMode ? "My Series" : "Series"}
               subtitle={landingDemo ? "Start from Episode 1." : isPremiumLayout || seriesOnlyMode ? "Start at Ep 1 & binge in order." : "Watch episodes in the right order."}
-              count={`${series.length} series`}
+              count={isPremiumLayout || seriesOnlyMode ? `${series.length} Series` : `${series.length} series`}
               colors={aboutColors}
               divided={false}
             >
             {availableSeriesPlatforms.length > 0 && (
-              <div className="border-b border-(--surface-border) px-3 py-2 sm:px-3.5">
-                  <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto overflow-y-hidden no-scrollbar py-2 -my-1.5">
+              <div className="px-2.5 pt-2.5">
+                  <div className="flex items-center gap-2 overflow-x-auto overflow-y-hidden no-scrollbar py-1 -my-1">
                     {["All", ...availableSeriesPlatforms].map((plat) => {
                       const isActive = seriesFilter.toLowerCase() === plat.toLowerCase();
                       return (
@@ -2623,12 +2624,14 @@ export function LivePreviewCard({
                           key={plat}
                           type="button"
                           onClick={() => setSeriesFilter(plat)}
-                          className={`tap-44 tap-scale px-2.5 py-1 text-[11px] sm:text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap shrink-0 border ${
+                          aria-pressed={isActive}
+                          className={`tap-scale inline-flex h-9 shrink-0 items-center gap-2 whitespace-nowrap rounded-[5px] border px-3.5 text-[13px] font-semibold transition-colors cursor-pointer ${
                             isActive
-                              ? "bg-(--accent) text-(--on-accent) border-(--accent) "
-                              : "bg-(--card-bg) text-(--text-muted) border-(--surface-border) hover:text-(--text) hover:bg-(--surface)"
+                              ? "border-(--accent) bg-(--accent) text-(--on-accent)"
+                              : "border-[color-mix(in_srgb,var(--accent-text)_25%,var(--surface-border))] bg-[color-mix(in_srgb,var(--accent-soft)_35%,var(--card-bg))] text-(--text) hover:bg-(--accent-soft)"
                           }`}
                         >
+                          {plat !== "All" && <BrandPlatformIcon platform={plat.toLowerCase()} size={18} />}
                           {plat}
                         </button>
                       );
@@ -2660,7 +2663,7 @@ export function LivePreviewCard({
                 </p>
               </div>
             ) : (
-              <div className={isPremiumLayout || seriesOnlyMode ? "divide-y divide-(--surface-border)" : "space-y-3 p-3"}>
+              <div className={isPremiumLayout || seriesOnlyMode ? "space-y-2 p-2.5" : "space-y-3 p-3"}>
                 {(() => {
                   const filtered = displayedSeries.filter((s) => {
                     if (seriesFilter.toLowerCase() === "all") return true;
@@ -2767,9 +2770,10 @@ export function LivePreviewCard({
             )}
 
             {!seriesOnlyMode && allSeriesHref && series.length > displayedSeries.length && (
-              <div className="border-t border-(--surface-border)">
+              <div className={isPremiumLayout ? "px-2.5 pb-2.5" : "border-t border-(--surface-border)"}>
                 <FooterCta
                   plain={!isPremiumLayout}
+                  boxed={isPremiumLayout}
                   onPointerEnter={() => {
                     if (allSeriesHref && !isInformationalMode) {
                       router.prefetch(allSeriesHref);

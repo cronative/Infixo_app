@@ -3,7 +3,7 @@
 import type { MouseEvent, ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { PLAIN_FOOTER_CTA, SECTION_FOOTER_CTA } from "./tokens";
+import { BOXED_FOOTER_CTA, PLAIN_FOOTER_CTA, SECTION_FOOTER_CTA } from "./tokens";
 
 export interface FooterCtaProps {
   /** Label, e.g. "View all series (12)". */
@@ -15,6 +15,8 @@ export interface FooterCtaProps {
   "aria-expanded"?: boolean;
   /** Tabs layout: plain accent text bar instead of the tinted section footer. */
   plain?: boolean;
+  /** Bordered button inside the section padding instead of a full-bleed bar. */
+  boxed?: boolean;
   /** Replaces the default → arrow (e.g. a rotating chevron for "Show more"). */
   trailing?: ReactNode;
   className?: string;
@@ -22,11 +24,11 @@ export interface FooterCtaProps {
 
 /** Full-width 44px "View all" bar at the bottom of a Section (a link, or a button when there is no href). */
 export function FooterCta(props: FooterCtaProps) {
-  const cls = `${props.plain ? PLAIN_FOOTER_CTA : SECTION_FOOTER_CTA} ${props.className ?? ""}`;
+  const cls = `${props.plain ? PLAIN_FOOTER_CTA : props.boxed ? BOXED_FOOTER_CTA : SECTION_FOOTER_CTA} ${props.className ?? ""}`;
   const content = (
     <>
       <span>{props.children}</span>
-      {props.trailing ?? <ArrowRight className="h-3.5 w-3.5 shrink-0" />}
+      {props.trailing ?? <ArrowRight className={`${props.boxed ? "h-4 w-4" : "h-3.5 w-3.5"} shrink-0`} />}
     </>
   );
   if (props.href !== undefined) {
