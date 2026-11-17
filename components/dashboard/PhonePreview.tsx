@@ -281,27 +281,29 @@ export function PhonePreview({
         )}
 
         {/* Live profile card (full height, internal scroll, footer at bottom) */}
-        {/* The box scrolls like a phone: header + sections move, the Inflixo nav stays pinned. */}
-        <div className="relative z-10 h-full min-h-0 flex flex-col px-4 py-4 overflow-y-auto overflow-x-hidden overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <div className="flex min-h-full shrink-0 flex-col">
-<LivePreviewCard
-            profile={profile}
-            socials={socials}
-            series={seriesData}
-            products={productsData}
-            customLinks={linksData}
-            totalAudience={totalAudience}
-            themeKey={resolvedThemeKey}
-            variant="full"
-            layoutMode={profile.publicProfileLayout === "tabs" ? "tabs" : "premium"}
-            seriesOnlyMode={cleanSubpath === "series"}
-            productsOnlyMode={cleanSubpath === "products" || cleanSubpath === "shop"}
-            linksOnlyMode={cleanSubpath === "links"}
-            pageHeader={undefined}
-            hideFooter={false}
-            isInformational={true}
-          />
-</div>
+        <div className="relative z-10 h-full min-h-0 flex flex-col px-4 py-4">
+          {/* Inner box scrolls like a phone (padding stays outside, so nothing shows above the pinned nav). */}
+          <div className="flex min-h-0 flex-1 flex-col rounded-[5px] overflow-y-auto overflow-x-hidden overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex min-h-full shrink-0 flex-col">
+              <LivePreviewCard
+                profile={profile}
+                socials={socials}
+                series={seriesData}
+                products={productsData}
+                customLinks={linksData}
+                totalAudience={totalAudience}
+                themeKey={resolvedThemeKey}
+                variant="full"
+                layoutMode={profile.publicProfileLayout === "tabs" ? "tabs" : "premium"}
+                seriesOnlyMode={cleanSubpath === "series"}
+                productsOnlyMode={cleanSubpath === "products" || cleanSubpath === "shop"}
+                linksOnlyMode={cleanSubpath === "links"}
+                pageHeader={undefined}
+                hideFooter={false}
+                isInformational={true}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </aside>
