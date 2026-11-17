@@ -5,11 +5,15 @@ import Link from "next/link";
 import { ArrowUpRight, AtSign, ChevronDown, User, UsersRound, Languages, MapPin, PenLine } from "lucide-react";
 import {
   BrandPlatformIcon,
+  CARD_ITEM,
+  CARD_ITEM_HOVER,
+  CARD_LIST,
   PLATFORM_BRAND,
   SECTION_CARD,
   SECTION_ROW,
   SECTION_ROW_HOVER,
   SectionCard,
+  useCardLayout,
   type SectionColors,
 } from "@/components/public/ui";
 import { formatFans } from "@/lib/creatorEra";
@@ -49,6 +53,7 @@ export function AboutMeBlock({
   ownerPreview?: boolean;
   showHeader?: boolean;
 }) {
+  const cards = useCardLayout();
   if (!bio) {
     if (!ownerPreview) return null;
     return (
@@ -71,7 +76,9 @@ export function AboutMeBlock({
   const chips = (tags ?? []).filter(Boolean);
   return (
     <SectionCard icon={User} title="About Me" subtitle="A little about who I am." colors={colors} showHeader={showHeader}>
-      <div className="space-y-2.5 px-4 py-3">
+      {/* Profile / listing pages: the text sits in its own white card inside the section padding. */}
+      <div className={cards ? "p-2.5" : ""}>
+      <div className={`space-y-2.5 ${cards ? `${CARD_ITEM} p-3` : "px-4 py-3"}`}>
         {bio}
         {(location || langs.length > 0) && (
           <div style={{ color: colors.muted }} className="flex flex-wrap items-center gap-x-3.5 gap-y-1 text-xs text-(--text-muted)">
@@ -103,6 +110,7 @@ export function AboutMeBlock({
           </div>
         )}
       </div>
+      </div>
     </SectionCard>
   );
 }
@@ -122,17 +130,18 @@ export function FanbaseByPlatform({
   total?: number;
   colors: AboutColors;
 }) {
+  const cards = useCardLayout();
   const rows = items.filter((i) => i.count > 0).sort((a, b) => platformRank(a.platform) - platformRank(b.platform));
   const sum = rows.reduce((s, r) => s + r.count, 0);
   if (sum === 0) return null;
   return (
     <SectionCard icon={UsersRound} title="My Community" subtitle="All of you, on every platform." count={`${formatFans(total && total > 0 ? total : sum)} total`} colors={colors}>
-      <ul className="divide-y divide-(--surface-border)">
+      <ul className={cards ? CARD_LIST : "divide-y divide-(--surface-border)"}>
         {rows.map((r) => {
           const p = r.platform.toLowerCase();
           const handle = (r.handle || "").replace(/^@/, "");
           return (
-            <li key={p} className={`flex items-center gap-2.5 ${SECTION_ROW} py-2.5 ${SECTION_ROW_HOVER}`}>
+            <li key={p} className={`flex items-center gap-2.5 ${cards ? `${CARD_ITEM} p-2.5` : `${SECTION_ROW} py-2.5 ${SECTION_ROW_HOVER}`}`}>
               <BrandPlatformIcon platform={p} size={28} />
               <div className="min-w-0 flex-1">
                 <p style={{ color: colors.primary }} className="break-words text-[13px] font-medium leading-[18px] text-(--text)">
@@ -186,6 +195,7 @@ export function SocialAccountsBlock({
   collapsedCount?: number;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const cards = useCardLayout();
   const handleOf = (item: AboutSocialItem) => {
     const raw = (item.handle || item.label || "").replace(/^@/, "");
     return item.platform === "spotify" && raw.toLowerCase() === "spotify" ? "Spotify Artist" : `@${raw}`;
@@ -215,10 +225,10 @@ export function SocialAccountsBlock({
 
   return (
     <SectionCard icon={AtSign} title="More of Me" subtitle="My other channels & pages." count={`${total} more`} colors={colors} showHeader={showHeader} lockedCount={lockedCount}>
-      <ul className="divide-y divide-(--surface-border)">
+      <ul className={cards ? CARD_LIST : "divide-y divide-(--surface-border)"}>
         {rows.map((row) =>
           row.kind === "label" ? (
-            <li key={row.key} style={{ color: colors.muted }} className="px-4 pb-1 pt-2.5 text-[11px] font-semibold uppercase tracking-wider text-(--text-muted)">
+            <li key={row.key} style={{ color: colors.muted }} className={`${cards ? "px-1 pt-1" : "px-4 pb-1 pt-2.5"} text-[11px] font-semibold uppercase tracking-wider text-(--text-muted)`}>
               {row.text}
             </li>
           ) : (
@@ -228,7 +238,7 @@ export function SocialAccountsBlock({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={click(row.item)}
-                className={`group flex items-center gap-2.5 ${SECTION_ROW} py-2.5 ${SECTION_ROW_HOVER}`}
+                className={`group flex items-center gap-2.5 ${cards ? `${CARD_ITEM} ${CARD_ITEM_HOVER} p-2.5` : `${SECTION_ROW} py-2.5 ${SECTION_ROW_HOVER}`}`}
                 title={`Open ${handleOf(row.item)} on ${PLATFORM_BRAND[row.item.platform]?.label ?? row.item.platform}`}
               >
                 <BrandPlatformIcon platform={row.item.platform} size={22} />
@@ -246,7 +256,7 @@ export function SocialAccountsBlock({
               type="button"
               onClick={() => setExpanded((v) => !v)}
               aria-expanded={expanded}
-              className={`flex w-full items-center justify-center gap-1 ${SECTION_ROW} py-2.5 text-[13px] font-semibold text-(--accent-text) ${SECTION_ROW_HOVER} cursor-pointer`}
+              className={cards ? "flex h-11 w-full items-center justify-center gap-1 rounded-[5px] border border-[color-mix(in_srgb,var(--accent-text)_30%,transparent)] bg-[color-mix(in_srgb,var(--accent-soft)_40%,var(--card-bg))] text-[13px] font-semibold text-(--accent-text) transition-colors hover:bg-(--accent-soft) cursor-pointer" : `flex w-full items-center justify-center gap-1 ${SECTION_ROW} py-2.5 text-[13px] font-semibold text-(--accent-text) ${SECTION_ROW_HOVER} cursor-pointer`}
             >
               {expanded ? "Show less" : `Show all (${totalItems})`}
               <ChevronDown className={`h-3.5 w-3.5 transition-transform ${expanded ? "rotate-180" : ""}`} />

@@ -34,5 +34,13 @@ export const BOXED_FOOTER_CTA =
 export const PLAIN_FOOTER_CTA =
   "flex h-11 w-full items-center justify-center gap-1.5 text-xs sm:text-[13px] font-semibold text-(--accent-text) hover:bg-[color-mix(in_srgb,var(--accent)_6%,transparent)] transition-colors cursor-pointer";
 
+/** One content item as its own white card (white on light themes, card colour on dark ones). */
+export const CARD_ITEM = "rounded-[5px] border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))]";
+/** Hover for a linked CARD_ITEM. */
+export const CARD_ITEM_HOVER =
+  "transition-colors hover:border-[color-mix(in_srgb,var(--accent-text)_35%,var(--surface-border))] hover:bg-[color-mix(in_srgb,var(--accent)_3%,var(--header-bg,var(--card-bg)))]";
+/** Body of a section whose items are separate cards. */
+export const CARD_LIST = "space-y-2 p-2.5";
+
 /** Popover frame colour (arrow + panel border). */
 export const POPOVER_LINE = "border-[color-mix(in_srgb,var(--accent-text)_45%,transparent)]";

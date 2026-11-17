@@ -24,6 +24,11 @@ export function FullBleedSectionsProvider({ enabled = true, children }: { enable
   return <FullBleedContext.Provider value={enabled}>{children}</FullBleedContext.Provider>;
 }
 
+/** True on the premium profile / listing pages: content items render as separate white cards. */
+export function useCardLayout() {
+  return useContext(FullBleedContext);
+}
+
 /** Cancels the card's side padding (--card-px); `!` beats a caller's w-full / rounded / border. */
 const FULL_BLEED = "-mx-(--card-px) w-auto! rounded-none! border-x-0!";
 

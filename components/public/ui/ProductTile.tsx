@@ -2,6 +2,7 @@
 
 import type { MouseEvent } from "react";
 import { ExternalLink, Package } from "lucide-react";
+import { CARD_ITEM, CARD_ITEM_HOVER } from "./tokens";
 
 export interface ProductTileItem {
   id: string | number;
@@ -19,9 +20,9 @@ export function ProductTile({ product: p, onClick }: { product: ProductTileItem;
       target="_blank"
       rel="noopener noreferrer sponsored"
       onClick={(e) => onClick?.(e, p)}
-      className="group flex h-full flex-col rounded-[5px] bg-(--surface) p-1.5 transition-colors hover:bg-(--accent-soft)"
+      className={`group flex h-full flex-col p-1.5 ${CARD_ITEM} ${CARD_ITEM_HOVER}`}
     >
-      <span className="flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-[5px] bg-(--card-bg)">
+      <span className="flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-[5px] bg-(--surface)">
         {p.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element -- remote product images of any host
           <img src={p.imageUrl} alt="" loading="lazy" className="h-full w-full object-cover" />

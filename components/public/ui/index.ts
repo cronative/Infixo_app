@@ -8,7 +8,7 @@
  */
 export * from "./tokens";
 export { CountPill } from "./CountPill";
-export { Section, SectionCard, SectionHeader, SolidSectionsProvider, FullBleedSectionsProvider, type SectionProps, type SectionCardProps, type SectionHeaderProps } from "./Section";
+export { Section, SectionCard, SectionHeader, SolidSectionsProvider, FullBleedSectionsProvider, useCardLayout, type SectionProps, type SectionCardProps, type SectionHeaderProps } from "./Section";
 export { LockedRow } from "./LockedRow";
 export { FooterCta, type FooterCtaProps } from "./FooterCta";
 export { ListRow, LIST_ROW_PAD, type ListRowProps } from "./ListRow";

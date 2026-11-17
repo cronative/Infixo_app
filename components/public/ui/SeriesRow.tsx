@@ -9,6 +9,7 @@ import { getSeriesCoverUrl } from "@/lib/videoUrl";
 import { getSeriesEpisodes } from "@/lib/seriesMetrics";
 import { ListRow } from "./ListRow";
 import { BrandPlatformIcon } from "./BrandPlatformIcon";
+import { CARD_ITEM, CARD_ITEM_HOVER } from "./tokens";
 
 const BLUR =
   "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiM3QTIyNTMiLz48L3N2Zz4=";
@@ -50,8 +51,8 @@ export function SeriesRow({ series, seriesHref, onOpenSeries }: SeriesRowProps) 
     <ListRow
       href={seriesHref}
       onClick={(e) => onOpenSeries?.(e, series)}
-      // White card on light themes (same --header-bg as the profile header); dark themes keep their card colour.
-      className="gap-3 rounded-[5px] border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] p-2 transition-colors hover:border-[color-mix(in_srgb,var(--accent-text)_35%,var(--surface-border))] hover:bg-[color-mix(in_srgb,var(--accent)_3%,var(--header-bg,var(--card-bg)))]"
+      // Separate white card (white on light themes, card colour on dark ones).
+      className={`gap-3 p-2 ${CARD_ITEM} ${CARD_ITEM_HOVER}`}
       leading={
         <span className="relative h-[52px] w-[92px] shrink-0 overflow-hidden rounded-[5px] bg-(--accent) min-[400px]:h-[63px] min-[400px]:w-28">
           {hasCover ? (

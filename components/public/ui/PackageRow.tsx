@@ -4,7 +4,7 @@ import { Tv } from "lucide-react";
 import type { MediaKitPackage } from "@/types";
 import { BrandPlatformIcon } from "./BrandPlatformIcon";
 import { ListRow } from "./ListRow";
-import type { SectionColors } from "./tokens";
+import { CARD_ITEM, CARD_ITEM_HOVER, type SectionColors } from "./tokens";
 
 // ── Package price helpers (same rules as the legacy PackageCard) ──
 
@@ -44,7 +44,7 @@ export function PackageRow({ pkg, colors, onEnquire }: { pkg: MediaKitPackage; c
     <li>
       <ListRow
         onClick={() => onEnquire(pkg)}
-        className="gap-3 px-4 py-3 transition-colors hover:bg-[color-mix(in_srgb,var(--accent)_4%,transparent)]"
+        className={`gap-3 p-3 ${CARD_ITEM} ${CARD_ITEM_HOVER}`}
         leading={
           pKey ? (
             <BrandPlatformIcon platform={pKey} size={32} />

@@ -6,6 +6,8 @@ import { ArrowUpRight, Check, ChevronDown, CheckCircle2, Clock, Handshake, Star,
 import type { CreatorReview, MediaKitPackage } from "@/types";
 import {
   BrandPlatformIcon,
+  CARD_ITEM,
+  CARD_LIST,
   FooterCta,
   PLATFORM_BRAND,
   PackageRow,
@@ -14,6 +16,7 @@ import {
   SectionHeader,
   packagePlatformKey,
   packagePrice,
+  useCardLayout,
   type SectionColors as AboutColors,
 } from "@/components/public/ui";
 import { formatFans } from "@/lib/creatorEra";
@@ -209,14 +212,14 @@ export function WorkWithMe({
         colors={colors}
       >
         {packages.length > 0 && (
-          <ul className="divide-y divide-(--surface-border)">
+          <ul className={CARD_LIST}>
             {shownPackages.map((pkg) => (
               <PackageRow key={pkg.id} pkg={pkg} colors={colors} onEnquire={onEnquire} />
             ))}
           </ul>
         )}
         {onCustomRequest && (
-          <div className="border-t border-(--surface-border) p-3">
+          <div className={packages.length > 0 ? "px-2.5 pb-2.5" : "p-2.5"}>
             <button
               type="button"
               onClick={onCustomRequest}
@@ -229,14 +232,16 @@ export function WorkWithMe({
           </div>
         )}
         {packages.length > 3 && (
-          <FooterCta
-            onClick={() => setShowAllPackages((v) => !v)}
-            aria-expanded={showAllPackages}
-            className="border-t border-(--surface-border)"
-            trailing={<ChevronDown className={`h-3.5 w-3.5 transition-transform ${showAllPackages ? "rotate-180" : ""}`} />}
-          >
-            {showAllPackages ? "Show less" : `View all packages (${packages.length})`}
-          </FooterCta>
+          <div className="px-2.5 pb-2.5">
+            <FooterCta
+              boxed
+              onClick={() => setShowAllPackages((v) => !v)}
+              aria-expanded={showAllPackages}
+              trailing={<ChevronDown className={`h-4 w-4 transition-transform ${showAllPackages ? "rotate-180" : ""}`} />}
+            >
+              {showAllPackages ? "Show less" : `View all packages (${packages.length})`}
+            </FooterCta>
+          </div>
         )}
       </SectionCard>
     );
@@ -286,6 +291,7 @@ export function WhatBrandsSay({
   allHref?: string;
 }) {
   const [showAll, setShowAll] = useState(false);
+  const cards = useCardLayout();
   const visible = showAll ? reviews : reviews.slice(0, limit);
   const uniqueBrands = compact && reviews.length > 0 ? [] : Array.from(new Set(brands.map((b) => b.trim()).filter(Boolean)));
   if (reviews.length === 0 && uniqueBrands.length === 0) return null;
@@ -299,9 +305,9 @@ export function WhatBrandsSay({
       count={reviews.length > 0 ? `${reviews.length} ${reviews.length === 1 ? "review" : "reviews"}` : undefined}
       colors={colors}
     >
-      <ul className="divide-y divide-(--surface-border)">
+      <ul className={cards ? CARD_LIST : "divide-y divide-(--surface-border)"}>
         {uniqueBrands.length > 0 && (
-          <li className={ROW}>
+          <li className={cards ? `${CARD_ITEM} p-3` : ROW}>
             <p style={{ color: colors.muted }} className="mb-2 text-[11px] font-bold uppercase tracking-wider text-(--text-muted)">
               Brands I&apos;ve worked with
             </p>
@@ -327,7 +333,7 @@ export function WhatBrandsSay({
         {visible.map((rev) => {
           const rating = Number(rev.rating) || 5;
           return (
-            <li key={rev.id} className={`${ROW} space-y-2`}>
+            <li key={rev.id} className={`${cards ? `${CARD_ITEM} p-3` : ROW} space-y-2`}>
               <div className="flex items-start gap-2.5">
                 <span
                   style={{ backgroundColor: "color-mix(in srgb, var(--accent) 10%, var(--surface))", color: "var(--accent-text)" }}
@@ -361,7 +367,7 @@ export function WhatBrandsSay({
         })}
         {reviews.length > limit && allHref && (
           <li>
-            <FooterCta href={allHref}>View all reviews ({reviews.length})</FooterCta>
+            <FooterCta boxed={cards} href={allHref}>View all reviews ({reviews.length})</FooterCta>
           </li>
         )}
         {reviews.length > limit && !allHref && (

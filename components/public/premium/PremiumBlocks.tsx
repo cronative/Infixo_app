@@ -2,7 +2,7 @@
 
 import { Monitor, Package, Users } from "lucide-react";
 import type { CreatorSetupItem, TeamMember } from "@/types";
-import { BrandPlatformIcon, FooterCta, LIST_ROW_PAD, ListRow, SECTION_ROW, Section, type SectionColors } from "@/components/public/ui";
+import { BrandPlatformIcon, CARD_ITEM, CARD_ITEM_HOVER, CARD_LIST, FooterCta, ListRow, Section, type SectionColors } from "@/components/public/ui";
 import { getInitials } from "@/lib/avatar";
 
 /** Product tiles moved to the shared library. */
@@ -42,6 +42,8 @@ export function SetupSection({
       subtitle={subtitle?.trim() || "The gear behind my videos."}
       count={`${items.length} ${items.length === 1 ? "item" : "items"}`}
       colors={colors}
+      divided={false}
+      bodyClassName={CARD_LIST}
     >
       {items.slice(0, limit).map((item) => {
         const meta = [item.brand, item.category].filter(Boolean).join(" · ");
@@ -52,7 +54,7 @@ export function SetupSection({
             external
             rel="noopener noreferrer sponsored"
             onClick={item.linkUrl ? (e) => onItemClick?.(e, item) : undefined}
-            className={item.linkUrl ? `gap-3 ${LIST_ROW_PAD}` : `gap-3 ${SECTION_ROW} py-2.5`}
+            className={`gap-3 p-2.5 ${CARD_ITEM} ${item.linkUrl ? CARD_ITEM_HOVER : ""}`}
             leading={
               <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-[5px] border border-(--surface-border) bg-(--surface)">
                 {item.imageUrl ? (
@@ -71,7 +73,7 @@ export function SetupSection({
           />
         );
       })}
-      {items.length > limit && <FooterCta href={allHref}>See full setup ({items.length})</FooterCta>}
+      {items.length > limit && <FooterCta boxed href={allHref}>See full setup ({items.length})</FooterCta>}
     </Section>
   );
 }
@@ -122,10 +124,13 @@ export function CrewSection({
       subtitle={subtitle?.trim() || "The people behind my videos."}
       count={`${members.length} ${members.length === 1 ? "member" : "members"}`}
       colors={colors}
+      divided={false}
+      bodyClassName={CARD_LIST}
     >
       {(limit ? members.slice(0, limit) : members).map((m) => (
         <ListRow
           key={m.id}
+          className={`gap-3 p-2.5 ${CARD_ITEM}`}
           leading={
             m.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element -- small avatar
@@ -183,7 +188,7 @@ export function CrewSection({
           }
         />
       ))}
-      {limit && allHref && members.length > limit && <FooterCta href={allHref}>See all crew ({members.length})</FooterCta>}
+      {limit && allHref && members.length > limit && <FooterCta boxed href={allHref}>See all crew ({members.length})</FooterCta>}
     </Section>
   );
 }
