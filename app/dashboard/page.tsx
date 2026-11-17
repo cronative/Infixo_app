@@ -43,8 +43,10 @@ import {
   TopPerformers,
   TrafficSources,
   WeeklyMetrics,
+  hasWeeklyActivity,
   type SmartAlert,
 } from "@/components/dashboard/home/DashboardWidgets";
+import { PhonePreview } from "@/components/dashboard/PhonePreview";
 import type { DashboardSummary } from "@/lib/dashboardSummary";
 import type { SocialAccounts, CustomLink, CreatorProduct } from "@/types";
 import { getCreatorEra } from "@/lib/creatorEra";
@@ -83,6 +85,13 @@ export default function DashboardOverviewPage() {
   const [shareOpen, setShareOpen] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
   const [celebrationOpen, setCelebrationOpen] = useState(false);
+  // The setup bar already nudges for a photo; only repeat it as an alert once that bar is dismissed.
+  const [setupDismissed, setSetupDismissed] = useState(false);
+  useEffect(() => {
+    try {
+      setSetupDismissed(localStorage.getItem("inflixo_setup_checklist_dismissed") === "true");
+    } catch {}
+  }, []);
 
   useEffect(() => {
     if (profile.eraUnlockedPending) {
@@ -288,17 +297,27 @@ export default function DashboardOverviewPage() {
     showToast(ok ? "Media kit link copied — share it with brands ✨" : "Could not copy link", ok ? "success" : "error");
   }
 
+  // All plan limits in one line, so the home screen doesn't read like an error page.
+  const limits = summary?.limits ?? [];
+  const limitAlert: SmartAlert[] =
+    limits.length === 0
+      ? []
+      : [{
+          id: "plan-limits",
+          tone: "warn" as const,
+          text:
+            limits.length === 1
+              ? `${limits[0].label}: plan limit reached (${limits[0].used}/${limits[0].limit}).`
+              : `${limits.length} plan limits reached: ${limits.map((l) => `${l.label} (${l.used}/${l.limit})`).join(" · ")}.`,
+          cta: { label: "Upgrade", href: limits.length === 1 ? limits[0].href : "/dashboard/subscription" },
+        }];
+
   const alerts: SmartAlert[] = [
-    ...(summary?.limits ?? []).map((l) => ({
-      id: `limit-${l.resource}-${l.label}`,
-      tone: "warn" as const,
-      text: `${l.label}: plan limit reached (${l.used}/${l.limit}).`,
-      cta: { label: "Upgrade", href: l.href },
-    })),
+    ...limitAlert,
     ...(!profile.bio?.trim()
       ? [{ id: "bio", tone: "info" as const, text: "Your bio is empty — tell fans and brands what you create.", cta: { label: "Add bio", href: "/dashboard/profile?edit=details" } }]
       : []),
-    ...(!profile.photoDataUrl?.trim()
+    ...(!profile.photoDataUrl?.trim() && setupDismissed
       ? [{ id: "avatar", tone: "info" as const, text: "Add a profile photo so fans recognise you.", cta: { label: "Add photo", href: "/dashboard/profile?edit=photo" } }]
       : []),
     ...((summary?.inbox.stalePending ?? 0) > 0
@@ -318,6 +337,9 @@ export default function DashboardOverviewPage() {
     <PageContainer className="select-none text-left">
       <PageHeader eyebrow={greeting} {...PAGE_COPY.dashboard} />
 
+      <div className="flex items-start gap-8">
+      {/* Main column: grids size to this column (container queries), so they fit beside the live preview. */}
+      <div className="@container min-w-0 flex-1 space-y-5">
       {/* 1. LINK BAR */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 bg-white border border-[#ECECF0] rounded-[5px]">
         {/* Left: 36px avatar + Name + green Live dot */}
@@ -397,30 +419,12 @@ export default function DashboardOverviewPage() {
         onCopyLink={handleCopyLink}
       />
 
-      {/* 1. Brand inbox */}
-      <BrandInboxCard inbox={summary?.inbox ?? null} loading={loading} onShareMediaKit={handleShareMediaKit} />
-
-      {/* 2. Last 7 days */}
-      <WeeklyMetrics metrics={summary?.metrics ?? null} loading={loading} />
-
-      {/* 3 + 4. Top performers & traffic sources */}
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-        <TopPerformers top={summary?.top ?? null} />
-        <TrafficSources sources={summary?.sources ?? null} />
-      </div>
-
-      {/* 5. Quick actions */}
-      <QuickActions addEpisodeHref={addEpisodeHref} onCopyLink={handleCopyLink} />
-
-      {/* 6. Era progress */}
-      <EraProgressCard fans={effectiveTotalAudience} onShare={() => setCelebrationOpen(true)} />
-
-      {/* 7. Smart alerts (only when true) */}
+      {/* Alerts right under setup: one line for plan limits */}
       <SmartAlerts alerts={alerts} />
 
       {/* 3. SECTION: CONTENT & STOREFRONT */}
       <section className="space-y-3">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 gap-3 @xl:grid-cols-2 @4xl:grid-cols-3">
           {/* Card 1: Series */}
           <div className="rounded-[5px] border border-[#ECECF0] bg-white flex flex-col overflow-hidden">
             <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-[#ECECF0] bg-[#FAFAFB]">
@@ -665,6 +669,31 @@ export default function DashboardOverviewPage() {
         </div>
 
       </section>
+
+      {/* Brand inbox */}
+      <BrandInboxCard inbox={summary?.inbox ?? null} loading={loading} onShareMediaKit={handleShareMediaKit} />
+
+      {/* Last 7 days (one quiet line until there is activity) */}
+      <WeeklyMetrics metrics={summary?.metrics ?? null} loading={loading} />
+
+      {/* Top performers & traffic sources: only once there is something to show */}
+      {!loading && hasWeeklyActivity(summary?.metrics ?? null) && (
+        <div className="grid grid-cols-1 gap-3 @2xl:grid-cols-2">
+          <TopPerformers top={summary?.top ?? null} />
+          <TrafficSources sources={summary?.sources ?? null} />
+        </div>
+      )}
+
+      <QuickActions addEpisodeHref={addEpisodeHref} />
+
+      <EraProgressCard fans={effectiveTotalAudience} onShare={() => setCelebrationOpen(true)} />
+      </div>
+
+      {/* Live profile preview (wide screens), like the Series / Shop / Links pages */}
+      <div className="hidden self-stretch xl:block">
+        <PhonePreview username={handle} links={customLinks} products={products} refreshTrigger={summary} />
+      </div>
+      </div>
 
       {/* Share Modal */}
       <Modal

@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   AlertTriangle,
   Clapperboard,
-  Copy,
   IdCard,
   Briefcase,
   Link2,
@@ -16,7 +15,7 @@ import {
   Star,
   Eye,
 } from "lucide-react";
-import { StatCard, StatCardGrid } from "@/components/dashboard/StatCard";
+import { StatCard } from "@/components/dashboard/StatCard";
 import { formatCount } from "@/utils/format";
 import { formatFans, getCreatorEra, getEraProgress } from "@/lib/creatorEra";
 import { eraFill, eraInk, getEraConfig } from "@/lib/eraConfig";
@@ -145,7 +144,29 @@ const METRIC_META: { key: DashboardMetricKey; label: string; tip: string }[] = [
   { key: "shopClicks", label: "Shop clicks", tip: "Mark a product you love as Top Pick." },
 ];
 
+/** True once the 7-day window has any activity (stats worth a full grid). */
+export function hasWeeklyActivity(metrics: DashboardSummary["metrics"] | null) {
+  return METRIC_META.some(({ key }) => {
+    const m = metrics?.[key];
+    return Boolean(m && (m.current > 0 || m.previous > 0));
+  });
+}
+
 export function WeeklyMetrics({ metrics, loading }: { metrics: DashboardSummary["metrics"] | null; loading: boolean }) {
+  // New creator, nothing yet: one quiet line instead of four "0" cards.
+  if (!loading && !hasWeeklyActivity(metrics)) {
+    return (
+      <section className="flex items-center gap-3 rounded-[5px] border border-[#ECECF0] bg-white px-3.5 py-3" aria-label="Last 7 days">
+        <Eye className="h-4 w-4 shrink-0 text-[#7A2253]" aria-hidden />
+        <p className="min-w-0 flex-1 text-[12.5px] text-[#3F3F46]">
+          <span className="font-semibold text-[#18181B]">No visits in the last 7 days.</span> Add your Inflixo link to your Instagram bio to start getting fans.
+        </p>
+        <Link href="/dashboard/analytics" className="shrink-0 text-[12.5px] font-medium text-[#7A2253] hover:underline underline-offset-2">
+          Analytics
+        </Link>
+      </section>
+    );
+  }
   return (
     <section className="space-y-2.5">
       <div className="flex items-center justify-between">
@@ -154,7 +175,7 @@ export function WeeklyMetrics({ metrics, loading }: { metrics: DashboardSummary[
           All analytics
         </Link>
       </div>
-      <StatCardGrid cols={4}>
+      <div className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-2 @3xl:grid-cols-4">
         {METRIC_META.map(({ key, label, tip }) => {
           const m = metrics?.[key];
           const quiet = !m || (m.current === 0 && m.previous === 0);
@@ -175,7 +196,7 @@ export function WeeklyMetrics({ metrics, loading }: { metrics: DashboardSummary[
             />
           );
         })}
-      </StatCardGrid>
+      </div>
     </section>
   );
 }
@@ -265,9 +286,9 @@ export function TrafficSources({ sources }: { sources: DashboardSummary["sources
 
 // ── 5. Quick actions ──────────────────────────────────────────
 
-export function QuickActions({ addEpisodeHref, onCopyLink }: { addEpisodeHref: string; onCopyLink: () => void }) {
+export function QuickActions({ addEpisodeHref }: { addEpisodeHref: string }) {
   const cls =
-    "flex min-w-[112px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-[5px] border border-[#E8E8EC] bg-white px-3 py-3 text-center text-[12.5px] font-medium text-[#18181B] transition-colors hover:border-[#7A2253] hover:text-[#7A2253] cursor-pointer lg:min-w-0";
+    "flex min-w-[112px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-[5px] border border-[#E8E8EC] bg-white px-3 py-3 text-center text-[12.5px] font-medium text-[#18181B] transition-colors hover:border-[#7A2253] hover:text-[#7A2253] cursor-pointer @xl:min-w-0";
   const icon = "h-4 w-4 text-[#7A2253]";
   const actions: { label: string; icon: ReactNode; href?: string; onClick?: () => void }[] = [
     { label: "Add Episode", icon: <Clapperboard className={icon} />, href: addEpisodeHref },
@@ -275,12 +296,11 @@ export function QuickActions({ addEpisodeHref, onCopyLink }: { addEpisodeHref: s
     { label: "Add Product", icon: <ShoppingBag className={icon} />, href: "/dashboard/products?new=true" },
     { label: "Update Media Kit", icon: <Briefcase className={icon} />, href: "/dashboard/mediakit" },
     { label: "Share Journey Card", icon: <IdCard className={icon} />, href: "/dashboard/creator-card" },
-    { label: "Copy Link", icon: <Copy className={icon} />, onClick: onCopyLink },
   ];
   return (
     <section className="space-y-2.5">
       <h2 className="text-[14px] font-semibold text-[#18181B]">Quick actions</h2>
-      <div className="flex snap-x gap-2 overflow-x-auto pb-1 lg:grid lg:grid-cols-6 lg:overflow-visible">
+      <div className="flex snap-x gap-2 overflow-x-auto pb-1 @xl:grid @xl:grid-cols-5 @xl:overflow-visible">
         {actions.map((a) =>
           a.href ? (
             <Link key={a.label} href={a.href} className={cls}>
