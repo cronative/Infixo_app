@@ -44,7 +44,7 @@ export function EraBadge({ era, stage, label, onClick, showInfo = false, size = 
   const cfg = getEraConfig(era);
   const ink = eraInk(cfg.color);
   const md = size === "md";
-  const cls = `inline-flex min-w-0 items-center gap-1.5 rounded-[5px] border ${md ? "h-8 pl-1 pr-1.5 sm:h-9 sm:pr-2" : "h-7 pl-1 pr-2"} ${className}`;
+  const cls = `inline-flex min-w-0 items-center gap-1.5 rounded-[5px] border ${md ? "min-h-8 py-0.5 pl-1 pr-1.5 sm:min-h-9 sm:pr-2" : "min-h-7 py-0.5 pl-1 pr-2"} ${className}`;
   const css: CSSProperties = {
     background: eraSoftBg(cfg),
     borderColor: eraAlpha(cfg.accent ?? cfg.color, 0.45),
@@ -54,8 +54,10 @@ export function EraBadge({ era, stage, label, onClick, showInfo = false, size = 
   const content = (
     <>
       <EraAwardMedal era={era} stage={stage} size={md ? 22 : 20} />
-      <span className={`whitespace-nowrap font-semibold leading-none tracking-[-0.01em] ${md ? "text-[12px] sm:text-[13px]" : "text-[12px]"}`}>{label}</span>
-      {showInfo && <Info className={`${md ? "h-3.5 w-3.5" : "h-3 w-3"} shrink-0 opacity-70`} aria-hidden />}
+      {/* One line when there is room; on narrow cards the name wraps to 2 lines so the medal never gets pushed out. */}
+      <span className={`line-clamp-2 min-w-0 flex-1 text-left font-semibold leading-[1.15] tracking-[-0.01em] ${md ? "text-[12px] sm:text-[13px]" : "text-[12px]"}`}>{label}</span>
+      {/* Under 360px the name needs the room; the whole badge still opens the Era popover. */}
+      {showInfo && <Info className={`${md ? "h-3.5 w-3.5" : "h-3 w-3"} shrink-0 opacity-70 max-[359px]:hidden`} aria-hidden />}
     </>
   );
   if (!onClick) {

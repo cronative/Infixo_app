@@ -643,7 +643,7 @@ export function ProfileHeader({
                     // Era ink pulled toward the theme text: deeper on light cards, lighter on dark ones.
                     color: `color-mix(in srgb, ${eraInk(getEraConfig(currentEra.era).color)} 60%, var(--text))`,
                   }}
-                  className="shrink-0"
+                  className="min-w-0 max-w-full"
                 />
               }
             >
