@@ -1444,6 +1444,7 @@ export default function DashboardMediaKitPage() {
         initial={formInitial}
         isEdit={Boolean(editingPkgId)}
         pricesPlusGst={settings.commercialTerms?.pricesPlusGst}
+        themeKey={profile?.themeKey}
         onSubmit={handleSubmitPackage}
       />
 

@@ -5,6 +5,10 @@ import { Briefcase, ChevronDown, Eye, Minus, PencilLine, Plus, X } from "lucide-
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/shared/BrandIcons";
 import { PackageCard } from "@/components/mediakit/PackageCard";
+import { WorkWithMe } from "@/components/public/collab/CollabSections";
+import { FullBleedSectionsProvider, SolidSectionsProvider } from "@/components/public/ui";
+import { themeTokenStyle } from "@/themes/config";
+import { ThemeService } from "@/services/ThemeService";
 import { MEDIAKIT_PACKAGE_CATEGORIES, type MediaKitPackage } from "@/types";
 import {
   COLLAB_TYPES,
@@ -109,10 +113,12 @@ export interface PackageFormProps {
   isEdit?: boolean;
   /** Creator-wide "+ GST" for the preview. */
   pricesPlusGst?: boolean;
+  /** Creator's profile theme, so the "Profile" preview matches the public page. */
+  themeKey?: string;
   onSubmit: (pkg: MediaKitPackage, mode: "draft" | "publish") => Promise<void>;
 }
 
-export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPlusGst, onSubmit }: PackageFormProps) {
+export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPlusGst, themeKey, onSubmit }: PackageFormProps) {
   // Basics
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -150,6 +156,11 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
   const [storyPitch, setStoryPitch] = useState("");
 
   const [tab, setTab] = useState<"edit" | "preview">("edit");
+  const [previewMode, setPreviewMode] = useState<"profile" | "mediakit">("profile");
+  const profileColors = useMemo(() => {
+    const meta = ThemeService.getThemeMeta(themeKey as Parameters<typeof ThemeService.getThemeMeta>[0]);
+    return { primary: meta.colors.primaryText, secondary: meta.colors.secondaryText, muted: meta.colors.mutedText, headingFont: meta.typography.headingFontFamily };
+  }, [themeKey]);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState<"" | "draft" | "publish">("");
 
@@ -598,9 +609,34 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
           <aside className={`border-l border-[#ECECF0] bg-[#FAFAFB] p-3 sm:p-4 ${tab === "edit" ? "hidden lg:block" : ""}`} aria-label="Package preview">
             <div className="space-y-2 lg:sticky lg:top-0">
               <p className="text-[11px] font-bold uppercase tracking-wider text-[#6B6B76]">Live preview · how brands see it</p>
-              <div style={{ ["--card-bg" as string]: "#FFFFFF", ["--header-bg" as string]: "#FFFFFF" }}>
-                <PackageCard pkg={draftPackage} pricesPlusGst={pricesPlusGst} preview />
+              <div className="flex rounded-[5px] border border-[#ECECF0] bg-white p-0.5" role="tablist" aria-label="Preview where">
+                {(["profile", "mediakit"] as const).map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    role="tab"
+                    aria-selected={previewMode === m}
+                    onClick={() => setPreviewMode(m)}
+                    className={`h-7 flex-1 rounded-[5px] text-[12px] font-semibold cursor-pointer ${previewMode === m ? "bg-[#7A2253] text-white" : "text-[#52525B] hover:text-[#18181B]"}`}
+                  >
+                    {m === "profile" ? "Profile" : "Media kit"}
+                  </button>
+                ))}
               </div>
+              {previewMode === "profile" ? (
+                // Same "Work With Me" section the public profile renders, in the creator's theme.
+                <div style={{ ...themeTokenStyle(themeKey), background: "var(--page-bg)" }} className="rounded-[5px] p-2.5">
+                  <FullBleedSectionsProvider>
+                    <SolidSectionsProvider>
+                      <WorkWithMe packages={[draftPackage]} colors={profileColors} onEnquire={() => {}} />
+                    </SolidSectionsProvider>
+                  </FullBleedSectionsProvider>
+                </div>
+              ) : (
+                <div style={{ ["--card-bg" as string]: "#FFFFFF", ["--header-bg" as string]: "#FFFFFF" }}>
+                  <PackageCard pkg={draftPackage} pricesPlusGst={pricesPlusGst} preview />
+                </div>
+              )}
             </div>
           </aside>
         </div>
