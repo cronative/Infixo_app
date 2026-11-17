@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { resolveThemeKey } from "@/lib/themeKeys";
+import type { ThemeKey } from "@/types";
 import { ThemeCard } from "@/themes/registry";
 import { SocialService } from "@/services/SocialService";
 import { useToast } from "@/contexts/ToastContext";
@@ -15,7 +17,12 @@ import {
 
 export default function DemoCreatorSeriesPage() {
   const { showToast } = useToast();
-  const theme = EXPERT_DEMO_THEME;
+  // ?theme=<id> previews the demo in another theme (same as /demo_creator); unknown ids fall back to the default.
+  const [theme, setTheme] = useState<ThemeKey>(EXPERT_DEMO_THEME);
+  useEffect(() => {
+    const t = new URLSearchParams(window.location.search).get("theme");
+    if (t) setTheme(resolveThemeKey(t));
+  }, []);
   const totalAudience = SocialService.calculateTotalAudience(EXPERT_DEMO_SOCIALS);
 
   useEffect(() => {

@@ -274,7 +274,14 @@ export function SeriesDetailClient({
   const profileUrl = `/${username}`;
 
   // Theme integration
-  const themeKey = resolveThemeKey(creator?.themeKey);
+  // Demo creator only: ?theme=<id> previews the series page in another theme (like /demo_creator?theme=).
+  const [demoTheme, setDemoTheme] = useState<string | null>(null);
+  useEffect(() => {
+    if ((creator?.username || initialUsername) !== "demo_creator") return;
+    const t = new URLSearchParams(window.location.search).get("theme");
+    if (t) setDemoTheme(t);
+  }, [creator?.username, initialUsername]);
+  const themeKey = resolveThemeKey(demoTheme || creator?.themeKey);
   const pt = getPublicTheme(themeKey);
   const c = pt.colors;
   const sectionColors = { primary: c.primaryText, secondary: c.secondaryText, muted: c.mutedText };
