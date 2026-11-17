@@ -554,7 +554,26 @@ export interface MediaKitSettings {
   nofitTags?: string[];
   promises?: string[];
   signatureName?: string;
+  /** India-specific commercial terms shown on the media kit and PDF. */
+  commercialTerms?: CommercialTerms;
   updatedAt?: string;
+}
+
+export type BarterPolicy = "no" | "yes" | "hybrid";
+
+export interface CommercialTerms {
+  gstRegistered?: boolean;
+  /** 15-character GSTIN (shown only when entered). */
+  gstin?: string;
+  /** Package prices are before 18% GST. */
+  pricesPlusGst?: boolean;
+  /** e.g. "50% advance, 50% after posting". */
+  paymentTerms?: string;
+  barter?: BarterPolicy;
+  /** Minimum product value for barter, e.g. "₹5,000". */
+  barterMinValue?: string;
+  /** Priced extras (usage rights, exclusivity, raw footage …), max 6. */
+  addOns?: { label: string; price: string }[];
 }
 
 export interface CollabRequest {

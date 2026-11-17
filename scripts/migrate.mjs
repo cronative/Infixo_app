@@ -392,6 +392,11 @@ async function migrateDatabase(target) {
       `);
     }
 
+    // 021: Media kit commercial terms (GST, payment terms, barter, add-ons) as one JSON column
+    if (mkSettingsTables.length) {
+      await addColumnIfMissing("mediakit_settings", "commercial_terms", "JSON DEFAULT NULL");
+    }
+
     console.log(`✅ ${target.name} migrated successfully.`);
   } finally {
     await connection.end();

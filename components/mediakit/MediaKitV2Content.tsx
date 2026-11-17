@@ -244,6 +244,35 @@ export function MediaKitV2Content({
   const showReviews = visibleReviews.length > 0;
   const showTeam = !hideTeam && activeTeamMembers.length > 0;
 
+  // India-specific commercial terms (GST, payment, barter, add-ons).
+  const terms = settings?.commercialTerms;
+  const termRows = [
+    terms?.gstRegistered || terms?.pricesPlusGst
+      ? {
+          label: "GST",
+          value: [
+            terms?.gstRegistered ? "GST registered" : "",
+            terms?.gstin ? `GSTIN ${terms.gstin}` : "",
+            terms?.pricesPlusGst ? "Prices + 18% GST" : "",
+          ].filter(Boolean).join(" · "),
+        }
+      : null,
+    terms?.paymentTerms ? { label: "Payment", value: terms.paymentTerms } : null,
+    terms?.barter
+      ? {
+          label: "Barter",
+          value:
+            terms.barter === "no"
+              ? "Paid collaborations only"
+              : `${terms.barter === "hybrid" ? "Paid + barter collabs welcome" : "Barter collabs welcome"}${
+                  terms.barterMinValue ? ` (min product value ${terms.barterMinValue})` : ""
+                }`,
+        }
+      : null,
+  ].filter(Boolean) as { label: string; value: string }[];
+  const termAddOns = (terms?.addOns || []).filter((a) => a.label);
+  const showTerms = termRows.length > 0 || termAddOns.length > 0;
+
   // Section numbers follow the sections actually shown (no "03 → 05" gaps when one is empty).
   const sectionOrder = [
     showHello && "hello",
@@ -251,6 +280,7 @@ export function MediaKitV2Content({
     showSeries && "series",
     showFitChips && "fit",
     showPackages && "packages",
+    showTerms && "terms",
     showPromises && "promises",
     showReviews && "reviews",
     showTeam && "team",
@@ -693,6 +723,9 @@ export function MediaKitV2Content({
                     <div className="text-left sm:text-right">
                       <div className="text-base sm:text-lg font-extrabold text-[#7A2253]">
                         {formatPackagePrice(pkg)}
+                        {terms?.pricesPlusGst && (pkg.price || pkg.minPrice || "").trim() && (
+                          <span className="ml-1 text-[12px] font-semibold text-[#78716C]">+ GST</span>
+                        )}
                       </div>
                       <p className="text-[11px] text-[#78716C]">Final scope shaped together</p>
                     </div>
@@ -748,6 +781,55 @@ export function MediaKitV2Content({
               );
             })}
           </div>
+        </section>
+      )}
+
+      {/* =================================================================== */}
+      {/* RATES & TERMS — GST, payment, barter, add-ons (India)               */}
+      {/* =================================================================== */}
+      {showTerms && (
+        <section
+          aria-label="Rates and terms"
+          className="rounded-xl border border-[#E7E0D6] bg-[#FAF7F2] p-5 sm:p-7 text-[#1C1917] shadow-2xs space-y-4 print-avoid-break"
+        >
+          <div className="space-y-1">
+            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
+              {num("terms")} · Rates &amp; Terms
+            </span>
+            <h3
+              style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+              className="text-xl sm:text-2xl font-normal text-[#1C1917]"
+            >
+              Good to know before we start
+            </h3>
+          </div>
+
+          {termRows.length > 0 && (
+            <dl className="divide-y divide-[#E7E0D6] rounded-lg border border-[#E7E0D6] bg-white">
+              {termRows.map((row) => (
+                <div key={row.label} className="flex flex-col gap-0.5 px-4 py-3 sm:flex-row sm:items-baseline sm:gap-4">
+                  <dt className="w-24 shrink-0 text-[11px] font-bold uppercase tracking-wider text-[#78716C]">{row.label}</dt>
+                  <dd className="min-w-0 break-words text-[14px] font-medium text-[#1C1917]">{row.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+
+          {termAddOns.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-[#78716C]">Add-ons</p>
+              <ul className="divide-y divide-[#E7E0D6] rounded-lg border border-[#E7E0D6] bg-white">
+                {termAddOns.map((a, i) => (
+                  <li key={`${a.label}-${i}`} className="flex items-center justify-between gap-3 px-4 py-2.5">
+                    <span className="min-w-0 break-words text-[13px] text-[#292524]">{a.label}</span>
+                    <span className="shrink-0 whitespace-nowrap text-[13px] font-bold text-[#7A2253]">
+                      {a.price ? (a.price.startsWith("₹") ? a.price : `₹${a.price}`) : "On request"}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </section>
       )}
 

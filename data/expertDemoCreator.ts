@@ -550,6 +550,20 @@ export const EXPERT_DEMO_MEDIA_KIT_SETTINGS: MediaKitSettings = {
   ],
   allowWhatsapp: true,
   allowEmail: true,
+  commercialTerms: {
+    gstRegistered: true,
+    gstin: "23ABCDE1234F1Z5",
+    pricesPlusGst: true,
+    paymentTerms: "50% advance, 50% after posting",
+    barter: "hybrid",
+    barterMinValue: "₹15,000",
+    addOns: [
+      { label: "Usage rights for ads (30 days)", price: "₹20,000" },
+      { label: "Exclusivity: no competitor (30 days)", price: "₹25,000" },
+      { label: "Link in bio (7 days)", price: "₹3,000" },
+      { label: "Raw footage", price: "₹10,000" },
+    ],
+  },
   updatedAt: new Date().toISOString(),
 };
 

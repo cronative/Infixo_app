@@ -6,6 +6,7 @@ import { getSessionFromRequest } from "@/lib/session";
 import { getPlanQuota } from "@/services/subscriptionLimits";
 import { getCreatorPlanKey } from "@/lib/planServer";
 import { getPlanLimit } from "@/config/plans";
+import type { BarterPolicy, CommercialTerms } from "@/types";
 
 let mediaKitTablesEnsured = false;
 
@@ -72,6 +73,7 @@ async function ensureMediaKitTables() {
     try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN nofit_tags JSON DEFAULT NULL"); } catch {}
     try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN promises JSON DEFAULT NULL"); } catch {}
     try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN signature_name VARCHAR(120) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN commercial_terms JSON DEFAULT NULL"); } catch {}
 
     try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN creator_id VARCHAR(100) DEFAULT NULL"); } catch {}
     try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN price_unit VARCHAR(50) DEFAULT 'per_package'"); } catch {}
@@ -146,7 +148,7 @@ export async function GET(req: Request) {
               avg_reel_views, engagement_rate, top_cities, content_languages, categories, past_brands,
               allow_whatsapp, allow_email,
               intro, now_making, audience_desc, availability, reply_time,
-              fit_tags, nofit_tags, promises, signature_name,
+              fit_tags, nofit_tags, promises, signature_name, commercial_terms,
               updated_at 
        FROM mediakit_settings 
        WHERE creator_id = ? OR email = ? OR email = ?
@@ -215,6 +217,9 @@ export async function GET(req: Request) {
       nofitTags: parseJsonStringArray(s.nofit_tags, 3),
       promises: parseJsonStringArray(s.promises, 4),
       signatureName: s.signature_name || "",
+      commercialTerms: sanitizeCommercialTerms(
+        typeof s.commercial_terms === "string" ? safeJson(s.commercial_terms) : s.commercial_terms
+      ),
       updatedAt: s.updated_at ? new Date(s.updated_at).toISOString() : undefined,
     };
 
@@ -323,13 +328,15 @@ export async function POST(req: Request) {
         ? JSON.stringify(settings.promises.map((p: any) => String(p || "").trim()).filter(Boolean).slice(0, 4))
         : null;
       const signatureName = settings?.signatureName ? String(settings.signatureName).trim().slice(0, 120) : null;
+      const cleanTerms = sanitizeCommercialTerms(settings?.commercialTerms);
+      const commercialTerms = cleanTerms ? JSON.stringify(cleanTerms) : null;
 
       await db.query(
         `INSERT INTO mediakit_settings 
           (creator_id, email, whatsapp_number, sponsor_email, min_budget, bio_highlight, accepting_sponsors,
            avg_reel_views, engagement_rate, top_cities, content_languages, categories, past_brands, allow_whatsapp, allow_email,
-           intro, now_making, audience_desc, availability, reply_time, fit_tags, nofit_tags, promises, signature_name)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+           intro, now_making, audience_desc, availability, reply_time, fit_tags, nofit_tags, promises, signature_name, commercial_terms)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
            email = VALUES(email),
            whatsapp_number = VALUES(whatsapp_number),
@@ -353,7 +360,8 @@ export async function POST(req: Request) {
            fit_tags = VALUES(fit_tags),
            nofit_tags = VALUES(nofit_tags),
            promises = VALUES(promises),
-           signature_name = VALUES(signature_name)`,
+           signature_name = VALUES(signature_name),
+           commercial_terms = VALUES(commercial_terms)`,
         [
           resolvedCreatorId,
           resolvedEmail,
@@ -379,6 +387,7 @@ export async function POST(req: Request) {
           nofitTags,
           promises,
           signatureName,
+          commercialTerms,
         ]
       );
     }
@@ -492,4 +501,41 @@ export async function POST(req: Request) {
     console.error("POST Media Kit Error:", err);
     return apiError(err.message || "Failed to save Media Kit", 500);
   }
+}
+
+// ── Commercial terms (GST, payment, barter, add-ons) ──────────────────────
+
+function safeJson(value: string): unknown {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
+}
+
+const GSTIN_RE = /^[0-9]{2}[A-Z0-9]{13}$/;
+const clip = (v: unknown, max: number) => String(v ?? "").trim().slice(0, max);
+
+/** Validates and trims creator-entered commercial terms; null when nothing is set. */
+function sanitizeCommercialTerms(raw: any): CommercialTerms | null {
+  if (!raw || typeof raw !== "object") return null;
+  const gstin = clip(raw.gstin, 15).toUpperCase();
+  const barter: BarterPolicy | undefined = raw.barter === "yes" || raw.barter === "hybrid" || raw.barter === "no" ? raw.barter : undefined;
+  const addOns = Array.isArray(raw.addOns)
+    ? raw.addOns
+        .map((a: any) => ({ label: clip(a?.label, 60), price: clip(a?.price, 30) }))
+        .filter((a: { label: string }) => a.label)
+        .slice(0, 6)
+    : [];
+  const terms: CommercialTerms = {
+    gstRegistered: raw.gstRegistered === true,
+    gstin: raw.gstRegistered === true && GSTIN_RE.test(gstin) ? gstin : undefined,
+    pricesPlusGst: raw.pricesPlusGst === true,
+    paymentTerms: clip(raw.paymentTerms, 120) || undefined,
+    barter,
+    barterMinValue: barter && barter !== "no" ? clip(raw.barterMinValue, 30) || undefined : undefined,
+    addOns: addOns.length ? addOns : undefined,
+  };
+  const empty = !terms.gstRegistered && !terms.pricesPlusGst && !terms.paymentTerms && !terms.barter && !terms.addOns;
+  return empty ? null : terms;
 }

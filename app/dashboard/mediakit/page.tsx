@@ -44,6 +44,7 @@ import { MediaKitService } from "@/services/MediaKitService";
 import {
   MediaKitPackage,
   MediaKitSettings,
+  CommercialTerms,
   MEDIAKIT_PROMISE_PRESETS,
   MEDIAKIT_PACKAGE_CATEGORIES,
 } from "@/types";
@@ -53,6 +54,7 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import { formatFans } from "@/lib/creatorEra";
 import { SectionCard } from "@/components/dashboard/SectionCard";
+import { CommercialTermsCard } from "@/components/mediakit/CommercialTermsCard";
 import { StatCard, StatCardGrid } from "@/components/dashboard/StatCard";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { PDF_PREPARING_LABEL, useMediaKitPdf } from "@/hooks/useMediaKitPdf";
@@ -618,6 +620,16 @@ export default function DashboardMediaKitPage() {
     } finally {
       setSavingBrandStory(false);
     }
+  };
+
+  const handleSaveCommercialTerms = async (terms: CommercialTerms) => {
+    const updatedSettings: MediaKitSettings = { ...settings, commercialTerms: terms, updatedAt: new Date().toISOString() };
+    setSettings(updatedSettings);
+    MediaKitService.saveSettings(updatedSettings);
+    if (activeEmail) {
+      await MediaKitService.saveToDb(activeEmail, updatedSettings, packages, activeCreatorId);
+    }
+    showToast("Saved rates, GST & payment terms 🇮🇳");
   };
 
   const handleOpenAddModal = () => {
@@ -1235,6 +1247,9 @@ export default function DashboardMediaKitPage() {
           </div>
         </form>
       </SectionCard>
+
+      {/* 2.6 RATES, GST & PAYMENT (India-specific commercial terms) */}
+      <CommercialTermsCard value={settings.commercialTerms} onSave={handleSaveCommercialTerms} />
 
       {/* 3. COLLAB PACKAGES (NO TABS) */}
       <SectionCard
