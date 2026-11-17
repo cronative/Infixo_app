@@ -1887,6 +1887,9 @@ export function LivePreviewCard({
         isPublicSurface
           ? "px-(--card-px) pt-5 [--card-px:8px] sm:[--card-px:12px] rounded-[5px] border profile-card-glass"
           : `${cardPadding ? cardPadding : "px-4 sm:px-5 pt-[20px]"} [--card-px:16px] sm:[--card-px:20px] rounded-[5px] border shadow-none`
+      } ${
+        // Full-width sections: header ends 30px under the era pill and the first section starts flush below it.
+        isPremiumLayout || isListingPage ? "[--header-pb:30px] [--header-bb:0px] [--header-mb:0px]" : ""
       } transition-all`}
     >
       {/* Ambient Animation in Preview mode when theme supports it */}
@@ -2027,8 +2030,8 @@ export function LivePreviewCard({
           </div>
         )}
 
-        {/* Divider below ProfileHeader on Standalone Listing Pages & Dashboard Previews */}
-        {isListingPage && (
+        {/* Divider + title below ProfileHeader on the reviews / media kit pages (other listing pages start flush with their section) */}
+        {(reviewsOnlyMode || mediaKitOnlyMode) && (
           <div className="relative z-20 mt-2.5 sm:mt-3 -mx-(--card-px) select-none bg-(--card-bg)">
             <div style={{ backgroundColor: c.divider }} className="h-px opacity-60" aria-hidden="true" />
 
@@ -2118,7 +2121,10 @@ export function LivePreviewCard({
           containedScroll
             ? "min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             : ""
-        } pt-1.5 sm:pt-2 pb-6`}
+        } ${
+          // Cancel the first section's top margin (every section has the same one) so it sits flush under the header.
+          isPremiumLayout ? "-mt-2" : isListingPage ? "-mt-1.5 sm:-mt-2" : "pt-1.5 sm:pt-2"
+        } pb-6`}
       >
 
         {/* Fresh / In-Progress Profile State: Warm emotional visitor welcome & interactive nudge */}

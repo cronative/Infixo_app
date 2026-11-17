@@ -494,7 +494,7 @@ export function ProfileHeader({
       {/* ROW 2: STACKED PROFILE (photo on top, details centered below)       */}
       {/* ============================================================== */}
       {/* Profile block on the header surface (white on light themes), bleeding to the card edges. */}
-      <div className="-mx-[var(--card-px,16px)] mb-1 border-b border-(--divider) bg-[var(--header-bg,var(--card-bg))] px-[var(--card-px,16px)] pb-3 pt-3">
+      <div className="-mx-[var(--card-px,16px)] mb-[var(--header-mb,4px)] border-b border-(--divider) [border-bottom-width:var(--header-bb,1px)] bg-[var(--header-bg,var(--card-bg))] px-[var(--card-px,16px)] pb-[var(--header-pb,12px)] pt-3">
       <div className="flex w-full flex-col items-center gap-2.5 mx-auto text-center">
         {/* LEFT: Creator Avatar (reduced slightly as requested: 68px on mobile, 76px on sm) */}
         <div className="relative shrink-0">
