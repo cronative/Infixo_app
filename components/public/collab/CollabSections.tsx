@@ -7,12 +7,12 @@ import {
   CARD_ITEM,
   CARD_LIST,
   FooterCta,
-  PackageRow,
   SectionCard,
   useCardLayout,
   type SectionColors as AboutColors,
 } from "@/components/public/ui";
 import { getInitials } from "@/lib/avatar";
+import { PackageCard } from "@/components/mediakit/PackageCard";
 
 const ROW = "px-4 py-3";
 
@@ -20,15 +20,21 @@ const ROW = "px-4 py-3";
 
 // ── 2. Work with me ───────────────────────────────────────────
 
-/** Tabs layout: full package card row (deliverables + Enquire button). */
+/** Collab packages with their full details (deliverables, inclusions, terms) and a request button. */
 export function WorkWithMe({
   packages,
   colors,
   onEnquire,
   onCustomRequest,
   lockedCount = 0,
+  pricesPlusGst,
+  preview = false,
 }: {
   lockedCount?: number;
+  /** Creator-wide "prices + 18% GST" from the media kit terms. */
+  pricesPlusGst?: boolean;
+  /** Dashboard preview: the request button does nothing. */
+  preview?: boolean;
   packages: MediaKitPackage[];
   colors: AboutColors;
   onEnquire: (pkg: MediaKitPackage) => void;
@@ -48,7 +54,9 @@ export function WorkWithMe({
       {packages.length > 0 && (
         <ul className={CARD_LIST}>
           {shownPackages.map((pkg) => (
-            <PackageRow key={pkg.id} pkg={pkg} colors={colors} onEnquire={onEnquire} />
+            <li key={pkg.id}>
+              <PackageCard pkg={pkg} pricesPlusGst={pricesPlusGst} onRequest={onEnquire} preview={preview} />
+            </li>
           ))}
         </ul>
       )}

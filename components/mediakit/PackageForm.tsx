@@ -628,7 +628,7 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
                 <div style={{ ...themeTokenStyle(themeKey), background: "var(--page-bg)" }} className="rounded-[5px] p-2.5">
                   <FullBleedSectionsProvider>
                     <SolidSectionsProvider>
-                      <WorkWithMe packages={[draftPackage]} colors={profileColors} onEnquire={() => {}} />
+                      <WorkWithMe packages={[draftPackage]} colors={profileColors} pricesPlusGst={pricesPlusGst} preview onEnquire={() => {}} />
                     </SolidSectionsProvider>
                   </FullBleedSectionsProvider>
                 </div>

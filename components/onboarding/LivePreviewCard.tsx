@@ -2655,6 +2655,7 @@ export function LivePreviewCard({
                     lockedCount={locked("packages")}
                     packages={activePackages}
                     colors={aboutColors}
+                    pricesPlusGst={mediaKitSettings?.commercialTerms?.pricesPlusGst}
                     onEnquire={(pkg) => openEnquiry(pkg)}
                     // "Get in touch for collaboration" button hidden for now; pass () => openEnquiry(null) to bring it back.
                     onCustomRequest={undefined}
