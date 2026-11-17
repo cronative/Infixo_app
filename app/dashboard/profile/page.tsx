@@ -21,6 +21,7 @@ import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import { SectionCard } from "@/components/dashboard/SectionCard";
+import { ProfileHeroCard } from "@/components/dashboard/ProfileHeroCard";
 import { CreatorProfile } from "@/types";
 
 const BIO_SUGGESTIONS = [
@@ -33,7 +34,7 @@ const BIO_SUGGESTIONS = [
 ];
 
 export default function DashboardProfilePage() {
-  const { profile, updateProfile, loading } = useCreator();
+  const { profile, updateProfile, loading, socials, totalAudience } = useCreator();
   const { showToast } = useToast();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -207,88 +208,16 @@ export default function DashboardProfilePage() {
         }
       />
 
-      {/* VIEW MODE: SectionCard "Your profile" */}
+      {/* VIEW MODE: identity card laid out like the public header */}
       {!isEditing ? (
-        <SectionCard
-          icon={<User className="h-4 w-4" />}
-          title="Your profile"
-          subtitle="This is how your creator identity appears across Inflixo."
-          action={
-            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-(--success)">
-              <span className="h-1.5 w-1.5 rounded-full bg-(--success)" />
-              Live
-            </span>
-          }
-        >
-          <div className="flex flex-col sm:flex-row items-start gap-5 pt-1">
-            {/* Profile photo 72px (or initials) */}
-            <div className="shrink-0">
-              <CreatorAvatar
-                src={profile.photoDataUrl}
-                name={displayName || handleStr}
-                className="w-[72px] h-[72px] rounded-full border-2 border-[#ECECF0] shadow-xs object-cover"
-                textClassName="text-xl font-extrabold text-[#7A2253]"
-                fallbackBgClass="bg-[#FAFAFB]"
-              />
-            </div>
-
-            {/* Read-only details */}
-            <div className="space-y-3 flex-1 min-w-0">
-              {/* Display name 18px/600 */}
-              <div>
-                <h3 className="text-[18px] font-semibold text-[#18181B] leading-tight">
-                  {displayName || "Your name"}
-                </h3>
-
-                {/* inflixo.com/username (copy icon) */}
-                <div className="pt-1">
-                  <button
-                    type="button"
-                    onClick={handleCopyUrl}
-                    className="tap-scale inline-flex items-center gap-1.5 text-[12px] font-medium text-[#6B6B76] hover:text-[#7A2253] transition-colors cursor-pointer group"
-                    title="Copy profile link"
-                  >
-                    <span>inflixo.com/{handleStr}</span>
-                    <Copy className="h-3.5 w-3.5 text-[#A1A1AA] group-hover:text-[#7A2253] transition-colors" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Niche chips */}
-              {selectedCategories.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 pt-0.5">
-                  {selectedCategories.map((cat) => (
-                    <span
-                      key={cat}
-                      className="h-6 inline-flex items-center rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0] px-2 text-[12px] font-medium text-[#18181B]"
-                    >
-                      {cat}
-                    </span>
-                  ))}
-                  {profile.customCategory && (
-                    <span className="h-6 inline-flex items-center rounded-[5px] bg-[#F7EEF2] border border-[#F7EEF2] px-2 text-[12px] font-medium text-[#7A2253]">
-                      {profile.customCategory}
-                    </span>
-                  )}
-                </div>
-              )}
-
-              {/* Short bio */}
-              <div className="pt-1">
-                <h4 className="text-[12px] font-semibold text-[#6B6B76] mb-1">
-                  Bio
-                </h4>
-                {profile.bio && profile.bio.trim() ? (
-                  <p className="text-[13px] text-[#3F3F46] leading-relaxed max-w-xl">
-                    {profile.bio}
-                  </p>
-                ) : (
-                  <p className="text-[12px] text-[#6B6B76] italic">No bio added yet.</p>
-                )}
-              </div>
-            </div>
-          </div>
-        </SectionCard>
+        <ProfileHeroCard
+          profile={profile}
+          socials={socials}
+          totalAudience={totalAudience}
+          categories={selectedCategories}
+          onEdit={handleStartEdit}
+          onCopyLink={handleCopyUrl}
+        />
       ) : (
         /* EDIT MODE: Existing form */
         <div className="space-y-6">
