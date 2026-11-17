@@ -81,8 +81,10 @@ function ProfilePreview({ themeKey, className = "" }: { themeKey: ThemeKey; clas
         />
       )}
       {!t.hasPhotoBackdrop && <FocusOverlay overlay={meta.focusOverlay} contained={true} />}
-      <div className="relative z-10 h-full flex flex-col px-5 py-5 min-h-0">
-        <LivePreviewCard
+      {/* The box scrolls like a phone: header + sections move, the Inflixo nav stays pinned. */}
+      <div className="relative z-10 h-full flex flex-col px-5 py-5 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex min-h-full shrink-0 flex-col">
+<LivePreviewCard
           profile={profile}
           socials={socials}
           series={series}
@@ -93,6 +95,7 @@ function ProfilePreview({ themeKey, className = "" }: { themeKey: ThemeKey; clas
           hideFooter={true}
           isInformational={true}
         />
+</div>
       </div>
     </div>
   );

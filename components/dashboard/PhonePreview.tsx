@@ -281,8 +281,10 @@ export function PhonePreview({
         )}
 
         {/* Live profile card (full height, internal scroll, footer at bottom) */}
-        <div className="relative z-10 h-full min-h-0 flex flex-col px-4 py-4">
-          <LivePreviewCard
+        {/* The box scrolls like a phone: header + sections move, the Inflixo nav stays pinned. */}
+        <div className="relative z-10 h-full min-h-0 flex flex-col px-4 py-4 overflow-y-auto overflow-x-hidden overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex min-h-full shrink-0 flex-col">
+<LivePreviewCard
             profile={profile}
             socials={socials}
             series={seriesData}
@@ -295,11 +297,11 @@ export function PhonePreview({
             seriesOnlyMode={cleanSubpath === "series"}
             productsOnlyMode={cleanSubpath === "products" || cleanSubpath === "shop"}
             linksOnlyMode={cleanSubpath === "links"}
-            containedScroll={true}
             pageHeader={undefined}
             hideFooter={false}
             isInformational={true}
           />
+</div>
         </div>
       </div>
     </aside>

@@ -296,8 +296,10 @@ export default function DashboardPreviewPage() {
           <FocusOverlay overlay={activeThemeMeta.focusOverlay} contained={true} />
 
           {/* Centered Profile Card Surface */}
-          <div className="relative z-10 w-full max-w-[620px] mx-auto flex flex-col h-full min-h-0">
-            {(() => {
+          {/* The box scrolls like a phone: header + sections move, the Inflixo nav stays pinned. */}
+          <div className="relative z-10 w-full max-w-[620px] mx-auto flex flex-col h-full min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex min-h-full shrink-0 flex-col">
+{(() => {
               const quota = getPlanQuota(subscription?.planKey || "early_access");
               const visibleProducts =
                 quota.maxProducts === Infinity
@@ -318,11 +320,11 @@ export default function DashboardPreviewPage() {
                   team={team}
                   totalAudience={totalAudience}
                   variant="full"
-                  containedScroll={true}
                   layoutMode={previewLayout}
                 />
               );
             })()}
+</div>
           </div>
         </div>
       </div>
