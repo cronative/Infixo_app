@@ -405,6 +405,13 @@ async function migrateDatabase(target) {
       await addColumnIfMissing("mediakit_gigs", "is_draft", "TINYINT(1) DEFAULT 0");
     }
 
+    // 023: Collab request brief — campaign timeline and location
+    const [collabReqTables] = await connection.query("SHOW TABLES LIKE 'collab_requests'");
+    if (collabReqTables.length) {
+      await addColumnIfMissing("collab_requests", "timeline", "VARCHAR(60) DEFAULT NULL");
+      await addColumnIfMissing("collab_requests", "campaign_location", "VARCHAR(150) DEFAULT NULL");
+    }
+
     console.log(`✅ ${target.name} migrated successfully.`);
   } finally {
     await connection.end();

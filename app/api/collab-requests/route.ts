@@ -57,13 +57,16 @@ export async function POST(req: Request) {
     // 2. Save to collab_requests table with canonical creator ID
     const record = await insertCollabRequest({
       creatorId: canonicalCreatorId,
-      packageId: data.packageId,
+      // "custom" = brand picked "Custom collab (not listed)".
+      packageId: data.packageId === "custom" ? null : data.packageId,
       packageName: data.packageName,
       brandName: data.brandName,
       contactName: data.contactName,
       workEmail: data.workEmail,
       phone: data.phone,
       budget: data.budget,
+      timeline: data.timeline,
+      campaignLocation: data.campaignLocation,
       message: data.message,
       websiteOrSocial: data.websiteOrSocial,
     });
@@ -71,7 +74,7 @@ export async function POST(req: Request) {
     // 3. Analytics tracking
     if (creatorRecord?.id) {
       try {
-        await recordServerEvent(req, creatorRecord.id, "collab_request_submit", data.packageId || null);
+        await recordServerEvent(req, creatorRecord.id, "collab_request_submit", data.packageId === "custom" ? null : data.packageId || null);
       } catch {}
     }
 
@@ -90,6 +93,8 @@ export async function POST(req: Request) {
           workEmail: data.workEmail,
           packageName: data.packageName,
           budget: data.budget,
+          timeline: data.timeline,
+          campaignLocation: data.campaignLocation,
         },
       });
     } catch (notifErr: any) {
@@ -127,6 +132,8 @@ export async function POST(req: Request) {
           senderEmail: data.workEmail,
           campaignType: data.packageName || "Collaboration Request",
           approxBudget: data.budget || undefined,
+          timeline: data.timeline || undefined,
+          campaignLocation: data.campaignLocation || undefined,
           phone: data.phone || undefined,
           websiteOrSocial: data.websiteOrSocial || undefined,
           submittedDate: submittedDateStr,

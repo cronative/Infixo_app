@@ -590,6 +590,8 @@ export interface CollabRequest {
   workEmail: string;
   phone?: string | null;
   budget?: string | null;
+  timeline?: string | null;
+  campaignLocation?: string | null;
   message: string;
   websiteOrSocial?: string | null;
   status: "new" | "replied" | "closed";

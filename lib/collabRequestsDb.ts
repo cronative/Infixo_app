@@ -30,6 +30,11 @@ export async function ensureCollabRequestsTable(): Promise<void> {
     // Ensure columns in case table was created with an earlier variation
     try { await db.query("ALTER TABLE collab_requests ADD COLUMN package_name VARCHAR(255) DEFAULT NULL"); } catch {}
     try { await db.query("ALTER TABLE collab_requests ADD COLUMN website_or_social VARCHAR(255) DEFAULT NULL"); } catch {}
+    // Brand brief extras (migration 023): campaign timeline and location.
+    const [cols]: any = await db.query("SHOW COLUMNS FROM collab_requests");
+    const have = new Set((cols || []).map((c: any) => c.Field));
+    if (!have.has("timeline")) await db.query("ALTER TABLE collab_requests ADD COLUMN timeline VARCHAR(60) DEFAULT NULL");
+    if (!have.has("campaign_location")) await db.query("ALTER TABLE collab_requests ADD COLUMN campaign_location VARCHAR(150) DEFAULT NULL");
 
     isCollabTableEnsured = true;
   } catch (err: any) {
@@ -46,6 +51,8 @@ export async function insertCollabRequest(req: {
   workEmail: string;
   phone?: string | null;
   budget?: string | null;
+  timeline?: string | null;
+  campaignLocation?: string | null;
   message: string;
   websiteOrSocial?: string | null;
 }): Promise<CollabRequest> {
@@ -57,8 +64,8 @@ export async function insertCollabRequest(req: {
 
   await db.query(
     `INSERT INTO collab_requests 
-      (id, creator_id, package_id, package_name, brand_name, contact_name, work_email, phone, budget, message, website_or_social, status)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      (id, creator_id, package_id, package_name, brand_name, contact_name, work_email, phone, budget, timeline, campaign_location, message, website_or_social, status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       id,
       req.creatorId,
@@ -69,6 +76,8 @@ export async function insertCollabRequest(req: {
       req.workEmail,
       req.phone || null,
       req.budget || null,
+      req.timeline || null,
+      req.campaignLocation || null,
       req.message,
       req.websiteOrSocial || null,
       status,
@@ -85,6 +94,8 @@ export async function insertCollabRequest(req: {
     workEmail: req.workEmail,
     phone: req.phone || null,
     budget: req.budget || null,
+    timeline: req.timeline || null,
+    campaignLocation: req.campaignLocation || null,
     message: req.message,
     websiteOrSocial: req.websiteOrSocial || null,
     status,
@@ -106,7 +117,7 @@ export async function getCollabRequestsByCreator(creatorIdOrIds: string | string
   const [rows]: any = await db.query(
     `SELECT id, creator_id AS creatorId, package_id AS packageId, package_name AS packageName,
             brand_name AS brandName, contact_name AS contactName, work_email AS workEmail,
-            phone, budget, message, website_or_social AS websiteOrSocial, status,
+            phone, budget, timeline, campaign_location AS campaignLocation, message, website_or_social AS websiteOrSocial, status,
             created_at AS createdAt, updated_at AS updatedAt
      FROM collab_requests
      WHERE creator_id IN (${placeholders})
@@ -124,6 +135,8 @@ export async function getCollabRequestsByCreator(creatorIdOrIds: string | string
     workEmail: row.workEmail,
     phone: row.phone || null,
     budget: row.budget || null,
+    timeline: row.timeline || null,
+    campaignLocation: row.campaignLocation || null,
     message: row.message,
     websiteOrSocial: row.websiteOrSocial || null,
     status: row.status,

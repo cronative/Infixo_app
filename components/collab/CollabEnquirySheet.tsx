@@ -20,12 +20,51 @@ interface CollabEnquirySheetProps {
 }
 
 const BUDGET_OPTIONS = [
-  { value: "", label: "Select approx. budget (optional)" },
+  { value: "", label: "Select approx. budget" },
   { value: "<₹10K", label: "< ₹10,000" },
   { value: "₹10–25K", label: "₹10,000 – ₹25,000" },
   { value: "₹25–50K", label: "₹25,000 – ₹50,000" },
-  { value: "₹50K+", label: "₹50,000+" },
+  { value: "₹50K–1L", label: "₹50,000 – ₹1,00,000" },
+  { value: "₹1L+", label: "₹1,00,000+" },
 ];
+
+const TIMELINE_OPTIONS = [
+  { value: "", label: "When should it go live?" },
+  { value: "ASAP", label: "As soon as possible" },
+  { value: "Within 2 weeks", label: "Within 2 weeks" },
+  { value: "This month", label: "This month" },
+  { value: "In 1–3 months", label: "In 1–3 months" },
+  { value: "Flexible", label: "Flexible" },
+];
+
+const inputClass = (error?: string) =>
+  `w-full h-10 px-3 rounded-[5px] border bg-white dark:bg-zinc-900 text-sm text-zinc-900 dark:text-zinc-100 outline-none transition-colors ${
+    error ? "border-rose-400 focus:border-rose-500 ring-1 ring-rose-400" : "border-zinc-200 dark:border-zinc-700 focus:border-zinc-400"
+  }`;
+
+const packageOptionLabel = (pkg: MediaKitPackage) => {
+  if (pkg.details?.priceVisibility === "quote") return pkg.title;
+  const raw = String(pkg.price || "").trim().replace(/^₹\s*/, "");
+  if (!raw) return pkg.title;
+  const price = /^\d+$/.test(raw) ? `₹${Number(raw).toLocaleString("en-IN")}` : `₹${raw}`;
+  return `${pkg.title} (${price})`;
+};
+
+/** One labelled field per row; optional fields say so in the label. */
+function Field({ label, required, error, hint, children }: { label: string; required?: boolean; error?: string; hint?: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between gap-2">
+        <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200">
+          {label} {required ? <span className="text-rose-500">*</span> : <span className="font-normal text-zinc-400">(optional)</span>}
+        </label>
+        {hint}
+      </div>
+      {children}
+      {error && <p className="text-[11px] font-medium text-rose-500">{error}</p>}
+    </div>
+  );
+}
 
 export function CollabEnquirySheet({
   isOpen,
@@ -44,8 +83,10 @@ export function CollabEnquirySheet({
   const [contactName, setContactName] = useState("");
   const [workEmail, setWorkEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [selectedPkgId, setSelectedPkgId] = useState<string>("custom");
+  const [selectedPkgId, setSelectedPkgId] = useState<string>("");
   const [budget, setBudget] = useState("");
+  const [timeline, setTimeline] = useState("");
+  const [campaignLocation, setCampaignLocation] = useState("");
   const [message, setMessage] = useState("");
   const [websiteOrSocial, setWebsiteOrSocial] = useState("");
   const [honeypot, setHoneypot] = useState("");
@@ -68,7 +109,7 @@ export function CollabEnquirySheet({
       if (preselectedPackage) {
         setSelectedPkgId(String(preselectedPackage.id));
       } else {
-        setSelectedPkgId("custom");
+        setSelectedPkgId("");
       }
       setErrors({});
       setApiErrorMsg(null);
@@ -113,10 +154,11 @@ export function CollabEnquirySheet({
       contactName: contactName.trim(),
       workEmail: workEmail.trim(),
       phone: phone.trim() || undefined,
-      packageId: selectedPkgId === "custom" ? null : selectedPkgId,
-      packageName,
-      // Budget only applies to custom requests; packages already carry a price.
-      budget: selectedPkgId === "custom" ? budget || undefined : undefined,
+      packageId: selectedPkgId === "custom" ? "custom" : selectedPkgId,
+      packageName: selectedPkgId ? packageName : "",
+      budget: budget || undefined,
+      timeline: timeline || undefined,
+      campaignLocation: campaignLocation.trim() || undefined,
       message: message.trim(),
       websiteOrSocial: websiteOrSocial.trim() || undefined,
       hp: honeypot || undefined,
@@ -166,6 +208,8 @@ export function CollabEnquirySheet({
     setMessage("");
     setWebsiteOrSocial("");
     setBudget("");
+    setTimeline("");
+    setCampaignLocation("");
     setIsSuccess(false);
     onClose();
   };
@@ -183,7 +227,7 @@ export function CollabEnquirySheet({
   const mailtoUrl = `mailto:${resolvedEmail}?subject=${mailSubject}`;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center py-4 animate-fade-in">
       {/* Backdrop */}
       <div
         onClick={onClose}
@@ -191,14 +235,9 @@ export function CollabEnquirySheet({
       />
 
       {/* Sheet / Modal Container */}
-      <div role="dialog" aria-modal="true" aria-label={`Collab request to ${creatorDisplayName}`} className="relative w-full sm:max-w-lg max-h-[92vh] sm:max-h-[88vh] flex flex-col rounded-t-[5px] sm:rounded-[5px] bg-white dark:bg-[#1E1E24] shadow-2xl overflow-hidden z-10 transition-all text-left">
-        {/* Mobile Pull Handle */}
-        <div className="sm:hidden flex justify-center pt-2.5 pb-1">
-          <div className="h-1.5 w-10 rounded-full bg-zinc-300 dark:bg-zinc-700" />
-        </div>
-
+      <div role="dialog" aria-modal="true" aria-label={`Collab request to ${creatorDisplayName}`} className="relative w-[min(450px,calc(100vw-30px))] max-h-[calc(100dvh-32px)] flex flex-col rounded-[5px] bg-white dark:bg-[#1E1E24] shadow-2xl overflow-hidden z-10 transition-all text-left">
         {/* Header */}
-        <div className="px-5 py-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between shrink-0">
+        <div className="px-4 py-3.5 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between shrink-0">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
               Collab request to {creatorDisplayName}
@@ -210,14 +249,15 @@ export function CollabEnquirySheet({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-[5px] text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            aria-label="Close"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
           >
             <X className="h-4.5 w-4.5" />
           </button>
         </div>
 
         {/* Body Content */}
-        <div className="p-5 overflow-y-auto flex-1 text-left space-y-4">
+        <div className="p-4 overflow-y-auto flex-1 text-left space-y-4">
           {isSuccess ? (
             /* Success State */
             <div className="py-8 px-4 text-center space-y-3.5">
@@ -268,187 +308,145 @@ export function CollabEnquirySheet({
                 />
               </div>
 
-              {/* Row 1: Brand / Company Name* + Your Name* */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200">
-                    Brand / company name <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={brandName}
-                    onChange={(e) => {
-                      setBrandName(e.target.value);
-                      if (errors.brandName) setErrors({ ...errors, brandName: "" });
-                    }}
-                    placeholder="e.g. Acme Health or Spotify"
-                    className={`w-full h-9.5 px-3 rounded-[5px] border bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none transition-colors ${
-                      errors.brandName
-                        ? "border-rose-400 focus:border-rose-500 ring-1 ring-rose-400"
-                        : "border-zinc-200 dark:border-zinc-700 focus:border-zinc-400"
-                    }`}
-                  />
-                  {errors.brandName && (
-                    <p className="text-[11px] text-rose-500 font-medium">{errors.brandName}</p>
-                  )}
-                </div>
-
-                <div className="space-y-1">
-                  <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200">
-                    Your name <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={contactName}
-                    onChange={(e) => {
-                      setContactName(e.target.value);
-                      if (errors.contactName) setErrors({ ...errors, contactName: "" });
-                    }}
-                    placeholder="e.g. Sarah Jenkins"
-                    className={`w-full h-9.5 px-3 rounded-[5px] border bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none transition-colors ${
-                      errors.contactName
-                        ? "border-rose-400 focus:border-rose-500 ring-1 ring-rose-400"
-                        : "border-zinc-200 dark:border-zinc-700 focus:border-zinc-400"
-                    }`}
-                  />
-                  {errors.contactName && (
-                    <p className="text-[11px] text-rose-500 font-medium">{errors.contactName}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Row 2: Work Email* + Phone / WhatsApp */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200">
-                    Work email <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={workEmail}
-                    onChange={(e) => {
-                      setWorkEmail(e.target.value);
-                      if (errors.workEmail) setErrors({ ...errors, workEmail: "" });
-                    }}
-                    placeholder="name@company.com"
-                    className={`w-full h-9.5 px-3 rounded-[5px] border bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none transition-colors ${
-                      errors.workEmail
-                        ? "border-rose-400 focus:border-rose-500 ring-1 ring-rose-400"
-                        : "border-zinc-200 dark:border-zinc-700 focus:border-zinc-400"
-                    }`}
-                  />
-                  {errors.workEmail && (
-                    <p className="text-[11px] text-rose-500 font-medium">{errors.workEmail}</p>
-                  )}
-                </div>
-
-                <div className="space-y-1">
-                  <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200">
-                    Phone / WhatsApp <span className="text-zinc-400 font-normal">(optional)</span>
-                  </label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+91 98765 43210"
-                    className="w-full h-9.5 px-3 rounded-[5px] border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400"
-                  />
-                </div>
-              </div>
-
-              {/* Row 3: Package Select + Budget (budget only for a custom request) */}
-              <div className={`grid grid-cols-1 gap-3 ${selectedPkgId === "custom" ? "sm:grid-cols-2" : ""}`}>
-                <div className="space-y-1">
-                  <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200">
-                    Package
-                  </label>
-                  <select
-                    value={selectedPkgId}
-                    onChange={(e) => handlePackageChange(e.target.value)}
-                    className="w-full h-9.5 px-3 rounded-[5px] border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400 cursor-pointer"
-                  >
-                    <option value="custom">Custom collab</option>
-                    {preselectedPackage && !packages.some((p) => String(p.id) === String(preselectedPackage.id)) && (
-                      <option value={String(preselectedPackage.id)}>
-                        {preselectedPackage.title} {preselectedPackage.price ? `(${String(preselectedPackage.price).startsWith("₹") ? preselectedPackage.price : `₹${preselectedPackage.price}`})` : ""}
-                      </option>
-                    )}
-                    {packages
-                      .filter((p) => p.isActive !== false && !p.isDraft)
-                      .map((pkg) => (
-                        <option key={pkg.id} value={String(pkg.id)}>
-                          {pkg.title} {pkg.price ? `(${String(pkg.price).startsWith("₹") ? pkg.price : `₹${pkg.price}`})` : ""}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-
-                {selectedPkgId === "custom" && (
-                <div className="space-y-1">
-                  <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200">
-                    Budget <span className="text-zinc-400 font-normal">(optional)</span>
-                  </label>
-                  <select
-                    value={budget}
-                    onChange={(e) => setBudget(e.target.value)}
-                    className="w-full h-9.5 px-3 rounded-[5px] border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400 cursor-pointer"
-                  >
-                    {BUDGET_OPTIONS.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                )}
-              </div>
-
-              {/* Row 4: Website / Instagram Handle */}
-              <div className="space-y-1">
-                <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200">
-                  Website / Instagram handle <span className="text-zinc-400 font-normal">(optional)</span>
-                </label>
+              <Field label="Brand / company name" required error={errors.brandName}>
                 <input
                   type="text"
+                  required
+                  maxLength={150}
+                  value={brandName}
+                  onChange={(e) => {
+                    setBrandName(e.target.value);
+                    if (errors.brandName) setErrors({ ...errors, brandName: "" });
+                  }}
+                  placeholder="e.g. Acme Health or Spotify"
+                  className={inputClass(errors.brandName)}
+                />
+              </Field>
+
+              <Field label="Your name" required error={errors.contactName}>
+                <input
+                  type="text"
+                  required
+                  maxLength={150}
+                  value={contactName}
+                  onChange={(e) => {
+                    setContactName(e.target.value);
+                    if (errors.contactName) setErrors({ ...errors, contactName: "" });
+                  }}
+                  placeholder="e.g. Sarah Jenkins"
+                  className={inputClass(errors.contactName)}
+                />
+              </Field>
+
+              <Field label="Work email" required error={errors.workEmail}>
+                <input
+                  type="email"
+                  required
+                  maxLength={255}
+                  value={workEmail}
+                  onChange={(e) => {
+                    setWorkEmail(e.target.value);
+                    if (errors.workEmail) setErrors({ ...errors, workEmail: "" });
+                  }}
+                  placeholder="name@company.com"
+                  className={inputClass(errors.workEmail)}
+                />
+              </Field>
+
+              <Field label="Phone / WhatsApp">
+                <input type="tel" maxLength={30} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" className={inputClass()} />
+              </Field>
+
+              <Field label="Interested package" required error={errors.packageId}>
+                <select
+                  required
+                  value={selectedPkgId}
+                  onChange={(e) => {
+                    handlePackageChange(e.target.value);
+                    if (errors.packageId) setErrors({ ...errors, packageId: "" });
+                  }}
+                  className={`${inputClass(errors.packageId)} cursor-pointer ${selectedPkgId ? "" : "text-zinc-400"}`}
+                >
+                  <option value="" disabled>Select a package</option>
+                  {preselectedPackage && !packages.some((p) => String(p.id) === String(preselectedPackage.id)) && (
+                    <option value={String(preselectedPackage.id)}>{packageOptionLabel(preselectedPackage)}</option>
+                  )}
+                  {packages
+                    .filter((p) => p.isActive !== false && !p.isDraft)
+                    .map((pkg) => (
+                      <option key={pkg.id} value={String(pkg.id)}>
+                        {packageOptionLabel(pkg)}
+                      </option>
+                    ))}
+                  <option value="custom">Custom collab (not listed)</option>
+                </select>
+              </Field>
+
+              <Field label="Estimated budget">
+                <select value={budget} onChange={(e) => setBudget(e.target.value)} className={`${inputClass()} cursor-pointer ${budget ? "" : "text-zinc-400"}`}>
+                  {BUDGET_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+
+              <Field label="Campaign timeline">
+                <select value={timeline} onChange={(e) => setTimeline(e.target.value)} className={`${inputClass()} cursor-pointer ${timeline ? "" : "text-zinc-400"}`}>
+                  {TIMELINE_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+
+              <Field label="Website / Instagram">
+                <input
+                  type="text"
+                  maxLength={255}
                   value={websiteOrSocial}
                   onChange={(e) => setWebsiteOrSocial(e.target.value)}
                   placeholder="https://brand.com or @brandhandle"
-                  className="w-full h-9.5 px-3 rounded-[5px] border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400"
+                  className={inputClass()}
                 />
-              </div>
+              </Field>
 
-              {/* Row 5: Message* (min 20 chars) */}
-              <div className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200">
-                    Message / Campaign brief <span className="text-rose-500">*</span>
-                  </label>
-                  <span className={`text-[11px] ${message.length < 20 ? "text-zinc-400" : "text-emerald-600 font-medium"}`}>
-                    {message.length}/20 chars min
+              <Field label="Campaign location">
+                <input
+                  type="text"
+                  maxLength={150}
+                  value={campaignLocation}
+                  onChange={(e) => setCampaignLocation(e.target.value)}
+                  placeholder="e.g. Mumbai, Ahmedabad or Online"
+                  className={inputClass()}
+                />
+              </Field>
+
+              <Field
+                label="Campaign brief"
+                required
+                error={errors.message}
+                hint={
+                  <span className={`text-[11px] ${message.trim().length < 20 ? "text-zinc-400" : "text-emerald-600 font-medium"}`}>
+                    {message.trim().length}/20 chars min
                   </span>
-                </div>
+                }
+              >
                 <textarea
                   rows={3}
                   required
+                  maxLength={3000}
                   value={message}
                   onChange={(e) => {
                     setMessage(e.target.value);
                     if (errors.message) setErrors({ ...errors, message: "" });
                   }}
-                  placeholder="Tell us what you have in mind: timeline, goals, key deliverables..."
-                  className={`w-full p-3 rounded-[5px] border bg-white dark:bg-zinc-900 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 outline-none transition-colors resize-y min-h-[80px] ${
-                    errors.message
-                      ? "border-rose-400 focus:border-rose-500 ring-1 ring-rose-400"
-                      : "border-zinc-200 dark:border-zinc-700 focus:border-zinc-400"
-                  }`}
+                  placeholder="Goals, key deliverables, product details…"
+                  className={`${inputClass(errors.message)} h-auto min-h-[80px] resize-y py-2.5`}
                 />
-                {errors.message && (
-                  <p className="text-[11px] text-rose-500 font-medium">{errors.message}</p>
-                )}
-              </div>
+              </Field>
 
               {/* Submit Button */}
               <div className="pt-2">

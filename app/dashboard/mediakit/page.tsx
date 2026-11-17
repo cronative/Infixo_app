@@ -236,7 +236,7 @@ export default function DashboardMediaKitPage() {
       try {
         const res = await fetch(`/api/collab-requests?creatorId=${encodeURIComponent(activeCreatorId || creatorQueryKey)}`);
         const data = await res.json();
-        if (data.success && Array.isArray(data.data?.requests)) {
+        if ((data.success || data.status === 1) && Array.isArray(data.data?.requests)) {
           setCollabRequests(data.data.requests);
         }
       } catch {
@@ -1347,6 +1347,18 @@ export default function DashboardMediaKitPage() {
                         <div>
                           <span className="text-[#A1A1AA]">Phone:</span>{" "}
                           <span className="font-medium text-[#27272A]">{phone}</span>
+                        </div>
+                      )}
+                      {req.timeline && (
+                        <div>
+                          <span className="text-[#A1A1AA]">Timeline:</span>{" "}
+                          <span className="font-medium text-[#27272A]">{req.timeline}</span>
+                        </div>
+                      )}
+                      {(req.campaignLocation || req.campaign_location) && (
+                        <div>
+                          <span className="text-[#A1A1AA]">Location:</span>{" "}
+                          <span className="font-medium text-[#27272A]">{req.campaignLocation || req.campaign_location}</span>
                         </div>
                       )}
                       {(req.websiteOrSocial || req.website_or_social) && (

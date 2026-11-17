@@ -169,6 +169,8 @@ export async function sendCollabRequestReceivedEmail(
     senderEmail: string;
     campaignType?: string;
     approxBudget?: string;
+    timeline?: string;
+    campaignLocation?: string;
     phone?: string;
     websiteOrSocial?: string;
     submittedDate?: string;
@@ -188,6 +190,8 @@ export async function sendCollabRequestReceivedEmail(
     ...(options.phone ? [{ label: "Phone / WhatsApp", value: options.phone }] : []),
     ...(options.websiteOrSocial ? [{ label: "Website / Handle", value: options.websiteOrSocial }] : []),
     ...(options.approxBudget ? [{ label: "Proposed Budget", value: options.approxBudget }] : []),
+    ...(options.timeline ? [{ label: "Campaign Timeline", value: options.timeline }] : []),
+    ...(options.campaignLocation ? [{ label: "Campaign Location", value: options.campaignLocation }] : []),
     ...(options.campaignType ? [{ label: "Package / Proposal", value: options.campaignType }] : []),
     ...(options.submittedDate ? [{ label: "Submitted Date", value: options.submittedDate }] : []),
     { label: "Message / Brief", value: options.message },
