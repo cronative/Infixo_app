@@ -101,7 +101,7 @@ export interface AuthSession {
 // Profile
 // ---------------------------------------------------------------------------
 
-export type PublicProfileLayout = "default" | "minimal" | "creator" | "spotlight" | "studio" | "premium" | "tabs" | "stacked";
+export type PublicProfileLayout = "default" | "minimal" | "creator" | "spotlight" | "studio" | "premium" | "stacked";
 
 export const PUBLIC_PROFILE_LAYOUTS: Array<{
   id: PublicProfileLayout;

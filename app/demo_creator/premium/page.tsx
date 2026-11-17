@@ -1,12 +1,6 @@
-"use client";
+import { permanentRedirect } from "next/navigation";
 
-import { Suspense } from "react";
-import { DemoCreatorContent } from "../page";
-
+/** The premium layout is the only profile layout now; old links go to the demo profile. */
 export default function DemoCreatorPremiumPage() {
-  return (
-    <Suspense fallback={null}>
-      <DemoCreatorContent forcedLayout="premium" />
-    </Suspense>
-  );
+  permanentRedirect("/demo_creator");
 }

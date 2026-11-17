@@ -52,7 +52,7 @@ export interface SectionHeaderProps {
  * (beside the title on phones, right-aligned from sm). Plain (tabs layout):
  * accent @ 7% tint, title + subtitle left, muted count right.
  */
-export function SectionHeader({ title, subtitle, count, colors, icon: Icon, solid = false, hero = false }: SectionHeaderProps) {
+export function SectionHeader({ title, subtitle, count, colors, icon: Icon, hero = false }: SectionHeaderProps) {
   if (hero) {
     return (
       <div
@@ -84,54 +84,31 @@ export function SectionHeader({ title, subtitle, count, colors, icon: Icon, soli
       </div>
     );
   }
-  if (solid) {
-    return (
-      <div
-        className="flex items-center gap-2.5 px-3 py-2.5 transition-colors"
-        style={{ backgroundColor: SECTION_BG, borderBottom: `1px solid ${SECTION_LINE}`, color: SECTION_FG }}
-      >
-        {Icon && <Icon aria-hidden strokeWidth={2} style={{ color: SECTION_FG }} className="h-5 w-5 shrink-0" />}
-        <div className="min-w-0 flex-1">
-          <div className="flex min-w-0 items-center gap-2">
-            <h2
-              style={{ color: SECTION_FG, fontFamily: colors.headingFont }}
-              className="min-w-0 text-[14px] font-semibold leading-[18px] tracking-tight text-(--text)"
-            >
-              {title}
-            </h2>
-            {/* Phones: count beside the title so the subtitle keeps the full width. */}
-            {count != null && <CountPill className="sm:hidden">{count}</CountPill>}
-          </div>
-          {subtitle && (
-            <p style={{ color: SECTION_FG }} className="text-[12px] leading-4 text-(--text-muted)">
-              {subtitle}
-            </p>
-          )}
-        </div>
-        {count != null && <CountPill className="hidden sm:inline">{count}</CountPill>}
-      </div>
-    );
-  }
+  // Solid header: soft accent tint (series detail page and anything outside the full-bleed profile).
   return (
     <div
-      className="flex items-center justify-between gap-2.5 border-b border-(--surface-border) px-3.5 py-2"
-      style={{ backgroundColor: "color-mix(in srgb, var(--accent) 7%, transparent)" }}
+      className="flex items-center gap-2.5 px-3 py-2.5 transition-colors"
+      style={{ backgroundColor: SECTION_BG, borderBottom: `1px solid ${SECTION_LINE}`, color: SECTION_FG }}
     >
+      {Icon && <Icon aria-hidden strokeWidth={2} style={{ color: SECTION_FG }} className="h-5 w-5 shrink-0" />}
       <div className="min-w-0 flex-1">
-        <h2 style={{ color: colors.primary, fontFamily: colors.headingFont }} className="text-[14px] font-semibold leading-[18px] tracking-tight text-(--text)">
-          {title}
-        </h2>
+        <div className="flex min-w-0 items-center gap-2">
+          <h2
+            style={{ color: SECTION_FG, fontFamily: colors.headingFont }}
+            className="min-w-0 text-[14px] font-semibold leading-[18px] tracking-tight text-(--text)"
+          >
+            {title}
+          </h2>
+          {/* Phones: count beside the title so the subtitle keeps the full width. */}
+          {count != null && <CountPill className="sm:hidden">{count}</CountPill>}
+        </div>
         {subtitle && (
-          <p style={{ color: colors.muted }} className="text-[12px] leading-4 text-(--text-muted)">
+          <p style={{ color: SECTION_FG }} className="text-[12px] leading-4 text-(--text-muted)">
             {subtitle}
           </p>
         )}
       </div>
-      {count != null && (
-        <span style={{ color: colors.muted }} className="shrink-0 whitespace-nowrap text-[12px] text-(--text-muted)">
-          {count}
-        </span>
-      )}
+      {count != null && <CountPill className="hidden sm:inline">{count}</CountPill>}
     </div>
   );
 }

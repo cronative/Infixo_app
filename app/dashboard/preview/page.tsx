@@ -7,7 +7,6 @@ import {
   RotateCw,
   Sparkles,
   Crown,
-  Layout,
 } from "lucide-react";
 import { useCreator } from "@/contexts/CreatorContext";
 import { ThemeCard } from "@/themes/registry";
@@ -15,13 +14,11 @@ import { THEME_PAGE_BACKGROUNDS, THEME_LIST } from "@/services/ThemeService";
 import { AmbientAnimation } from "@/components/theme/AmbientAnimation";
 import { FocusOverlay } from "@/components/theme/FocusOverlay";
 import { VisibilitySettingsModal } from "@/components/shared/VisibilitySettingsModal";
-import { PremiumLookModal } from "@/components/preview/PremiumLookModal";
 import { VisibilitySettings, DEFAULT_VISIBILITY_SETTINGS } from "@/types";
 import { STORAGE_KEYS, storage } from "@/utils/storage";
 import { useToast } from "@/contexts/ToastContext";
 import { ProductService } from "@/services/ProductService";
 import { getPlanQuota } from "@/services/subscriptionLimits";
-import { canUsePremiumLayout } from "@/config/plans";
 import type { CreatorProduct } from "@/types";
 import { buildProfileUrl } from "@/utils/format";
 import { PageContainer } from "@/components/dashboard/PageContainer";
@@ -35,7 +32,6 @@ export default function DashboardPreviewPage() {
   const { profile, socials, series, totalAudience, theme, updateProfile, subscription, handleViewProfile, isTrialExpired } = useCreator();
   const { showToast } = useToast();
 
-  const isProOrVip = canUsePremiumLayout(subscription?.planKey);
 
   const [products, setProducts] = useState<CreatorProduct[]>([]);
   const [productRefresh, setProductRefresh] = useState(0);
@@ -71,16 +67,6 @@ export default function DashboardPreviewPage() {
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isVisibilityModalOpen, setIsVisibilityModalOpen] = useState(false);
-  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
-
-  // Layout mode state: "tabs" or "premium"
-  const [previewLayout, setPreviewLayout] = useState<"tabs" | "premium">(() =>
-    profile?.publicProfileLayout === "tabs" ? "tabs" : "premium"
-  );
-
-  useEffect(() => {
-    setPreviewLayout(profile?.publicProfileLayout === "tabs" ? "tabs" : "premium");
-  }, [profile?.publicProfileLayout]);
 
   const [visibilitySettings, setVisibilitySettings] = useState<VisibilitySettings>(() => {
     if (profile.visibilitySettings) return profile.visibilitySettings;
@@ -130,35 +116,6 @@ export default function DashboardPreviewPage() {
     }
   };
 
-  const handleApplyLayout = async (targetLayout: "tabs" | "premium") => {
-    setPreviewLayout(targetLayout);
-    updateProfile({ publicProfileLayout: targetLayout });
-
-    try {
-      const targetEmail = profile.email;
-      await fetch("/api/creator/settings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: targetEmail,
-          username: profile.username,
-          publicProfileLayout: targetLayout,
-          visibilitySettings: { ...visibilitySettings, publicProfileLayout: targetLayout },
-        }),
-      });
-
-      showToast(
-        targetLayout === "premium"
-          ? "✨ Premium Look activated on your public profile!"
-          : "Classic Tabs layout activated on your public profile.",
-        "success"
-      );
-    } catch (err) {
-      console.error("Failed to update layout:", err);
-      showToast("Could not save layout. Please try again.", "error");
-    }
-  };
-
   const handleRefresh = () => {
     setIsRefreshing(true);
     setProductRefresh((value) => value + 1);
@@ -192,24 +149,6 @@ export default function DashboardPreviewPage() {
               <span>Display settings</span>
             </button>
 
-            {/* Layout Selection Action Button */}
-            <button
-              type="button"
-              onClick={() => setIsPremiumModalOpen(true)}
-              className={`inline-flex items-center gap-1.5 h-8 px-3 rounded-[5px] text-[13px] font-medium border transition-all cursor-pointer ${
-                previewLayout === "premium"
-                  ? "bg-[#F7EEF2] border-[#7A2253]/30 text-[#7A2253] font-bold shadow-none"
-                  : "bg-white hover:bg-[#FAFAFB] border-[#ECECF0] text-[#18181B]"
-              }`}
-              title="Select Public Profile Layout"
-            >
-              <Layout className="h-3.5 w-3.5 text-[#7A2253]" />
-              <span>{previewLayout === "premium" ? "Premium Layout" : "Tabular Layout"}</span>
-              <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 ml-0.5">
-                Free
-              </span>
-            </button>
-
             <button type="button" onClick={handleViewProfile} className="dash-btn-primary">
               <span>Open public profile</span>
               <ExternalLink className="h-3.5 w-3.5" />
@@ -220,45 +159,13 @@ export default function DashboardPreviewPage() {
 
       {/* 2. COMPACT PREVIEW TOOLBAR */}
       <div className="flex items-center justify-between gap-3 rounded-[5px] border border-[#ECECF0] bg-white px-3.5 py-2 shadow-none flex-wrap">
-        {/* Left: Active Theme & Layout Mode Switcher */}
+        {/* Left: Active theme */}
         <div className="flex items-center gap-2.5 flex-wrap">
           <span className="h-6 inline-flex items-center gap-1.5 text-[12px] font-medium text-[#7A2253] bg-[#F7EEF2] px-2 rounded-[5px]">
             <Sparkles className="h-3.5 w-3.5 text-[#7A2253]" />
             <span>Active theme: {activeThemeMeta.name}</span>
           </span>
 
-          {/* Quick Layout Preview Switcher */}
-          <div className="flex items-center gap-1 bg-[#F4F4F5] p-0.5 rounded-[6px]">
-            <button
-              type="button"
-              onClick={() => handleApplyLayout("tabs")}
-              className={`h-6 px-2.5 rounded-[4px] text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 ${
-                previewLayout === "tabs"
-                  ? "bg-white text-[#18181B] shadow-xs"
-                  : "text-[#71717A] hover:text-[#18181B]"
-              }`}
-            >
-              <span>Tabular Layout</span>
-              <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1 rounded-sm">Free</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleApplyLayout("premium")}
-              className={`h-6 px-2.5 rounded-[4px] text-xs font-semibold transition-all flex items-center gap-1 cursor-pointer ${
-                previewLayout === "premium"
-                  ? "bg-[#7A2253] text-white shadow-xs"
-                  : "text-[#71717A] hover:text-[#18181B]"
-              }`}
-            >
-              <Sparkles className="h-3 w-3 text-amber-300" />
-              <span>Premium Layout</span>
-              <span className={`text-[9px] font-bold px-1 rounded-sm ${
-                previewLayout === "premium" ? "bg-white/20 text-white" : "text-emerald-700 bg-emerald-50"
-              }`}>
-                Free
-              </span>
-            </button>
-          </div>
         </div>
 
         {/* Right: Refresh Action */}
@@ -320,7 +227,7 @@ export default function DashboardPreviewPage() {
                   team={team}
                   totalAudience={totalAudience}
                   variant="full"
-                  layoutMode={previewLayout}
+                  layoutMode="premium"
                 />
               );
             })()}
@@ -337,15 +244,7 @@ export default function DashboardPreviewPage() {
         onSave={handleSaveVisibility}
       />
 
-      {/* 5. PREMIUM LOOK MODAL */}
-      <PremiumLookModal
-        isOpen={isPremiumModalOpen}
-        onClose={() => setIsPremiumModalOpen(false)}
-        isProOrVip={isProOrVip}
-        currentLayout={previewLayout}
-        onApplyLayout={handleApplyLayout}
-        onPreviewOnly={() => setPreviewLayout("premium")}
-      />
+
     </PageContainer>
   );
 }

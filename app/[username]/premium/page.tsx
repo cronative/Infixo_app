@@ -1,11 +1,7 @@
-import { Suspense } from "react";
-import PublicProfileClient from "../PublicProfileClient";
-import { SkeletonProfileCard } from "@/components/ui/Skeleton";
+import { permanentRedirect } from "next/navigation";
 
-export default function UserPremiumProfilePage() {
-  return (
-    <Suspense fallback={<SkeletonProfileCard />}>
-      <PublicProfileClient forcedLayout="premium" />
-    </Suspense>
-  );
+/** The premium layout is the only profile layout now; old links go to the profile. */
+export default async function UserPremiumProfilePage({ params }: { params: Promise<{ username: string }> }) {
+  const { username } = await params;
+  permanentRedirect(`/${encodeURIComponent(decodeURIComponent(username))}`);
 }

@@ -25,12 +25,8 @@ import {
   EXPERT_DEMO_ALL_SOCIAL_ACCOUNTS,
 } from "@/data/expertDemoCreator";
 
-export function DemoCreatorContent({ forcedLayout }: { forcedLayout?: "tabs" | "premium" } = {}) {
+export function DemoCreatorContent() {
   const searchParams = useSearchParams();
-  const queryLayout = searchParams?.get("layout");
-  const effectiveLayout: "tabs" | "premium" =
-    forcedLayout ||
-    (queryLayout === "tabs" || queryLayout === "simple" ? "tabs" : "premium");
   const testMode = searchParams?.get("testMode");
   const rawTab = searchParams?.get("tab");
   const initialTab =
@@ -107,7 +103,7 @@ export function DemoCreatorContent({ forcedLayout }: { forcedLayout?: "tabs" | "
           totalAudience={totalAudience}
           variant="full"
           containedScroll={false}
-          layoutMode={effectiveLayout}
+          layoutMode="premium"
           initialTab={initialTab}
           seriesOpenMode="page"
           seriesPreviewLimit={5}

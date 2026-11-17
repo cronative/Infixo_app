@@ -19,7 +19,6 @@ import { SyncingLoader } from "@/components/shared/SyncingLoader";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { CreatorPublicShell } from "@/components/public/CreatorPublicShell";
 import { getPlanQuota } from "@/services/subscriptionLimits";
-import { canUsePremiumLayout } from "@/config/plans";
 import { DEFAULT_THEME_KEY, resolveThemeKey } from "@/lib/themeKeys";
 import { setPublicTrackContext, trackProfileView } from "@/lib/publicTrack";
 
@@ -63,7 +62,7 @@ function isFreeTrialExpired(subscription?: {
   return false;
 }
 
-export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "tabs" | "premium" } = {}) {
+export default function PublicProfileClient() {
   const params = useParams<{ username: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -524,20 +523,6 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
   const handleStr = profile.username || decodeURIComponent(params.username ?? "username");
   const fullUrl = buildProfileUrl(handleStr);
 
-  const queryLayout = searchParams?.get("layout");
-  // Premium single page is the default; only an explicit "tabs" choice keeps the tabbed layout.
-  const savedLayout = profile.publicProfileLayout || (profile as any)?.visibilitySettings?.publicProfileLayout;
-  const requestedPremium = savedLayout !== "tabs";
-
-  const effectiveLayoutMode: "tabs" | "premium" =
-    forcedLayout ||
-    (queryLayout === "premium"
-      ? "premium"
-      : queryLayout === "tabs" || queryLayout === "simple"
-        ? "tabs"
-        : requestedPremium
-          ? "premium"
-          : "tabs");
 
   async function handleShare() {
     if (typeof navigator !== "undefined" && navigator.share) {
@@ -770,12 +755,12 @@ export default function PublicProfileClient({ forcedLayout }: { forcedLayout?: "
           totalAudience={totalAudience}
           variant="full"
           containedScroll={false}
-          layoutMode={effectiveLayoutMode}
+          layoutMode="premium"
           initialTab={initialTab}
           seriesOpenMode="page"
-          seriesPreviewLimit={effectiveLayoutMode === "premium" ? 3 : 5}
+          seriesPreviewLimit={3}
           allSeriesHref={`/${handleStr.replace(/^@/, "")}/series`}
-          productsPreviewLimit={effectiveLayoutMode === "premium" ? 4 : (handleStr.replace(/^@/, "") === "demo_creator" ? 9 : 6)}
+          productsPreviewLimit={4}
           allProductsHref={`/${handleStr.replace(/^@/, "")}/products`}
           reviewsPreviewLimit={3}
           allReviewsHref={`/${handleStr.replace(/^@/, "")}/reviews`}

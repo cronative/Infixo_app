@@ -57,7 +57,7 @@ export interface ThemeCardProps {
   allSetupHref?: string;
   pageHeader?: { pageLabel: string; backHref: string; backLabel: string };
   onShare?: () => void;
-  layoutMode?: "tabs" | "stacked" | "premium";
+  layoutMode?: "stacked" | "premium";
   initialTab?: "about" | "watch" | "explore" | "work" | "collab" | "series" | "fanbase" | "links" | "shop" | "reviews" | "setup";
   hideFooter?: boolean;
 }

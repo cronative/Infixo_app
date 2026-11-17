@@ -1,12 +1,6 @@
-"use client";
+import { permanentRedirect } from "next/navigation";
 
-import { Suspense } from "react";
-import { DemoCreatorContent } from "../page";
-
+/** The tabbed ("simple") layout was removed; old links go to the demo profile. */
 export default function DemoCreatorSimplePage() {
-  return (
-    <Suspense fallback={null}>
-      <DemoCreatorContent forcedLayout="tabs" />
-    </Suspense>
-  );
+  permanentRedirect("/demo_creator");
 }

@@ -1,11 +1,7 @@
-import { Suspense } from "react";
-import PublicProfileClient from "../PublicProfileClient";
-import { SkeletonProfileCard } from "@/components/ui/Skeleton";
+import { permanentRedirect } from "next/navigation";
 
-export default function UserSimpleProfilePage() {
-  return (
-    <Suspense fallback={<SkeletonProfileCard />}>
-      <PublicProfileClient forcedLayout="tabs" />
-    </Suspense>
-  );
+/** The tabbed ("simple") layout was removed; old links go to the profile. */
+export default async function UserSimpleProfilePage({ params }: { params: Promise<{ username: string }> }) {
+  const { username } = await params;
+  permanentRedirect(`/${encodeURIComponent(decodeURIComponent(username))}`);
 }
