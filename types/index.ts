@@ -524,6 +524,8 @@ export interface MediaKitPackage {
   isActive: boolean;
   /** Saved but not published: hidden from the public media kit and profile. */
   isDraft?: boolean;
+  /** Cover image for the package row (uploaded data URL until saved, then its /uploads path). */
+  coverImage?: string;
   /** Collab type, multi-platform deliverables, inclusions, commercial + delivery terms. */
   details?: import("@/lib/collabPackage").PackageDetails;
 }
@@ -560,6 +562,8 @@ export interface MediaKitSettings {
   signatureName?: string;
   /** India-specific commercial terms shown on the media kit and PDF. */
   commercialTerms?: CommercialTerms;
+  /** Shown in "About Me for Brands", e.g. "Ahmedabad, Gujarat". */
+  location?: string;
   updatedAt?: string;
 }
 
@@ -861,6 +865,11 @@ export interface CreatorCollaboration {
   campaignTitle?: string;
   campaignUrl?: string;
   description?: string;
+  /** Video cover image for the past-collaboration card. */
+  thumbnailUrl?: string | null;
+  /** e.g. "1:12". */
+  duration?: string;
+  platform?: "instagram" | "youtube" | "facebook" | "other";
   sortOrder: number;
   isActive: boolean;
   createdAt?: string;

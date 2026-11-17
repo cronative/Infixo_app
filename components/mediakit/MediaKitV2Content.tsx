@@ -179,8 +179,8 @@ export function MediaKitV2Content({
   const audienceDesc = (settings?.audienceDesc || "").trim();
   const availability: "open" | "busy" = settings?.availability === "busy" ? "busy" : "open";
   const replyTime = (settings?.replyTime || "Within 24h").trim();
-  const fitTags = (settings?.fitTags || []).map((t) => t.trim()).filter(Boolean).slice(0, 3);
-  const nofitTags = (settings?.nofitTags || []).map((t) => t.trim()).filter(Boolean).slice(0, 3);
+  const fitTags = (settings?.fitTags || []).map((t) => t.trim()).filter(Boolean).slice(0, 6);
+  const nofitTags = (settings?.nofitTags || []).map((t) => t.trim()).filter(Boolean).slice(0, 6);
   const promises = (settings?.promises || []).map((p) => p.trim()).filter(Boolean).slice(0, 4);
 
   // Audience numbers brands ask for first (shown only when the creator filled them in).
@@ -231,7 +231,8 @@ export function MediaKitV2Content({
   const showTeam = !hideTeam && activeTeamMembers.length > 0;
 
   // Data the creator already saved elsewhere, now shown on the kit.
-  const locationText = [profile.city, profile.state, profile.country].map((v) => (v || "").trim()).filter(Boolean).join(", ");
+  const locationText =
+    settings?.location?.trim() || [profile.city, profile.state, profile.country].map((v) => (v || "").trim()).filter(Boolean).join(", ");
   const niches = useMemo(() => {
     const raw = settings?.categories;
     const list = Array.isArray(raw) ? raw : (raw || "").split(",");
@@ -555,7 +556,13 @@ export function MediaKitV2Content({
           <div className={CARD_LIST}>
             {pastCampaigns.map((c) => (
               <article key={c.id} className={`${CARD_ITEM} flex items-start gap-3 p-3.5`}>
-                {c.brandLogoUrl ? (
+                {c.thumbnailUrl ? (
+                  <span className="relative h-16 w-24 shrink-0 overflow-hidden rounded-[5px] bg-(--accent-soft)">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- uploaded campaign cover */}
+                    <img src={c.thumbnailUrl} alt="" className="h-full w-full object-cover" />
+                    {c.duration && <span className="absolute bottom-1 right-1 rounded-[3px] bg-black/70 px-1 text-[10px] font-semibold text-white">{c.duration}</span>}
+                  </span>
+                ) : c.brandLogoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element -- brand logos of any host
                   <img src={c.brandLogoUrl} alt="" className="h-10 w-10 shrink-0 rounded-full border border-(--surface-border) object-cover" />
                 ) : (

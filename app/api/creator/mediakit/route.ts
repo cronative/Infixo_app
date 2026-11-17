@@ -8,6 +8,7 @@ import { getCreatorPlanKey } from "@/lib/planServer";
 import { getPlanLimit } from "@/config/plans";
 import type { BarterPolicy, CommercialTerms } from "@/types";
 import { sanitizePackageDetails } from "@/lib/collabPackage";
+import { saveBase64ImageToStorage } from "@/lib/imageStorage";
 
 let mediaKitTablesEnsured = false;
 
@@ -75,6 +76,7 @@ async function ensureMediaKitTables() {
     try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN promises JSON DEFAULT NULL"); } catch {}
     try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN signature_name VARCHAR(120) DEFAULT NULL"); } catch {}
     try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN commercial_terms JSON DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_settings ADD COLUMN location VARCHAR(120) DEFAULT NULL"); } catch {}
 
     try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN creator_id VARCHAR(100) DEFAULT NULL"); } catch {}
     try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN price_unit VARCHAR(50) DEFAULT 'per_package'"); } catch {}
@@ -84,6 +86,7 @@ async function ensureMediaKitTables() {
     try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN description TEXT DEFAULT NULL"); } catch {}
     try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN package_details JSON DEFAULT NULL"); } catch {}
     try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN is_draft TINYINT(1) DEFAULT 0"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN cover_image_url TEXT DEFAULT NULL"); } catch {}
 
     mediaKitTablesEnsured = true;
   } catch (e) {
@@ -152,7 +155,7 @@ export async function GET(req: Request) {
               avg_reel_views, engagement_rate, top_cities, content_languages, categories, past_brands,
               allow_whatsapp, allow_email,
               intro, now_making, audience_desc, availability, reply_time,
-              fit_tags, nofit_tags, promises, signature_name, commercial_terms,
+              fit_tags, nofit_tags, promises, signature_name, commercial_terms, location,
               updated_at 
        FROM mediakit_settings 
        WHERE creator_id = ? OR email = ? OR email = ?
@@ -217,8 +220,9 @@ export async function GET(req: Request) {
       audienceDesc: s.audience_desc || "",
       availability: (s.availability === "busy" ? "busy" : "open") as "open" | "busy",
       replyTime: s.reply_time || "Within 24h",
-      fitTags: parseJsonStringArray(s.fit_tags, 3),
-      nofitTags: parseJsonStringArray(s.nofit_tags, 3),
+      fitTags: parseJsonStringArray(s.fit_tags, 6),
+      nofitTags: parseJsonStringArray(s.nofit_tags, 6),
+      location: s.location || "",
       promises: parseJsonStringArray(s.promises, 4),
       signatureName: s.signature_name || "",
       commercialTerms: sanitizeCommercialTerms(
@@ -234,7 +238,7 @@ export async function GET(req: Request) {
               deliverables, badge, is_popular AS isPopular, is_active AS isActive,
               price_unit AS priceUnit, is_starting_price AS isStartingPrice,
               story_pitch AS storyPitch, category, description,
-              package_details AS packageDetails, is_draft AS isDraft
+              package_details AS packageDetails, is_draft AS isDraft, cover_image_url AS coverImage
        FROM mediakit_gigs 
        WHERE creator_id = ? OR (email = ? AND (creator_id IS NULL OR creator_id = ''))
        ORDER BY created_at ASC`,
@@ -268,6 +272,7 @@ export async function GET(req: Request) {
         isStartingPrice: Boolean(row.isStartingPrice),
         description: row.description || undefined,
         isDraft: Boolean(row.isDraft),
+        coverImage: row.coverImage || undefined,
         details:
           sanitizePackageDetails(typeof row.packageDetails === "string" ? safeJson(row.packageDetails) : row.packageDetails) ||
           undefined,
@@ -335,10 +340,10 @@ export async function POST(req: Request) {
       const availability = settings?.availability === "busy" ? "busy" : "open";
       const replyTime = settings?.replyTime ? String(settings.replyTime).trim().slice(0, 50) : null;
       const fitTags = Array.isArray(settings?.fitTags)
-        ? JSON.stringify(settings.fitTags.map((t: any) => String(t || "").trim()).filter(Boolean).slice(0, 3))
+        ? JSON.stringify(settings.fitTags.map((t: any) => String(t || "").trim().slice(0, 40)).filter(Boolean).slice(0, 6))
         : null;
       const nofitTags = Array.isArray(settings?.nofitTags)
-        ? JSON.stringify(settings.nofitTags.map((t: any) => String(t || "").trim()).filter(Boolean).slice(0, 3))
+        ? JSON.stringify(settings.nofitTags.map((t: any) => String(t || "").trim().slice(0, 40)).filter(Boolean).slice(0, 6))
         : null;
       const promises = Array.isArray(settings?.promises)
         ? JSON.stringify(settings.promises.map((p: any) => String(p || "").trim()).filter(Boolean).slice(0, 4))
@@ -346,13 +351,14 @@ export async function POST(req: Request) {
       const signatureName = settings?.signatureName ? String(settings.signatureName).trim().slice(0, 120) : null;
       const cleanTerms = sanitizeCommercialTerms(settings?.commercialTerms);
       const commercialTerms = cleanTerms ? JSON.stringify(cleanTerms) : null;
+      const location = settings?.location ? String(settings.location).trim().slice(0, 120) : null;
 
       await db.query(
         `INSERT INTO mediakit_settings 
           (creator_id, email, whatsapp_number, sponsor_email, min_budget, bio_highlight, accepting_sponsors,
            avg_reel_views, engagement_rate, top_cities, content_languages, categories, past_brands, allow_whatsapp, allow_email,
-           intro, now_making, audience_desc, availability, reply_time, fit_tags, nofit_tags, promises, signature_name, commercial_terms)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+           intro, now_making, audience_desc, availability, reply_time, fit_tags, nofit_tags, promises, signature_name, commercial_terms, location)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
            email = VALUES(email),
            whatsapp_number = VALUES(whatsapp_number),
@@ -377,7 +383,8 @@ export async function POST(req: Request) {
            nofit_tags = VALUES(nofit_tags),
            promises = VALUES(promises),
            signature_name = VALUES(signature_name),
-           commercial_terms = VALUES(commercial_terms)`,
+           commercial_terms = VALUES(commercial_terms),
+           location = VALUES(location)`,
         [
           resolvedCreatorId,
           resolvedEmail,
@@ -404,6 +411,7 @@ export async function POST(req: Request) {
           promises,
           signatureName,
           commercialTerms,
+          location,
         ]
       );
     }
@@ -467,11 +475,15 @@ export async function POST(req: Request) {
         const cleanDetails = sanitizePackageDetails(pkg.details);
         const packageDetails = cleanDetails ? JSON.stringify(cleanDetails) : null;
         const isDraft = pkg.isDraft ? 1 : 0;
+        // New uploads arrive as data URLs; saved ones come back as their /uploads path.
+        const coverImage = typeof pkg.coverImage === "string" && pkg.coverImage
+          ? await saveBase64ImageToStorage(pkg.coverImage, "uploads", "pkg_cover")
+          : null;
 
         await db.query(
           `INSERT INTO mediakit_gigs 
-             (id, creator_id, email, title, platform, price, min_price, max_price, package_name, turnaround_days, deliverables, badge, is_popular, is_active, price_unit, is_starting_price, story_pitch, category, description, package_details, is_draft)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             (id, creator_id, email, title, platform, price, min_price, max_price, package_name, turnaround_days, deliverables, badge, is_popular, is_active, price_unit, is_starting_price, story_pitch, category, description, package_details, is_draft, cover_image_url)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
            ON DUPLICATE KEY UPDATE
              creator_id = VALUES(creator_id),
              email = VALUES(email),
@@ -492,7 +504,8 @@ export async function POST(req: Request) {
              category = VALUES(category),
              description = VALUES(description),
              package_details = VALUES(package_details),
-             is_draft = VALUES(is_draft)`,
+             is_draft = VALUES(is_draft),
+             cover_image_url = VALUES(cover_image_url)`,
           [
             gigId,
             resolvedCreatorId,
@@ -515,6 +528,7 @@ export async function POST(req: Request) {
             description,
             packageDetails,
             isDraft,
+            coverImage,
           ]
         );
       }

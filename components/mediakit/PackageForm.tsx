@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Briefcase, ChevronDown, Eye, Minus, PencilLine, Plus, X } from "lucide-react";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
+import { PhotoUpload } from "@/components/ui/PhotoUpload";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/shared/BrandIcons";
 import { PackageCard } from "@/components/mediakit/PackageCard";
 import { WorkWithMe } from "@/components/public/collab/CollabSections";
@@ -154,6 +155,7 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
   // Display
   const [isPopular, setIsPopular] = useState(false);
   const [storyPitch, setStoryPitch] = useState("");
+  const [coverImage, setCoverImage] = useState<string | null>(null);
 
   const [tab, setTab] = useState<"edit" | "preview">("edit");
   const [previewMode, setPreviewMode] = useState<"profile" | "mediakit">("profile");
@@ -201,6 +203,7 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
     setConditions(d?.requirements?.conditions || "");
     setIsPopular(Boolean(initial?.isPopular));
     setStoryPitch(d ? initial?.storyPitch || "" : "");
+    setCoverImage(initial?.coverImage || null);
     setTab("edit");
     setError("");
     setSaving("");
@@ -261,6 +264,7 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
       description: description.trim(),
       category: category || undefined,
       storyPitch: storyPitch.trim().slice(0, 120) || undefined,
+      coverImage: coverImage || undefined,
       platform: platformsSummary(items),
       price: priceStr,
       minPrice: priceStr || undefined,
@@ -274,7 +278,7 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
       details,
     };
   }, [
-    initial, title, description, category, storyPitch, collabType, items, customLines, inclusions, price, priceVisibility,
+    initial, title, description, category, storyPitch, coverImage, collabType, items, customLines, inclusions, price, priceVisibility,
     barterDetails, gst, travel, extraCharges, days, revisions, customRevisions, languages, usageRights, usageDuration,
     exclusivity, postRetention, productProvided, briefRequired, visitRequired, shipping, location, conditions, isPopular,
   ]);
@@ -330,6 +334,10 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
+        </div>
+        <div className="space-y-1">
+          <span className={label}>Cover image <span className="font-normal text-[#6B6B76]">(optional, shown on your package list)</span></span>
+          <PhotoUpload value={coverImage} onChange={setCoverImage} shape="landscape" />
         </div>
       </Group>
 

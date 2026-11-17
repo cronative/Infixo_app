@@ -38,7 +38,7 @@ export async function GET(req: Request) {
     if (accessError) return accessError;
 
     const [rows]: any = await db.query(
-      `SELECT id, creator_id AS creatorId, brand_name AS brandName, brand_logo_url AS brandLogoUrl, campaign_title AS campaignTitle, campaign_url AS campaignUrl, description, sort_order AS sortOrder, is_active AS isActive, created_at AS createdAt, updated_at AS updatedAt
+      `SELECT id, creator_id AS creatorId, brand_name AS brandName, brand_logo_url AS brandLogoUrl, campaign_title AS campaignTitle, campaign_url AS campaignUrl, description, thumbnail_url AS thumbnailUrl, duration, platform, sort_order AS sortOrder, is_active AS isActive, created_at AS createdAt, updated_at AS updatedAt
        FROM creator_collaborations
        WHERE creator_id = ?
        ORDER BY sort_order ASC, created_at ASC`,
@@ -53,6 +53,9 @@ export async function GET(req: Request) {
       campaignTitle: c.campaignTitle || "",
       campaignUrl: sanitizeUrl(c.campaignUrl, { allowEmpty: true }) || "",
       description: c.description || "",
+      thumbnailUrl: c.thumbnailUrl || null,
+      duration: c.duration || "",
+      platform: c.platform || undefined,
       sortOrder: Number(c.sortOrder || 0),
       isActive: Boolean(c.isActive),
       createdAt: c.createdAt,
@@ -97,27 +100,41 @@ export async function POST(req: Request) {
     }
 
     const finalLogoUrl = await saveBase64ImageToStorage(c.brandLogoUrl, "collaborations", "collab_logo") || (c.brandLogoUrl && !c.brandLogoUrl.startsWith("data:") ? c.brandLogoUrl : null);
+    const finalThumbUrl = await saveBase64ImageToStorage(c.thumbnailUrl, "collaborations", "collab_thumb") || (c.thumbnailUrl && !c.thumbnailUrl.startsWith("data:") ? c.thumbnailUrl : null);
+    const duration = /^\d{1,2}:\d{2}(:\d{2})?$/.test(String(c.duration || "").trim()) ? String(c.duration).trim() : null;
+    const platform = ["instagram", "youtube", "facebook", "other"].includes(c.platform) ? c.platform : null;
     const collabId = c.id || `collab_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    // An id that belongs to another creator must not be overwritten.
+    if (c.id) {
+      const [owner]: any = await db.query("SELECT creator_id FROM creator_collaborations WHERE id = ? LIMIT 1", [c.id]);
+      if (owner?.[0] && owner[0].creator_id !== targetId) return apiError("Not allowed", 403);
+    }
     await db.query(
-      `INSERT INTO creator_collaborations (id, creator_id, brand_name, brand_logo_url, campaign_title, campaign_url, description, sort_order, is_active)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `INSERT INTO creator_collaborations (id, creator_id, brand_name, brand_logo_url, campaign_title, campaign_url, description, thumbnail_url, duration, platform, sort_order, is_active)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
          brand_name = VALUES(brand_name),
          brand_logo_url = VALUES(brand_logo_url),
          campaign_title = VALUES(campaign_title),
          campaign_url = VALUES(campaign_url),
          description = VALUES(description),
+         thumbnail_url = VALUES(thumbnail_url),
+         duration = VALUES(duration),
+         platform = VALUES(platform),
          sort_order = VALUES(sort_order),
          is_active = VALUES(is_active),
          updated_at = NOW()`,
       [
         collabId,
         targetId,
-        c.brandName.trim(),
+        c.brandName.trim().slice(0, 150),
         finalLogoUrl || null,
-        (c.campaignTitle || "").trim() || null,
+        (c.campaignTitle || "").trim().slice(0, 255) || null,
         sanitizeUrl(c.campaignUrl) || null,
-        (c.description || "").trim() || null,
+        (c.description || "").trim().slice(0, 1000) || null,
+        finalThumbUrl || null,
+        duration,
+        platform,
         Number(c.sortOrder || 0),
         c.isActive !== false ? 1 : 0,
       ]

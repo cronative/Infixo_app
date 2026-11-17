@@ -21,6 +21,12 @@ export async function ensureCollaborationsTable() {
         INDEX idx_creator_id (creator_id)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
+    // Past-collaboration card on the media kit (migration 024): video cover, length and platform.
+    const [cols]: any = await db.query("SHOW COLUMNS FROM creator_collaborations");
+    const have = new Set((cols || []).map((c: any) => c.Field));
+    if (!have.has("thumbnail_url")) await db.query("ALTER TABLE creator_collaborations ADD COLUMN thumbnail_url TEXT DEFAULT NULL");
+    if (!have.has("duration")) await db.query("ALTER TABLE creator_collaborations ADD COLUMN duration VARCHAR(10) DEFAULT NULL");
+    if (!have.has("platform")) await db.query("ALTER TABLE creator_collaborations ADD COLUMN platform VARCHAR(20) DEFAULT NULL");
     isEnsured = true;
   } catch (err: any) {
     console.warn("ensureCollaborationsTable error:", err.message);

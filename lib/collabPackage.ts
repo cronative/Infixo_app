@@ -194,3 +194,19 @@ export function sanitizePackageDetails(raw: unknown): PackageDetails | null {
     requirements: hasReq ? requirements : undefined,
   };
 }
+
+/**
+ * Short list line for a package row: "1 Reel + 2 Stories + 1 Facebook Reel".
+ * The first platform's items drop the platform name; the others keep it.
+ */
+export function shortItemsSummary(items: PackageDeliverableItem[]): string {
+  if (!items.length) return "";
+  const primary = items[0].platform;
+  return items
+    .map((it) => {
+      const plural = it.qty > 1 && !/s$/i.test(it.type) ? (/[^aeiou]y$/i.test(it.type) ? `${it.type.slice(0, -1)}ies` : `${it.type}s`) : it.type;
+      const name = it.platform === primary || it.type.toLowerCase().startsWith(platformLabel(it.platform).toLowerCase()) ? plural : `${platformLabel(it.platform)} ${plural}`;
+      return `${it.qty} ${name}`;
+    })
+    .join(" + ");
+}

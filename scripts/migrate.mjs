@@ -412,6 +412,18 @@ async function migrateDatabase(target) {
       await addColumnIfMissing("collab_requests", "campaign_location", "VARCHAR(150) DEFAULT NULL");
     }
 
+    // 024: Media kit redesign — location, package cover, past-collaboration video card
+    const [mkSettingsTables] = await connection.query("SHOW TABLES LIKE 'mediakit_settings'");
+    if (mkSettingsTables.length) await addColumnIfMissing("mediakit_settings", "location", "VARCHAR(120) DEFAULT NULL");
+    const [mkGigTables2] = await connection.query("SHOW TABLES LIKE 'mediakit_gigs'");
+    if (mkGigTables2.length) await addColumnIfMissing("mediakit_gigs", "cover_image_url", "TEXT DEFAULT NULL");
+    const [collabTables] = await connection.query("SHOW TABLES LIKE 'creator_collaborations'");
+    if (collabTables.length) {
+      await addColumnIfMissing("creator_collaborations", "thumbnail_url", "TEXT DEFAULT NULL");
+      await addColumnIfMissing("creator_collaborations", "duration", "VARCHAR(10) DEFAULT NULL");
+      await addColumnIfMissing("creator_collaborations", "platform", "VARCHAR(20) DEFAULT NULL");
+    }
+
     console.log(`✅ ${target.name} migrated successfully.`);
   } finally {
     await connection.end();
