@@ -106,10 +106,10 @@ function Block({ icon: Icon, title, accent, action, children, className = "" }: 
     <section className={`${MK_CARD} print-avoid-break p-3.5 sm:p-4 ${className}`}>
       <div className="mb-3 flex items-center justify-between gap-2">
         <h2 className="flex min-w-0 items-center gap-2 text-[16px] font-bold leading-5 text-(--text)">
-          <Icon aria-hidden className="h-5 w-5 shrink-0 text-(--accent-text)" strokeWidth={1.8} />
+          <Icon aria-hidden className="h-5 w-5 shrink-0 text-(--text-muted)" strokeWidth={1.8} />
           <span className="min-w-0">
             {title}
-            {accent && <span className="text-(--accent-text)"> {accent}</span>}
+            {accent && <span className="font-medium text-(--text-muted)"> {accent}</span>}
           </span>
         </h2>
         {action}
@@ -454,26 +454,26 @@ export function MediaKitV2Content({
   const primaryBtn =
     "inline-flex h-11 w-full items-center justify-center gap-2 rounded-[5px] px-4 text-[14px] font-semibold transition-opacity hover:opacity-95 cursor-pointer";
   const outlineBtn =
-    "inline-flex h-11 w-full items-center justify-center gap-2 rounded-[5px] border border-(--accent) bg-(--card-bg) px-4 text-[14px] font-semibold text-(--text) transition-colors hover:bg-(--accent-soft) cursor-pointer disabled:cursor-wait";
+    "inline-flex h-11 w-full items-center justify-center gap-2 rounded-[5px] border border-(--surface-border) bg-(--card-bg) px-4 text-[14px] font-semibold text-(--text) transition-colors hover:bg-(--surface) cursor-pointer disabled:cursor-wait";
   const accentStyle = { backgroundColor: "var(--accent)", color: "var(--on-accent)" } as const;
 
   return (
     <div className="w-full space-y-2.5 text-left">
       {/* TOP BAR — Inflixo · Media Kit, share + PDF */}
       {/* Stays pinned while brands scroll, like the profile's nav. */}
-      <div style={accentStyle} className="sticky top-0 z-30 -mx-(--card-px) -mt-5 flex h-12 items-center justify-between gap-3 rounded-t-[5px] px-4">
+      <div className="sticky top-0 z-30 -mx-(--card-px) -mt-5 flex h-12 items-center justify-between gap-3 rounded-t-[5px] border-b border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] px-4 text-(--text)">
         <a href={`/${cleanHandle}`} aria-label="Back to profile" className="flex items-center gap-2.5">
           {/* Same Inflixo wordmark as everywhere else, drawn in the bar's text colour. */}
-          <span role="img" aria-label="Inflixo" className="inflixo-logo inline-block h-6 shrink-0" style={{ backgroundColor: "var(--on-accent)" }} />
-          <span aria-hidden className="h-4 w-px bg-current opacity-50" />
-          <span className="text-[14px] font-semibold">Media Kit</span>
+          <span role="img" aria-label="Inflixo" className="inflixo-logo inline-block h-6 shrink-0" />
+          <span aria-hidden className="h-4 w-px bg-(--surface-border)" />
+          <span className="text-[14px] font-semibold text-(--text-secondary)">Media Kit</span>
         </a>
         {!activeIsPrint && (
           <span className="no-print flex items-center gap-2">
-            <button type="button" onClick={onShare || handleCopyMediaKitLink} aria-label="Share media kit" className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-current/40 cursor-pointer hover:bg-white/10">
+            <button type="button" onClick={onShare || handleCopyMediaKitLink} aria-label="Share media kit" className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-(--surface-border) text-(--text-secondary) cursor-pointer hover:bg-(--surface)">
               <Share2 className="h-4 w-4" />
             </button>
-            <button type="button" onClick={handleDownloadPdf} disabled={pdfLoading} aria-label="Download media kit PDF" className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-current/40 cursor-pointer hover:bg-white/10 disabled:cursor-wait">
+            <button type="button" onClick={handleDownloadPdf} disabled={pdfLoading} aria-label="Download media kit PDF" className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-(--surface-border) text-(--text-secondary) cursor-pointer hover:bg-(--surface) disabled:cursor-wait">
               {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
             </button>
           </span>
@@ -485,7 +485,7 @@ export function MediaKitV2Content({
         <CreatorAvatar
           src={profile.photoDataUrl}
           name={displayName}
-          className="mx-auto h-20 w-20 rounded-full object-cover ring-4 ring-(--accent-soft)"
+          className="mx-auto h-20 w-20 rounded-full object-cover ring-4 ring-(--surface)"
           textClassName="text-2xl font-bold text-white"
           style={{ backgroundColor: "var(--accent)" }}
         />
@@ -496,16 +496,16 @@ export function MediaKitV2Content({
         <p className="text-[13px] text-(--text-muted)">@{cleanHandle}</p>
         {(primaryCategory || locationText || languagesList.length > 0) && (
           <ul className="mt-2.5 flex flex-wrap justify-center gap-1.5 text-[12px] font-medium">
-            {primaryCategory && <li className="rounded-full bg-(--accent-soft) px-2.5 py-1 text-(--accent-text)">{primaryCategory} Creator</li>}
+            {primaryCategory && <li className="rounded-full border border-(--surface-border) px-2.5 py-1 text-(--text-secondary)">{primaryCategory} Creator</li>}
             {locationText && (
-              <li className="inline-flex items-center gap-1 rounded-full bg-(--accent-soft) px-2.5 py-1 text-(--text)">
-                <MapPin aria-hidden className="h-3.5 w-3.5 text-(--accent-text)" />
+              <li className="inline-flex items-center gap-1 rounded-full border border-(--surface-border) px-2.5 py-1 text-(--text-secondary)">
+                <MapPin aria-hidden className="h-3.5 w-3.5 text-(--text-muted)" />
                 {locationText}
               </li>
             )}
             {languagesList.length > 0 && (
-              <li className="inline-flex items-center gap-1 rounded-full bg-(--accent-soft) px-2.5 py-1 text-(--text)">
-                <Languages aria-hidden className="h-3.5 w-3.5 text-(--accent-text)" />
+              <li className="inline-flex items-center gap-1 rounded-full border border-(--surface-border) px-2.5 py-1 text-(--text-secondary)">
+                <Languages aria-hidden className="h-3.5 w-3.5 text-(--text-muted)" />
                 {languagesList.join(" · ")}
               </li>
             )}
@@ -515,7 +515,7 @@ export function MediaKitV2Content({
         {allPlatforms.length > 0 && (
           <div className="mt-3 flex justify-center gap-2">
             {allPlatforms.slice(0, 6).map((p) => (
-              <a key={p.key} href={p.url || undefined} target="_blank" rel="noopener noreferrer" aria-label={p.label} className={`${tile} flex h-10 w-10 items-center justify-center hover:border-(--accent-text)`}>
+              <a key={p.key} href={p.url || undefined} target="_blank" rel="noopener noreferrer" aria-label={p.label} className={`${tile} flex h-10 w-10 items-center justify-center hover:border-(--text-muted)`}>
                 <BrandPlatformIcon platform={p.key} size={22} />
               </a>
             ))}
@@ -545,7 +545,7 @@ export function MediaKitV2Content({
               Request Collaboration
             </button>
             <button type="button" onClick={handleDownloadPdf} disabled={pdfLoading} aria-busy={pdfLoading} className={outlineBtn}>
-              {pdfLoading ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : <Download aria-hidden className="h-4 w-4 text-(--accent-text)" />}
+              {pdfLoading ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : <Download aria-hidden className="h-4 w-4" />}
               {pdfLoading ? PDF_PREPARING_LABEL : "Download Media Kit (PDF)"}
             </button>
           </div>
@@ -558,13 +558,13 @@ export function MediaKitV2Content({
           {introText && <p className="whitespace-pre-line break-words text-[14px] leading-[21px] text-(--text-secondary)">{introText}</p>}
           {nowMaking && (
             <p className="mt-2 text-[13px] text-(--text)">
-              <strong className="font-semibold text-(--accent-text)">Now making:</strong> {nowMaking}
+              <strong className="font-semibold text-(--text)">Now making:</strong> {nowMaking}
             </p>
           )}
           {niches.length > 0 && (
             <ul className="mt-2.5 flex flex-wrap gap-1.5" aria-label="Content niches">
               {niches.map((n) => (
-                <li key={n} className="rounded-full bg-(--accent-soft) px-2.5 py-0.5 text-[12px] font-medium text-(--accent-text)">{n}</li>
+                <li key={n} className="rounded-full border border-(--surface-border) px-2.5 py-0.5 text-[12px] font-medium text-(--text-secondary)">{n}</li>
               ))}
             </ul>
           )}
@@ -579,7 +579,7 @@ export function MediaKitV2Content({
                 const T = t!.icon;
                 return (
                   <div key={t!.label} className={`${tile} flex min-w-0 flex-col gap-1 p-2.5`}>
-                    <T aria-hidden className="h-4 w-4 shrink-0 text-(--accent-text)" strokeWidth={1.8} />
+                    <T aria-hidden className="h-4 w-4 shrink-0 text-(--text-muted)" strokeWidth={1.8} />
                     <div className="min-w-0">
                       <dt className="text-[12px] font-bold leading-4 text-(--text)">{t!.label}</dt>
                       <dd className="break-words text-[12px] leading-4 text-(--text-secondary)">{t!.value}</dd>
@@ -595,10 +595,10 @@ export function MediaKitV2Content({
       {showAudience && (
         <Block icon={UsersRound} title="Audience & Reach">
           <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-[150px_minmax(0,1fr)] print:grid-cols-[150px_minmax(0,1fr)]">
-            <div className="flex flex-col items-center justify-center rounded-[5px] bg-(--accent-soft) px-3 py-4 text-center">
+            <div className="flex flex-col items-center justify-center rounded-[5px] border border-(--surface-border) bg-(--surface) px-3 py-4 text-center">
               <span className="text-[28px] font-extrabold leading-8 text-(--text)">{calculatedFans > 0 ? formatFans(calculatedFans) : "—"}</span>
               <span className="text-[13px] text-(--text-secondary)">Total Fanbase</span>
-              {creatorEra?.badge && <span className="mt-1 text-[11px] font-semibold text-(--accent-text)">{creatorEra.badge}</span>}
+              {creatorEra?.badge && <span className="mt-1 text-[11px] font-medium text-(--text-muted)">{creatorEra.badge}</span>}
             </div>
             <ul className="divide-y divide-(--surface-border)">
               {allPlatforms.map((plat) => (
@@ -632,7 +632,7 @@ export function MediaKitV2Content({
           {audienceDesc && <p className="mt-3 text-[13px] leading-5 text-(--text-secondary)">{audienceDesc}</p>}
           {languagesList.length > 0 && (
             <p className="mt-3 flex items-center gap-2 border-t border-(--surface-border) pt-3 text-[13px] text-(--text-secondary)">
-              <Languages aria-hidden className="h-4 w-4 shrink-0 text-(--accent-text)" />
+              <Languages aria-hidden className="h-4 w-4 shrink-0 text-(--text-muted)" />
               <span>
                 <strong className="font-semibold text-(--text)">Languages:</strong> {languagesList.join(", ")}
               </span>
@@ -662,12 +662,12 @@ export function MediaKitV2Content({
                 const kind = c.platform === "youtube" ? "Campaign Video" : "Campaign Post";
                 return (
                   <article key={c.id} className={`${tile} print-avoid-break w-[62%] shrink-0 snap-start overflow-hidden min-[460px]:w-auto print:w-auto`}>
-                    <a href={c.campaignUrl || undefined} target="_blank" rel="noopener noreferrer" className="relative block aspect-[16/11] bg-(--accent-soft)" aria-label={`Watch ${c.brandName} campaign`}>
+                    <a href={c.campaignUrl || undefined} target="_blank" rel="noopener noreferrer" className="relative block aspect-[16/11] bg-(--surface)" aria-label={`Watch ${c.brandName} campaign`}>
                       {cover ? (
                         // eslint-disable-next-line @next/next/no-img-element -- uploaded campaign cover / brand logo
                         <img src={cover} alt="" className={`h-full w-full ${c.thumbnailUrl ? "object-cover" : "object-contain p-5"}`} />
                       ) : (
-                        <span aria-hidden className="flex h-full w-full items-center justify-center text-[26px] font-bold text-(--accent-text)">{c.brandName.trim().charAt(0).toUpperCase()}</span>
+                        <span aria-hidden className="flex h-full w-full items-center justify-center text-[26px] font-bold text-(--text-muted)">{c.brandName.trim().charAt(0).toUpperCase()}</span>
                       )}
                       {c.campaignUrl && (
                         <span aria-hidden className="no-print absolute inset-0 m-auto flex h-9 w-9 items-center justify-center rounded-full bg-black/45 text-white">
@@ -706,7 +706,7 @@ export function MediaKitV2Content({
                       // eslint-disable-next-line @next/next/no-img-element -- brand logos of any host
                       <img src={b.logo} alt="" className="h-5 w-5 rounded-full object-cover" />
                     ) : (
-                      <span aria-hidden className="flex h-5 w-5 items-center justify-center rounded-full bg-(--accent-soft) text-[10px] font-bold text-(--accent-text)">{b.name.charAt(0).toUpperCase()}</span>
+                      <span aria-hidden className="flex h-5 w-5 items-center justify-center rounded-full bg-(--surface) text-[10px] font-bold text-(--text-secondary)">{b.name.charAt(0).toUpperCase()}</span>
                     )}
                     {b.name}
                   </li>
@@ -757,15 +757,15 @@ export function MediaKitV2Content({
               const open = activeIsPrint || Boolean(openPkg[pkg.id]);
               const hasMore = v.deliverables.length > 0 || (v.d?.inclusions?.length ?? 0) > 0 || v.terms.length > 0 || v.requirements.length > 0;
               return (
-                <li key={pkg.id} className={`${tile} print-avoid-break p-2.5 ${pkg.isPopular ? "border-(--accent-text)" : ""}`}>
+                <li key={pkg.id} className={`${tile} print-avoid-break p-2.5 ${pkg.isPopular ? "border-(--text-muted)" : ""}`}>
                   <div className="flex gap-3">
-                    <div className="h-[92px] w-[96px] shrink-0 overflow-hidden rounded-[5px] bg-(--accent-soft) min-[460px]:h-[110px] min-[460px]:w-[140px]">
+                    <div className="h-[92px] w-[96px] shrink-0 overflow-hidden rounded-[5px] bg-(--surface) min-[460px]:h-[110px] min-[460px]:w-[140px]">
                       {pkg.coverImage ? (
                         // eslint-disable-next-line @next/next/no-img-element -- uploaded package cover
                         <img src={pkg.coverImage} alt="" className="h-full w-full object-cover" />
                       ) : (
                         <span className="flex h-full w-full items-center justify-center gap-1">
-                          {v.platforms.length ? v.platforms.map((p) => <span key={p}>{platformIcon(p)}</span>) : <Layers aria-hidden className="h-6 w-6 text-(--accent-text)" />}
+                          {v.platforms.length ? v.platforms.map((p) => <span key={p}>{platformIcon(p)}</span>) : <Layers aria-hidden className="h-6 w-6 text-(--text-muted)" />}
                         </span>
                       )}
                     </div>
@@ -773,10 +773,10 @@ export function MediaKitV2Content({
                       <div className="flex flex-col gap-0.5 min-[460px]:flex-row min-[460px]:items-start min-[460px]:justify-between min-[460px]:gap-2">
                         <h3 className="line-clamp-2 break-words text-[15px] font-bold leading-5 text-(--text)">
                           {pkg.title}
-                          {pkg.isPopular && <span className="ml-1.5 rounded-full bg-(--accent-soft) px-1.5 py-0.5 align-middle text-[10px] font-bold text-(--accent-text)">Popular</span>}
+                          {pkg.isPopular && <span className="ml-1.5 rounded-full border border-(--surface-border) px-1.5 py-0.5 align-middle text-[10px] font-bold text-(--text-secondary)">Popular</span>}
                         </h3>
                         <p className="shrink-0 leading-tight min-[460px]:text-right">
-                          <span className="whitespace-nowrap text-[18px] font-extrabold italic text-(--accent-text)">{v.price}</span>
+                          <span className="whitespace-nowrap text-[17px] font-extrabold text-(--text)">{v.price}</span>
                           {v.gst && <span className="block text-[10px] font-semibold text-(--text-muted)">{v.gst}</span>}
                         </p>
                       </div>
@@ -798,7 +798,7 @@ export function MediaKitV2Content({
                           <ul className="space-y-1">
                             {v.deliverables.map((it, i) => (
                               <li key={i} className="flex items-start gap-1.5 text-[13px] leading-[18px]">
-                                <Check aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0 text-(--accent-text)" strokeWidth={3} />
+                                <Check aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0 text-(--text-muted)" strokeWidth={3} />
                                 <span className="min-w-0 break-words">
                                   <span className="font-semibold text-(--text)">{it.text}</span>
                                   {(it.extras.length > 0 || it.notes) && <span className="text-(--text-muted)"> · {[...it.extras, it.notes].filter(Boolean).join(" · ")}</span>}
@@ -813,13 +813,13 @@ export function MediaKitV2Content({
                           <p className="mb-1 text-[11px] font-bold uppercase tracking-wider text-(--text-muted)">Also included</p>
                           <ul className="flex flex-wrap gap-1.5">
                             {v.d.inclusions.map((inc) => (
-                              <li key={inc} className="rounded-full bg-(--accent-soft) px-2 py-0.5 text-[11px] font-medium text-(--text)">{inc}</li>
+                              <li key={inc} className="rounded-full border border-(--surface-border) px-2 py-0.5 text-[11px] font-medium text-(--text-secondary)">{inc}</li>
                             ))}
                           </ul>
                         </div>
                       ) : null}
                       {v.d && v.d.collabType !== "paid" && v.d.barterDetails && (
-                        <p className="text-[12px] text-(--text-secondary)"><strong className="text-(--accent-text)">Barter:</strong> {v.d.barterDetails}</p>
+                        <p className="text-[12px] text-(--text-secondary)"><strong className="text-(--text)">Barter:</strong> {v.d.barterDetails}</p>
                       )}
                       {v.terms.length > 0 && (
                         <dl className="grid grid-cols-2 gap-x-3 gap-y-1.5 min-[460px]:grid-cols-3">
@@ -842,7 +842,7 @@ export function MediaKitV2Content({
                           type="button"
                           aria-expanded={open}
                           onClick={() => setOpenPkg((o) => ({ ...o, [pkg.id]: !o[pkg.id] }))}
-                          className="inline-flex h-10 shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-[5px] border border-(--surface-border) px-3 text-[13px] font-semibold text-(--text) hover:bg-(--accent-soft) cursor-pointer"
+                          className="inline-flex h-10 shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-[5px] border border-(--surface-border) px-3 text-[13px] font-semibold text-(--text) hover:bg-(--surface) cursor-pointer"
                         >
                           {open ? "Hide details" : "What's included"}
                           <ChevronDown aria-hidden className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
@@ -893,7 +893,7 @@ export function MediaKitV2Content({
               <ul className="space-y-1.5">
                 {promises.map((p) => (
                   <li key={p} className="flex items-start gap-2 text-[13px] leading-5 text-(--text-secondary)">
-                    <Check aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-(--accent-text)" strokeWidth={2.5} />
+                    <Check aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-(--text-muted)" strokeWidth={2.5} />
                     <span className="min-w-0">{p}</span>
                   </li>
                 ))}
@@ -908,7 +908,7 @@ export function MediaKitV2Content({
         <Block
           icon={Users}
           title={team?.team?.teamName?.trim() || "The Crew"}
-          action={<span className="shrink-0 rounded-full bg-(--accent-soft) px-2 py-0.5 text-[11px] font-bold text-(--accent-text)">{activeTeamMembers.length} {activeTeamMembers.length === 1 ? "Member" : "Members"}</span>}
+          action={<span className="shrink-0 rounded-full border border-(--surface-border) px-2 py-0.5 text-[11px] font-semibold text-(--text-secondary)">{activeTeamMembers.length} {activeTeamMembers.length === 1 ? "Member" : "Members"}</span>}
         >
           <ul className="grid grid-cols-3 gap-2">
             {activeTeamMembers.slice(0, 9).map((m) => (
@@ -917,8 +917,8 @@ export function MediaKitV2Content({
                   src={m.avatarUrl || undefined}
                   name={m.name}
                   className="mx-auto h-11 w-11 rounded-full object-cover"
-                  textClassName="text-[13px] font-bold text-(--accent-text)"
-                  style={{ backgroundColor: "var(--accent-soft)" }}
+                  textClassName="text-[13px] font-bold text-(--text-secondary)"
+                  style={{ backgroundColor: "var(--surface)" }}
                 />
                 <p className="mt-1.5 truncate text-[12px] font-bold text-(--text)">{m.name}</p>
                 {m.role && <p className="truncate text-[11px] text-(--text-muted)">{m.role}</p>}
@@ -938,7 +938,7 @@ export function MediaKitV2Content({
                 return (
                   <div key={r.label} className="grid grid-cols-[118px_minmax(0,1fr)] gap-2 py-2 min-[420px]:grid-cols-[150px_minmax(0,1fr)] min-[420px]:gap-3">
                     <dt className="flex items-center gap-2 text-[13px] font-bold text-(--text)">
-                      <I aria-hidden className="h-4 w-4 shrink-0 text-(--accent-text)" strokeWidth={1.8} />
+                      <I aria-hidden className="h-4 w-4 shrink-0 text-(--text-muted)" strokeWidth={1.8} />
                       {r.label}
                     </dt>
                     <dd className="break-words text-[13px] text-(--text-secondary)">{r.value}</dd>
@@ -954,7 +954,7 @@ export function MediaKitV2Content({
                 {termAddOns.map((a, i) => (
                   <li key={`${a.label}-${i}`} className="flex items-center justify-between gap-3 text-[13px]">
                     <span className="min-w-0 break-words text-(--text)">{a.label}</span>
-                    <span className="shrink-0 font-bold text-(--accent-text)">{a.price ? (a.price.startsWith("₹") ? a.price : `₹${a.price}`) : "On request"}</span>
+                    <span className="shrink-0 font-bold text-(--text)">{a.price ? (a.price.startsWith("₹") ? a.price : `₹${a.price}`) : "On request"}</span>
                   </li>
                 ))}
               </ul>
@@ -968,7 +968,7 @@ export function MediaKitV2Content({
         <div className="flex flex-col gap-3 min-[460px]:flex-row min-[460px]:items-center print:flex-row print:items-center">
           <div className="min-w-0 flex-1">
             <h2 className="flex items-center gap-2 text-[16px] font-bold text-(--text)">
-              <Quote aria-hidden className="h-5 w-5 shrink-0 fill-(--accent-text) text-(--accent-text)" />
+              <Quote aria-hidden className="h-5 w-5 shrink-0 text-(--text-muted)" strokeWidth={1.8} />
               Before You Go
             </h2>
             <p className="mt-1.5 text-[13px] italic leading-5 text-(--text-secondary)">
@@ -978,7 +978,7 @@ export function MediaKitV2Content({
           </div>
           <div className="shrink-0 border-(--surface-border) min-[460px]:border-l min-[460px]:pl-4 print:border-l print:pl-4">
             <p className="text-[12px] text-(--text-muted)">Regards,</p>
-            <p style={{ fontFamily: "'Caveat', 'Playfair Display', cursive, serif" }} className="select-none text-[26px] font-semibold italic leading-8 text-(--accent-text)">
+            <p style={{ fontFamily: "'Caveat', 'Playfair Display', cursive, serif" }} className="select-none text-[26px] font-semibold italic leading-8 text-(--text)">
               {signatureName}
             </p>
           </div>
@@ -990,31 +990,31 @@ export function MediaKitV2Content({
         <p className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 px-2 text-[12px] text-(--text-secondary)">
           {businessEmail && (
             <a href={`mailto:${businessEmail}`} className="inline-flex items-center gap-1 hover:text-(--accent-text)">
-              <Mail aria-hidden className="h-3.5 w-3.5 text-(--accent-text)" />
+              <Mail aria-hidden className="h-3.5 w-3.5 text-(--text-muted)" />
               {businessEmail}
             </a>
           )}
           {whatsappDigits && (
             <a href={whatsappHref || undefined} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-(--accent-text)">
-              <MessageCircle aria-hidden className="h-3.5 w-3.5 text-(--accent-text)" />
+              <MessageCircle aria-hidden className="h-3.5 w-3.5 text-(--text-muted)" />
               +{whatsappDigits}
             </a>
           )}
         </p>
       )}
       {!activeIsPrint ? (
-        <div className="no-print grid grid-cols-2 gap-2 min-[460px]:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,0.8fr)]">
-          <button type="button" onClick={() => onEnquirePackage?.(null)} style={accentStyle} className={`${primaryBtn} col-span-2 min-[460px]:col-span-1`}>
+        <div className="no-print grid grid-cols-1 gap-2">
+          <button type="button" onClick={() => onEnquirePackage?.(null)} style={accentStyle} className={primaryBtn}>
             <Send aria-hidden className="h-4 w-4" />
             Request Collaboration
           </button>
           <button type="button" onClick={handleDownloadPdf} disabled={pdfLoading} aria-busy={pdfLoading} className={outlineBtn}>
-            {pdfLoading ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : <Download aria-hidden className="h-4 w-4 text-(--accent-text)" />}
-            {pdfLoading ? "Preparing…" : "Download PDF"}
+            {pdfLoading ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : <Download aria-hidden className="h-4 w-4" />}
+            {pdfLoading ? PDF_PREPARING_LABEL : "Download Media Kit (PDF)"}
           </button>
           <button type="button" onClick={onShare || handleCopyMediaKitLink} className={outlineBtn}>
-            {copiedLink ? <Check aria-hidden className="h-4 w-4 text-emerald-600" /> : <Share2 aria-hidden className="h-4 w-4 text-(--accent-text)" />}
-            {copiedLink ? "Copied!" : "Share"}
+            {copiedLink ? <Check aria-hidden className="h-4 w-4 text-emerald-600" /> : <Share2 aria-hidden className="h-4 w-4" />}
+            {copiedLink ? "Link copied!" : "Share Media Kit"}
           </button>
         </div>
       ) : (
