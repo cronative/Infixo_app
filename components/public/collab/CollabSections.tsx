@@ -55,7 +55,7 @@ export function WorkWithMe({
         <ul className={CARD_LIST}>
           {shownPackages.map((pkg) => (
             <li key={pkg.id}>
-              <PackageCard pkg={pkg} pricesPlusGst={pricesPlusGst} onRequest={onEnquire} preview={preview} />
+              <PackageCard compact pkg={pkg} pricesPlusGst={pricesPlusGst} onRequest={onEnquire} preview={preview} />
             </li>
           ))}
         </ul>

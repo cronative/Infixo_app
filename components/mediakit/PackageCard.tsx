@@ -45,7 +45,11 @@ export function formatPackagePrice(pkg: MediaKitPackage): string {
   if (pkg.details?.priceVisibility === "quote") return "Request quote";
   const unitLabel = pkg.priceUnit && pkg.priceUnit !== "per_package" ? UNIT_MAP[pkg.priceUnit] || "" : "";
   const prefix = pkg.isStartingPrice ? "From " : "";
-  const rupee = (v: string) => (v.startsWith("₹") ? v : `₹${v}`);
+  // "8000" / "₹8000" → "₹8,000"; anything that isn't a plain number is kept as typed.
+  const rupee = (v: string) => {
+    const bare = v.replace(/^₹\s*/, "");
+    return /^\d+(\.\d+)?$/.test(bare) ? `₹${Number(bare).toLocaleString("en-IN")}` : v.startsWith("₹") ? v : `₹${v}`;
+  };
   const min = (pkg.minPrice || "").trim();
   const max = (pkg.maxPrice || "").trim();
   if (min && max && min !== max) return `${rupee(min)}–${rupee(max)}${unitLabel ? ` ${unitLabel}` : ""}`;
@@ -73,6 +77,7 @@ export function PackageCard({
   pricesPlusGst,
   onRequest,
   preview = false,
+  compact = false,
 }: {
   pkg: MediaKitPackage;
   /** Creator-wide "prices + 18% GST" (media kit commercial terms). */
@@ -80,6 +85,8 @@ export function PackageCard({
   onRequest?: (pkg: MediaKitPackage) => void;
   /** Dashboard preview: the CTA is shown but does nothing. */
   preview?: boolean;
+  /** Tighter layout for the public profile's Work With Me: same details, inline lists. */
+  compact?: boolean;
 }) {
   const d = pkg.details;
   const badgeText = (pkg.packageName || pkg.badge || "").trim();
@@ -122,6 +129,109 @@ export function PackageCard({
     req?.location && `Location / travel: ${req.location}`,
     req?.conditions,
   ].filter(Boolean) as string[];
+
+  if (compact) {
+    // Delivery is already in the meta line, so the terms line starts after it.
+    const termLine = terms.filter((t) => t.label !== "Delivery" && t.label !== "Revisions").map((t) => (t.label === "Revisions" || t.label === "Language" ? t.value : `${t.label}: ${t.value}`));
+    return (
+      <article
+        className={`${CARD_ITEM} space-y-2 p-3`}
+        style={pkg.isPopular ? { borderColor: "color-mix(in srgb, var(--accent-text) 45%, var(--surface-border))" } : undefined}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <h4 title={pkg.title} className="line-clamp-2 min-w-0 break-words text-[14px] font-bold leading-[19px] text-(--text)">
+            {pkg.title || "Untitled package"}
+          </h4>
+          <p className="shrink-0 text-right leading-tight">
+            <span className="block whitespace-nowrap text-[14px] font-extrabold text-(--accent-text)">{price}</span>
+            {gst && <span className="text-[10px] font-semibold text-(--text-muted)">{gst}</span>}
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-(--text-muted)">
+          {pkg.isPopular && (
+            <span style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }} className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-bold">
+              <Star aria-hidden className="h-2.5 w-2.5 fill-current" />
+              Popular
+            </span>
+          )}
+          {platforms.length > 0 ? (
+            <span className="inline-flex items-center gap-1" aria-label={platforms.join(", ")}>
+              {platforms.map((p) => (
+                <span key={p}>{PLATFORM_ICON[p]}</span>
+              ))}
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 font-medium">
+              {platformIcon(pkg.platform)}
+              {pkg.platform}
+            </span>
+          )}
+          {d && <span className="rounded-full bg-(--accent-soft) px-2 py-0.5 font-bold text-(--accent-text)">{collabTypeShort(d.collabType)}</span>}
+          {pkg.turnaroundDays > 0 && (
+            <span className="inline-flex items-center gap-1">
+              <Clock aria-hidden className="h-3 w-3" />
+              {pkg.turnaroundDays} {pkg.turnaroundDays === 1 ? "day" : "days"}
+            </span>
+          )}
+          {d?.revisions && <span>{revisionsLabel(d.revisions)}</span>}
+          {pkg.category && <span className="font-semibold text-(--text-secondary)">{pkg.category}</span>}
+          {badgeText && <span className="rounded-full bg-(--accent-soft) px-2 py-0.5 font-bold text-(--accent-text)">{badgeText}</span>}
+        </div>
+
+        {description && <p className="line-clamp-2 break-words text-[12px] leading-[17px] text-(--text-secondary)">{description}</p>}
+
+        {deliverables.length > 0 && (
+          <ul className="space-y-1 rounded-[5px] bg-(--surface) px-2.5 py-2">
+            {deliverables.map((it, i) => (
+              <li key={i} className="flex items-start gap-1.5 text-[12px] leading-[17px]">
+                <Check aria-hidden className="mt-0.5 h-3 w-3 shrink-0 text-(--accent-text)" strokeWidth={3} />
+                <span className="min-w-0 break-words">
+                  <span className="font-semibold text-(--text)">{it.text}</span>
+                  {(it.extras.length > 0 || it.notes) && (
+                    <span className="text-(--text-muted)"> · {[...it.extras, it.notes].filter(Boolean).join(" · ")}</span>
+                  )}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {d?.inclusions?.length ? (
+          <p className="text-[12px] leading-[17px] text-(--text-secondary)">
+            <span className="font-semibold text-(--text)">Includes: </span>
+            {d.inclusions.join(" · ")}
+          </p>
+        ) : null}
+
+        {d && d.collabType !== "paid" && d.barterDetails && (
+          <p className="text-[12px] leading-[17px] text-(--text-secondary)">
+            <span className="font-semibold text-(--accent-text)">Barter: </span>
+            {d.barterDetails}
+          </p>
+        )}
+
+        {termLine.length > 0 && <p className="text-[11px] leading-4 text-(--text-muted)">{termLine.join(" · ")}</p>}
+
+        {requirements.length > 0 && (
+          <p className="text-[11px] leading-4 text-(--text-muted)">
+            <span className="font-semibold">Good to know: </span>
+            {requirements.join(" · ")}
+          </p>
+        )}
+
+        <button
+          type="button"
+          onClick={() => (preview ? undefined : onRequest?.(pkg))}
+          style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
+          className="no-print inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-[5px] px-3 text-[13px] font-semibold transition-opacity hover:opacity-95 cursor-pointer"
+        >
+          Request collaboration
+          <ArrowUpRight aria-hidden className="h-3.5 w-3.5" />
+        </button>
+      </article>
+    );
+  }
 
   return (
     <article
