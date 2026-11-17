@@ -2,12 +2,9 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import { createPortal } from "react-dom";
-import Image from "next/image";
-import Link from "next/link";
 import { renderSVG } from "uqr";
 import {
   Sparkles,
-  Play,
   Check,
   X,
   Star,
@@ -16,11 +13,16 @@ import {
   MessageSquare,
   ArrowUpRight,
   Clock,
-  ExternalLink,
-  Film,
   ShieldCheck,
   Users,
+  UsersRound,
   Loader2,
+  MapPin,
+  Clapperboard,
+  Target,
+  Handshake,
+  IndianRupee,
+  Mail,
 } from "lucide-react";
 import {
   CreatorProfile,
@@ -38,14 +40,20 @@ import {
   FacebookIcon,
 } from "@/components/shared/BrandIcons";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
-import { SeriesPoster } from "@/components/shared/SeriesPoster";
 import { PublicTeamGroups } from "@/components/team/PublicTeamGroups";
 import { formatFans, getCreatorEra, calculateTotalFanbase } from "@/lib/creatorEra";
-import { EraAwardMedal } from "@/components/shared/EraBadge";
-import { formatCount } from "@/utils/format";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { useToast } from "@/contexts/ToastContext";
 import { PDF_PREPARING_LABEL, useMediaKitPdf } from "@/hooks/useMediaKitPdf";
+import {
+  BrandPlatformIcon,
+  CARD_ITEM,
+  CARD_ITEM_HOVER,
+  CARD_LIST,
+  PLATFORM_BRAND,
+  SectionCard,
+  SeriesRow,
+} from "@/components/public/ui";
 
 export interface MediaKitV2ContentProps {
   profile: CreatorProfile;
@@ -62,15 +70,8 @@ export interface MediaKitV2ContentProps {
   isPrint?: boolean;
 }
 
-function getSeriesEpisodes(s: Series): any[] {
-  if (s && Array.isArray(s.seasons) && s.seasons.length > 0) {
-    return s.seasons.flatMap((sn) => (sn && Array.isArray(sn.episodes) ? sn.episodes : []));
-  }
-  if (s && Array.isArray((s as any).episodes)) {
-    return (s as any).episodes;
-  }
-  return [];
-}
+const NO_COLORS = {};
+const SERIF = "Georgia, 'Times New Roman', serif";
 
 /** Small brand glyph for a package's platform ("Instagram", "Instagram Bundle", "YouTube" …). */
 function platformIcon(platform?: string) {
@@ -236,13 +237,44 @@ export function MediaKitV2Content({
   }, [team]);
 
   const showHello = Boolean(introText || nowMaking || profile.photoDataUrl || settings?.availability);
-  const showAudience = Boolean(calculatedFans > 0 || audienceDesc || connectedPlatforms.length > 0);
+  const showAudience = Boolean(calculatedFans > 0 || audienceDesc || connectedPlatforms.length > 0 || (settings?.pastBrands || []).some((b) => b?.name?.trim()));
   const showSeries = topSeries.length > 0;
   const showFitChips = fitTags.length > 0 || nofitTags.length > 0;
   const showPackages = activePackages.length > 0;
   const showPromises = promises.length > 0;
   const showReviews = visibleReviews.length > 0;
   const showTeam = !hideTeam && activeTeamMembers.length > 0;
+
+  // Data the creator already saved elsewhere, now shown on the kit.
+  const locationText = [profile.city, profile.state, profile.country].map((v) => (v || "").trim()).filter(Boolean).join(", ");
+  const niches = useMemo(() => {
+    const raw = settings?.categories;
+    const list = Array.isArray(raw) ? raw : (raw || "").split(",");
+    return Array.from(new Set(list.map((c) => String(c).trim()).filter(Boolean))).slice(0, 6);
+  }, [settings?.categories]);
+  const pastBrands = useMemo(
+    () => Array.from(new Set((settings?.pastBrands || []).map((b) => (b?.name || "").trim()).filter(Boolean))).slice(0, 12),
+    [settings?.pastBrands]
+  );
+  // Instagram / YouTube / Facebook first, then any other connected platform.
+  const allPlatforms = useMemo(() => {
+    const extra = (["twitter", "linkedin", "threads", "snapchat", "pinterest", "twitch", "spotify", "tiktok"] as const)
+      .map((key) => {
+        const acc = socials?.[key];
+        const handle = (acc?.username || "").replace(/^@/, "").trim();
+        if (!acc || acc.enabled === false || (!acc.url && !handle)) return null;
+        return {
+          key,
+          label: PLATFORM_BRAND[key]?.label || key,
+          handle: handle || acc.url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""),
+          count: acc.followers || 0,
+          unit: key === "spotify" ? "listeners" : "followers",
+          url: acc.url,
+        };
+      })
+      .filter(Boolean) as { key: string; label: string; handle: string; count: number; unit: string; url: string }[];
+    return [...connectedPlatforms, ...extra];
+  }, [connectedPlatforms, socials]);
 
   // India-specific commercial terms (GST, payment, barter, add-ons).
   const terms = settings?.commercialTerms;
@@ -273,19 +305,6 @@ export function MediaKitV2Content({
   const termAddOns = (terms?.addOns || []).filter((a) => a.label);
   const showTerms = termRows.length > 0 || termAddOns.length > 0;
 
-  // Section numbers follow the sections actually shown (no "03 → 05" gaps when one is empty).
-  const sectionOrder = [
-    showHello && "hello",
-    showAudience && "audience",
-    showSeries && "series",
-    showFitChips && "fit",
-    showPackages && "packages",
-    showTerms && "terms",
-    showPromises && "promises",
-    showReviews && "reviews",
-    showTeam && "team",
-  ].filter(Boolean) as string[];
-  const num = (key: string) => String(sectionOrder.indexOf(key) + 1).padStart(2, "0");
 
   const mediaKitPublicUrl = useMemo(() => {
     const base = process.env.NEXT_PUBLIC_SITE_URL || "https://inflixo.com";
@@ -338,729 +357,473 @@ export function MediaKitV2Content({
   };
 
   return (
-    <div className="w-full space-y-8 sm:space-y-10 py-3 sm:py-5 text-left selection:bg-[#7A2253]/15 selection:text-[#7A2253]">
-      {/* =================================================================== */}
-      {/* 1. HELLO — Warm Editorial Intro, Large Photo, Availability, Now Making */}
-      {/* =================================================================== */}
+    <div className="w-full space-y-2 text-left">
+      {/* 1. HELLO — who I am, where, availability */}
       {showHello && (
-        <section
-          aria-label="Hello"
-          className="rounded-xl border border-[#E7E0D6] bg-[#FAF7F2] p-5 sm:p-7 text-[#1C1917] shadow-2xs space-y-5"
+        <SectionCard
+          as="section"
+          icon={Sparkles}
+          title="Hello"
+          subtitle="Who I am and what I make."
+          count={availability === "busy" ? "Busy right now" : "Open for collabs"}
+          colors={NO_COLORS}
         >
-          {/* Availability + Reply Time Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-              {num("hello")} · Hello
-            </span>
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#E7E0D6] bg-white px-3 py-1 text-xs font-medium text-[#1C1917]">
-              <span
-                className={`h-2 w-2 rounded-full ${
-                  availability === "busy" ? "bg-amber-500" : "bg-emerald-500"
-                }`}
-              />
-              <span className="font-semibold">
-                {availability === "busy" ? "Heads-down creating" : "Open for collaborations"}
-              </span>
-              {replyTime && (
-                <>
-                  <span className="text-[#A8A29E]">·</span>
-                  <span className="text-[#57534E] inline-flex items-center gap-1">
-                    <Clock className="h-3 w-3 text-[#78716C]" />
-                    <span>Replies {replyTime.toLowerCase()}</span>
-                  </span>
-                </>
-              )}
-            </div>
-          </div>
+          <div className={CARD_LIST}>
+            <div className={`${CARD_ITEM} space-y-3 p-3.5`}>
+              <div className="flex items-start gap-3">
+                <CreatorAvatar
+                  src={profile.photoDataUrl}
+                  name={displayName}
+                  className="h-14 w-14 shrink-0 rounded-full object-cover"
+                  textClassName="text-lg font-bold text-white"
+                  style={{ backgroundColor: "var(--accent)" }}
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="break-words text-[16px] font-bold leading-5 text-(--text)">{displayName}</p>
+                  {locationText && (
+                    <p className="mt-0.5 flex items-center gap-1 text-[12px] text-(--text-muted)">
+                      <MapPin aria-hidden className="h-3.5 w-3.5 shrink-0" />
+                      <span className="min-w-0 break-words">{locationText}</span>
+                    </p>
+                  )}
+                  <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[12px] text-(--text-muted)">
+                    <span className={`h-2 w-2 rounded-full ${availability === "busy" ? "bg-amber-500" : "bg-emerald-500"}`} />
+                    <span className="font-semibold text-(--text)">{availability === "busy" ? "Heads-down creating" : "Open for collaborations"}</span>
+                    {replyTime && (
+                      <>
+                        <span aria-hidden>·</span>
+                        <Clock aria-hidden className="h-3 w-3" />
+                        <span>Replies {replyTime.toLowerCase()}</span>
+                      </>
+                    )}
+                  </p>
+                </div>
+              </div>
 
-          {/* Large Creator Portrait + Quote Typography Intro */}
-          <div className="flex flex-col sm:flex-row items-start gap-5 sm:gap-6">
-            <div className="relative h-24 w-24 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-2xl border-2 border-white bg-[#EFE8DF] shadow-md">
-              <CreatorAvatar
-                src={profile.photoDataUrl}
-                name={displayName}
-                className="h-full w-full rounded-2xl object-cover"
-                textClassName="text-2xl font-serif font-bold text-white"
-                style={{ backgroundColor: "#7A2253" }}
-              />
-            </div>
-
-            <div className="min-w-0 flex-1 space-y-3">
-              {introText ? (
-                <blockquote
-                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-                  className="text-base sm:text-lg leading-relaxed text-[#1C1917] italic font-normal"
-                >
-                  &ldquo;{introText}&rdquo;
-                </blockquote>
-              ) : (
-                <p
-                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-                  className="text-base sm:text-lg leading-relaxed text-[#1C1917]"
-                >
-                  Hi, I&apos;m {displayName} — I create original stories and thoughtful partnerships for people who care about craft.
-                </p>
-              )}
+              <blockquote style={{ fontFamily: SERIF }} className="text-[15px] italic leading-relaxed text-(--text)">
+                &ldquo;{introText || `Hi, I'm ${displayName} — I create original stories and thoughtful partnerships for people who care about craft.`}&rdquo;
+              </blockquote>
 
               {nowMaking && (
-                <div className="inline-flex items-center gap-2 rounded-lg border border-[#E7E0D6] bg-white/90 px-3.5 py-2 text-xs text-[#44403C]">
-                  <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#7A2253]" />
+                <p className="flex items-start gap-2 rounded-[5px] bg-(--accent-soft) px-3 py-2 text-[13px] text-(--text)">
+                  <Sparkles aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0 text-(--accent-text)" />
                   <span>
-                    <strong className="font-semibold text-[#7A2253]">Now making:</strong>{" "}
-                    {nowMaking}
+                    <strong className="font-semibold text-(--accent-text)">Now making:</strong> {nowMaking}
                   </span>
-                </div>
+                </p>
+              )}
+
+              {niches.length > 0 && (
+                <ul className="flex flex-wrap gap-1.5" aria-label="Content niches">
+                  {niches.map((n) => (
+                    <li key={n} className="rounded-full bg-(--accent-soft) px-2.5 py-0.5 text-[12px] font-medium text-(--accent-text)">
+                      {n}
+                    </li>
+                  ))}
+                </ul>
               )}
             </div>
           </div>
-        </section>
+        </SectionCard>
       )}
 
-      {/* =================================================================== */}
-      {/* 2. AUDIENCE — "{fans} people chose to follow along" + Era "earned, not bought" */}
-      {/* =================================================================== */}
+      {/* 2. AUDIENCE — fans, numbers brands ask for, platforms, past brands */}
       {showAudience && (
-        <section
-          aria-label="Audience"
-          className="rounded-xl border border-[#E7E0D6] bg-[#FAF7F2] p-5 sm:p-7 text-[#1C1917] shadow-2xs space-y-4"
+        <SectionCard
+          as="section"
+          icon={UsersRound}
+          title="Audience"
+          subtitle={creatorEra ? `${creatorEra.badge} · earned, not bought.` : "The people who tune in."}
+          count={calculatedFans > 0 ? `${formatFans(calculatedFans)} fans` : undefined}
+          colors={NO_COLORS}
         >
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-              {num("audience")} · Audience
-            </span>
-            {creatorEra && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E7E0D6] bg-white px-3 py-1 text-xs font-semibold text-[#44403C]">
-                <EraAwardMedal era={creatorEra.era} stage={creatorEra.stage} size={18} />
-                <span>{creatorEra.badge}</span>
-                <span className="text-[#78716C] font-normal italic">— earned, not bought</span>
-              </span>
-            )}
-          </div>
-
-          <div className="space-y-2.5">
-            {calculatedFans > 0 && (
-              <h3
-                style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-                className="text-2xl sm:text-[28px] font-normal tracking-tight text-[#1C1917] leading-snug"
-              >
-                <span className="font-bold text-[#7A2253]">{formatFans(calculatedFans)}</span>{" "}
-                people chose to follow along.
-              </h3>
-            )}
-
-            {!creatorEra && calculatedFans > 0 && (
-              <p className="text-xs italic text-[#78716C]">Earned, not bought.</p>
-            )}
-
+          <div className={CARD_LIST}>
             {audienceDesc && (
-              <p className="text-sm sm:text-[15px] leading-relaxed text-[#44403C]">
-                {audienceDesc}
-              </p>
+              <p className={`${CARD_ITEM} p-3.5 text-[13px] leading-5 text-(--text-secondary)`}>{audienceDesc}</p>
             )}
-          </div>
 
-          {audienceStats.length > 0 && (
-            <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {audienceStats.map((t) => (
-                <div key={t.label} className="rounded-lg border border-[#E7E0D6] bg-white px-3 py-2.5">
-                  <dt className="text-[11px] font-semibold uppercase tracking-wider text-[#78716C]">{t.label}</dt>
-                  <dd title={t.value} className="mt-0.5 line-clamp-2 break-words text-[15px] font-bold leading-5 text-[#1C1917]">
-                    {t.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          )}
-
-          {/* Platform reach chips */}
-          {connectedPlatforms.length > 0 && (
-            <div className="pt-2 border-t border-[#E7E0D6]/80 flex flex-wrap items-center gap-2">
-              {connectedPlatforms.map((plat) => (
-                <a
-                  key={plat.key}
-                  href={plat.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-[#E7E0D6] bg-white px-3.5 py-1.5 text-xs text-[#1C1917] hover:border-[#7A2253]/40 transition-colors"
-                >
-                  {plat.icon}
-                  <span className="font-semibold">@{plat.handle}</span>
-                  {plat.count > 0 && (
-                    <span className="text-[#78716C]">
-                      <span className="font-semibold text-[#1C1917]">{formatCount(plat.count)}</span> {plat.unit}
-                    </span>
-                  )}
-                  <ArrowUpRight className="h-3 w-3 text-[#A8A29E]" />
-                </a>
-              ))}
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* =================================================================== */}
-      {/* 3. SERIES — Top 3 Series with Inline Play                           */}
-      {/* =================================================================== */}
-      {showSeries && (
-        <section
-          aria-label="Original Series"
-          className="rounded-xl border border-[#E7E0D6] bg-[#FAF7F2] p-5 sm:p-7 text-[#1C1917] shadow-2xs space-y-5"
-        >
-          <div className="space-y-1">
-            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-              {num("series")} · Original Series
-            </span>
-            <h3
-              style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-              className="text-xl sm:text-2xl font-normal text-[#1C1917]"
-            >
-              Stories my audience comes back for
-            </h3>
-          </div>
-
-          <div className="space-y-3.5">
-            {topSeries.map((s) => {
-              const episodes = getSeriesEpisodes(s);
-              const posterSrc = s.posterDataUrl || episodes[0]?.thumbnailDataUrl || null;
-              const epCount = episodes.length;
-              const episodeText = `${epCount} ${epCount === 1 ? "episode" : "episodes"}`;
-              const metaParts = [
-                s.genre?.trim(),
-                s.language?.trim(),
-                episodeText,
-                s.platform?.trim() || "Series",
-              ].filter(Boolean);
-
-              return (
-                <div
-                  key={s.id}
-                  className="overflow-hidden rounded-xl border border-[#E7E0D6] bg-white transition-all print-avoid-break"
-                >
-                  <div className="flex flex-col sm:flex-row items-stretch gap-3.5 p-3.5 sm:p-4">
-                    <Link
-                      href={`/${cleanHandle}/series`}
-                      className="group relative h-28 sm:h-24 sm:w-40 shrink-0 overflow-hidden rounded-lg bg-[#1C1917]"
-                    >
-                      <SeriesPoster
-                        src={posterSrc}
-                        title={s.title}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        iconSize={22}
-                      />
-                    </Link>
-
-                    <div className="min-w-0 flex-1 flex flex-col justify-between gap-2">
-                      <div>
-                        <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-semibold text-[#78716C]">
-                          {metaParts.map((part, i) => (
-                            <React.Fragment key={i}>
-                              {i > 0 && <span>·</span>}
-                              <span>{part}</span>
-                            </React.Fragment>
-                          ))}
-                        </div>
-                        <h4 className="mt-0.5 text-base font-bold text-[#1C1917] leading-snug">
-                          {s.title}
-                        </h4>
-                        {s.description && (
-                          <p className="mt-1 text-xs text-[#57534E] line-clamp-2 leading-relaxed">
-                            {s.description}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="pt-1">
-                        <Link
-                          href={`/${cleanHandle}/series`}
-                          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#7A2253] hover:underline"
-                        >
-                          <span>Watch series →</span>
-                        </Link>
-                      </div>
-                    </div>
+            {audienceStats.length > 0 && (
+              <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {audienceStats.map((t) => (
+                  <div key={t.label} className={`${CARD_ITEM} px-3 py-2.5`}>
+                    <dt className="text-[11px] font-semibold uppercase tracking-wider text-(--text-muted)">{t.label}</dt>
+                    <dd title={t.value} className="mt-0.5 line-clamp-2 break-words text-[15px] font-bold leading-5 text-(--text)">
+                      {t.value}
+                    </dd>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-      {/* =================================================================== */}
-      {/* 4. FIT / NOT-FIT CHIPS                                              */}
-      {/* =================================================================== */}
-      {showFitChips && (
-        <section
-          aria-label="Brand Fit"
-          className="rounded-xl border border-[#E7E0D6] bg-[#FAF7F2] p-5 sm:p-7 text-[#1C1917] shadow-2xs space-y-5"
-        >
-          <div className="space-y-1">
-            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-              {num("fit")} · Brand Fit
-            </span>
-            <h3
-              style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-              className="text-xl sm:text-2xl font-normal text-[#1C1917]"
-            >
-              Where I add the most value
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {fitTags.length > 0 && (
-              <div className="rounded-xl border border-emerald-200/80 bg-white p-4 space-y-2.5">
-                <p className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
-                  <Check className="h-3.5 w-3.5 stroke-[2.5]" />
-                  <span>Great fit for</span>
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {fitTags.map((tag, idx) => (
-                    <span
-                      key={idx}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-900"
-                    >
-                      <span>✓</span>
-                      <span>{tag}</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
+                ))}
+              </dl>
             )}
 
-            {nofitTags.length > 0 && (
-              <div className="rounded-xl border border-rose-200/80 bg-white p-4 space-y-2.5">
-                <p className="text-xs font-bold uppercase tracking-wider text-rose-800 flex items-center gap-1.5">
-                  <X className="h-3.5 w-3.5 stroke-[2.5]" />
-                  <span>Probably not the right fit</span>
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {nofitTags.map((tag, idx) => (
-                    <span
-                      key={idx}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 border border-rose-200 px-3 py-1 text-xs font-semibold text-rose-900"
-                    >
-                      <span>✕</span>
-                      <span>{tag}</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* =================================================================== */}
-      {/* 5. PACKAGES — "The story I'd tell for you" & "What your brand gets" */}
-      {/* =================================================================== */}
-      {/* Page break between Page 1 (Who I am) and Page 2 (Working together) for print */}
-      <div
-        className="print-page-break hidden print:block"
-        style={{ pageBreakAfter: "always", breakAfter: "page" }}
-      />
-      {showPackages && (
-        <section
-          aria-label="Collaboration Packages"
-          className="rounded-xl border border-[#E7E0D6] bg-[#FAF7F2] p-5 sm:p-7 text-[#1C1917] shadow-2xs space-y-5 print-avoid-break"
-        >
-          <div className="flex flex-wrap items-end justify-between gap-2">
-            <div className="space-y-1">
-              <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-                {num("packages")} · Ways We Can Collaborate
-              </span>
-              <h3
-                style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-                className="text-xl sm:text-2xl font-normal text-[#1C1917]"
+            {allPlatforms.map((plat) => (
+              <a
+                key={plat.key}
+                href={plat.url || undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-2.5 p-2.5 ${CARD_ITEM} ${CARD_ITEM_HOVER}`}
               >
-                Partnership formats &amp; stories
-              </h3>
-            </div>
-          </div>
+                <BrandPlatformIcon platform={plat.key} size={28} />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[13px] font-semibold leading-[18px] text-(--text)">{plat.label}</span>
+                  <span className="block break-all text-[12px] leading-4 text-(--text-muted)">@{plat.handle}</span>
+                </span>
+                {plat.count > 0 && (
+                  <span className="shrink-0 whitespace-nowrap text-[12px] text-(--text-muted)">
+                    <span className="text-[13px] font-semibold text-(--text)">{formatFans(plat.count)}</span> {plat.unit}
+                  </span>
+                )}
+                <ArrowUpRight aria-hidden className="h-4 w-4 shrink-0 text-(--text-muted)" />
+              </a>
+            ))}
 
-          <div className="space-y-4">
+            {pastBrands.length > 0 && (
+              <div className={`${CARD_ITEM} space-y-2 p-3.5`}>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-(--text-muted)">Brands I&apos;ve worked with</p>
+                <ul className="flex flex-wrap gap-1.5">
+                  {pastBrands.map((b) => (
+                    <li key={b} className="rounded-[5px] border border-(--surface-border) bg-(--surface) px-2.5 py-1 text-[12px] font-semibold text-(--text)">
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </SectionCard>
+      )}
+
+      {/* 3. SERIES — same rows as the profile */}
+      {showSeries && (
+        <SectionCard
+          as="section"
+          icon={Clapperboard}
+          title="Original Series"
+          subtitle="Stories my audience comes back for."
+          count={`${(series || []).length} series`}
+          colors={NO_COLORS}
+        >
+          <div className={CARD_LIST}>
+            {topSeries.map((s) => (
+              <SeriesRow
+                key={s.id}
+                series={s}
+                seriesHref={`/${cleanHandle}/series/${s.id}`}
+                onOpenSeries={(e, selected) => {
+                  if (isInformational) {
+                    e.preventDefault();
+                    showToast(`Opens ${selected.title} series page ✨`);
+                  }
+                }}
+              />
+            ))}
+          </div>
+        </SectionCard>
+      )}
+
+      {/* 4. BRAND FIT */}
+      {showFitChips && (
+        <SectionCard as="section" icon={Target} title="Brand Fit" subtitle="Where I add the most value." colors={NO_COLORS}>
+          <div className={CARD_LIST}>
+            {fitTags.length > 0 && (
+              <div className={`${CARD_ITEM} space-y-2 p-3.5`}>
+                <p className="flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider text-(--accent-text)">
+                  <Check aria-hidden className="h-3.5 w-3.5 stroke-[2.5]" />
+                  Great fit for
+                </p>
+                <ul className="flex flex-wrap gap-1.5">
+                  {fitTags.map((tag) => (
+                    <li key={tag} className="rounded-full bg-(--accent-soft) px-2.5 py-1 text-[12px] font-semibold text-(--accent-text)">
+                      {tag}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {nofitTags.length > 0 && (
+              <div className={`${CARD_ITEM} space-y-2 p-3.5`}>
+                <p className="flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider text-(--text-muted)">
+                  <X aria-hidden className="h-3.5 w-3.5 stroke-[2.5]" />
+                  Probably not the right fit
+                </p>
+                <ul className="flex flex-wrap gap-1.5">
+                  {nofitTags.map((tag) => (
+                    <li key={tag} className="rounded-full border border-(--surface-border) bg-(--surface) px-2.5 py-1 text-[12px] font-medium text-(--text-muted)">
+                      {tag}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </SectionCard>
+      )}
+
+      {/* Print: page 2 (working together) starts here */}
+      <div className="print-page-break hidden print:block" style={{ pageBreakAfter: "always", breakAfter: "page" }} />
+
+      {/* 5. PACKAGES */}
+      {showPackages && (
+        <SectionCard
+          as="section"
+          icon={Handshake}
+          title="Work With Me"
+          subtitle="Partnership formats & stories."
+          count={`${activePackages.length} ${activePackages.length === 1 ? "package" : "packages"}`}
+          colors={NO_COLORS}
+          className="print-avoid-break"
+        >
+          <div className={CARD_LIST}>
             {activePackages.map((pkg) => {
               const badgeText = (pkg.packageName || pkg.badge || "").trim();
               const storyPitch = (pkg.storyPitch || pkg.description || "").trim();
-
+              const hasPrice = Boolean((pkg.price || pkg.minPrice || "").trim());
               return (
-                <div
-                  key={pkg.id}
-                  className="rounded-xl border border-[#E7E0D6] bg-white p-5 sm:p-6 space-y-4 transition-all hover:border-[#7A2253]/40"
-                >
-                  {/* Top Meta + Badge */}
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div className="space-y-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        {pkg.category && (
-                          <span className="rounded-md bg-[#FAF7F2] border border-[#E7E0D6] px-2.5 py-0.5 text-[11px] font-semibold text-[#57534E]">
-                            {pkg.category}
-                          </span>
-                        )}
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-[#78716C]">
-                          {platformIcon(pkg.platform)}
-                          {pkg.platform}
-                        </span>
-                        {pkg.turnaroundDays > 0 && (
-                          <span className="text-xs text-[#78716C]">
-                            · ~{pkg.turnaroundDays} {pkg.turnaroundDays === 1 ? "day" : "days"}
-                          </span>
-                        )}
-                        {badgeText && (
-                          <span className="rounded-full bg-[#7A2253]/10 px-2.5 py-0.5 text-[11px] font-bold text-[#7A2253]">
-                            {badgeText}
-                          </span>
-                        )}
-                      </div>
-
-                      <h4
-                        style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-                        className="text-lg sm:text-xl font-bold text-[#1C1917]"
-                      >
-                        {pkg.title}
-                      </h4>
-                    </div>
-
-                    <div className="text-left sm:text-right">
-                      <div className="text-base sm:text-lg font-extrabold text-[#7A2253]">
-                        {formatPackagePrice(pkg)}
-                        {terms?.pricesPlusGst && (pkg.price || pkg.minPrice || "").trim() && (
-                          <span className="ml-1 text-[12px] font-semibold text-[#78716C]">+ GST</span>
-                        )}
-                      </div>
-                      <p className="text-[11px] text-[#78716C]">Final scope shaped together</p>
-                    </div>
+                <article key={pkg.id} className={`${CARD_ITEM} space-y-3 p-3.5`}>
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-(--text-muted)">
+                    {pkg.category && (
+                      <span className="rounded-[5px] border border-(--surface-border) bg-(--surface) px-2 py-0.5 text-[11px] font-semibold text-(--text-secondary)">
+                        {pkg.category}
+                      </span>
+                    )}
+                    <span className="inline-flex items-center gap-1 font-medium">
+                      {platformIcon(pkg.platform)}
+                      {pkg.platform}
+                    </span>
+                    {pkg.turnaroundDays > 0 && (
+                      <span className="inline-flex items-center gap-1">
+                        <Clock aria-hidden className="h-3 w-3" />~{pkg.turnaroundDays} {pkg.turnaroundDays === 1 ? "day" : "days"}
+                      </span>
+                    )}
+                    {badgeText && (
+                      <span className="rounded-full bg-(--accent-soft) px-2 py-0.5 text-[11px] font-bold text-(--accent-text)">{badgeText}</span>
+                    )}
                   </div>
 
-                  {/* "The story I'd tell for you" */}
+                  <div className="flex items-start justify-between gap-3">
+                    <h4 title={pkg.title} className="line-clamp-2 min-w-0 break-words text-[15px] font-bold leading-5 text-(--text)">
+                      {pkg.title}
+                    </h4>
+                    <p className="shrink-0 text-right">
+                      <span className="block whitespace-nowrap text-[15px] font-extrabold text-(--accent-text)">{formatPackagePrice(pkg)}</span>
+                      {terms?.pricesPlusGst && hasPrice && <span className="text-[11px] font-semibold text-(--text-muted)">+ GST</span>}
+                    </p>
+                  </div>
+
                   {storyPitch && (
-                    <div className="rounded-lg border-l-2 border-[#7A2253] bg-[#FAF7F2] px-4 py-3 space-y-1">
-                      <p className="text-[11px] font-bold uppercase tracking-wider text-[#7A2253]">
-                        The story I&apos;d tell for you
-                      </p>
-                      <p
-                        style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-                        className="text-sm italic text-[#292524] leading-relaxed"
-                      >
+                    <div className="rounded-[5px] bg-(--accent-soft) px-3 py-2.5">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-(--accent-text)">The story I&apos;d tell for you</p>
+                      <p style={{ fontFamily: SERIF }} className="mt-0.5 text-[13px] italic leading-relaxed text-(--text)">
                         &ldquo;{storyPitch}&rdquo;
                       </p>
                     </div>
                   )}
 
-                  {/* "What your brand gets" */}
                   {Array.isArray(pkg.deliverables) && pkg.deliverables.length > 0 && (
-                    <div className="space-y-2">
-                      <p className="text-[11px] font-bold uppercase tracking-wider text-[#78716C]">
-                        What your brand gets
-                      </p>
-                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="space-y-1.5">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-(--text-muted)">What your brand gets</p>
+                      <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
                         {pkg.deliverables.map((item, i) => (
-                          <li
-                            key={i}
-                            className="flex items-start gap-2 text-xs sm:text-[13px] text-[#292524]"
-                          >
-                            <Check className="h-4 w-4 shrink-0 text-[#7A2253] mt-0.5" />
-                            <span>{item}</span>
+                          <li key={i} className="flex items-start gap-2 text-[13px] leading-[18px] text-(--text)">
+                            <Check aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0 text-(--accent-text)" strokeWidth={2.5} />
+                            <span className="min-w-0 break-words">{item}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
                   )}
 
-                  {/* CTA Row */}
-                  <div className="pt-2 border-t border-[#F5F1EB] flex flex-wrap items-center justify-end gap-3">
-                    <button
-                      type="button"
-                      onClick={() => onEnquirePackage?.(pkg)}
-                      className="inline-flex items-center gap-2 rounded-lg bg-[#7A2253] px-4 py-2.5 text-xs sm:text-sm font-semibold text-white hover:opacity-95 transition-opacity cursor-pointer"
-                    >
-                      <span>Book this package</span>
-                      <ArrowUpRight className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
+                  <button
+                    type="button"
+                    onClick={() => onEnquirePackage?.(pkg)}
+                    style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
+                    className="no-print inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-[5px] px-4 text-[14px] font-semibold transition-opacity hover:opacity-95 cursor-pointer"
+                  >
+                    Book this package
+                    <ArrowUpRight aria-hidden className="h-4 w-4" />
+                  </button>
+                </article>
               );
             })}
           </div>
-        </section>
+        </SectionCard>
       )}
 
-      {/* =================================================================== */}
-      {/* RATES & TERMS — GST, payment, barter, add-ons (India)               */}
-      {/* =================================================================== */}
+      {/* 6. RATES & TERMS — GST, payment, barter, add-ons (India) */}
       {showTerms && (
-        <section
-          aria-label="Rates and terms"
-          className="rounded-xl border border-[#E7E0D6] bg-[#FAF7F2] p-5 sm:p-7 text-[#1C1917] shadow-2xs space-y-4 print-avoid-break"
+        <SectionCard
+          as="section"
+          icon={IndianRupee}
+          title="Rates & Terms"
+          subtitle="Good to know before we start."
+          colors={NO_COLORS}
+          className="print-avoid-break"
         >
-          <div className="space-y-1">
-            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-              {num("terms")} · Rates &amp; Terms
-            </span>
-            <h3
-              style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-              className="text-xl sm:text-2xl font-normal text-[#1C1917]"
-            >
-              Good to know before we start
-            </h3>
-          </div>
-
-          {termRows.length > 0 && (
-            <dl className="divide-y divide-[#E7E0D6] rounded-lg border border-[#E7E0D6] bg-white">
-              {termRows.map((row) => (
-                <div key={row.label} className="flex flex-col gap-0.5 px-4 py-3 sm:flex-row sm:items-baseline sm:gap-4">
-                  <dt className="w-24 shrink-0 text-[11px] font-bold uppercase tracking-wider text-[#78716C]">{row.label}</dt>
-                  <dd className="min-w-0 break-words text-[14px] font-medium text-[#1C1917]">{row.value}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
-
-          {termAddOns.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[#78716C]">Add-ons</p>
-              <ul className="divide-y divide-[#E7E0D6] rounded-lg border border-[#E7E0D6] bg-white">
-                {termAddOns.map((a, i) => (
-                  <li key={`${a.label}-${i}`} className="flex items-center justify-between gap-3 px-4 py-2.5">
-                    <span className="min-w-0 break-words text-[13px] text-[#292524]">{a.label}</span>
-                    <span className="shrink-0 whitespace-nowrap text-[13px] font-bold text-[#7A2253]">
-                      {a.price ? (a.price.startsWith("₹") ? a.price : `₹${a.price}`) : "On request"}
-                    </span>
-                  </li>
+          <div className={CARD_LIST}>
+            {termRows.length > 0 && (
+              <dl className={`${CARD_ITEM} divide-y divide-(--surface-border)`}>
+                {termRows.map((row) => (
+                  <div key={row.label} className="flex flex-col gap-0.5 px-3.5 py-3 sm:flex-row sm:items-baseline sm:gap-4">
+                    <dt className="w-24 shrink-0 text-[11px] font-bold uppercase tracking-wider text-(--text-muted)">{row.label}</dt>
+                    <dd className="min-w-0 break-words text-[14px] font-medium text-(--text)">{row.value}</dd>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* =================================================================== */}
-      {/* 6. PROMISE — Creator's Selected Promises                            */}
-      {/* =================================================================== */}
-      {showPromises && (
-        <section
-          aria-label="Creator Promise"
-          className="rounded-xl border border-[#E7E0D6] bg-[#FAF7F2] p-5 sm:p-7 text-[#1C1917] shadow-2xs space-y-4"
-        >
-          <div className="space-y-1">
-            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-              {num("promises")} · My Working Promise
-            </span>
-            <h3
-              style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-              className="text-xl sm:text-2xl font-normal text-[#1C1917]"
-            >
-              What you can count on when we work together
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {promises.map((promise, idx) => (
-              <div
-                key={idx}
-                className="flex items-start gap-3 rounded-xl border border-[#E7E0D6] bg-white p-3.5 sm:p-4"
-              >
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#7A2253]/10 text-[#7A2253]">
-                  <ShieldCheck className="h-3.5 w-3.5" />
-                </div>
-                <p className="text-xs sm:text-sm font-medium text-[#1C1917] leading-snug">
-                  {promise}
-                </p>
+              </dl>
+            )}
+            {termAddOns.length > 0 && (
+              <div className={CARD_ITEM}>
+                <p className="border-b border-(--surface-border) px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider text-(--text-muted)">Add-ons</p>
+                <ul className="divide-y divide-(--surface-border)">
+                  {termAddOns.map((a, i) => (
+                    <li key={`${a.label}-${i}`} className="flex items-center justify-between gap-3 px-3.5 py-2.5">
+                      <span className="min-w-0 break-words text-[13px] text-(--text)">{a.label}</span>
+                      <span className="shrink-0 whitespace-nowrap text-[13px] font-bold text-(--accent-text)">
+                        {a.price ? (a.price.startsWith("₹") ? a.price : `₹${a.price}`) : "On request"}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            ))}
+            )}
           </div>
-        </section>
+        </SectionCard>
       )}
 
-      {/* =================================================================== */}
-      {/* 7. REVIEWS — "Reviewed via Inflixo invite"                          */}
-      {/* =================================================================== */}
-      {showReviews && (
-        <section
-          aria-label="Brand Reviews"
-          className="rounded-xl border border-[#E7E0D6] bg-[#FAF7F2] p-5 sm:p-7 text-[#1C1917] shadow-2xs space-y-5"
-        >
-          <div className="flex flex-wrap items-end justify-between gap-2">
-            <div className="space-y-1">
-              <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-                {num("reviews")} · Kind Words From Partners
-              </span>
-              <h3
-                style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-                className="text-xl sm:text-2xl font-normal text-[#1C1917]"
-              >
-                What brands say after working together
-              </h3>
-            </div>
-          </div>
+      {/* 7. PROMISE */}
+      {showPromises && (
+        <SectionCard as="section" icon={ShieldCheck} title="My Promise" subtitle="What you can count on when we work together." colors={NO_COLORS}>
+          <ul className={CARD_LIST}>
+            {promises.map((promise) => (
+              <li key={promise} className={`${CARD_ITEM} flex items-start gap-2.5 p-3`}>
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--accent-soft) text-(--accent-text)">
+                  <ShieldCheck aria-hidden className="h-3.5 w-3.5" />
+                </span>
+                <span className="min-w-0 break-words pt-0.5 text-[13px] font-medium leading-[18px] text-(--text)">{promise}</span>
+              </li>
+            ))}
+          </ul>
+        </SectionCard>
+      )}
 
-          <div className="space-y-3.5">
+      {/* 8. REVIEWS */}
+      {showReviews && (
+        <SectionCard
+          as="section"
+          icon={Star}
+          title="Brand Love"
+          subtitle="What brands say after working together."
+          count={`${visibleReviews.length} ${visibleReviews.length === 1 ? "review" : "reviews"}`}
+          colors={NO_COLORS}
+        >
+          <div className={CARD_LIST}>
             {visibleReviews.map((rev) => {
               const stars = Number(rev.rating) || 5;
               return (
-                <blockquote
-                  key={rev.id}
-                  className="rounded-xl border border-[#E7E0D6] bg-white p-5 space-y-3"
-                >
+                <blockquote key={rev.id} className={`${CARD_ITEM} space-y-2 p-3.5`}>
                   <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-0.5 text-amber-500">
+                    <span className="flex items-center gap-0.5" aria-label={`${stars} out of 5`}>
                       {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-3.5 w-3.5 ${
-                            i < stars ? "fill-amber-400 text-amber-500" : "text-stone-200"
-                          }`}
-                        />
+                        <Star key={i} aria-hidden className={`h-3.5 w-3.5 ${i < stars ? "fill-amber-400 text-amber-500" : "text-(--surface-border)"}`} />
                       ))}
-                    </div>
-                    <span className="text-[11px] font-medium text-[#78716C]">
-                      Reviewed via Inflixo invite
                     </span>
+                    <span className="text-[11px] font-medium text-(--text-muted)">Reviewed via Inflixo invite</span>
                   </div>
-
                   {rev.comment && (
-                    <p
-                      style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-                      className="text-sm sm:text-base italic text-[#1C1917] leading-relaxed"
-                    >
+                    <p style={{ fontFamily: SERIF }} className="text-[14px] italic leading-relaxed text-(--text)">
                       &ldquo;{rev.comment.trim()}&rdquo;
                     </p>
                   )}
-
-                  <footer className="text-xs text-[#57534E] font-medium">
-                    <strong className="font-bold text-[#1C1917]">{rev.clientName}</strong>
+                  <footer className="text-[12px] text-(--text-muted)">
+                    <strong className="font-bold text-(--text)">{rev.clientName}</strong>
                     {rev.projectTitle ? ` · ${rev.projectTitle}` : ""}
                   </footer>
                 </blockquote>
               );
             })}
           </div>
-        </section>
+        </SectionCard>
       )}
 
-      {/* =================================================================== */}
-      {/* 8. TEAM — The People Behind The Camera                              */}
-      {/* =================================================================== */}
+      {/* 9. TEAM */}
       {showTeam && (
-        <section
-          aria-label="Team"
-          className="rounded-xl border border-[#E7E0D6] bg-[#FAF7F2] p-5 sm:p-7 text-[#1C1917] shadow-2xs space-y-4"
+        <SectionCard
+          as="section"
+          icon={Users}
+          title={team?.team?.teamName?.trim() || "My Crew"}
+          subtitle={team?.team?.teamDescription?.trim() || "The people behind the camera."}
+          count={`${activeTeamMembers.length} ${activeTeamMembers.length === 1 ? "member" : "members"}`}
+          colors={NO_COLORS}
         >
-          <div className="space-y-1">
-            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-              {num("team")} · {team?.team?.teamName || "The Crew"}
-            </span>
-            <h3
-              style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-              className="text-xl sm:text-2xl font-normal text-[#1C1917]"
-            >
-              The people behind the camera
-            </h3>
-            {team?.team?.teamDescription && team.team.teamDescription.trim() && (
-              <p className="text-xs sm:text-sm text-[#57534E] leading-relaxed">
-                {team.team.teamDescription.trim()}
-              </p>
-            )}
+          <div className="p-2.5">
+            <PublicTeamGroups members={activeTeamMembers} variant="profile" isInformational={isInformational} />
           </div>
-
-          <PublicTeamGroups
-            members={activeTeamMembers}
-            variant="mediakit"
-            isInformational={isInformational}
-          />
-        </section>
+        </SectionCard>
       )}
 
-      {/* =================================================================== */}
-      {/* 9. CLOSING LETTER + SCRIPT SIGNATURE + CTAs                         */}
-      {/* =================================================================== */}
-      <section
-        aria-label="Closing Letter"
-        className="rounded-xl border border-[#E7E0D6] bg-[#FAF7F2] p-6 sm:p-8 text-[#1C1917] shadow-2xs space-y-6 print-avoid-break"
-      >
-        <div className="space-y-3">
-          <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-            Before you go
-          </span>
-          <p
-            style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-            className="text-base sm:text-lg leading-relaxed text-[#292524]"
-          >
-            Thank you for taking the time to read through my work. Every collaboration I take on is
-            crafted to feel native to the people watching and meaningful for the brand behind it. If
-            you feel our stories align, I&apos;d love to hear what you&apos;re building.
-          </p>
-
-          <div className="pt-2">
-            <p className="text-xs uppercase tracking-widest text-[#78716C]">Warmly,</p>
-            <p
-              style={{
-                fontFamily: "'Caveat', 'Playfair Display', cursive, serif",
-              }}
-              className="mt-1 text-3xl sm:text-4xl text-[#7A2253] italic font-semibold select-none"
-            >
-              {signatureName}
+      {/* 10. CLOSING LETTER + QR + CTAs */}
+      <SectionCard as="section" icon={Mail} title="Before You Go" subtitle="Let's create something together." colors={NO_COLORS} className="print-avoid-break">
+        <div className={CARD_LIST}>
+          <div className={`${CARD_ITEM} space-y-3 p-3.5`}>
+            <p style={{ fontFamily: SERIF }} className="text-[15px] leading-relaxed text-(--text)">
+              Thank you for taking the time to read through my work. Every collaboration I take on is crafted to feel native to the
+              people watching and meaningful for the brand behind it. If you feel our stories align, I&apos;d love to hear what
+              you&apos;re building.
             </p>
-          </div>
-        </div>
-
-        {/* QR Code + verification banner for Print / Public */}
-        {qrSvg && (
-          <div className="pt-4 border-t border-[#E7E0D6] flex items-center justify-between gap-4">
-            <div className="space-y-1 text-left">
-              <p className="text-xs font-bold text-[#1C1917]">Official Creator Media Kit</p>
-              <p className="text-[11px] text-[#57534E]">Scan to watch series, inspect real-time audience &amp; enquire</p>
-              <p className="text-[10px] text-[#78716C]">
-                inflixo.com/{cleanHandle}/mediakit · Numbers as of {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+            <div>
+              <p className="text-[11px] uppercase tracking-widest text-(--text-muted)">Warmly,</p>
+              <p style={{ fontFamily: "'Caveat', 'Playfair Display', cursive, serif" }} className="mt-0.5 select-none text-3xl font-semibold italic text-(--accent-text)">
+                {signatureName}
               </p>
             </div>
-            <div
-              className="h-16 w-16 shrink-0 rounded-lg border border-[#E7E0D6] p-1 bg-white"
-              dangerouslySetInnerHTML={{ __html: qrSvg }}
-            />
           </div>
-        )}
 
-        {/* 3 CTAs: Start a conversation / Download PDF / Copy link */}
-        <div className={activeIsPrint ? "hidden" : "pt-4 border-t border-[#E7E0D6] flex flex-wrap items-center gap-2.5 no-print"}>
-          <button
-            type="button"
-            onClick={() => onEnquirePackage?.(null)}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#7A2253] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white hover:opacity-95 transition-opacity cursor-pointer shadow-xs"
-          >
-            <MessageSquare className="h-4 w-4" />
-            <span>Start a conversation</span>
-          </button>
+          {qrSvg && (
+            <div className={`${CARD_ITEM} flex items-center justify-between gap-4 p-3.5`}>
+              <div className="min-w-0 space-y-1">
+                <p className="text-[12px] font-bold text-(--text)">Official Creator Media Kit</p>
+                <p className="text-[11px] text-(--text-secondary)">Scan to watch series, see live numbers and enquire.</p>
+                <p className="break-all text-[11px] text-(--text-muted)">
+                  inflixo.com/{cleanHandle}/mediakit · Numbers as of{" "}
+                  {new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                </p>
+              </div>
+              <div className="h-16 w-16 shrink-0 rounded-[5px] border border-(--surface-border) bg-white p-1" dangerouslySetInnerHTML={{ __html: qrSvg }} />
+            </div>
+          )}
 
-          <button
-            type="button"
-            onClick={handleDownloadPdf}
-            disabled={pdfLoading}
-            aria-busy={pdfLoading}
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#D6CEC2] bg-white px-4 py-2.5 text-xs sm:text-sm font-semibold text-[#1C1917] hover:bg-[#F5F0E8] transition-colors cursor-pointer disabled:cursor-wait disabled:opacity-80"
-          >
-            {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin text-[#7A2253]" /> : <Download className="h-4 w-4 text-[#7A2253]" />}
-            <span>{pdfLoading ? PDF_PREPARING_LABEL : "Download PDF"}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handleCopyMediaKitLink}
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#D6CEC2] bg-white px-4 py-2.5 text-xs sm:text-sm font-semibold text-[#1C1917] hover:bg-[#F5F0E8] transition-colors cursor-pointer"
-          >
-            {copiedLink ? (
-              <>
-                <Check className="h-4 w-4 text-emerald-600" />
-                <span>Copied!</span>
-              </>
-            ) : (
-              <>
-                <Copy className="h-4 w-4 text-[#78716C]" />
-                <span>Copy link</span>
-              </>
-            )}
-          </button>
+          {!activeIsPrint && (
+            <div className="no-print grid grid-cols-1 gap-2 sm:grid-cols-3">
+              <button
+                type="button"
+                onClick={() => onEnquirePackage?.(null)}
+                style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
+                className="inline-flex h-10 items-center justify-center gap-1.5 rounded-[5px] px-4 text-[14px] font-semibold transition-opacity hover:opacity-95 cursor-pointer"
+              >
+                <MessageSquare aria-hidden className="h-4 w-4" />
+                Start a conversation
+              </button>
+              <button
+                type="button"
+                onClick={handleDownloadPdf}
+                disabled={pdfLoading}
+                aria-busy={pdfLoading}
+                className={`inline-flex h-10 items-center justify-center gap-1.5 px-4 text-[14px] font-semibold text-(--text) cursor-pointer disabled:cursor-wait ${CARD_ITEM} ${CARD_ITEM_HOVER}`}
+              >
+                {pdfLoading ? <Loader2 aria-hidden className="h-4 w-4 animate-spin text-(--accent-text)" /> : <Download aria-hidden className="h-4 w-4 text-(--accent-text)" />}
+                {pdfLoading ? PDF_PREPARING_LABEL : "Download PDF"}
+              </button>
+              <button
+                type="button"
+                onClick={handleCopyMediaKitLink}
+                className={`inline-flex h-10 items-center justify-center gap-1.5 px-4 text-[14px] font-semibold text-(--text) cursor-pointer ${CARD_ITEM} ${CARD_ITEM_HOVER}`}
+              >
+                {copiedLink ? <Check aria-hidden className="h-4 w-4 text-emerald-600" /> : <Copy aria-hidden className="h-4 w-4 text-(--text-muted)" />}
+                {copiedLink ? "Copied!" : "Copy link"}
+              </button>
+            </div>
+          )}
         </div>
-      </section>
+      </SectionCard>
 
       {/* Phones: always-visible contact bar (not in previews or the PDF). */}
       {showStickyBar && (
