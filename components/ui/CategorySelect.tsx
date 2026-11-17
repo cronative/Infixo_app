@@ -191,7 +191,7 @@ export function CategorySelect({
       >
         <div className="min-w-0 flex-1 flex flex-wrap gap-1.5 items-center">
           {selectedCategories.length === 0 ? (
-            <span className="text-[13px] font-medium text-[#94a3b8]">
+            <span className="text-[13px] font-medium text-[#A1A1AA]">
               Select niches or creator types... (e.g. Food, Comedy, Tech)
             </span>
           ) : (
@@ -256,16 +256,16 @@ export function CategorySelect({
           className="max-sm:h-[100dvh] max-sm:max-h-[100dvh] sm:max-h-[90dvh] max-w-3xl rounded-[5px]"
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-[#F1F5F9] bg-white px-5 sm:px-6 py-4 shrink-0">
+          <div className="flex items-center justify-between border-b border-[#F4F4F5] bg-white px-5 sm:px-6 py-4 shrink-0">
             <div className="flex items-center gap-3.5 min-w-0 pr-2">
               <div className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] text-[#7A2253] shrink-0">
                 <Tag className="h-5 w-5 stroke-[2.2]" />
               </div>
               <div className="min-w-0">
-                <h2 className="text-lg sm:text-xl font-bold text-[#0F172A] tracking-tight">
+                <h2 className="text-lg sm:text-xl font-bold text-[#18181B] tracking-tight">
                   What do you create?
                 </h2>
-                <p className="text-xs sm:text-sm text-[#64748B] mt-0.5 truncate sm:overflow-visible sm:whitespace-normal">
+                <p className="text-xs sm:text-sm text-[#6B6B76] mt-0.5 truncate sm:overflow-visible sm:whitespace-normal">
                   Select up to {max} niches or specific creator types that best describe you.
                 </p>
               </div>
@@ -275,7 +275,7 @@ export function CategorySelect({
               type="button"
               onClick={closePicker}
               aria-label="Close"
-              className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors cursor-pointer shrink-0"
+              className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#6B6B76] hover:text-[#18181B] hover:bg-[#F4F4F5] transition-colors cursor-pointer shrink-0"
             >
               <X className="h-5 w-5" />
             </button>
@@ -284,8 +284,8 @@ export function CategorySelect({
           {/* Modal Body - Scrollable */}
           <div className="flex-1 min-h-0 overflow-y-auto px-5 sm:px-6 py-4 space-y-5">
             {/* Search Input */}
-            <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                 <Search className="h-4 w-4" />
               </span>
               <input
@@ -293,7 +293,7 @@ export function CategorySelect({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search niches... (e.g. Food, Comedy, Tech, Gaming)"
-                className="h-10 flex-1 min-w-0 bg-transparent px-3 text-xs sm:text-sm font-medium text-[#0F172A] placeholder:text-[#94A3B8] outline-none"
+                className="h-10 flex-1 min-w-0 bg-transparent px-3 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#A1A1AA] outline-none"
                 autoFocus
               />
             </div>
@@ -304,9 +304,9 @@ export function CategorySelect({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <span className="text-base">🔥</span>
-                    <span className="text-sm font-bold text-[#0F172A]">Popular Niches</span>
+                    <span className="text-sm font-bold text-[#18181B]">Popular Niches</span>
                   </div>
-                  <span className="text-xs text-[#94A3B8] font-normal">Tap to select</span>
+                  <span className="text-xs text-[#A1A1AA] font-normal">Tap to select</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {POPULAR_NICHES_CONFIG.map((niche) => {
@@ -337,7 +337,7 @@ export function CategorySelect({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Layers className="h-4 w-4 text-[#7A2253]" />
-                    <span className="text-sm font-bold text-[#0F172A]">Selected Creator Types</span>
+                    <span className="text-sm font-bold text-[#18181B]">Selected Creator Types</span>
                   </div>
                   <span className="rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] px-2.5 py-0.5 text-xs font-semibold text-[#7A2253]">
                     {selectedCategories.length} / {max} selected
@@ -368,7 +368,7 @@ export function CategorySelect({
 
             {/* Categories Accordion Groups */}
             {filteredTaxonomy.length === 0 ? (
-              <div className="rounded-[5px] border border-dashed border-[#CBD5E1] px-4 py-10 text-center text-xs font-medium text-[#64748B]">
+              <div className="rounded-[5px] border border-dashed border-[#D4D4D8] px-4 py-10 text-center text-xs font-medium text-[#6B6B76]">
                 No creator types found matching &ldquo;{searchQuery}&rdquo;.
               </div>
             ) : (
@@ -403,7 +403,7 @@ export function CategorySelect({
 
                       {/* Accordion Body Grid */}
                       {isExpanded && (
-                        <div className="p-3 bg-white border-t border-[#F1F5F9]">
+                        <div className="p-3 bg-white border-t border-[#F4F4F5]">
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             {group.subtypes.map((type) => {
                               const isSelected = selectedCategories.includes(type);
@@ -419,20 +419,20 @@ export function CategorySelect({
                                     isSelected
                                       ? "bg-[#7A2253] border-[#7A2253] text-white shadow-xs"
                                       : isMaxReached
-                                        ? "bg-white border-[#E2E8F0] opacity-40 cursor-not-allowed text-[#94A3B8]"
-                                        : "bg-white border-[#E2E8F0] hover:border-[#CBD5E1] text-[#1E293B]"
+                                        ? "bg-white border-[#ECECF0] opacity-40 cursor-not-allowed text-[#A1A1AA]"
+                                        : "bg-white border-[#ECECF0] hover:border-[#D4D4D8] text-[#27272A]"
                                   }`}
                                 >
                                   <div
                                     className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-[3px] border transition-colors ${
                                       isSelected
                                         ? "border-white bg-[#7A2253] text-white"
-                                        : "border-[#CBD5E1] bg-white"
+                                        : "border-[#D4D4D8] bg-white"
                                     }`}
                                   >
                                     {isSelected && <Check className="h-3 w-3 stroke-[3]" />}
                                   </div>
-                                  <span className={`text-xs ${isSelected ? "font-semibold text-white" : "font-medium text-[#1E293B]"} truncate`}>
+                                  <span className={`text-xs ${isSelected ? "font-semibold text-white" : "font-medium text-[#27272A]"} truncate`}>
                                     {type}
                                   </span>
                                 </button>
@@ -449,7 +449,7 @@ export function CategorySelect({
           </div>
 
           {/* Sticky Footer */}
-          <div className="flex items-center justify-between border-t border-[#F1F5F9] bg-white px-5 sm:px-6 py-3.5 shrink-0">
+          <div className="flex items-center justify-between border-t border-[#F4F4F5] bg-white px-5 sm:px-6 py-3.5 shrink-0">
             <span className="text-sm font-bold text-[#7A2253]">
               {selectedCategories.length} / {max} selected
             </span>

@@ -116,10 +116,10 @@ export function SeriesCoverUpload({
     <div className={`w-full space-y-1.5 text-left ${className}`}>
       {/* Section Header */}
       <div className="flex items-center justify-between">
-        <label className="block text-[13px] font-medium text-[#0f172a]">
-          {label} <span className="font-normal text-[#94a3b8]">· 16:9, optional</span>
+        <label className="block text-[13px] font-medium text-[#18181B]">
+          {label} <span className="font-normal text-[#A1A1AA]">· 16:9, optional</span>
         </label>
-        <span className="text-[11px] text-[#94a3b8]">
+        <span className="text-[11px] text-[#A1A1AA]">
           JPG, PNG, WebP · max {maxSizeMB}MB
         </span>
       </div>
@@ -148,10 +148,10 @@ export function SeriesCoverUpload({
           }
         }}
         className={`group relative w-full overflow-hidden rounded-[5px] border transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7A2253]/30 ${value
-          ? "aspect-[16/9] border-[#e2e8f0] bg-slate-950"
+          ? "aspect-[16/9] border-[#ECECF0] bg-zinc-950"
           : isDragging
             ? "h-20 border-dashed border-[#7A2253] bg-[#7A2253]/[0.05]"
-            : "h-20 border-dashed border-[#cbd5e1] bg-[#f8fafc] hover:border-[#94a3b8] hover:bg-[#f1f5f9]"
+            : "h-20 border-dashed border-[#D4D4D8] bg-[#FAFAFB] hover:border-[#A1A1AA] hover:bg-[#F4F4F5]"
           }`}
       >
         {value ? (
@@ -166,7 +166,7 @@ export function SeriesCoverUpload({
             />
 
             {/* Dark gradient overlay on hover for clear button contrast */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/70 via-zinc-950/20 to-transparent opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" />
 
             {/* Actions Bar */}
             <div className="absolute bottom-3 inset-x-3 flex items-center justify-between gap-2 z-10">
@@ -176,9 +176,9 @@ export function SeriesCoverUpload({
                   e.stopPropagation();
                   fileInputRef.current?.click();
                 }}
-                className="tap-scale flex h-8 items-center gap-1.5 rounded-[5px] bg-white/95 hover:bg-white text-[#0f172a] px-3 text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+                className="tap-scale flex h-8 items-center gap-1.5 rounded-[5px] bg-white/95 hover:bg-white text-[#18181B] px-3 text-xs font-semibold shadow-sm transition-colors cursor-pointer"
               >
-                <Camera className="h-3.5 w-3.5 text-[#64748b]" />
+                <Camera className="h-3.5 w-3.5 text-[#6B6B76]" />
                 <span>Change Cover</span>
               </button>
 
@@ -187,9 +187,9 @@ export function SeriesCoverUpload({
                   type="button"
                   onClick={cyclePosition}
                   title={`Position: ${position.toUpperCase()} (Click to toggle)`}
-                  className="tap-scale flex h-8 items-center gap-1 rounded-[5px] bg-white/95 hover:bg-white text-[#475569] px-2.5 text-xs font-medium shadow-sm transition-colors cursor-pointer"
+                  className="tap-scale flex h-8 items-center gap-1 rounded-[5px] bg-white/95 hover:bg-white text-[#52525B] px-2.5 text-xs font-medium shadow-sm transition-colors cursor-pointer"
                 >
-                  <MoveVertical className="h-3.5 w-3.5 text-[#64748b]" />
+                  <MoveVertical className="h-3.5 w-3.5 text-[#6B6B76]" />
                   <span className="capitalize text-[11px]">{position}</span>
                 </button>
 
@@ -198,7 +198,7 @@ export function SeriesCoverUpload({
                   onClick={handleRemove}
                   title="Remove cover"
                   aria-label="Remove cover"
-                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-[5px] bg-white/95 hover:bg-white text-[#64748b] hover:text-[#C2414B] shadow-sm transition-colors cursor-pointer"
+                  className="tap-scale flex h-8 w-8 items-center justify-center rounded-[5px] bg-white/95 hover:bg-white text-[#6B6B76] hover:text-[#C2414B] shadow-sm transition-colors cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
@@ -208,19 +208,19 @@ export function SeriesCoverUpload({
         ) : (
           /* Empty state — compact dropzone so the form's required fields stay above the fold */
           <div className="absolute inset-0 flex items-center justify-center gap-3 px-4 text-left">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white text-[#64748b]">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white text-[#6B6B76]">
               <ImagePlus className="h-5 w-5" />
             </span>
             <span className="min-w-0">
-              <span className="block text-sm font-medium text-[#0f172a]">Upload a cover</span>
-              <span className="block text-xs text-[#64748b]">Drop an image or tap to browse · 1600 × 900 px recommended</span>
+              <span className="block text-sm font-medium text-[#18181B]">Upload a cover</span>
+              <span className="block text-xs text-[#6B6B76]">Drop an image or tap to browse · 1600 × 900 px recommended</span>
             </span>
           </div>
         )}
       </div>
 
       {/* Helper Guidance Text */}
-      <p className="text-[11.5px] text-[#64748b] leading-relaxed">
+      <p className="text-[12px] text-[#6B6B76] leading-relaxed">
         Best size: 1600×900 px (landscape). The important part should be in the centre — it will be cropped for the profile.
       </p>
 

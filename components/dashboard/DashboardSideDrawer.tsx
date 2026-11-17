@@ -354,7 +354,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
 
                       {/* New-request count badge for Media Kit & Rates */}
                       {item.href === "/dashboard/mediakit" && newCollabCount > 0 && (
-                        <span className="ml-auto inline-flex items-center justify-center rounded-full bg-[#7A2253] text-white text-[10.5px] font-bold h-4.5 min-w-[18px] px-1.5 shrink-0 shadow-none">
+                        <span className="ml-auto inline-flex items-center justify-center rounded-full bg-[#7A2253] text-white text-[11px] font-bold h-4.5 min-w-[18px] px-1.5 shrink-0 shadow-none">
                           {newCollabCount > 9 ? "9+" : newCollabCount}
                         </span>
                       )}

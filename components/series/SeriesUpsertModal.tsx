@@ -613,20 +613,20 @@ export function SeriesUpsertModal({
             {/* 2. Series Title (required, max 80) */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-[13px] font-semibold text-[#0f172a]">
+                <label className="block text-[13px] font-semibold text-[#18181B]">
                   Series Title <span className="text-rose-500">*</span>
                 </label>
-                <span className="text-[11px] text-[#94a3b8] tabular-nums">
+                <span className="text-[11px] text-[#A1A1AA] tabular-nums">
                   {title.length}/80
                 </span>
               </div>
               <div
                 className={`flex items-center rounded-[5px] border ${(titleTouched || submitted) && seriesTitleError
                     ? "border-rose-500 bg-rose-50/20 focus-within:border-rose-600 has-series-error"
-                    : "border-[#e2e8f0] focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10"
+                    : "border-[#ECECF0] focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10"
                   } bg-white overflow-hidden transition-colors`}
               >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Film className="h-4 w-4" />
                 </span>
                 <input
@@ -636,7 +636,7 @@ export function SeriesUpsertModal({
                   onChange={(e) => setTitle(e.target.value)}
                   onBlur={() => setTitleTouched(true)}
                   placeholder="e.g. 3 Days Street Food Challenge"
-                  className="flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  className="flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                   disabled={saving}
                   autoFocus
                 />
@@ -649,10 +649,10 @@ export function SeriesUpsertModal({
             {/* 3. Short description (max 160) */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-[13px] font-semibold text-[#0f172a]">
-                  Short Description <span className="text-[#94a3b8] font-normal">(Optional)</span>
+                <label className="block text-[13px] font-semibold text-[#18181B]">
+                  Short Description <span className="text-[#A1A1AA] font-normal">(Optional)</span>
                 </label>
-                <span className="text-[11px] text-[#94a3b8] tabular-nums">
+                <span className="text-[11px] text-[#A1A1AA] tabular-nums">
                   {description.length}/160
                 </span>
               </div>
@@ -663,7 +663,7 @@ export function SeriesUpsertModal({
                 rows={2}
                 maxLength={160}
                 disabled={saving}
-                className="w-full rounded-[5px] border border-[#e2e8f0] bg-white px-3 py-2 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 resize-none"
+                className="w-full rounded-[5px] border border-[#ECECF0] bg-white px-3 py-2 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 resize-none"
               />
             </div>
 
@@ -690,7 +690,7 @@ export function SeriesUpsertModal({
               {/* 6. Platform Selector (Segmented control: 2x2 grid on mobile, 4 columns on desktop) */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-[13px] font-semibold text-[#0f172a]">
+                  <label className="block text-[13px] font-semibold text-[#18181B]">
                     Platform <span className="text-rose-500">*</span>
                   </label>
                   {!platform && (
@@ -700,7 +700,7 @@ export function SeriesUpsertModal({
                 <div
                   role="radiogroup"
                   aria-label="Series platform"
-                  className="grid grid-cols-2 sm:grid-cols-4 rounded-[5px] border border-[#cbd5e1] bg-slate-100/80 overflow-hidden divide-x divide-y sm:divide-y-0 divide-[#cbd5e1] shadow-2xs"
+                  className="grid grid-cols-2 sm:grid-cols-4 rounded-[5px] border border-[#D4D4D8] bg-zinc-100/80 overflow-hidden divide-x divide-y sm:divide-y-0 divide-[#D4D4D8] shadow-2xs"
                 >
                   {(["YouTube", "Instagram", "Facebook", "Mix"] as EpisodePlatform[]).map((p) => {
                     const isSelected = platform === p;
@@ -715,7 +715,7 @@ export function SeriesUpsertModal({
                         className={`flex items-center justify-center gap-2 py-2.5 px-3 text-xs sm:text-[13px] font-semibold transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7A2253]/30 z-10 ${
                           isSelected
                             ? "bg-[#7A2253] text-white shadow-xs"
-                            : "bg-white text-[#475569] hover:bg-slate-100 hover:text-[#0f172a]"
+                            : "bg-white text-[#52525B] hover:bg-zinc-100 hover:text-[#18181B]"
                         }`}
                       >
                         {p === "YouTube" && (
@@ -744,18 +744,18 @@ export function SeriesUpsertModal({
               {/* 7. Episodes Section (Disabled until a platform is selected) */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-[13px] font-semibold text-[#0f172a]">
+              <label className="block text-[13px] font-semibold text-[#18181B]">
                 Episodes
               </label>
               {platform && (
-                <span className="text-xs text-[#64748b]">
+                <span className="text-xs text-[#6B6B76]">
                   {episodeRows.filter((r, i) => !isRowCompletelyEmpty(r, i + 1)).length} episode(s) entered
                 </span>
               )}
             </div>
 
             {!platform ? (
-              <div className="rounded-[5px] border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-xs font-medium text-slate-500">
+              <div className="rounded-[5px] border border-dashed border-zinc-300 bg-zinc-50 p-6 text-center text-xs font-medium text-zinc-500">
                 Select a platform first to add episodes.
               </div>
             ) : (
@@ -771,7 +771,7 @@ export function SeriesUpsertModal({
                     return (
                       <div
                         key={row.id}
-                        className="relative p-3.5 sm:p-4 rounded-[5px] border border-slate-200 bg-white space-y-3 transition-colors shadow-xs text-left"
+                        className="relative p-3.5 sm:p-4 rounded-[5px] border border-zinc-200 bg-white space-y-3 transition-colors shadow-xs text-left"
                       >
                         {/* Card Top: Episode label + delete (x) button top-right */}
                         <div className="flex items-center justify-between">
@@ -783,7 +783,7 @@ export function SeriesUpsertModal({
                               type="button"
                               onClick={() => handleRemoveRow(idx)}
                               disabled={saving}
-                              className="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                              className="p-1 rounded text-zinc-400 hover:text-rose-600 hover:bg-zinc-100 transition-colors cursor-pointer"
                               title="Remove episode"
                             >
                               <X className="h-4 w-4" />
@@ -793,7 +793,7 @@ export function SeriesUpsertModal({
 
                         {/* 1. Episode No. (auto-assigned, default = position) */}
                         <div>
-                          <label className="block text-xs font-semibold text-[#0f172a] mb-1">
+                          <label className="block text-xs font-semibold text-[#18181B] mb-1">
                             Episode No.
                           </label>
                           <input
@@ -803,17 +803,17 @@ export function SeriesUpsertModal({
                             value={idx + 1}
                             disabled
                             readOnly
-                            className="w-full rounded-[4px] border border-[#e2e8f0] bg-slate-50 px-3 py-1.5 text-xs text-[#0f172a] focus:outline-none cursor-not-allowed"
+                            className="w-full rounded-[4px] border border-[#ECECF0] bg-zinc-50 px-3 py-1.5 text-xs text-[#18181B] focus:outline-none cursor-not-allowed"
                           />
                         </div>
 
                         {/* 2. Title (text, required, max 100) */}
                         <div>
                           <div className="flex items-center justify-between mb-1">
-                            <label className="block text-xs font-semibold text-[#0f172a]">
+                            <label className="block text-xs font-semibold text-[#18181B]">
                               Title <span className="text-rose-500">*</span>
                             </label>
-                            <span className="text-[11px] text-[#94a3b8] tabular-nums">
+                            <span className="text-[11px] text-[#A1A1AA] tabular-nums">
                               {(row.title || "").length}/100
                             </span>
                           </div>
@@ -836,10 +836,10 @@ export function SeriesUpsertModal({
                                 }));
                               }}
                               placeholder={platform === "YouTube" ? "e.g. Episode Title" : `Episode ${idx + 1}`}
-                              className={`w-full rounded-[4px] border bg-white px-3 py-1.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none transition-colors ${
+                              className={`w-full rounded-[4px] border bg-white px-3 py-1.5 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:outline-none transition-colors ${
                                 showTitleErr
                                   ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-series-error"
-                                  : "border-[#e2e8f0] focus:border-[#7A2253]"
+                                  : "border-[#ECECF0] focus:border-[#7A2253]"
                               }`}
                             />
                             {row.loadingTitle && (
@@ -855,7 +855,7 @@ export function SeriesUpsertModal({
 
                         {/* 3. Video link (url, required) */}
                         <div>
-                          <label className="block text-xs font-semibold text-[#0f172a] mb-1">
+                          <label className="block text-xs font-semibold text-[#18181B] mb-1">
                             Video link <span className="text-rose-500">*</span>
                           </label>
                           <input
@@ -879,10 +879,10 @@ export function SeriesUpsertModal({
                               }
                             }}
                             placeholder={getPlatformPlaceholder(platform)}
-                            className={`w-full rounded-[4px] border bg-white px-3 py-1.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none transition-colors ${
+                            className={`w-full rounded-[4px] border bg-white px-3 py-1.5 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:outline-none transition-colors ${
                               showUrlErr
                                 ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-series-error"
-                                : "border-[#e2e8f0] focus:border-[#7A2253]"
+                                : "border-[#ECECF0] focus:border-[#7A2253]"
                             }`}
                           />
                           {showUrlErr && (
@@ -917,12 +917,12 @@ export function SeriesUpsertModal({
           </div>
         </ModalBody>
 
-        <ModalFooter className="flex items-center justify-between border-t border-[#e2e8f0] px-5 sm:px-6 py-3.5">
+        <ModalFooter className="flex items-center justify-between border-t border-[#ECECF0] px-5 sm:px-6 py-3.5">
           <button
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
+            className="h-10 px-5 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer"
           >
             Cancel
           </button>

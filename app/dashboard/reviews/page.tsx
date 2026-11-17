@@ -382,7 +382,7 @@ export default function DashboardReviewsPage() {
                     <span>{formatDate(rev.createdAt)}</span>
 
                     {!isVisible && (
-                      <span className="inline-flex items-center rounded-[4px] bg-[#F1F5F9] border border-[#E2E8F0] px-2 py-0.5 text-[11px] font-medium text-[#64748B]">
+                      <span className="inline-flex items-center rounded-[5px] bg-[#F4F4F5] border border-[#ECECF0] px-2 py-0.5 text-[11px] font-medium text-[#6B6B76]">
                         Hidden
                       </span>
                     )}
@@ -399,7 +399,7 @@ export default function DashboardReviewsPage() {
                       aria-checked={isVisible}
                       onClick={() => handleToggleVisible(rev)}
                       className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors cursor-pointer ${
-                        isVisible ? "bg-[#7A2253]" : "bg-[#CBD5E1]"
+                        isVisible ? "bg-[#7A2253]" : "bg-[#D4D4D8]"
                       }`}
                     >
                       <span
@@ -432,9 +432,9 @@ export default function DashboardReviewsPage() {
         onClose={() => setIsModalOpen(false)}
         size="md"
         showCloseButton={false}
-        className="rounded-[5px] border border-slate-200/80 shadow-2xl overflow-hidden"
+        className="rounded-[5px] border border-zinc-200/80 shadow-2xl overflow-hidden"
       >
-        <div className="relative border-b border-slate-100 bg-gradient-to-b from-[#FFF9FB]/80 to-white px-5 sm:px-6 pt-5 pb-4">
+        <div className="relative border-b border-zinc-100 bg-gradient-to-b from-[#FFF9FB]/80 to-white px-5 sm:px-6 pt-5 pb-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-gradient-to-tr from-[#7A2253] via-[#942767] to-[#C2414B] text-white shadow-md shadow-[#7A2253]/25">
@@ -442,7 +442,7 @@ export default function DashboardReviewsPage() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="font-display text-lg font-bold tracking-tight text-slate-900">
+                  <h3 className="font-display text-lg font-bold tracking-tight text-zinc-900">
                     Request a Review
                   </h3>
                   <span className="inline-flex items-center gap-1 rounded-[5px] bg-pink-50 border border-pink-200/60 px-2 py-0.5 text-[10px] font-bold text-[#7A2253]">
@@ -450,7 +450,7 @@ export default function DashboardReviewsPage() {
                     Verified
                   </span>
                 </div>
-                <p className="mt-0.5 text-xs text-slate-500 font-normal">
+                <p className="mt-0.5 text-xs text-zinc-500 font-normal">
                   Ask a brand you&apos;ve worked with to leave feedback for your profile.
                 </p>
               </div>
@@ -459,7 +459,7 @@ export default function DashboardReviewsPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="flex h-8 w-8 items-center justify-center rounded-[5px] text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
+              className="flex h-8 w-8 items-center justify-center rounded-[5px] text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors cursor-pointer shrink-0"
               aria-label="Close"
             >
               <X className="h-4 w-4" />
@@ -474,8 +474,8 @@ export default function DashboardReviewsPage() {
                 <Send className="h-4 w-4" />
               </div>
               <div>
-                <p className="font-bold text-slate-800 text-xs">We&apos;ll send an email invitation</p>
-                <p className="text-[11.5px] text-slate-500 font-normal leading-tight mt-0.5">
+                <p className="font-bold text-zinc-800 text-xs">We&apos;ll send an email invitation</p>
+                <p className="text-[12px] text-zinc-500 font-normal leading-tight mt-0.5">
                   The brand will receive a secure 1-click link to submit their review about working with you.
                 </p>
               </div>
@@ -484,15 +484,15 @@ export default function DashboardReviewsPage() {
             {/* Field 1: Client / Brand Name */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label htmlFor="client-name" className="block text-[13px] font-bold text-slate-800">
+                <label htmlFor="client-name" className="block text-[13px] font-bold text-zinc-800">
                   Client or brand name <span className="text-[#C2414B]">*</span>
                 </label>
-                <span className="text-[11px] text-slate-400 font-normal">
+                <span className="text-[11px] text-zinc-400 font-normal">
                   Brand you collaborated with
                 </span>
               </div>
-              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Building2 className="h-4 w-4" />
                 </span>
                 <input
@@ -502,19 +502,19 @@ export default function DashboardReviewsPage() {
                   value={clientName}
                   onChange={(e) => setClientName(e.target.value)}
                   placeholder="e.g. Puma India or Urban Cafe"
-                  className="flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  className="flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                 />
               </div>
 
               {!clientName && (
                 <div className="flex items-center gap-1.5 pt-0.5 flex-wrap">
-                  <span className="text-[10.5px] text-slate-400 font-medium">Popular:</span>
+                  <span className="text-[11px] text-zinc-400 font-medium">Popular:</span>
                   {["Puma", "Boat", "Mamaearth", "Nykaa", "Urban Cafe"].map((b) => (
                     <button
                       key={b}
                       type="button"
                       onClick={() => setClientName(b)}
-                      className="text-[10.5px] font-medium text-slate-600 bg-slate-100 hover:bg-slate-200/80 px-2 py-0.5 rounded-[5px] transition-colors cursor-pointer"
+                      className="text-[11px] font-medium text-zinc-600 bg-zinc-100 hover:bg-zinc-200/80 px-2 py-0.5 rounded-[5px] transition-colors cursor-pointer"
                     >
                       {b}
                     </button>
@@ -526,15 +526,15 @@ export default function DashboardReviewsPage() {
             {/* Field 2: Client Email */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label htmlFor="client-email" className="block text-[13px] font-bold text-slate-800">
+                <label htmlFor="client-email" className="block text-[13px] font-bold text-zinc-800">
                   Client email <span className="text-[#C2414B]">*</span>
                 </label>
-                <span className="text-[11px] text-slate-400 font-normal">
+                <span className="text-[11px] text-zinc-400 font-normal">
                   We&apos;ll send the review request to this email
                 </span>
               </div>
-              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Mail className="h-4 w-4" />
                 </span>
                 <input
@@ -544,7 +544,7 @@ export default function DashboardReviewsPage() {
                   value={clientEmail}
                   onChange={(e) => setClientEmail(e.target.value)}
                   placeholder="collabs@brand.com"
-                  className="flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  className="flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                 />
               </div>
             </div>
@@ -552,15 +552,15 @@ export default function DashboardReviewsPage() {
             {/* Field 3: Collaboration / Campaign Name */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label htmlFor="collab-title" className="block text-[13px] font-bold text-slate-800">
-                  Collaboration / campaign name <span className="text-slate-400 font-normal text-xs">(Optional)</span>
+                <label htmlFor="collab-title" className="block text-[13px] font-bold text-zinc-800">
+                  Collaboration / campaign name <span className="text-zinc-400 font-normal text-xs">(Optional)</span>
                 </label>
-                <span className="text-[11px] text-slate-400 font-normal">
+                <span className="text-[11px] text-zinc-400 font-normal">
                   Helps brand remember the project
                 </span>
               </div>
-              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Tag className="h-4 w-4" />
                 </span>
                 <input
@@ -569,17 +569,17 @@ export default function DashboardReviewsPage() {
                   value={projectTitle}
                   onChange={(e) => setProjectTitle(e.target.value)}
                   placeholder="e.g. Summer Campaign Reel or Store Launch"
-                  className="flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  className="flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                 />
               </div>
             </div>
 
             {/* Compact Live Review Preview Pill */}
-            <div className="p-3.5 rounded-[5px] border border-slate-200/80 bg-slate-50/70 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5 text-xs text-slate-600">
+            <div className="p-3.5 rounded-[5px] border border-zinc-200/80 bg-zinc-50/70 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 text-xs text-zinc-600">
                 <Sparkles className="h-4 w-4 text-amber-500 shrink-0" />
-                <span className="text-[11.5px]">
-                  Brand will submit: <strong className="text-slate-800 font-semibold">1–5★ Rating</strong> · <strong className="text-slate-800 font-semibold">Feedback</strong> · <strong className="text-slate-800 font-semibold">Brand Logo</strong>
+                <span className="text-[12px]">
+                  Brand will submit: <strong className="text-zinc-800 font-semibold">1–5★ Rating</strong> · <strong className="text-zinc-800 font-semibold">Feedback</strong> · <strong className="text-zinc-800 font-semibold">Brand Logo</strong>
                 </span>
               </div>
               <span className="shrink-0 text-[10px] font-bold text-[#7A2253] bg-pink-50 border border-pink-200/70 px-2 py-0.5 rounded-[5px] uppercase tracking-wider">
@@ -588,11 +588,11 @@ export default function DashboardReviewsPage() {
             </div>
           </ModalBody>
 
-          <ModalFooter className="px-5 sm:px-6 py-3.5 border-t border-[#e2e8f0] bg-white flex items-center justify-between gap-2">
+          <ModalFooter className="px-5 sm:px-6 py-3.5 border-t border-[#ECECF0] bg-white flex items-center justify-between gap-2">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
+              className="h-10 px-5 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer"
             >
               Cancel
             </button>

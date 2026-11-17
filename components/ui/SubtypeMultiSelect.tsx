@@ -55,7 +55,7 @@ export function SubtypeMultiSelect({
       </div>
 
       {/* Chips Container */}
-      <div className="flex flex-wrap gap-2 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-3 max-h-48 overflow-y-auto">
+      <div className="flex flex-wrap gap-2 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] p-3 max-h-48 overflow-y-auto">
         {availableSubtypes.map((st) => {
           const isSelected = selectedSubtypes.includes(st);
           const isMaxReached = !isSelected && selectedSubtypes.length >= max;
@@ -69,8 +69,8 @@ export function SubtypeMultiSelect({
               className={`tap-scale flex items-center gap-1.5 rounded-[5px] px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${isSelected
                 ? "bg-[#7A2253] text-white shadow-xs ring-2 ring-[#7A2253]/25"
                 : isMaxReached
-                  ? "opacity-40 cursor-not-allowed bg-white border border-[#e2e8f0] text-[#64748b]"
-                  : "bg-white border border-[#e2e8f0] text-[#475569] hover:border-[#cbd5e1] hover:text-[#7A2253]"
+                  ? "opacity-40 cursor-not-allowed bg-white border border-[#ECECF0] text-[#6B6B76]"
+                  : "bg-white border border-[#ECECF0] text-[#52525B] hover:border-[#D4D4D8] hover:text-[#7A2253]"
                 }`}
             >
               {isSelected ? (
@@ -80,7 +80,7 @@ export function SubtypeMultiSelect({
                 </>
               ) : (
                 <>
-                  <span className="text-slate-400 text-sm leading-none">+</span>
+                  <span className="text-zinc-400 text-sm leading-none">+</span>
                   <span>{st}</span>
                 </>
               )}

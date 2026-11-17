@@ -29,21 +29,21 @@ export function BottomSheet({ isOpen, onClose, title, children }: BottomSheetPro
       {/* Dimmed Overlay */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity animate-fade-in"
+        className="fixed inset-0 bg-zinc-950/60 backdrop-blur-xs transition-opacity animate-fade-in"
       />
 
       {/* Sheet Container */}
       <div className="relative w-full max-w-lg rounded-t-[28px] sm:rounded-3xl bg-white p-6 shadow-2xl transition-transform animate-slide-up z-10 safe-bottom max-h-[85dvh] flex flex-col">
         {/* Drag Handle for Mobile */}
-        <div className="w-12 h-1 bg-slate-200 rounded-full mx-auto mb-4 shrink-0 sm:hidden" />
+        <div className="w-12 h-1 bg-zinc-200 rounded-full mx-auto mb-4 shrink-0 sm:hidden" />
 
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-100 shrink-0">
+        <div className="flex items-center justify-between pb-3 mb-2 border-b border-zinc-100 shrink-0">
           <h3 className="text-base font-black text-[#7A2253]">{title || ""}</h3>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-[#f1f5f9] transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 text-zinc-500 hover:bg-[#F4F4F5] transition-colors"
             aria-label="Close"
           >
             <X className="h-4 w-4" />

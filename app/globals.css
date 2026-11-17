@@ -7,14 +7,14 @@
   /* PAGE & LAYOUT */
   --color-bg: #ffffff;
   --color-surface: #ffffff;
-  --color-surface-alt: #f1f5f9;
-  --color-muted-surface: #e2e8f0;
+  --color-surface-alt: #F4F4F5;
+  --color-muted-surface: #ECECF0;
 
   /* TEXT */
   --color-ink: #7A2253;
-  --color-ink-muted: #475569;
-  --color-caption: #64748b;
-  --color-very-muted: #94a3b8;
+  --color-ink-muted: #52525B;
+  --color-caption: #6B6B76;
+  --color-very-muted: #A1A1AA;
 
   /* BRAND & BUTTONS */
   --color-primary: #7A2253;
@@ -23,7 +23,7 @@
   --color-primary-gradient: #7A2253;
 
   /* BORDERS & DIVIDERS */
-  --color-border: #e2e8f0;
+  --color-border: #ECECF0;
   --color-border-hover: #7A2253;
   --color-border-active: #7A2253;
 

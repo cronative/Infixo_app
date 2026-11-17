@@ -1009,7 +1009,7 @@ export default function DashboardMediaKitPage() {
               onClick={downloadPdf}
               disabled={pdfLoading}
               aria-busy={pdfLoading}
-              className="inline-flex items-center gap-1 text-[12px] font-semibold text-[#64748b] hover:text-[#7A2253] transition-colors cursor-pointer disabled:cursor-wait"
+              className="inline-flex items-center gap-1 text-[12px] font-semibold text-[#6B6B76] hover:text-[#7A2253] transition-colors cursor-pointer disabled:cursor-wait"
             >
               {pdfLoading && <Loader2 className="h-3 w-3 animate-spin" />}
               {pdfLoading ? PDF_PREPARING_LABEL : "Download PDF"}
@@ -1032,10 +1032,10 @@ export default function DashboardMediaKitPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <label className="block text-[13px] font-semibold text-[#0f172a]">
+                <label className="block text-[13px] font-semibold text-[#18181B]">
                   Hello / Brand introduction
                 </label>
-                <span className="text-[11px] text-[#64748b] font-medium">{brandIntro.length}/300</span>
+                <span className="text-[11px] text-[#6B6B76] font-medium">{brandIntro.length}/300</span>
               </div>
               <textarea
                 rows={3}
@@ -1043,16 +1043,16 @@ export default function DashboardMediaKitPage() {
                 value={brandIntro}
                 onChange={(e) => setBrandIntro(e.target.value.slice(0, 300))}
                 placeholder="Write a warm, first-person note to brands about who you are and the stories you tell..."
-                className="w-full rounded-[5px] border border-[#e2e8f0] bg-white p-3 text-xs sm:text-sm text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none transition-colors resize-none"
+                className="w-full rounded-[5px] border border-[#ECECF0] bg-white p-3 text-xs sm:text-sm text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none transition-colors resize-none"
               />
             </div>
 
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <label className="block text-[13px] font-semibold text-[#0f172a]">
+                <label className="block text-[13px] font-semibold text-[#18181B]">
                   Who follows along (Audience story)
                 </label>
-                <span className="text-[11px] text-[#64748b] font-medium">{brandAudienceDesc.length}/200</span>
+                <span className="text-[11px] text-[#6B6B76] font-medium">{brandAudienceDesc.length}/200</span>
               </div>
               <textarea
                 rows={3}
@@ -1060,7 +1060,7 @@ export default function DashboardMediaKitPage() {
                 value={brandAudienceDesc}
                 onChange={(e) => setBrandAudienceDesc(e.target.value.slice(0, 200))}
                 placeholder="Describe the people who watch your work — what they care about, trust you for, and ask you about..."
-                className="w-full rounded-[5px] border border-[#e2e8f0] bg-white p-3 text-xs sm:text-sm text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none transition-colors resize-none"
+                className="w-full rounded-[5px] border border-[#ECECF0] bg-white p-3 text-xs sm:text-sm text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none transition-colors resize-none"
               />
             </div>
           </div>
@@ -1069,8 +1069,8 @@ export default function DashboardMediaKitPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
             <div className="space-y-1 sm:col-span-2 lg:col-span-1">
               <div className="flex items-center justify-between">
-                <label className="block text-[12px] font-semibold text-[#0f172a]">Currently making</label>
-                <span className="text-[10px] text-[#64748b]">{brandNowMaking.length}/80</span>
+                <label className="block text-[12px] font-semibold text-[#18181B]">Currently making</label>
+                <span className="text-[10px] text-[#6B6B76]">{brandNowMaking.length}/80</span>
               </div>
               <input
                 type="text"
@@ -1078,12 +1078,12 @@ export default function DashboardMediaKitPage() {
                 value={brandNowMaking}
                 onChange={(e) => setBrandNowMaking(e.target.value.slice(0, 80))}
                 placeholder="e.g., A 6-part series on hidden cafes"
-                className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-[12px] font-semibold text-[#0f172a]">Availability</label>
+              <label className="block text-[12px] font-semibold text-[#18181B]">Availability</label>
               <div className="grid grid-cols-2 gap-1.5 h-9">
                 <button
                   type="button"
@@ -1091,7 +1091,7 @@ export default function DashboardMediaKitPage() {
                   className={`rounded-[5px] border text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer transition-colors ${
                     brandAvailability === "open"
                       ? "bg-[#EAF7F0] border-[#10b981] text-[#047857]"
-                      : "bg-white border-[#e2e8f0] text-[#64748b] hover:bg-[#f8fafc]"
+                      : "bg-white border-[#ECECF0] text-[#6B6B76] hover:bg-[#FAFAFB]"
                   }`}
                 >
                   <span className="h-2 w-2 rounded-full bg-[#10b981]" />
@@ -1103,7 +1103,7 @@ export default function DashboardMediaKitPage() {
                   className={`rounded-[5px] border text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer transition-colors ${
                     brandAvailability === "busy"
                       ? "bg-[#FFFBEB] border-[#f59e0b] text-[#b45309]"
-                      : "bg-white border-[#e2e8f0] text-[#64748b] hover:bg-[#f8fafc]"
+                      : "bg-white border-[#ECECF0] text-[#6B6B76] hover:bg-[#FAFAFB]"
                   }`}
                 >
                   <span className="h-2 w-2 rounded-full bg-[#f59e0b]" />
@@ -1113,11 +1113,11 @@ export default function DashboardMediaKitPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="block text-[12px] font-semibold text-[#0f172a]">Typical reply time</label>
+              <label className="block text-[12px] font-semibold text-[#18181B]">Typical reply time</label>
               <select
                 value={brandReplyTime}
                 onChange={(e) => setBrandReplyTime(e.target.value)}
-                className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-medium text-[#0f172a] focus:border-[#7A2253] focus:outline-none cursor-pointer"
+                className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-xs font-medium text-[#18181B] focus:border-[#7A2253] focus:outline-none cursor-pointer"
               >
                 <option value="Within 24h">Within 24h</option>
                 <option value="Within 48h">Within 48h</option>
@@ -1127,14 +1127,14 @@ export default function DashboardMediaKitPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="block text-[12px] font-semibold text-[#0f172a]">Closing signature name</label>
+              <label className="block text-[12px] font-semibold text-[#18181B]">Closing signature name</label>
               <input
                 type="text"
                 maxLength={120}
                 value={brandSignatureName}
                 onChange={(e) => setBrandSignatureName(e.target.value)}
                 placeholder={profile.displayName || "Your signature"}
-                className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
               />
             </div>
           </div>
@@ -1142,7 +1142,7 @@ export default function DashboardMediaKitPage() {
           {/* Row 3: Fit tags (3) & Not-fit tags (3) */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-1">
             <div className="space-y-1.5">
-              <label className="block text-[12px] font-semibold text-[#0f172a]">
+              <label className="block text-[12px] font-semibold text-[#18181B]">
                 Great fit for (up to 3 tags)
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -1158,14 +1158,14 @@ export default function DashboardMediaKitPage() {
                       setBrandFitTags(next);
                     }}
                     placeholder={idx === 0 ? "e.g., Specialty coffee" : idx === 1 ? "e.g., Indie D2C" : "e.g., Travel gear"}
-                    className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                    className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
                   />
                 ))}
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-[12px] font-semibold text-[#0f172a]">
+              <label className="block text-[12px] font-semibold text-[#18181B]">
                 Not a fit for (up to 3 tags)
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -1181,7 +1181,7 @@ export default function DashboardMediaKitPage() {
                       setBrandNofitTags(next);
                     }}
                     placeholder={idx === 0 ? "e.g., Betting apps" : idx === 1 ? "e.g., Crypto tokens" : "e.g., Hard scripts"}
-                    className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-2.5 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                    className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
                   />
                 ))}
               </div>
@@ -1190,7 +1190,7 @@ export default function DashboardMediaKitPage() {
 
           {/* Row 4: Promises (4 presets) */}
           <div className="space-y-1.5 pt-1">
-            <label className="block text-[12px] font-semibold text-[#0f172a]">
+            <label className="block text-[12px] font-semibold text-[#18181B]">
               My promises to brands (select all that apply)
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -1202,7 +1202,7 @@ export default function DashboardMediaKitPage() {
                     className={`flex items-center gap-2.5 rounded-[5px] border px-3 py-2 text-xs font-medium cursor-pointer transition-colors ${
                       checked
                         ? "border-[#7A2253] bg-[#FFF0F5]/60 text-[#7A2253]"
-                        : "border-[#e2e8f0] bg-white text-[#334155] hover:bg-[#f8fafc]"
+                        : "border-[#ECECF0] bg-white text-[#3F3F46] hover:bg-[#FAFAFB]"
                     }`}
                   >
                     <input
@@ -1224,7 +1224,7 @@ export default function DashboardMediaKitPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-end pt-2 border-t border-[#f1f5f9]">
+          <div className="flex items-center justify-end pt-2 border-t border-[#F4F4F5]">
             <button
               type="submit"
               disabled={savingBrandStory}
@@ -1279,10 +1279,10 @@ export default function DashboardMediaKitPage() {
         ) : (
           <div className="space-y-4">
             {/* Desktop Table View (NO IMAGE) */}
-            <div className="hidden md:block overflow-x-auto rounded-[5px] border border-[#e2e8f0] bg-white shadow-2xs">
+            <div className="hidden md:block overflow-x-auto rounded-[5px] border border-[#ECECF0] bg-white shadow-2xs">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-[#e2e8f0] bg-[#f8fafc]/80 text-[11px] font-bold uppercase tracking-wider text-[#64748b]">
+                  <tr className="border-b border-[#ECECF0] bg-[#FAFAFB]/80 text-[11px] font-bold uppercase tracking-wider text-[#6B6B76]">
                     <th className="py-3 px-4 min-w-[220px]">Package</th>
                     <th className="py-3 px-4 min-w-[140px]">Category</th>
                     <th className="py-3 px-4 min-w-[220px]">Deliverables</th>
@@ -1292,7 +1292,7 @@ export default function DashboardMediaKitPage() {
                     <th className="py-3 px-4 min-w-[110px] text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#e2e8f0]">
+                <tbody className="divide-y divide-[#ECECF0]">
                   {packages.map((pkg) => {
                     const displayPrice = formatPriceClean(pkg.price);
                     const turnaroundText = pkg.turnaroundDays ? `${pkg.turnaroundDays} ${pkg.turnaroundDays === 1 ? "day" : "days"}` : "3 days";
@@ -1303,15 +1303,15 @@ export default function DashboardMediaKitPage() {
                         {/* 1. Package Name & Type (NO IMAGE) */}
                         <td className="py-4 px-4 align-top">
                           <div className="space-y-1">
-                            <p className="flex flex-wrap items-center gap-1.5 font-bold text-sm text-[#0f172a] leading-snug">
+                            <p className="flex flex-wrap items-center gap-1.5 font-bold text-sm text-[#18181B] leading-snug">
                               {pkg.title}
                               {packages.indexOf(pkg) >= getPlanQuota(subscription?.planKey).maxGigs && <OverLimitBadge />}
                             </p>
-                            <p className="text-xs text-[#64748b]">
+                            <p className="text-xs text-[#6B6B76]">
                               {pkg.platform}
                             </p>
                             {pkg.storyPitch && (
-                              <p className="text-[11px] italic text-[#475569] line-clamp-2">
+                              <p className="text-[11px] italic text-[#52525B] line-clamp-2">
                                 &ldquo;{pkg.storyPitch}&rdquo;
                               </p>
                             )}
@@ -1327,14 +1327,14 @@ export default function DashboardMediaKitPage() {
 
                         {/* 2. Category badge */}
                         <td className="py-4 px-4 align-top">
-                          <span className="inline-flex items-center rounded-[5px] bg-[#f1f5f9] px-2.5 py-1 text-xs font-semibold text-[#475569]">
+                          <span className="inline-flex items-center rounded-[5px] bg-[#F4F4F5] px-2.5 py-1 text-xs font-semibold text-[#52525B]">
                             {pkg.category || "—"}
                           </span>
                         </td>
 
                         {/* 3. Deliverables list */}
                         <td className="py-4 px-4 align-top">
-                          <ul className="space-y-1 text-xs text-[#334155]">
+                          <ul className="space-y-1 text-xs text-[#3F3F46]">
                             {pkg.deliverables && pkg.deliverables.length > 0 ? (
                               pkg.deliverables.map((item, idx) => (
                                 <li key={idx} className="flex items-start gap-1.5 leading-snug">
@@ -1343,18 +1343,18 @@ export default function DashboardMediaKitPage() {
                                 </li>
                               ))
                             ) : (
-                              <li className="text-xs text-[#94a3b8] italic">Custom deliverables</li>
+                              <li className="text-xs text-[#A1A1AA] italic">Custom deliverables</li>
                             )}
                           </ul>
                         </td>
 
                         {/* 4. Delivery Time */}
-                        <td className="py-4 px-4 align-top text-xs font-medium text-[#0f172a] whitespace-nowrap">
+                        <td className="py-4 px-4 align-top text-xs font-medium text-[#18181B] whitespace-nowrap">
                           {turnaroundText}
                         </td>
 
                         {/* 5. Price */}
-                        <td className="py-4 px-4 align-top text-sm font-bold text-[#0f172a] whitespace-nowrap">
+                        <td className="py-4 px-4 align-top text-sm font-bold text-[#18181B] whitespace-nowrap">
                           {displayPrice}
                         </td>
 
@@ -1366,8 +1366,8 @@ export default function DashboardMediaKitPage() {
                               Active
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#f1f5f9] px-2.5 py-1 text-xs font-semibold text-[#64748b]">
-                              <span className="h-1.5 w-1.5 rounded-full bg-[#94a3b8]" />
+                            <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#F4F4F5] px-2.5 py-1 text-xs font-semibold text-[#6B6B76]">
+                              <span className="h-1.5 w-1.5 rounded-full bg-[#A1A1AA]" />
                               Hidden
                             </span>
                           )}
@@ -1428,14 +1428,14 @@ export default function DashboardMediaKitPage() {
                 return (
                   <div
                     key={pkg.id}
-                    className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 space-y-3 text-left shadow-2xs"
+                    className="rounded-[5px] border border-[#ECECF0] bg-white p-3.5 space-y-3 text-left shadow-2xs"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
-                        <h3 className="font-bold text-sm text-[#0f172a] leading-tight">
+                        <h3 className="font-bold text-sm text-[#18181B] leading-tight">
                           {pkg.title}
                         </h3>
-                        <p className="text-xs text-[#64748b] mt-0.5">
+                        <p className="text-xs text-[#6B6B76] mt-0.5">
                           {pkg.platform}
                         </p>
                       </div>
@@ -1446,8 +1446,8 @@ export default function DashboardMediaKitPage() {
                             Active
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#f1f5f9] px-2 py-0.5 text-[11px] font-semibold text-[#64748b]">
-                            <span className="h-1.5 w-1.5 rounded-full bg-[#94a3b8]" />
+                          <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#F4F4F5] px-2 py-0.5 text-[11px] font-semibold text-[#6B6B76]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#A1A1AA]" />
                             Hidden
                           </span>
                         )}
@@ -1456,7 +1456,7 @@ export default function DashboardMediaKitPage() {
 
                     <div className="flex flex-wrap items-center gap-1.5">
                       {pkg.category && (
-                        <span className="inline-flex items-center rounded-[5px] bg-[#f1f5f9] px-2 py-0.5 text-[11px] font-medium text-[#475569]">
+                        <span className="inline-flex items-center rounded-[5px] bg-[#F4F4F5] px-2 py-0.5 text-[11px] font-medium text-[#52525B]">
                           {pkg.category}
                         </span>
                       )}
@@ -1468,16 +1468,16 @@ export default function DashboardMediaKitPage() {
                     </div>
 
                     {pkg.storyPitch && (
-                      <p className="text-xs italic text-[#475569]">
+                      <p className="text-xs italic text-[#52525B]">
                         &ldquo;{pkg.storyPitch}&rdquo;
                       </p>
                     )}
 
                     {/* Deliverables list */}
                     {pkg.deliverables && pkg.deliverables.length > 0 && (
-                      <div className="rounded-[5px] bg-[#f8fafc] border border-[#f1f5f9] p-2.5">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-[#94a3b8] mb-1">Deliverables</p>
-                        <ul className="space-y-1 text-xs text-[#334155]">
+                      <div className="rounded-[5px] bg-[#FAFAFB] border border-[#F4F4F5] p-2.5">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-[#A1A1AA] mb-1">Deliverables</p>
+                        <ul className="space-y-1 text-xs text-[#3F3F46]">
                           {pkg.deliverables.map((item, idx) => (
                             <li key={idx} className="flex items-start gap-1.5 leading-snug">
                               <span className="text-[#C2414B] font-bold text-xs">•</span>
@@ -1488,10 +1488,10 @@ export default function DashboardMediaKitPage() {
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between pt-2 border-t border-[#f1f5f9]">
+                    <div className="flex items-center justify-between pt-2 border-t border-[#F4F4F5]">
                       <div>
-                        <p className="text-[11px] text-[#64748b]">Delivery: <span className="font-semibold text-[#0f172a]">{turnaroundText}</span></p>
-                        <p className="text-sm font-bold text-[#0f172a] mt-0.5">{displayPrice}</p>
+                        <p className="text-[11px] text-[#6B6B76]">Delivery: <span className="font-semibold text-[#18181B]">{turnaroundText}</span></p>
+                        <p className="text-sm font-bold text-[#18181B] mt-0.5">{displayPrice}</p>
                       </div>
 
                       <div className="flex items-center gap-1.5">
@@ -1593,14 +1593,14 @@ export default function DashboardMediaKitPage() {
           bodyClassName="p-4"
         >
           {loadingRequests ? (
-            <div className="p-8 text-center text-xs text-[#64748b] bg-white rounded-[5px] border border-[#e2e8f0]">
+            <div className="p-8 text-center text-xs text-[#6B6B76] bg-white rounded-[5px] border border-[#ECECF0]">
               Loading collab requests...
             </div>
           ) : collabRequests.length === 0 ? (
-            <div className="p-8 text-center bg-white rounded-[5px] border border-dashed border-[#cbd5e1]">
-              <Mail className="h-8 w-8 text-[#94a3b8] mx-auto mb-2" />
-              <p className="text-xs font-bold text-[#0f172a]">No collab requests yet</p>
-              <p className="text-[11px] text-[#64748b] mt-1 max-w-sm mx-auto">
+            <div className="p-8 text-center bg-white rounded-[5px] border border-dashed border-[#D4D4D8]">
+              <Mail className="h-8 w-8 text-[#A1A1AA] mx-auto mb-2" />
+              <p className="text-xs font-bold text-[#18181B]">No collab requests yet</p>
+              <p className="text-[11px] text-[#6B6B76] mt-1 max-w-sm mx-auto">
                 When brands submit an inquiry via the &quot;Send a collab request&quot; button on your profile, it will appear here.
               </p>
             </div>
@@ -1625,25 +1625,25 @@ export default function DashboardMediaKitPage() {
                 const isLongMessage = rawMessage.length > 140;
 
                 return (
-                  <div key={req.id} className="p-4 bg-white rounded-[5px] border border-[#e2e8f0] shadow-2xs space-y-3 text-left">
+                  <div key={req.id} className="p-4 bg-white rounded-[5px] border border-[#ECECF0] shadow-2xs space-y-3 text-left">
                     {/* Top line: brand · name · package · budget · date · status chip (New / Replied / Closed) */}
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#f1f5f9] pb-2.5">
-                      <div className="flex flex-wrap items-center gap-1.5 text-xs text-[#475569]">
-                        <span className="font-bold text-sm text-[#0f172a]">{brand}</span>
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#F4F4F5] pb-2.5">
+                      <div className="flex flex-wrap items-center gap-1.5 text-xs text-[#52525B]">
+                        <span className="font-bold text-sm text-[#18181B]">{brand}</span>
                         {contactPerson && (
                           <>
-                            <span className="text-[#94a3b8]">·</span>
-                            <span className="text-[#334155] font-medium">{contactPerson}</span>
+                            <span className="text-[#A1A1AA]">·</span>
+                            <span className="text-[#3F3F46] font-medium">{contactPerson}</span>
                           </>
                         )}
-                        <span className="text-[#94a3b8]">·</span>
-                        <span className="font-medium text-[#0f172a]">{pkgTitle}</span>
-                        <span className="text-[#94a3b8]">·</span>
-                        <span className="text-[#64748b]">{budgetText}</span>
+                        <span className="text-[#A1A1AA]">·</span>
+                        <span className="font-medium text-[#18181B]">{pkgTitle}</span>
+                        <span className="text-[#A1A1AA]">·</span>
+                        <span className="text-[#6B6B76]">{budgetText}</span>
                         {dateFormatted && (
                           <>
-                            <span className="text-[#94a3b8]">·</span>
-                            <span className="text-[#94a3b8]">{dateFormatted}</span>
+                            <span className="text-[#A1A1AA]">·</span>
+                            <span className="text-[#A1A1AA]">{dateFormatted}</span>
                           </>
                         )}
                       </div>
@@ -1663,10 +1663,10 @@ export default function DashboardMediaKitPage() {
                     </div>
 
                     {/* Contact details */}
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#64748b]">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#6B6B76]">
                       {email && (
                         <div>
-                          <span className="text-[#94a3b8]">Email:</span>{" "}
+                          <span className="text-[#A1A1AA]">Email:</span>{" "}
                           <a href={`mailto:${email}`} className="text-[#7A2253] hover:underline font-medium">
                             {email}
                           </a>
@@ -1674,13 +1674,13 @@ export default function DashboardMediaKitPage() {
                       )}
                       {phone && (
                         <div>
-                          <span className="text-[#94a3b8]">Phone:</span>{" "}
-                          <span className="font-medium text-[#1e293b]">{phone}</span>
+                          <span className="text-[#A1A1AA]">Phone:</span>{" "}
+                          <span className="font-medium text-[#27272A]">{phone}</span>
                         </div>
                       )}
                       {(req.websiteOrSocial || req.website_or_social) && (
                         <div>
-                          <span className="text-[#94a3b8]">Link:</span>{" "}
+                          <span className="text-[#A1A1AA]">Link:</span>{" "}
                           <a
                             href={
                               (req.websiteOrSocial || req.website_or_social).startsWith("http")
@@ -1699,7 +1699,7 @@ export default function DashboardMediaKitPage() {
 
                     {/* Message (Full / Expandable) */}
                     {rawMessage && (
-                      <div className="text-xs text-[#334155] bg-[#f8fafc] p-2.5 rounded-[5px] border border-[#f1f5f9] leading-relaxed">
+                      <div className="text-xs text-[#3F3F46] bg-[#FAFAFB] p-2.5 rounded-[5px] border border-[#F4F4F5] leading-relaxed">
                         <p className={`whitespace-pre-wrap ${!isExpanded && isLongMessage ? "line-clamp-2" : ""}`}>
                           {rawMessage}
                         </p>
@@ -1745,12 +1745,12 @@ export default function DashboardMediaKitPage() {
                         )}
                       </div>
 
-                      <div className="flex items-center gap-1.5 text-xs text-[#64748b]">
+                      <div className="flex items-center gap-1.5 text-xs text-[#6B6B76]">
                         <span className="text-[11px] font-medium">Status:</span>
                         <select
                           value={currentStatus}
                           onChange={(e) => handleUpdateStatus(req.id, e.target.value as "new" | "replied" | "closed")}
-                          className="h-7 px-2 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-medium text-[#0f172a] outline-none focus:border-[#7A2253] cursor-pointer"
+                          className="h-7 px-2 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-medium text-[#18181B] outline-none focus:border-[#7A2253] cursor-pointer"
                         >
                           <option value="new">New</option>
                           <option value="replied">Replied</option>
@@ -1780,11 +1780,11 @@ export default function DashboardMediaKitPage() {
             {/* Package title & Category */}
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
               <div className="sm:col-span-7 space-y-1">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
+                <label className="block text-[13px] font-medium text-[#18181B]">
                   Package title <span className="text-[#C2414B]">*</span>
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <FileText className="h-4 w-4" />
                   </div>
                   <input
@@ -1792,21 +1792,21 @@ export default function DashboardMediaKitPage() {
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
                     placeholder="e.g., Cafe Visit Reel, Brand Promo Reel, or Store Launch"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                     required
                   />
                 </div>
               </div>
 
               <div className="sm:col-span-5 space-y-1">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
+                <label className="block text-[13px] font-medium text-[#18181B]">
                   Category <span className="text-[#C2414B]">*</span>
                 </label>
                 <select
                   value={formCategory}
                   onChange={(e) => setFormCategory(e.target.value)}
                   required
-                  className="w-full h-10 px-3 rounded-[5px] border border-[#e2e8f0] bg-white text-xs sm:text-sm font-medium text-[#0f172a] focus:border-[#7A2253] outline-none cursor-pointer"
+                  className="w-full h-10 px-3 rounded-[5px] border border-[#ECECF0] bg-white text-xs sm:text-sm font-medium text-[#18181B] focus:border-[#7A2253] outline-none cursor-pointer"
                 >
                   <option value="" disabled>
                     Select a category...
@@ -1823,10 +1823,10 @@ export default function DashboardMediaKitPage() {
             {/* Story Pitch (120 chars) */}
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
-                  The story I&apos;d tell for you <span className="text-[#64748b] font-normal">(Optional)</span>
+                <label className="block text-[13px] font-medium text-[#18181B]">
+                  The story I&apos;d tell for you <span className="text-[#6B6B76] font-normal">(Optional)</span>
                 </label>
-                <span className="text-[10px] font-medium text-[#64748b]">{formStoryPitch.length}/120</span>
+                <span className="text-[10px] font-medium text-[#6B6B76]">{formStoryPitch.length}/120</span>
               </div>
               <input
                 type="text"
@@ -1834,16 +1834,16 @@ export default function DashboardMediaKitPage() {
                 value={formStoryPitch}
                 onChange={(e) => setFormStoryPitch(e.target.value.slice(0, 120))}
                 placeholder="e.g., A first-person reel weaving your product into my morning routine"
-                className="w-full h-10 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] focus:outline-none transition-colors"
+                className="w-full h-10 rounded-[5px] border border-[#ECECF0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 focus:border-[#7A2253] focus:outline-none transition-colors"
               />
             </div>
 
             {/* Collaboration Type & Delivery Time */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="block text-[13px] font-medium text-[#0f172a]">Collaboration Type</label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <label className="block text-[13px] font-medium text-[#18181B]">Collaboration Type</label>
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Film className="h-4 w-4" />
                   </div>
                   <select
@@ -1865,8 +1865,8 @@ export default function DashboardMediaKitPage() {
 
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <label className="block text-[13px] font-medium text-[#0f172a]">Delivery time (days)</label>
-                  <span className="text-[10px] text-[#64748b] font-medium">
+                  <label className="block text-[13px] font-medium text-[#18181B]">Delivery time (days)</label>
+                  <span className="text-[10px] text-[#6B6B76] font-medium">
                     {formTurnaround} {formTurnaround === 1 ? "day" : "days"}
                   </span>
                 </div>
@@ -1881,7 +1881,7 @@ export default function DashboardMediaKitPage() {
                         className={`flex-1 h-10 rounded-[5px] text-xs font-semibold border transition-all cursor-pointer ${
                           isSelected
                             ? "bg-[#7A2253] text-white border-[#7A2253] shadow-xs"
-                            : "bg-white text-[#0f172a] border-[#e2e8f0] hover:bg-[#f8fafc]"
+                            : "bg-white text-[#18181B] border-[#ECECF0] hover:bg-[#FAFAFB]"
                         }`}
                       >
                         {days}D
@@ -1897,7 +1897,7 @@ export default function DashboardMediaKitPage() {
                       max={60}
                       title="Custom Days"
                       placeholder="Custom days"
-                      className="w-full h-10 rounded-[5px] border border-[#e2e8f0] bg-white px-2 text-center text-xs font-semibold text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none transition-colors"
+                      className="w-full h-10 rounded-[5px] border border-[#ECECF0] bg-white px-2 text-center text-xs font-semibold text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none transition-colors"
                     />
                   </div>
                 </div>
@@ -1906,7 +1906,7 @@ export default function DashboardMediaKitPage() {
 
             {formPlatform === "Other" && (
               <div className="space-y-1 animate-in fade-in duration-200">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
+                <label className="block text-[13px] font-medium text-[#18181B]">
                   Specify Collaboration Type <span className="text-[#C2414B]">*</span>
                 </label>
                 <input
@@ -1914,7 +1914,7 @@ export default function DashboardMediaKitPage() {
                   value={customPlatform}
                   onChange={(e) => setCustomPlatform(e.target.value)}
                   placeholder="e.g., Live Stream Sponsorship, Workshop, Brand Ambassador"
-                  className="w-full h-10 rounded-[5px] border border-[#7A2253] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:outline-none transition-colors shadow-xs"
+                  className="w-full h-10 rounded-[5px] border border-[#7A2253] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 focus:outline-none transition-colors shadow-xs"
                   required
                 />
               </div>
@@ -1922,16 +1922,16 @@ export default function DashboardMediaKitPage() {
 
             {/* Package Pricing Inputs */}
             <div className="space-y-2">
-              <label className="block text-[13px] font-medium text-[#0f172a]">
+              <label className="block text-[13px] font-medium text-[#18181B]">
                 Package Pricing (INR) &amp; Billing Unit
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
                 <div className="sm:col-span-4">
-                  <label className="block text-[10px] font-bold text-[#64748b] mb-1">
+                  <label className="block text-[10px] font-bold text-[#6B6B76] mb-1">
                     Price (₹) <span className="text-[#C2414B]">*</span>
                   </label>
-                  <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                    <div className="flex h-10 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-sm font-semibold text-[#64748b]">
+                  <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                    <div className="flex h-10 w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-sm font-semibold text-[#6B6B76]">
                       ₹
                     </div>
                     <input
@@ -1939,20 +1939,20 @@ export default function DashboardMediaKitPage() {
                       value={formMinPrice}
                       onChange={(e) => setFormMinPrice(e.target.value)}
                       placeholder="10,000"
-                      className="flex-1 h-10 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                      className="flex-1 h-10 px-3 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                       required
                     />
                   </div>
                 </div>
 
                 <div className="sm:col-span-4">
-                  <label className="block text-[10px] font-bold text-[#64748b] mb-1">
+                  <label className="block text-[10px] font-bold text-[#6B6B76] mb-1">
                     Price Unit
                   </label>
                   <select
                     value={formPriceUnit}
                     onChange={(e) => setFormPriceUnit(e.target.value)}
-                    className="w-full h-10 px-3 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#0f172a] outline-none cursor-pointer"
+                    className="w-full h-10 px-3 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#18181B] outline-none cursor-pointer"
                   >
                     <option value="per_package">/ package (fixed)</option>
                     <option value="per_reel">/ reel</option>
@@ -1964,12 +1964,12 @@ export default function DashboardMediaKitPage() {
 
                 <div className="sm:col-span-4">
                   <div className="flex flex-col justify-center gap-1.5 h-10">
-                    <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-[#0f172a]">
+                    <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-[#18181B]">
                       <input
                         type="checkbox"
                         checked={formIsStartingPrice}
                         onChange={(e) => setFormIsStartingPrice(e.target.checked)}
-                        className="rounded border-[#cbd5e1] text-[#7A2253] focus:ring-[#7A2253]"
+                        className="rounded border-[#D4D4D8] text-[#7A2253] focus:ring-[#7A2253]"
                       />
                       <span>Starting price (&quot;From ₹...&quot;)</span>
                     </label>
@@ -1980,10 +1980,10 @@ export default function DashboardMediaKitPage() {
 
             {/* Deliverables List & Suggestions */}
             <div className="space-y-2">
-              <label className="block text-[13px] font-medium text-[#0f172a]">Included deliverables</label>
+              <label className="block text-[13px] font-medium text-[#18181B]">Included deliverables</label>
               <div className="flex items-center gap-2">
-                <div className="flex-1 flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <div className="flex-1 flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <List className="h-4 w-4" />
                   </div>
                   <input
@@ -1997,7 +1997,7 @@ export default function DashboardMediaKitPage() {
                       }
                     }}
                     placeholder="e.g. Brand Collaborator Tag"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                   />
                 </div>
                 <button
@@ -2017,7 +2017,7 @@ export default function DashboardMediaKitPage() {
 
                 return (
                   <div className="space-y-2 bg-[#FFF0F5]/40 border border-[#FCE7F1] rounded-[5px] p-3">
-                    <div className="flex items-center justify-between text-[11px] font-semibold text-[#0f172a]">
+                    <div className="flex items-center justify-between text-[11px] font-semibold text-[#18181B]">
                       <span className="flex items-center gap-1.5">
                         <span className="text-amber-500">💡</span> Popular suggestions for {formPlatform === "Other" ? (customPlatform.trim() || "Collaboration") : formPlatform}:
                       </span>
@@ -2039,7 +2039,7 @@ export default function DashboardMediaKitPage() {
                             className={`text-[11px] font-medium px-2.5 py-1.5 rounded-[5px] border transition-all cursor-pointer ${
                               isAdded
                                 ? "bg-[#EAF7F0] text-[#17845B] border-[#17845B]/20 cursor-default opacity-70"
-                                : "bg-white hover:bg-slate-50 text-[#0f172a] border-[#e2e8f0] hover:border-[#7A2253]/30 shadow-2xs"
+                                : "bg-white hover:bg-zinc-50 text-[#18181B] border-[#ECECF0] hover:border-[#7A2253]/30 shadow-2xs"
                             }`}
                           >
                             {isAdded ? `✓ ${item}` : `+ ${item}`}
@@ -2065,9 +2065,9 @@ export default function DashboardMediaKitPage() {
               {/* Added Deliverables */}
               {formDeliverables.length > 0 && (
                 <div className="space-y-1.5 max-h-28 overflow-y-auto pt-1">
-                  <p className="text-[10px] font-bold text-[#64748b] uppercase tracking-wider">Added Deliverables ({formDeliverables.length}):</p>
+                  <p className="text-[10px] font-bold text-[#6B6B76] uppercase tracking-wider">Added Deliverables ({formDeliverables.length}):</p>
                   {formDeliverables.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between bg-[#f8fafc] border border-[#e2e8f0] rounded-[5px] px-2.5 py-1 text-xs font-medium text-[#7A2253]">
+                    <div key={idx} className="flex items-center justify-between bg-[#FAFAFB] border border-[#ECECF0] rounded-[5px] px-2.5 py-1 text-xs font-medium text-[#7A2253]">
                       <span>• {item}</span>
                       <button
                         type="button"
@@ -2085,8 +2085,8 @@ export default function DashboardMediaKitPage() {
             {/* Highlight badge with Quick Chips */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="block text-[13px] font-medium text-[#0f172a] flex items-center gap-1.5">
-                  <span>👑</span> Highlight badge <span className="text-[#64748b] font-normal">(Optional)</span>
+                <label className="block text-[13px] font-medium text-[#18181B] flex items-center gap-1.5">
+                  <span>👑</span> Highlight badge <span className="text-[#6B6B76] font-normal">(Optional)</span>
                 </label>
                 {formPackageName && (
                   <button
@@ -2115,7 +2115,7 @@ export default function DashboardMediaKitPage() {
                       className={`h-9 px-3 rounded-[5px] text-xs font-semibold border flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                         isSelected
                           ? "bg-[#FFF0F5] text-[#7A2253] border-[#7A2253] ring-1 ring-[#7A2253]"
-                          : "bg-white text-[#0f172a] border-[#e2e8f0] hover:bg-[#f8fafc]"
+                          : "bg-white text-[#18181B] border-[#ECECF0] hover:bg-[#FAFAFB]"
                       }`}
                     >
                       <span>{badge.icon}</span>
@@ -2125,8 +2125,8 @@ export default function DashboardMediaKitPage() {
                 })}
               </div>
 
-              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Tag className="h-3.5 w-3.5" />
                 </div>
                 <input
@@ -2134,7 +2134,7 @@ export default function DashboardMediaKitPage() {
                   value={formPackageName}
                   onChange={(e) => setFormPackageName(e.target.value)}
                   placeholder="Or type a custom badge (e.g. Creator Choice, Limited Edition)"
-                  className="flex-1 h-9 px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  className="flex-1 h-9 px-3 text-xs font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                 />
               </div>
             </div>
@@ -2144,7 +2144,7 @@ export default function DashboardMediaKitPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
+              className="h-10 px-5 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -2172,7 +2172,7 @@ export default function DashboardMediaKitPage() {
           {SERVICE_EXAMPLES.map((example, idx) => (
             <div
               key={idx}
-              className="rounded-[5px] border border-[#e2e8f0] bg-white p-3.5 sm:p-4 space-y-2 hover:border-[#cbd5e1] transition-colors"
+              className="rounded-[5px] border border-[#ECECF0] bg-white p-3.5 sm:p-4 space-y-2 hover:border-[#D4D4D8] transition-colors"
             >
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
@@ -2184,10 +2184,10 @@ export default function DashboardMediaKitPage() {
                 <span className="text-xs font-bold text-[#7A2253]">{example.minPrice}–{example.maxPrice}</span>
               </div>
 
-              <p className="text-xs text-[#475569] font-normal">{example.description}</p>
+              <p className="text-xs text-[#52525B] font-normal">{example.description}</p>
 
-              <div className="pt-1 flex items-center justify-between gap-2 border-t border-[#e2e8f0]">
-                <span className="text-[11px] text-[#64748b]">{example.turnaroundDays}-day delivery · {example.deliverables.length} deliverables</span>
+              <div className="pt-1 flex items-center justify-between gap-2 border-t border-[#ECECF0]">
+                <span className="text-[11px] text-[#6B6B76]">{example.turnaroundDays}-day delivery · {example.deliverables.length} deliverables</span>
                 <button
                   type="button"
                   onClick={() => handleApplyTemplate(example)}
@@ -2203,7 +2203,7 @@ export default function DashboardMediaKitPage() {
           <button
             type="button"
             onClick={() => setIsExamplesModalOpen(false)}
-            className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
+            className="h-10 px-5 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -2222,75 +2222,75 @@ export default function DashboardMediaKitPage() {
         <form onSubmit={handleSaveContactSettings} className="flex flex-col flex-1 min-h-0">
           <ModalBody className="p-4 sm:p-5 space-y-4 text-left max-h-[70vh] overflow-y-auto">
             {/* Section A: Audience Snapshot */}
-            <div className="space-y-3 pb-3 border-b border-[#e2e8f0]">
+            <div className="space-y-3 pb-3 border-b border-[#ECECF0]">
               <h4 className="text-xs font-bold uppercase tracking-wider text-[#7A2253]">Audience Snapshot</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="block text-xs font-medium text-[#0f172a]">Avg. Reel Views</label>
+                  <label className="block text-xs font-medium text-[#18181B]">Avg. Reel Views</label>
                   <input
                     type="text"
                     value={settingAvgReelViews}
                     onChange={(e) => setSettingAvgReelViews(e.target.value)}
                     placeholder="e.g., 45K or 1.2M"
-                    className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                    className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-xs font-medium text-[#0f172a]">Engagement Rate (%)</label>
+                  <label className="block text-xs font-medium text-[#18181B]">Engagement Rate (%)</label>
                   <input
                     type="text"
                     value={settingEngagementRate}
                     onChange={(e) => setSettingEngagementRate(e.target.value)}
                     placeholder="e.g., 4.8%"
-                    className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                    className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-xs font-medium text-[#0f172a]">Top Cities</label>
+                <label className="block text-xs font-medium text-[#18181B]">Top Cities</label>
                 <input
                   type="text"
                   value={settingTopCities}
                   onChange={(e) => setSettingTopCities(e.target.value)}
                   placeholder="e.g., Mumbai, Delhi, Bengaluru (up to 3)"
-                  className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                  className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="block text-xs font-medium text-[#0f172a]">Content Languages</label>
+                  <label className="block text-xs font-medium text-[#18181B]">Content Languages</label>
                   <input
                     type="text"
                     value={settingLanguages}
                     onChange={(e) => setSettingLanguages(e.target.value)}
                     placeholder="e.g., Hindi, English (comma-separated)"
-                    className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                    className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-xs font-medium text-[#0f172a]">Categories / Niches</label>
+                  <label className="block text-xs font-medium text-[#18181B]">Categories / Niches</label>
                   <input
                     type="text"
                     value={settingCategories}
                     onChange={(e) => setSettingCategories(e.target.value)}
                     placeholder="e.g., Street Food, Travel, Vlogs"
-                    className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                    className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-xs font-medium text-[#0f172a]">Past Brands Worked With</label>
+                <label className="block text-xs font-medium text-[#18181B]">Past Brands Worked With</label>
                 <input
                   type="text"
                   value={settingPastBrands}
                   onChange={(e) => setSettingPastBrands(e.target.value)}
                   placeholder="e.g., Chai Tapri Co., Masala Munch Snacks, Monsoon Sips"
-                  className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                  className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
                 />
-                <p className="text-[11px] text-[#64748b]">Separate multiple brands with commas.</p>
+                <p className="text-[11px] text-[#6B6B76]">Separate multiple brands with commas.</p>
               </div>
             </div>
 
@@ -2299,7 +2299,7 @@ export default function DashboardMediaKitPage() {
               <h4 className="text-xs font-bold uppercase tracking-wider text-[#7A2253]">Contact Options</h4>
 
               <div className="space-y-1">
-                <label className="block text-xs font-medium text-[#0f172a]">
+                <label className="block text-xs font-medium text-[#18181B]">
                   Official WhatsApp Number
                 </label>
                 <input
@@ -2307,12 +2307,12 @@ export default function DashboardMediaKitPage() {
                   value={settings.whatsappNumber || ""}
                   onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
                   placeholder="+91 9876543210"
-                  className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                  className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-xs font-medium text-[#0f172a]">
+                <label className="block text-xs font-medium text-[#18181B]">
                   Business Email Address
                 </label>
                 <input
@@ -2320,12 +2320,12 @@ export default function DashboardMediaKitPage() {
                   value={settings.sponsorEmail || ""}
                   onChange={(e) => setSettings({ ...settings, sponsorEmail: e.target.value })}
                   placeholder={profile.email || "collabs@yourdomain.com"}
-                  className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                  className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
                 />
               </div>
 
               <div className="space-y-2 pt-1">
-                <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-[#0f172a]">
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-[#18181B]">
                   <input
                     type="checkbox"
                     checked={settingAllowWhatsapp}
@@ -2334,7 +2334,7 @@ export default function DashboardMediaKitPage() {
                   />
                   <span>Show &quot;Prefer WhatsApp?&quot; direct link in collab sheet</span>
                 </label>
-                <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-[#0f172a]">
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-[#18181B]">
                   <input
                     type="checkbox"
                     checked={settingAllowEmail}
@@ -2346,7 +2346,7 @@ export default function DashboardMediaKitPage() {
               </div>
 
               <div className="space-y-1 pt-1">
-                <label className="block text-xs font-medium text-[#0f172a]">
+                <label className="block text-xs font-medium text-[#18181B]">
                   Minimum Campaign Budget (Optional)
                 </label>
                 <input
@@ -2354,17 +2354,17 @@ export default function DashboardMediaKitPage() {
                   value={settings.minBudget || ""}
                   onChange={(e) => setSettings({ ...settings, minBudget: e.target.value })}
                   placeholder="₹0 (Accept all deals)"
-                  className="w-full h-9 rounded-[5px] border border-[#e2e8f0] bg-white px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none"
+                  className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
                 />
               </div>
             </div>
           </ModalBody>
 
-          <ModalFooter className="px-4 sm:px-5 py-3 border-t border-[#e2e8f0] bg-[#f8fafc]">
+          <ModalFooter className="px-4 sm:px-5 py-3 border-t border-[#ECECF0] bg-[#FAFAFB]">
             <button
               type="button"
               onClick={() => setIsContactModalOpen(false)}
-              className="px-4 py-2 rounded-[5px] border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-[5px] border border-[#ECECF0] text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#7A2253] transition-colors cursor-pointer"
             >
               Cancel
             </button>

@@ -32,7 +32,7 @@ export function ProductLimitModal({ isOpen, onClose, used, limit, plan }: {
         <button
           type="button"
           onClick={onClose}
-          className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
+          className="h-10 px-5 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer"
         >
           Not now
         </button>

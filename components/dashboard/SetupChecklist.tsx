@@ -186,7 +186,7 @@ export function SetupChecklist({
             />
           </span>
           {nextItem && (
-            <span className="hidden sm:inline truncate max-w-[220px] text-[12.5px] text-[#6B6B76]">
+            <span className="hidden sm:inline truncate max-w-[220px] text-[13px] text-[#6B6B76]">
               Next: <span className="font-medium text-[#18181B]">{nextItem.title}</span>
             </span>
           )}
@@ -237,7 +237,7 @@ export function SetupChecklist({
 
                   {/* Title */}
                   <span
-                    className={`text-[13.5px] font-semibold transition-colors ${
+                    className={`text-[14px] font-semibold transition-colors ${
                       item.isDone
                         ? "text-[#8E8E93] line-through"
                         : "text-[#18181B] group-hover:text-[#7A2253]"
@@ -259,7 +259,7 @@ export function SetupChecklist({
               {/* Row Body (Expanded) */}
               {isExpanded && (
                 <div className="pl-8 pr-2 pt-1 pb-2">
-                  <p className="text-[12.5px] text-[#52525B] leading-relaxed mb-3">
+                  <p className="text-[13px] text-[#52525B] leading-relaxed mb-3">
                     {item.description}
                   </p>
 
@@ -267,7 +267,7 @@ export function SetupChecklist({
                     item.actionHref ? (
                       <Link
                         href={item.actionHref}
-                        className="inline-flex h-8 items-center justify-center px-4 rounded-[5px] bg-[#7A2253] text-white hover:bg-[#681c46] text-[12.5px] font-semibold transition-colors cursor-pointer shadow-2xs"
+                        className="inline-flex h-8 items-center justify-center px-4 rounded-[5px] bg-[#7A2253] text-white hover:bg-[#631841] text-[13px] font-semibold transition-colors cursor-pointer shadow-2xs"
                       >
                         {item.actionLabel}
                       </Link>
@@ -275,7 +275,7 @@ export function SetupChecklist({
                       <button
                         type="button"
                         onClick={item.onAction}
-                        className="inline-flex h-8 items-center justify-center px-4 rounded-[5px] bg-[#7A2253] text-white hover:bg-[#681c46] text-[12.5px] font-semibold transition-colors cursor-pointer shadow-2xs"
+                        className="inline-flex h-8 items-center justify-center px-4 rounded-[5px] bg-[#7A2253] text-white hover:bg-[#631841] text-[13px] font-semibold transition-colors cursor-pointer shadow-2xs"
                       >
                         {item.actionLabel}
                       </button>

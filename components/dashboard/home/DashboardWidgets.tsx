@@ -59,7 +59,7 @@ export function BrandInboxCard({
           </span>
           <div className="min-w-0">
             <h2 className="text-[14px] font-semibold text-[#18181B]">Brand inbox is quiet</h2>
-            <p className="mt-0.5 text-[12.5px] text-[#6B6B76]">Share your media kit so brands can see your rates and send requests.</p>
+            <p className="mt-0.5 text-[13px] text-[#6B6B76]">Share your media kit so brands can see your rates and send requests.</p>
           </div>
         </div>
         <button type="button" onClick={onShareMediaKit} className="dash-btn-primary inline-flex shrink-0 items-center justify-center gap-1.5">
@@ -85,13 +85,13 @@ export function BrandInboxCard({
               {row.icon}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[12.5px] text-[#6B6B76]">{row.label}</p>
+              <p className="truncate text-[13px] text-[#6B6B76]">{row.label}</p>
               <p className="text-[18px] font-semibold leading-tight text-[#18181B] tabular-nums">{loading ? "…" : formatCount(row.value)}</p>
             </div>
             <Link
               href={row.href}
-              className={`inline-flex h-8 shrink-0 items-center rounded-[5px] px-3 text-[12.5px] font-medium transition-colors ${
-                row.hot ? "bg-[#7A2253] text-white hover:bg-[#681c46]" : "border border-[#ECECF0] bg-white text-[#18181B] hover:border-[#7A2253]"
+              className={`inline-flex h-8 shrink-0 items-center rounded-[5px] px-3 text-[13px] font-medium transition-colors ${
+                row.hot ? "bg-[#7A2253] text-white hover:bg-[#631841]" : "border border-[#ECECF0] bg-white text-[#18181B] hover:border-[#7A2253]"
               }`}
             >
               {row.cta}
@@ -158,10 +158,10 @@ export function WeeklyMetrics({ metrics, loading }: { metrics: DashboardSummary[
     return (
       <section className="flex items-center gap-3 rounded-[5px] border border-[#ECECF0] bg-white px-3.5 py-3" aria-label="Last 7 days">
         <Eye className="h-4 w-4 shrink-0 text-[#7A2253]" aria-hidden />
-        <p className="min-w-0 flex-1 text-[12.5px] text-[#3F3F46]">
+        <p className="min-w-0 flex-1 text-[13px] text-[#3F3F46]">
           <span className="font-semibold text-[#18181B]">No visits in the last 7 days.</span> Add your Inflixo link to your Instagram bio to start getting fans.
         </p>
-        <Link href="/dashboard/analytics" className="shrink-0 text-[12.5px] font-medium text-[#7A2253] hover:underline underline-offset-2">
+        <Link href="/dashboard/analytics" className="shrink-0 text-[13px] font-medium text-[#7A2253] hover:underline underline-offset-2">
           Analytics
         </Link>
       </section>
@@ -171,7 +171,7 @@ export function WeeklyMetrics({ metrics, loading }: { metrics: DashboardSummary[
     <section className="space-y-2.5">
       <div className="flex items-center justify-between">
         <h2 className="text-[14px] font-semibold text-[#18181B]">Last 7 days</h2>
-        <Link href="/dashboard/analytics" className="text-[12.5px] font-medium text-[#7A2253] hover:underline underline-offset-2">
+        <Link href="/dashboard/analytics" className="text-[13px] font-medium text-[#7A2253] hover:underline underline-offset-2">
           All analytics
         </Link>
       </div>
@@ -188,7 +188,7 @@ export function WeeklyMetrics({ metrics, loading }: { metrics: DashboardSummary[
               badge={m ? <ChangeBadge current={m.current} previous={m.previous} /> : undefined}
               footer={
                 loading ? null : quiet ? (
-                  <p className="line-clamp-2 text-[11.5px] leading-snug text-[#6B6B76]">{tip}</p>
+                  <p className="line-clamp-2 text-[12px] leading-snug text-[#6B6B76]">{tip}</p>
                 ) : (
                   <Sparkline data={m!.daily} />
                 )
@@ -208,8 +208,8 @@ function PerformerRow({ icon, label, title, count, unit, sub }: { icon: ReactNod
     <li className="flex items-center gap-3 py-2.5">
       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">{icon}</span>
       <div className="min-w-0 flex-1">
-        <p className="text-[11.5px] uppercase tracking-wide text-[#8E8E93]">{label}</p>
-        <p className="truncate text-[13.5px] font-medium text-[#18181B]" title={title}>{title ?? "—"}</p>
+        <p className="text-[12px] uppercase tracking-wide text-[#8E8E93]">{label}</p>
+        <p className="truncate text-[14px] font-medium text-[#18181B]" title={title}>{title ?? "—"}</p>
         {sub && <p className="truncate text-[12px] text-[#6B6B76]" title={sub}>{sub}</p>}
       </div>
       <span className="shrink-0 text-right text-[13px] font-semibold text-[#18181B] tabular-nums">
@@ -224,7 +224,7 @@ export function TopPerformers({ top }: { top: DashboardSummary["top"] | null }) 
   return (
     <DashboardCard title="Top performers · 7d">
       {none ? (
-        <p className="py-4 text-center text-[12.5px] text-[#6B6B76]">No clicks yet this week. Share your profile to see what fans love.</p>
+        <p className="py-4 text-center text-[13px] text-[#6B6B76]">No clicks yet this week. Share your profile to see what fans love.</p>
       ) : (
         <ul className="-my-2.5 divide-y divide-[#F4F4F5]">
           <PerformerRow icon={<Link2 className="h-4 w-4" />} label="Top link" title={top!.link?.title} count={top!.link?.clicks} unit="click" />
@@ -259,14 +259,14 @@ export function TrafficSources({ sources }: { sources: DashboardSummary["sources
   return (
     <DashboardCard title="Traffic sources · 7d">
       {!sources || total === 0 ? (
-        <p className="py-4 text-center text-[12.5px] text-[#6B6B76]">No visits yet. Add your link to your bio to see where fans come from.</p>
+        <p className="py-4 text-center text-[13px] text-[#6B6B76]">No visits yet. Add your link to your bio to see where fans come from.</p>
       ) : (
         <ul className="space-y-2.5">
           {sources.map((s) => {
             const pct = Math.round((s.count / total) * 100);
             return (
               <li key={s.source}>
-                <div className="mb-1 flex items-center justify-between text-[12.5px]">
+                <div className="mb-1 flex items-center justify-between text-[13px]">
                   <span className="font-medium text-[#18181B]">{s.source}</span>
                   <span className="tabular-nums text-[#6B6B76]">
                     {formatCount(s.count)} · {pct}%
@@ -288,7 +288,7 @@ export function TrafficSources({ sources }: { sources: DashboardSummary["sources
 
 export function QuickActions({ addEpisodeHref }: { addEpisodeHref: string }) {
   const cls =
-    "flex min-w-[112px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-[5px] border border-[#E8E8EC] bg-white px-3 py-3 text-center text-[12.5px] font-medium text-[#18181B] transition-colors hover:border-[#7A2253] hover:text-[#7A2253] cursor-pointer @xl:min-w-0";
+    "flex min-w-[112px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-[5px] border border-[#E8E8EC] bg-white px-3 py-3 text-center text-[13px] font-medium text-[#18181B] transition-colors hover:border-[#7A2253] hover:text-[#7A2253] cursor-pointer @xl:min-w-0";
   const icon = "h-4 w-4 text-[#7A2253]";
   const actions: { label: string; icon: ReactNode; href?: string; onClick?: () => void }[] = [
     { label: "Add Episode", icon: <Clapperboard className={icon} />, href: addEpisodeHref },
@@ -331,7 +331,7 @@ export function EraProgressCard({ fans, onShare }: { fans: number; onShare: () =
         <div className="flex min-w-0 items-center gap-3">
           <EraAwardMedal era={cfg.name} stage={era?.stage ?? "Bronze"} size={38} />
           <div className="min-w-0">
-            <p className="text-[12.5px] text-[#6B6B76]">
+            <p className="text-[13px] text-[#6B6B76]">
               {cfg.award} · {formatFans(fans)} fans
             </p>
             <p className="truncate text-[15px] font-semibold" style={{ color: eraInk(cfg.color) }}>
@@ -339,7 +339,7 @@ export function EraProgressCard({ fans, onShare }: { fans: number; onShare: () =
             </p>
           </div>
         </div>
-        <button type="button" onClick={onShare} className="shrink-0 text-[12.5px] font-medium text-[#7A2253] hover:underline underline-offset-2 cursor-pointer">
+        <button type="button" onClick={onShare} className="shrink-0 text-[13px] font-medium text-[#7A2253] hover:underline underline-offset-2 cursor-pointer">
           Share Era
         </button>
       </div>
@@ -380,13 +380,13 @@ export function SmartAlerts({ alerts }: { alerts: SmartAlert[] }) {
           }`}
         >
           <AlertTriangle className={`h-4 w-4 shrink-0 ${a.tone === "warn" ? "text-amber-600" : "text-[#7A2253]"}`} />
-          <p className="min-w-0 flex-1 text-[12.5px] font-medium text-[#18181B]">{a.text}</p>
+          <p className="min-w-0 flex-1 text-[13px] font-medium text-[#18181B]">{a.text}</p>
           {a.cta.href ? (
-            <Link href={a.cta.href} className="shrink-0 text-[12.5px] font-semibold text-[#7A2253] hover:underline underline-offset-2">
+            <Link href={a.cta.href} className="shrink-0 text-[13px] font-semibold text-[#7A2253] hover:underline underline-offset-2">
               {a.cta.label}
             </Link>
           ) : (
-            <button type="button" onClick={a.cta.onClick} className="shrink-0 text-[12.5px] font-semibold text-[#7A2253] hover:underline underline-offset-2 cursor-pointer">
+            <button type="button" onClick={a.cta.onClick} className="shrink-0 text-[13px] font-semibold text-[#7A2253] hover:underline underline-offset-2 cursor-pointer">
               {a.cta.label}
             </button>
           )}

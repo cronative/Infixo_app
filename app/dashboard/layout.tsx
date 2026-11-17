@@ -55,7 +55,7 @@ function DesktopTopHeader() {
     <header className="hidden h-13 shrink-0 items-center justify-between border-b border-[#ECECF0] bg-white px-6 lg:flex lg:px-8">
       <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-[13px] text-[#6B6B76]">
         <span>{pathname === "/dashboard" ? "Studio" : (group?.title ?? "Studio")}</span>
-        <ChevronRight className="h-3.5 w-3.5 text-[#cbd5e1]" />
+        <ChevronRight className="h-3.5 w-3.5 text-[#D4D4D8]" />
         <span className="font-medium text-[#18181B]">{navTitle}</span>
       </nav>
 

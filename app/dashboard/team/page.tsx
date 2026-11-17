@@ -430,7 +430,7 @@ export default function DashboardTeamPage() {
 
       {/* Main Content Area */}
       {loading ? (
-        <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-6 text-center text-xs text-[#64748b]">
+        <div className="rounded-[5px] border border-[#ECECF0] bg-white p-6 text-center text-xs text-[#6B6B76]">
           Loading team details...
         </div>
       ) : !team ? (
@@ -443,7 +443,7 @@ export default function DashboardTeamPage() {
             <button
               type="button"
               onClick={handleOpenTeamModal}
-              className="inline-flex items-center gap-2 rounded-[5px] bg-[#7A2253] h-9 px-4 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:bg-[#681c46] cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-[5px] bg-[#7A2253] h-9 px-4 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:bg-[#631841] cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Create Your Team</span>
@@ -478,7 +478,7 @@ export default function DashboardTeamPage() {
                     {team.teamDescription}
                   </p>
                 ) : null}
-                <p className="text-[11.5px] text-[#6B6B76]">
+                <p className="text-[12px] text-[#6B6B76]">
                   {team.members?.length || 0} team {team.members?.length === 1 ? "member" : "members"}
                 </p>
               </div>
@@ -513,12 +513,12 @@ export default function DashboardTeamPage() {
           {isExpanded && (
             <div>
               {/* Divider Bar: TEAM MEMBERS (N) */}
-              <div className="border-t border-b border-[#e2e8f0] bg-[#f8fafc] px-4 sm:px-5 py-2 flex items-center justify-between">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748b]">
+              <div className="border-t border-b border-[#ECECF0] bg-[#FAFAFB] px-4 sm:px-5 py-2 flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#6B6B76]">
                   TEAM MEMBERS ({team.members?.length || 0})
                 </span>
                 {(team.members?.length || 0) > 1 && (
-                  <span className="text-[11px] text-[#94a3b8]">
+                  <span className="text-[11px] text-[#A1A1AA]">
                     Drag rows to reorder
                   </span>
                 )}
@@ -527,20 +527,20 @@ export default function DashboardTeamPage() {
               {!team.members || team.members.length === 0 ? (
                 <div className="p-6 text-center space-y-2 bg-white">
                   <p className="text-xs font-bold text-[#7A2253]">No team members added yet</p>
-                  <p className="text-xs text-[#64748b] max-w-sm mx-auto">
+                  <p className="text-xs text-[#6B6B76] max-w-sm mx-auto">
                     Add members to highlight on-camera talent, directors, editors, writers, and collaborators on your public profile.
                   </p>
                   <button
                     type="button"
                     onClick={() => handleOpenMemberModal()}
-                    className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] h-8 px-3 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs mt-2"
+                    className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#631841] h-8 px-3 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs mt-2"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     <span>Add First Member</span>
                   </button>
                 </div>
               ) : (
-                <div className="divide-y divide-[#f1f5f9] bg-white">
+                <div className="divide-y divide-[#F4F4F5] bg-white">
                   {team.members.map((member: TeamMember) => {
                     const isHidden = member.isActive === false;
                     const groupLabel = member.group === "On camera" ? "On camera" : "Behind the camera";
@@ -578,7 +578,7 @@ export default function DashboardTeamPage() {
                         {/* Left: Drag Handle + Round Photo + Name, Role Chip, Group, One-Liner */}
                         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                           <div
-                            className="cursor-grab active:cursor-grabbing text-[#94a3b8] hover:text-[#475569] shrink-0"
+                            className="cursor-grab active:cursor-grabbing text-[#A1A1AA] hover:text-[#52525B] shrink-0"
                             title="Drag to reorder"
                           >
                             <GripVertical className="h-4 w-4" />
@@ -587,31 +587,31 @@ export default function DashboardTeamPage() {
                           <CreatorAvatar
                             src={member.avatarUrl || null}
                             name={member.name}
-                            className="h-10 w-10 rounded-full object-cover shrink-0 border border-[#e2e8f0]"
+                            className="h-10 w-10 rounded-full object-cover shrink-0 border border-[#ECECF0]"
                             fallbackBgClass="bg-[#FFF5F7]"
                             textClassName="text-xs font-bold text-[#7A2253]"
                           />
 
                           <div className="min-w-0 flex-1 space-y-0.5">
                             <div className="flex flex-wrap items-center gap-1.5">
-                              <p className="font-bold text-sm text-[#0f172a] truncate">
+                              <p className="font-bold text-sm text-[#18181B] truncate">
                                 {member.name}
                               </p>
                               <span className="inline-flex items-center gap-1 rounded-full bg-[#F7EEF2] text-[#7A2253] px-2 py-0.5 text-[11px] font-semibold">
                                 {member.role}
                               </span>
-                              <span className="inline-flex items-center rounded-[4px] bg-[#f1f5f9] text-[#475569] px-1.5 py-0.5 text-[10px] font-semibold">
+                              <span className="inline-flex items-center rounded-[5px] bg-[#F4F4F5] text-[#52525B] px-1.5 py-0.5 text-[10px] font-semibold">
                                 {groupLabel}
                               </span>
                               {isHidden && (
-                                <span className="inline-flex items-center rounded-[4px] bg-[#f1f5f9] border border-[#cbd5e1] text-[#475569] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                                <span className="inline-flex items-center rounded-[5px] bg-[#F4F4F5] border border-[#D4D4D8] text-[#52525B] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
                                   Hidden
                                 </span>
                               )}
                             </div>
 
                             {member.oneLiner && member.oneLiner.trim() && (
-                              <p className="text-xs italic text-[#64748b] line-clamp-1">
+                              <p className="text-xs italic text-[#6B6B76] line-clamp-1">
                                 &ldquo;{member.oneLiner.trim()}&rdquo;
                               </p>
                             )}
@@ -678,7 +678,7 @@ export default function DashboardTeamPage() {
                             {member.isActive ? (
                               <Eye className="h-4 w-4 text-[#10b981]" />
                             ) : (
-                              <EyeOff className="h-4 w-4 text-[#94a3b8]" />
+                              <EyeOff className="h-4 w-4 text-[#A1A1AA]" />
                             )}
                           </button>
 
@@ -728,20 +728,20 @@ export default function DashboardTeamPage() {
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-bold text-[#7A2253]">What is a Creator Team?</p>
-                <p className="text-[11px] text-[#64748b] mt-0.5">Highlight your on-camera talent, directors, editors, writers, and collaborators on your Inflixo profile.</p>
+                <p className="text-[11px] text-[#6B6B76] mt-0.5">Highlight your on-camera talent, directors, editors, writers, and collaborators on your Inflixo profile.</p>
               </div>
             </div>
 
             {/* Team Name */}
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
+                <label className="block text-[13px] font-medium text-[#18181B]">
                   Team Name <span className="text-[#C2414B]">*</span>
                 </label>
-                <span className="text-[11px] text-[#64748b]">Default: The Crew</span>
+                <span className="text-[11px] text-[#6B6B76]">Default: The Crew</span>
               </div>
-              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Users className="h-4 w-4" />
                 </div>
                 <input
@@ -750,7 +750,7 @@ export default function DashboardTeamPage() {
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
                   placeholder="The Crew"
-                  className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                 />
               </div>
             </div>
@@ -758,12 +758,12 @@ export default function DashboardTeamPage() {
             {/* Team Logo (Optional) */}
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
-                  Team Logo <span className="font-normal text-[#94a3b8]">(Optional)</span>
+                <label className="block text-[13px] font-medium text-[#18181B]">
+                  Team Logo <span className="font-normal text-[#A1A1AA]">(Optional)</span>
                 </label>
-                <span className="text-[11px] text-[#64748b]">Add a team logo to make it stand out.</span>
+                <span className="text-[11px] text-[#6B6B76]">Add a team logo to make it stand out.</span>
               </div>
-              <label className="relative flex flex-col items-center justify-center p-4 border border-dashed border-[#cbd5e1] rounded-[5px] bg-[#f8fafc] hover:bg-[#f1f5f9] transition-colors cursor-pointer min-h-[96px] group">
+              <label className="relative flex flex-col items-center justify-center p-4 border border-dashed border-[#D4D4D8] rounded-[5px] bg-[#FAFAFB] hover:bg-[#F4F4F5] transition-colors cursor-pointer min-h-[96px] group">
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
@@ -776,10 +776,10 @@ export default function DashboardTeamPage() {
                     <img
                       src={teamLogoUrl}
                       alt="Team logo preview"
-                      className="h-14 w-14 rounded-[5px] object-cover border border-[#e2e8f0]"
+                      className="h-14 w-14 rounded-[5px] object-cover border border-[#ECECF0]"
                     />
                     <div className="min-w-0 flex-1">
-                      <span className="block text-xs font-semibold text-[#0f172a]">Logo uploaded</span>
+                      <span className="block text-xs font-semibold text-[#18181B]">Logo uploaded</span>
                       <span className="block text-[11px] text-[#7A2253] font-medium">Click to change logo</span>
                     </div>
                     <button
@@ -789,18 +789,18 @@ export default function DashboardTeamPage() {
                         e.stopPropagation();
                         setTeamLogoUrl(null);
                       }}
-                      className="h-7 w-7 flex items-center justify-center rounded-[5px] text-[#64748b] hover:text-rose-600 hover:bg-rose-50"
+                      className="h-7 w-7 flex items-center justify-center rounded-[5px] text-[#6B6B76] hover:text-rose-600 hover:bg-rose-50"
                     >
                       <X className="h-4 w-4" />
                     </button>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center text-center">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#64748b] group-hover:text-[#7A2253] mb-1">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#6B6B76] group-hover:text-[#7A2253] mb-1">
                       <ImageIcon className="h-5 w-5" />
                     </div>
-                    <span className="text-xs font-semibold text-[#0f172a]">Upload Team Logo</span>
-                    <span className="text-[11px] text-[#94a3b8]">JPG, PNG or WebP · Max 5MB</span>
+                    <span className="text-xs font-semibold text-[#18181B]">Upload Team Logo</span>
+                    <span className="text-[11px] text-[#A1A1AA]">JPG, PNG or WebP · Max 5MB</span>
                   </div>
                 )}
               </label>
@@ -809,13 +809,13 @@ export default function DashboardTeamPage() {
             {/* Team Description (Optional) */}
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
-                  Team Description <span className="font-normal text-[#94a3b8]">(Optional)</span>
+                <label className="block text-[13px] font-medium text-[#18181B]">
+                  Team Description <span className="font-normal text-[#A1A1AA]">(Optional)</span>
                 </label>
-                <span className="text-[11px] text-[#64748b]">Shown on your public team section</span>
+                <span className="text-[11px] text-[#6B6B76]">Shown on your public team section</span>
               </div>
-              <div className="flex rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <div className="flex w-10 shrink-0 items-start justify-center pt-2.5 border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+              <div className="flex rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex w-10 shrink-0 items-start justify-center pt-2.5 border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <FileText className="h-4 w-4" />
                 </div>
                 <textarea
@@ -823,7 +823,7 @@ export default function DashboardTeamPage() {
                   onChange={(e) => setTeamDescription(e.target.value)}
                   placeholder="e.g. A team of filmmakers, editors and storytellers creating travel and lifestyle content."
                   rows={2}
-                  className="flex-1 p-2.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none resize-y"
+                  className="flex-1 p-2.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none resize-y"
                 />
               </div>
             </div>
@@ -833,7 +833,7 @@ export default function DashboardTeamPage() {
             <button
               type="button"
               onClick={() => setIsTeamModalOpen(false)}
-              className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
+              className="h-10 px-5 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -862,15 +862,15 @@ export default function DashboardTeamPage() {
             {/* Member Photo Upload (Required for new members; existing fall back to initials) */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
+                <label className="block text-[13px] font-medium text-[#18181B]">
                   Member Photo {!editingMember && <span className="text-[#C2414B]">*</span>}
                 </label>
-                <span className="text-[11px] text-[#64748b]">
+                <span className="text-[11px] text-[#6B6B76]">
                   {editingMember ? "Optional (falls back to initials)" : "Required for new members"}
                 </span>
               </div>
               <div className="flex items-center gap-3.5">
-                <label className="relative h-14 w-14 rounded-full border border-dashed border-[#cbd5e1] bg-[#f8fafc] hover:bg-[#f1f5f9] flex items-center justify-center overflow-hidden cursor-pointer shrink-0 group">
+                <label className="relative h-14 w-14 rounded-full border border-dashed border-[#D4D4D8] bg-[#FAFAFB] hover:bg-[#F4F4F5] flex items-center justify-center overflow-hidden cursor-pointer shrink-0 group">
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
@@ -885,11 +885,11 @@ export default function DashboardTeamPage() {
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <Camera className="h-5 w-5 text-[#64748b] group-hover:text-[#7A2253]" />
+                    <Camera className="h-5 w-5 text-[#6B6B76] group-hover:text-[#7A2253]" />
                   )}
                 </label>
                 <div className="min-w-0 flex-1 space-y-1">
-                  <label className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 py-1.5 text-xs font-semibold text-[#0f172a] hover:bg-[#f8fafc] cursor-pointer">
+                  <label className="inline-flex items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-3 py-1.5 text-xs font-semibold text-[#18181B] hover:bg-[#FAFAFB] cursor-pointer">
                     <input
                       type="file"
                       accept="image/jpeg,image/png,image/webp"
@@ -907,7 +907,7 @@ export default function DashboardTeamPage() {
                       Remove
                     </button>
                   )}
-                  <p className="text-[11px] text-[#94a3b8]">Displayed as a round portrait on your public team cards.</p>
+                  <p className="text-[11px] text-[#A1A1AA]">Displayed as a round portrait on your public team cards.</p>
                 </div>
               </div>
             </div>
@@ -915,11 +915,11 @@ export default function DashboardTeamPage() {
             {/* Name & Role Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
+                <label className="block text-[13px] font-medium text-[#18181B]">
                   Name <span className="text-[#C2414B]">*</span>
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <User className="h-4 w-4" />
                   </div>
                   <input
@@ -928,17 +928,17 @@ export default function DashboardTeamPage() {
                     value={memberName}
                     onChange={(e) => setMemberName(e.target.value)}
                     placeholder="e.g. Rahul Sharma"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
+                <label className="block text-[13px] font-medium text-[#18181B]">
                   Role <span className="text-[#C2414B]">*</span>
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Briefcase className="h-4 w-4" />
                   </div>
                   <input
@@ -947,7 +947,7 @@ export default function DashboardTeamPage() {
                     value={memberRole}
                     onChange={(e) => setMemberRole(e.target.value)}
                     placeholder="e.g. Lead Video Editor"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                   />
                 </div>
               </div>
@@ -955,7 +955,7 @@ export default function DashboardTeamPage() {
 
             {/* Group: On camera | Behind the camera */}
             <div className="space-y-1">
-              <label className="block text-[13px] font-medium text-[#0f172a]">Group</label>
+              <label className="block text-[13px] font-medium text-[#18181B]">Group</label>
               <div className="grid grid-cols-2 gap-2">
                 {(["Behind the camera", "On camera"] as TeamMemberGroup[]).map((grp) => {
                   const selected = memberGroup === grp;
@@ -967,7 +967,7 @@ export default function DashboardTeamPage() {
                       className={`h-10 rounded-[5px] border text-xs font-semibold transition-all cursor-pointer ${
                         selected
                           ? "border-[#7A2253] bg-[#FFF0F5] text-[#7A2253] ring-1 ring-[#7A2253]"
-                          : "border-[#e2e8f0] bg-white text-[#475569] hover:bg-[#f8fafc]"
+                          : "border-[#ECECF0] bg-white text-[#52525B] hover:bg-[#FAFAFB]"
                       }`}
                     >
                       {grp}
@@ -980,10 +980,10 @@ export default function DashboardTeamPage() {
             {/* One-liner (80 chars, optional) */}
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
-                  One-liner <span className="font-normal text-[#94a3b8]">(Optional)</span>
+                <label className="block text-[13px] font-medium text-[#18181B]">
+                  One-liner <span className="font-normal text-[#A1A1AA]">(Optional)</span>
                 </label>
-                <span className="text-[11px] text-[#64748b]">{memberOneLiner.length}/80</span>
+                <span className="text-[11px] text-[#6B6B76]">{memberOneLiner.length}/80</span>
               </div>
               <input
                 type="text"
@@ -991,17 +991,17 @@ export default function DashboardTeamPage() {
                 value={memberOneLiner}
                 onChange={(e) => setMemberOneLiner(e.target.value.slice(0, 80))}
                 placeholder="e.g. The one who always says 'one more take'"
-                className="w-full h-10 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 focus:border-[#7A2253] outline-none"
+                className="w-full h-10 rounded-[5px] border border-[#ECECF0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 focus:border-[#7A2253] outline-none"
               />
             </div>
 
             {/* Inflixo Username (Optional) */}
             <div className="space-y-1">
-              <label className="block text-[13px] font-medium text-[#0f172a]">
-                Inflixo Username <span className="font-normal text-[#94a3b8]">(Optional)</span>
+              <label className="block text-[13px] font-medium text-[#18181B]">
+                Inflixo Username <span className="font-normal text-[#A1A1AA]">(Optional)</span>
               </label>
-              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <div className="flex h-10 px-3 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-xs font-semibold text-[#64748b]">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex h-10 px-3 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-xs font-semibold text-[#6B6B76]">
                   inflixo.com/
                 </div>
                 <input
@@ -1009,7 +1009,7 @@ export default function DashboardTeamPage() {
                   value={memberInflixoUsername}
                   onChange={(e) => setMemberInflixoUsername(extractHandle(e.target.value, "inflixo"))}
                   placeholder="username"
-                  className="flex-1 h-10 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/40 bg-transparent outline-none"
+                  className="flex-1 h-10 px-3 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/40 bg-transparent outline-none"
                 />
               </div>
             </div>
@@ -1018,23 +1018,23 @@ export default function DashboardTeamPage() {
             <div className="space-y-3 pt-1">
               <div>
                 <p className="text-xs font-bold text-[#7A2253]">Social Profiles (Optional)</p>
-                <p className="text-[11px] text-[#64748b] mt-0.5">Enter username only — we&apos;ll generate the full profile links automatically.</p>
+                <p className="text-[11px] text-[#6B6B76] mt-0.5">Enter username only — we&apos;ll generate the full profile links automatically.</p>
               </div>
 
               {/* Instagram */}
               <div className="space-y-1">
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB]">
                     <InstagramIcon className="h-4.5 w-4.5 text-[#E1306C]" />
                   </div>
                   <div className="flex-1 px-3 py-1 min-w-0">
-                    <span className="block text-[10px] font-semibold text-[#64748b] leading-tight">Instagram Username</span>
+                    <span className="block text-[10px] font-semibold text-[#6B6B76] leading-tight">Instagram Username</span>
                     <input
                       type="text"
                       value={memberInstagram}
                       onChange={(e) => setMemberInstagram(extractHandle(e.target.value, "instagram"))}
                       placeholder="e.g. johndoe"
-                      className="w-full text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/40 bg-transparent outline-none pt-0.5"
+                      className="w-full text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/40 bg-transparent outline-none pt-0.5"
                     />
                   </div>
                 </div>
@@ -1042,18 +1042,18 @@ export default function DashboardTeamPage() {
 
               {/* YouTube */}
               <div className="space-y-1">
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB]">
                     <YoutubeIcon className="h-4.5 w-4.5 text-[#FF0000]" />
                   </div>
                   <div className="flex-1 px-3 py-1 min-w-0">
-                    <span className="block text-[10px] font-semibold text-[#64748b] leading-tight">YouTube Channel Username</span>
+                    <span className="block text-[10px] font-semibold text-[#6B6B76] leading-tight">YouTube Channel Username</span>
                     <input
                       type="text"
                       value={memberYoutube}
                       onChange={(e) => setMemberYoutube(extractHandle(e.target.value, "youtube"))}
                       placeholder="e.g. channelname"
-                      className="w-full text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/40 bg-transparent outline-none pt-0.5"
+                      className="w-full text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/40 bg-transparent outline-none pt-0.5"
                     />
                   </div>
                 </div>
@@ -1061,18 +1061,18 @@ export default function DashboardTeamPage() {
 
               {/* Facebook */}
               <div className="space-y-1">
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB]">
                     <FacebookIcon className="h-4.5 w-4.5 text-[#1877F2]" />
                   </div>
                   <div className="flex-1 px-3 py-1 min-w-0">
-                    <span className="block text-[10px] font-semibold text-[#64748b] leading-tight">Facebook Username</span>
+                    <span className="block text-[10px] font-semibold text-[#6B6B76] leading-tight">Facebook Username</span>
                     <input
                       type="text"
                       value={memberFacebook}
                       onChange={(e) => setMemberFacebook(extractHandle(e.target.value, "facebook"))}
                       placeholder="e.g. pagename"
-                      className="w-full text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/40 bg-transparent outline-none pt-0.5"
+                      className="w-full text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/40 bg-transparent outline-none pt-0.5"
                     />
                   </div>
                 </div>
@@ -1084,7 +1084,7 @@ export default function DashboardTeamPage() {
             <button
               type="button"
               onClick={() => setIsMemberModalOpen(false)}
-              className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
+              className="h-10 px-5 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer"
             >
               Cancel
             </button>

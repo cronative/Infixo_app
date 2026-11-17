@@ -92,13 +92,13 @@ export function LocationSearchModal({
       icon={<MapPin className="h-4 w-4" />}
     >
       {/* Mode Tabs */}
-      <div className="flex border-b border-[#e2e8f0] bg-[#f8fafc] p-1 px-4 gap-1.5 shrink-0">
+      <div className="flex border-b border-[#ECECF0] bg-[#FAFAFB] p-1 px-4 gap-1.5 shrink-0">
         <button
           type="button"
           onClick={() => setMode("search")}
           className={`flex-1 rounded-[5px] py-1.5 text-xs font-semibold transition-colors cursor-pointer ${mode === "search"
-            ? "bg-white text-[#7A2253] shadow-xs border border-[#e2e8f0]"
-            : "text-[#64748b] hover:text-[#7A2253]"
+            ? "bg-white text-[#7A2253] shadow-xs border border-[#ECECF0]"
+            : "text-[#6B6B76] hover:text-[#7A2253]"
             }`}
         >
           Search Cities
@@ -107,8 +107,8 @@ export function LocationSearchModal({
           type="button"
           onClick={() => setMode("custom")}
           className={`flex-1 rounded-[5px] py-1.5 text-xs font-semibold transition-colors cursor-pointer ${mode === "custom"
-            ? "bg-white text-[#7A2253] shadow-xs border border-[#e2e8f0]"
-            : "text-[#64748b] hover:text-[#7A2253]"
+            ? "bg-white text-[#7A2253] shadow-xs border border-[#ECECF0]"
+            : "text-[#6B6B76] hover:text-[#7A2253]"
             }`}
         >
           Custom Location
@@ -119,8 +119,8 @@ export function LocationSearchModal({
         {mode === "search" ? (
           <div className="space-y-3">
             {/* Search Input */}
-            <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                 <Search className="h-4 w-4" />
               </span>
               <input
@@ -129,13 +129,13 @@ export function LocationSearchModal({
                 placeholder="Search city, state, or country..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="h-10 flex-1 min-w-0 bg-transparent px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 outline-none"
+                className="h-10 flex-1 min-w-0 bg-transparent px-3 text-xs font-medium text-[#18181B] placeholder:text-[#6B6B76]/60 outline-none"
               />
             </div>
 
             {/* Results List */}
             <div className="space-y-1.5 pt-1">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748b] mb-1.5 text-left">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#6B6B76] mb-1.5 text-left">
                 {query ? `Matching Results (${filteredLocations.length})` : "Popular Locations"}
               </p>
 
@@ -145,17 +145,17 @@ export function LocationSearchModal({
                     key={idx}
                     type="button"
                     onClick={() => handleSelect(loc)}
-                    className="w-full flex items-center justify-between rounded-[5px] p-2.5 text-left border border-[#e2e8f0] bg-white hover:border-[#cbd5e1] hover:bg-[#f1f5f9] transition-colors group cursor-pointer"
+                    className="w-full flex items-center justify-between rounded-[5px] p-2.5 text-left border border-[#ECECF0] bg-white hover:border-[#D4D4D8] hover:bg-[#F4F4F5] transition-colors group cursor-pointer"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-[5px] bg-[#f8fafc] text-[#64748b] group-hover:bg-[#f1f5f9] group-hover:text-[#7A2253] transition-colors shrink-0">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-[5px] bg-[#FAFAFB] text-[#6B6B76] group-hover:bg-[#F4F4F5] group-hover:text-[#7A2253] transition-colors shrink-0">
                         <Building className="h-3.5 w-3.5" />
                       </div>
                       <div>
                         <p className="text-xs font-bold text-[#7A2253] group-hover:text-[#7A2253] transition-colors">
                           {loc.city}
                         </p>
-                        <p className="text-[11px] text-[#64748b] font-medium">
+                        <p className="text-[11px] text-[#6B6B76] font-medium">
                           {loc.state}, {loc.country}
                         </p>
                       </div>
@@ -168,7 +168,7 @@ export function LocationSearchModal({
               ) : (
                 <div className="py-6 text-center space-y-2">
                   <p className="text-xs font-bold text-[#7A2253]">No matching location found</p>
-                  <p className="text-xs text-[#64748b]">
+                  <p className="text-xs text-[#6B6B76]">
                     Switch to the <b>Custom Location</b> tab above to enter your exact city.
                   </p>
                 </div>
@@ -178,9 +178,9 @@ export function LocationSearchModal({
         ) : (
           <div className="space-y-3.5 text-left">
             <div className="space-y-1">
-              <label className="block text-[13px] font-medium text-[#0f172a]">City <span className="text-rose-500">*</span></label>
-              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+              <label className="block text-[13px] font-medium text-[#18181B]">City <span className="text-rose-500">*</span></label>
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Building className="h-4 w-4" />
                 </span>
                 <input
@@ -188,15 +188,15 @@ export function LocationSearchModal({
                   placeholder="e.g. Surat, Austin, Kyoto"
                   value={customCity}
                   onChange={(e) => setCustomCity(e.target.value)}
-                  className="h-10 flex-1 min-w-0 bg-transparent px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 outline-none"
+                  className="h-10 flex-1 min-w-0 bg-transparent px-3 text-xs font-medium text-[#18181B] placeholder:text-[#6B6B76]/60 outline-none"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="block text-[13px] font-medium text-[#0f172a]">State or Region <span className="text-[#64748b] font-normal">(Optional)</span></label>
-              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+              <label className="block text-[13px] font-medium text-[#18181B]">State or Region <span className="text-[#6B6B76] font-normal">(Optional)</span></label>
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Navigation className="h-4 w-4" />
                 </span>
                 <input
@@ -204,15 +204,15 @@ export function LocationSearchModal({
                   placeholder="e.g. Gujarat, California"
                   value={customState}
                   onChange={(e) => setCustomState(e.target.value)}
-                  className="h-10 flex-1 min-w-0 bg-transparent px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 outline-none"
+                  className="h-10 flex-1 min-w-0 bg-transparent px-3 text-xs font-medium text-[#18181B] placeholder:text-[#6B6B76]/60 outline-none"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="block text-[13px] font-medium text-[#0f172a]">Country <span className="text-rose-500">*</span></label>
-              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+              <label className="block text-[13px] font-medium text-[#18181B]">Country <span className="text-rose-500">*</span></label>
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Globe className="h-4 w-4" />
                 </span>
                 <input
@@ -220,7 +220,7 @@ export function LocationSearchModal({
                   placeholder="e.g. India, United States, Japan"
                   value={customCountry}
                   onChange={(e) => setCustomCountry(e.target.value)}
-                  className="h-10 flex-1 min-w-0 bg-transparent px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#64748b]/60 outline-none"
+                  className="h-10 flex-1 min-w-0 bg-transparent px-3 text-xs font-medium text-[#18181B] placeholder:text-[#6B6B76]/60 outline-none"
                 />
               </div>
             </div>
@@ -229,7 +229,7 @@ export function LocationSearchModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-[5px] border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-[5px] border border-[#ECECF0] text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#7A2253] transition-colors cursor-pointer"
               >
                 Cancel
               </button>

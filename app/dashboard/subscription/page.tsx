@@ -247,7 +247,7 @@ function PlanPage() {
             <p className="text-[13px] text-[#3F3F46]">
               Trial ends in {trial.daysLeft ?? 0} {trial.daysLeft === 1 ? "day" : "days"}. After that your profile goes private. Keep it public from {cheapest}/month.
             </p>
-            <a href="#plans" className="inline-flex h-8 shrink-0 items-center justify-center rounded-[5px] bg-[#7A2253] px-3 text-[13px] font-medium text-white hover:bg-[#681c46] transition-colors">
+            <a href="#plans" className="inline-flex h-8 shrink-0 items-center justify-center rounded-[5px] bg-[#7A2253] px-3 text-[13px] font-medium text-white hover:bg-[#631841] transition-colors">
               Choose plan
             </a>
           </div>
@@ -364,7 +364,7 @@ function PlanPage() {
                       prefill={{ email: profile.email, name: profile.displayName }}
                       className={
                         isHigher
-                          ? "w-full h-9 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] text-white text-[13px] font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-none"
+                          ? "w-full h-9 rounded-[5px] bg-[#7A2253] hover:bg-[#631841] text-white text-[13px] font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-none"
                           : "w-full h-9 rounded-[5px] border border-[#7A2253] bg-white text-[#7A2253] hover:bg-[#F7EEF2] text-[13px] font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-none"
                       }
                       onSuccess={() => handlePurchaseSuccess(key)}
@@ -379,15 +379,15 @@ function PlanPage() {
 
       {/* f. Footer */}
       {planKey !== "trial" && state === "active" && (
-        <p className="pt-1 text-center text-xs text-[#64748b]">
-          <button type="button" onClick={() => setShowCancelModal(true)} className="inline-flex items-center gap-1 underline underline-offset-2 hover:text-[#0f172a] cursor-pointer">
+        <p className="pt-1 text-center text-xs text-[#6B6B76]">
+          <button type="button" onClick={() => setShowCancelModal(true)} className="inline-flex items-center gap-1 underline underline-offset-2 hover:text-[#18181B] cursor-pointer">
             <RefreshCw className="h-3 w-3" />
             Cancel auto-renewal
           </button>
         </p>
       )}
       {planKey === "trial" && (
-        <p className="pt-1 text-center text-[11px] text-[#64748b]">
+        <p className="pt-1 text-center text-[11px] text-[#6B6B76]">
           <CreditCard className="inline h-3 w-3 mr-1" />
           Payments are secured by Razorpay. <Link href="/terms" className="underline underline-offset-2">Terms</Link>
         </p>

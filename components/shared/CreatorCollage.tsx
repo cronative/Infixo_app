@@ -38,11 +38,11 @@ export function CreatorCollage() {
             <img
               src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
               alt="Maya"
-              className="h-11 w-11 rounded-full object-cover border-2 border-slate-100 shadow-xs"
+              className="h-11 w-11 rounded-full object-cover border-2 border-zinc-100 shadow-xs"
             />
             <div>
               <p className="text-sm font-extrabold text-[#7A2253]">Maya</p>
-              <p className="text-xs font-semibold text-slate-500">@maya · Travel Creator</p>
+              <p className="text-xs font-semibold text-zinc-500">@maya · Travel Creator</p>
             </div>
           </div>
 
@@ -57,15 +57,15 @@ export function CreatorCollage() {
 
           {/* Crisp 1px Border Platform Follower Pills */}
           <div className="grid grid-cols-3 gap-2">
-            <div className="flex flex-col items-center justify-center rounded-xl bg-[#f8fafc] border border-[#e2e8f0] p-2 text-center">
+            <div className="flex flex-col items-center justify-center rounded-xl bg-[#FAFAFB] border border-[#ECECF0] p-2 text-center">
               <InstagramIcon className="h-4 w-4 text-pink-500 mb-0.5" />
               <span className="text-xs font-black text-[#7A2253]">48.7K</span>
             </div>
-            <div className="flex flex-col items-center justify-center rounded-xl bg-[#f8fafc] border border-[#e2e8f0] p-2 text-center">
+            <div className="flex flex-col items-center justify-center rounded-xl bg-[#FAFAFB] border border-[#ECECF0] p-2 text-center">
               <YoutubeIcon className="h-4 w-4 text-red-500 mb-0.5" />
               <span className="text-xs font-black text-[#7A2253]">62.3K</span>
             </div>
-            <div className="flex flex-col items-center justify-center rounded-xl bg-[#f8fafc] border border-[#e2e8f0] p-2 text-center">
+            <div className="flex flex-col items-center justify-center rounded-xl bg-[#FAFAFB] border border-[#ECECF0] p-2 text-center">
               <FacebookIcon className="h-4 w-4 text-blue-600 mb-0.5" />
               <span className="text-xs font-black text-[#7A2253]">15K</span>
             </div>

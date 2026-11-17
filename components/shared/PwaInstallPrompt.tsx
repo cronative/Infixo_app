@@ -111,7 +111,7 @@ export function PwaInstallPrompt() {
 
   return (
     <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md animate-fade-in-up">
-      <div className="relative overflow-hidden rounded-3xl border border-[#e2e8f0] bg-white/95 p-4 sm:p-5 shadow-2xl shadow-[#7A2253]/15 backdrop-blur-xl">
+      <div className="relative overflow-hidden rounded-3xl border border-[#ECECF0] bg-white/95 p-4 sm:p-5 shadow-2xl shadow-[#7A2253]/15 backdrop-blur-xl">
         {/* Ambient Top Glow */}
         <div className="pointer-events-none absolute -top-10 left-1/2 h-20 w-40 -translate-x-1/2 rounded-full bg-[#7A2253]/10 blur-xl" />
 
@@ -119,7 +119,7 @@ export function PwaInstallPrompt() {
         <button
           type="button"
           onClick={handleDismiss}
-          className="tap-scale absolute right-3.5 top-3.5 flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors"
+          className="tap-scale absolute right-3.5 top-3.5 flex h-7 w-7 items-center justify-center rounded-full bg-zinc-100 text-zinc-400 hover:bg-[#F4F4F5] hover:text-[#7A2253] transition-colors"
           aria-label="Dismiss Install Prompt"
         >
           <X className="h-3.5 w-3.5" />
@@ -140,32 +140,32 @@ export function PwaInstallPrompt() {
           {/* Text Info */}
           <div className="min-w-0 flex-1 space-y-0.5 text-left">
             <div className="flex items-center gap-1.5">
-              <h4 className="font-display text-sm font-black text-slate-900 truncate">
+              <h4 className="font-display text-sm font-black text-zinc-900 truncate">
                 Install Inflixo App
               </h4>
               <span className="inline-flex items-center gap-0.5 rounded-full bg-[#7A2253] px-2 py-0.5 text-[9px] font-black text-white shadow-xs">
                 <Sparkles className="h-2.5 w-2.5" /> FREE
               </span>
             </div>
-            <p className="text-xs text-slate-500 font-medium leading-tight">
+            <p className="text-xs text-zinc-500 font-medium leading-tight">
               Fast, full-screen creator experience &amp; offline access!
             </p>
           </div>
         </div>
 
         {/* Instructions / Action Area */}
-        <div className="mt-3.5 pt-3 border-t border-[#e2e8f0]/60">
+        <div className="mt-3.5 pt-3 border-t border-[#ECECF0]/60">
           {isIOS ? (
             /* iOS Safari Instructions */
             <div className="space-y-2 text-left">
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+              <div className="flex items-center gap-2 text-xs font-semibold text-zinc-700">
                 <span>1. Tap Share icon</span>
-                <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs">
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-zinc-100 text-zinc-700 border border-zinc-200 shadow-2xs">
                   <Share className="h-3.5 w-3.5" />
                 </span>
                 <span>at the bottom</span>
               </div>
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+              <div className="flex items-center gap-2 text-xs font-semibold text-zinc-700">
                 <span>2. Select</span>
                 <span className="inline-flex items-center gap-1 rounded-md bg-[#fdf2f8] px-2 py-0.5 text-[11px] font-bold text-[#7A2253] border border-[#fbcfe8]">
                   <PlusSquare className="h-3 w-3" /> Add to Home Screen

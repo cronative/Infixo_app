@@ -175,10 +175,10 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
   };
 
   return (
-    <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-5 sm:p-6 space-y-5 shadow-xs text-left">
+    <div className="rounded-[5px] border border-[#ECECF0] bg-white p-5 sm:p-6 space-y-5 shadow-xs text-left">
 
       {/* Top Banner: Daily Streak & Peak Posting Window */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#e2e8f0]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#ECECF0]">
 
         {/* Streak Counter */}
         <div className="flex items-center gap-3">
@@ -194,17 +194,17 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
                 Active
               </span>
             </div>
-            <p className="text-xs font-medium text-[#64748b]">
+            <p className="text-xs font-medium text-[#6B6B76]">
               Come back tomorrow before 12 AM to keep your streak burning!
             </p>
           </div>
         </div>
 
         {/* Peak Best Time to Post Badge */}
-        <div className="flex items-center gap-2.5 bg-[#f8fafc] px-3.5 py-2 rounded-[5px] border border-[#e2e8f0] shadow-xs shrink-0">
+        <div className="flex items-center gap-2.5 bg-[#FAFAFB] px-3.5 py-2 rounded-[5px] border border-[#ECECF0] shadow-xs shrink-0">
           <Clock className="h-4 w-4 text-[#7A2253]" />
           <div>
-            <p className="text-[10px] font-extrabold uppercase tracking-wider text-[#64748b]">
+            <p className="text-[10px] font-extrabold uppercase tracking-wider text-[#6B6B76]">
               Today&apos;s Peak Window
             </p>
             <p className="text-xs font-black text-[#7A2253]">
@@ -239,7 +239,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
         {ideas.map((item, idx) => (
           <div
             key={item.id}
-            className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 space-y-2.5 shadow-xs hover:border-[#cbd5e1] transition-all flex flex-col justify-between"
+            className="rounded-[5px] border border-[#ECECF0] bg-white p-4 space-y-2.5 shadow-xs hover:border-[#D4D4D8] transition-all flex flex-col justify-between"
           >
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-2">
@@ -255,13 +255,13 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
                 {item.title}
               </h4>
 
-              <div className="p-2.5 rounded-[5px] bg-[#f8fafc] border border-[#e2e8f0] text-[11px] font-medium text-[#64748b] italic leading-relaxed">
+              <div className="p-2.5 rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0] text-[11px] font-medium text-[#6B6B76] italic leading-relaxed">
                 &ldquo;{item.hook}&rdquo;
               </div>
             </div>
 
-            <div className="pt-2 flex items-center justify-between gap-2 border-t border-[#e2e8f0]">
-              <span className="text-[10px] font-semibold text-[#64748b]">
+            <div className="pt-2 flex items-center justify-between gap-2 border-t border-[#ECECF0]">
+              <span className="text-[10px] font-semibold text-[#6B6B76]">
                 {item.format}
               </span>
               <button
@@ -287,7 +287,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
       </div>
 
       {/* Daily Motivation Footer Banner */}
-      <div className="pt-1 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-medium text-[#64748b] border-t border-[#e2e8f0]">
+      <div className="pt-1 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-medium text-[#6B6B76] border-t border-[#ECECF0]">
         <div className="flex items-center gap-1.5">
           <Award className="h-3.5 w-3.5 text-amber-500" />
           <span>Keep your streak active for 7 days to unlock exclusive brand collab badges!</span>

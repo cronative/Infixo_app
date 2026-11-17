@@ -203,7 +203,7 @@ export function PhonePreview({
         <div className="flex items-center gap-2 min-w-0">
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-[5px] bg-[#F4F4F5] border border-[#E4E4E7]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#10B981] animate-pulse" />
-            <span className="text-[11.5px] font-semibold text-[#18181B] truncate">
+            <span className="text-[12px] font-semibold text-[#18181B] truncate">
               {pageTitle}
             </span>
           </div>
@@ -217,7 +217,7 @@ export function PhonePreview({
             type="button"
             onClick={handleCopyLink}
             title="Copy public page link"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[5px] border border-[#E4E4E7] bg-white text-[11.5px] font-medium text-[#18181B] hover:bg-[#F4F4F5] hover:border-[#D4D4D8] active:scale-[0.98] transition-all cursor-pointer shadow-none"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[5px] border border-[#E4E4E7] bg-white text-[12px] font-medium text-[#18181B] hover:bg-[#F4F4F5] hover:border-[#D4D4D8] active:scale-[0.98] transition-all cursor-pointer shadow-none"
           >
             {copied ? (
               <>

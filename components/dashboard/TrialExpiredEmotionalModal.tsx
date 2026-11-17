@@ -65,7 +65,7 @@ export function TrialExpiredEmotionalModal({
       {/* Dark blur backdrop */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity"
+        className="fixed inset-0 bg-zinc-900/60 backdrop-blur-md transition-opacity"
         aria-hidden="true"
       />
 
@@ -97,7 +97,7 @@ export function TrialExpiredEmotionalModal({
           onClick={onClose}
           type="button"
           aria-label="Close dialog"
-          className="absolute top-4 right-4 sm:top-5 sm:right-5 flex h-8 w-8 items-center justify-center rounded-[5px] bg-slate-100/90 hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer z-20"
+          className="absolute top-4 right-4 sm:top-5 sm:right-5 flex h-8 w-8 items-center justify-center rounded-[5px] bg-zinc-100/90 hover:bg-zinc-200 text-zinc-400 hover:text-zinc-700 transition-colors cursor-pointer z-20"
         >
           <X className="h-4 w-4" />
         </button>
@@ -139,7 +139,7 @@ export function TrialExpiredEmotionalModal({
 
           {/* User handle & Status */}
           <div className="min-w-0">
-            <p className="line-clamp-2 break-words text-sm sm:text-base font-bold text-slate-900 leading-tight">
+            <p className="line-clamp-2 break-words text-sm sm:text-base font-bold text-zinc-900 leading-tight">
               @{handle}
             </p>
             <div className="mt-1 inline-flex items-center gap-1 rounded-[5px] bg-[#FFF1F2] border border-[#FECDD3] px-2.5 py-0.5 text-[11px] font-bold text-[#E11D48]">
@@ -154,7 +154,7 @@ export function TrialExpiredEmotionalModal({
           <div className="sm:col-span-7">
             {/* "Hey Nikunj, ♥" */}
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-xl sm:text-2xl font-bold text-slate-900">Hey</span>
+              <span className="text-xl sm:text-2xl font-bold text-zinc-900">Hey</span>
               <span className="relative inline-block text-xl sm:text-2xl font-extrabold text-[#7A2253]">
                 {firstName},
                 {/* Hand-drawn brush underline */}
@@ -178,13 +178,13 @@ export function TrialExpiredEmotionalModal({
             {/* Subheadline with emotional hook */}
             <h2
               id="trial-modal-title"
-              className="text-lg sm:text-[21px] font-bold text-slate-900 leading-snug tracking-tight mt-2"
+              className="text-lg sm:text-[21px] font-bold text-zinc-900 leading-snug tracking-tight mt-2"
             >
               Your profile couldn&apos;t be available for your lovely fans 💔
             </h2>
 
             {/* Explanatory Paragraph */}
-            <p className="text-xs sm:text-[13px] text-slate-600 leading-relaxed font-normal mt-2.5">
+            <p className="text-xs sm:text-[13px] text-zinc-600 leading-relaxed font-normal mt-2.5">
               Your free trial period is over, so your Inflixo profile is currently hidden.
               Reactivate it now and get back to sharing your links, series, and creator journey
               with your fans, brands, and new visitors.
@@ -243,8 +243,8 @@ export function TrialExpiredEmotionalModal({
                 <path d="M8 14L10 9" />
               </svg>
             </div>
-            <p className="text-xs sm:text-[13px] font-bold text-slate-900">All Your Links</p>
-            <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+            <p className="text-xs sm:text-[13px] font-bold text-zinc-900">All Your Links</p>
+            <p className="text-[11px] text-zinc-500 mt-0.5 leading-snug">
               Keep everything in one place
             </p>
           </div>
@@ -266,8 +266,8 @@ export function TrialExpiredEmotionalModal({
                 <path d="M8 14L10 9" />
               </svg>
             </div>
-            <p className="text-xs sm:text-[13px] font-bold text-slate-900">Your Series</p>
-            <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+            <p className="text-xs sm:text-[13px] font-bold text-zinc-900">Your Series</p>
+            <p className="text-[11px] text-zinc-500 mt-0.5 leading-snug">
               Organize your stories beautifully
             </p>
           </div>
@@ -289,8 +289,8 @@ export function TrialExpiredEmotionalModal({
                 <path d="M8 14L10 9" />
               </svg>
             </div>
-            <p className="text-xs sm:text-[13px] font-bold text-slate-900">Your Creator Brand</p>
-            <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+            <p className="text-xs sm:text-[13px] font-bold text-zinc-900">Your Creator Brand</p>
+            <p className="text-[11px] text-zinc-500 mt-0.5 leading-snug">
               Stay visible and grow faster
             </p>
           </div>
@@ -325,9 +325,9 @@ export function TrialExpiredEmotionalModal({
         </div>
 
         {/* Footer Reassurance Info */}
-        <div className="flex items-center justify-center gap-3 pt-3.5 text-xs text-slate-600 font-medium">
+        <div className="flex items-center justify-center gap-3 pt-3.5 text-xs text-zinc-600 font-medium">
           <div className="inline-flex items-center gap-1.5">
-            <CreditCard className="h-4 w-4 text-slate-700" />
+            <CreditCard className="h-4 w-4 text-zinc-700" />
             <span>
               Just <strong className="text-rose-600 font-bold">{formatMoney(planPrice("starter", "monthly"))}/month</strong>
             </span>
@@ -343,9 +343,9 @@ export function TrialExpiredEmotionalModal({
             </svg>
           </div>
 
-          <span className="text-slate-300 font-light">|</span>
+          <span className="text-zinc-300 font-light">|</span>
 
-          <div className="inline-flex items-center gap-1.5 text-slate-700">
+          <div className="inline-flex items-center gap-1.5 text-zinc-700">
             <ShieldCheck className="h-4 w-4 text-[#E11D48]" />
             <span>Cancel anytime</span>
           </div>

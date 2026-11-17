@@ -10,7 +10,7 @@ export function DashboardBottomNav() {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-[#e2e8f0] bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-[#ECECF0] bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
     >
       {BOTTOM_NAV.map((item) => {
         const active = isNavActive(pathname, item.href);
@@ -21,8 +21,8 @@ export function DashboardBottomNav() {
             key={item.href}
             href={item.href}
             aria-current={active ? "page" : undefined}
-            className={`flex h-14 w-full flex-col items-center justify-center gap-1 text-[10.5px] transition-colors ${
-              active ? "font-semibold text-[#7A2253]" : "font-medium text-[#64748b] active:text-[#0f172a]"
+            className={`flex h-14 w-full flex-col items-center justify-center gap-1 text-[11px] transition-colors ${
+              active ? "font-semibold text-[#7A2253]" : "font-medium text-[#6B6B76] active:text-[#18181B]"
             }`}
           >
             <span

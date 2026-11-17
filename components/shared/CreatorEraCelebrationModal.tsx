@@ -141,12 +141,12 @@ export function CreatorEraCelebrationModal({
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF0F5] border border-[#FCE7F3] text-xs font-bold text-[#7A2253]">
             ✦ NEW CREATOR ERA UNLOCKED
           </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-[#0f172a] tracking-tight leading-tight">
+          <h2 className="text-2xl sm:text-3xl font-black text-[#18181B] tracking-tight leading-tight">
             You entered your {era.badge} Era ✨
           </h2>
-          <p className="text-xs sm:text-sm text-[#64748b] font-medium leading-relaxed max-w-xs mx-auto">
+          <p className="text-xs sm:text-sm text-[#6B6B76] font-medium leading-relaxed max-w-xs mx-auto">
             You achieved an all-time peak community of{" "}
-            <strong className="text-[#0f172a]">{formatCount(fanbase)}</strong> fans across your
+            <strong className="text-[#18181B]">{formatCount(fanbase)}</strong> fans across your
             connected social channels.
           </p>
         </div>
@@ -158,8 +158,8 @@ export function CreatorEraCelebrationModal({
               {era.stage}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-bold text-[#0f172a] truncate">{era.badge} Share Card</p>
-              <p className="text-[11px] text-[#64748b]">1080×1920 Story PNG ready to post</p>
+              <p className="text-xs font-bold text-[#18181B] truncate">{era.badge} Share Card</p>
+              <p className="text-[11px] text-[#6B6B76]">1080×1920 Story PNG ready to post</p>
             </div>
           </div>
           <span className="text-[11px] font-bold text-[#7A2253] shrink-0">#MyCreatorEra</span>
@@ -171,7 +171,7 @@ export function CreatorEraCelebrationModal({
             type="button"
             onClick={handleShare}
             disabled={sharing}
-            className="tap-scale w-full flex items-center justify-center gap-2 py-3 px-5 rounded-[8px] bg-[#7A2253] hover:bg-[#681c46] text-white text-xs sm:text-sm font-bold shadow-md shadow-[#7A2253]/20 transition-all cursor-pointer disabled:opacity-60"
+            className="tap-scale w-full flex items-center justify-center gap-2 py-3 px-5 rounded-[8px] bg-[#7A2253] hover:bg-[#631841] text-white text-xs sm:text-sm font-bold shadow-md shadow-[#7A2253]/20 transition-all cursor-pointer disabled:opacity-60"
           >
             <Share2 className="h-4 w-4" />
             <span>{sharing ? "Preparing Card..." : "Share Era Card"}</span>
@@ -180,7 +180,7 @@ export function CreatorEraCelebrationModal({
           <button
             type="button"
             onClick={onClose}
-            className="w-full sm:w-auto py-2.5 px-4 rounded-[8px] border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-xs font-semibold text-[#64748b] hover:text-[#0f172a] transition-colors cursor-pointer"
+            className="w-full sm:w-auto py-2.5 px-4 rounded-[8px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-xs font-semibold text-[#6B6B76] hover:text-[#18181B] transition-colors cursor-pointer"
           >
             Later
           </button>

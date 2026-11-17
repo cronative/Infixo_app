@@ -153,11 +153,11 @@ export function CollaborationInquiryModal({
             {/* Brand & Contact Name */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[13px] font-medium text-[#0f172a] block">
+                <label className="text-[13px] font-medium text-[#18181B] block">
                   Brand / Company Name <span className="text-[#C2414B]">*</span>
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Building2 className="h-4 w-4" />
                   </span>
                   <input
@@ -166,17 +166,17 @@ export function CollaborationInquiryModal({
                     value={brandName}
                     onChange={(e) => setBrandName(e.target.value)}
                     placeholder="e.g. Mamaearth / Local Brand / Agency"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[13px] font-medium text-[#0f172a] block">
+                <label className="text-[13px] font-medium text-[#18181B] block">
                   Your Name <span className="text-[#C2414B]">*</span>
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <User className="h-4 w-4" />
                   </span>
                   <input
@@ -185,7 +185,7 @@ export function CollaborationInquiryModal({
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
                     placeholder="e.g. Rohan Sharma"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                   />
                 </div>
               </div>
@@ -194,11 +194,11 @@ export function CollaborationInquiryModal({
             {/* Email & Phone */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[13px] font-medium text-[#0f172a] block">
+                <label className="text-[13px] font-medium text-[#18181B] block">
                   Business Email <span className="text-[#C2414B]">*</span>
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Mail className="h-4 w-4" />
                   </span>
                   <input
@@ -207,17 +207,17 @@ export function CollaborationInquiryModal({
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     placeholder="contact@brand.com"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[13px] font-medium text-[#0f172a] block">
+                <label className="text-[13px] font-medium text-[#18181B] block">
                   Phone / WhatsApp
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Phone className="h-4 w-4" />
                   </span>
                   <input
@@ -225,7 +225,7 @@ export function CollaborationInquiryModal({
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
                     placeholder="+91 98765 43210"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                   />
                 </div>
               </div>
@@ -234,17 +234,17 @@ export function CollaborationInquiryModal({
             {/* Budget & Timeline */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[13px] font-medium text-[#0f172a] block">
+                <label className="text-[13px] font-medium text-[#18181B] block">
                   Estimated Budget
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#17845B] font-bold text-sm">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#17845B] font-bold text-sm">
                     ₹
                   </span>
                   <select
                     value={budgetRange}
                     onChange={(e) => setBudgetRange(e.target.value)}
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] bg-transparent outline-none cursor-pointer"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] bg-transparent outline-none cursor-pointer"
                   >
                     <option value="Under ₹15,000">Under ₹15,000</option>
                     <option value="₹15,000 – ₹30,000">₹15,000 – ₹30,000</option>
@@ -257,11 +257,11 @@ export function CollaborationInquiryModal({
               </div>
 
               <div className="space-y-1">
-                <label className="text-[13px] font-medium text-[#0f172a] block">
+                <label className="text-[13px] font-medium text-[#18181B] block">
                   Campaign Timeline
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Calendar className="h-4 w-4" />
                   </span>
                   <input
@@ -269,7 +269,7 @@ export function CollaborationInquiryModal({
                     value={timeline}
                     onChange={(e) => setTimeline(e.target.value)}
                     placeholder="e.g. Next month / Q3"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                   />
                 </div>
               </div>
@@ -277,11 +277,11 @@ export function CollaborationInquiryModal({
 
             {/* Preferred Deliverables */}
             <div className="space-y-1">
-              <label className="text-[13px] font-medium text-[#0f172a] block">
+              <label className="text-[13px] font-medium text-[#18181B] block">
                 Deliverables / Format
               </label>
-              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Tag className="h-4 w-4" />
                 </span>
                 <input
@@ -289,18 +289,18 @@ export function CollaborationInquiryModal({
                   value={deliverables}
                   onChange={(e) => setDeliverables(e.target.value)}
                   placeholder="e.g. 1x Dedicated Reel, 2x Stories with Link"
-                  className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                 />
               </div>
             </div>
 
             {/* Campaign Details / Message */}
             <div className="space-y-1">
-              <label className="text-[13px] font-medium text-[#0f172a] block">
+              <label className="text-[13px] font-medium text-[#18181B] block">
                 Campaign Brief &amp; Notes
               </label>
-              <div className="flex items-start rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] pt-2.5 self-start">
+              <div className="flex items-start rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76] pt-2.5 self-start">
                   <FileText className="h-4 w-4" />
                 </span>
                 <textarea
@@ -308,7 +308,7 @@ export function CollaborationInquiryModal({
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Share project goals, product details, or specific campaign requirements..."
-                  className="flex-1 p-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none resize-y min-h-[75px]"
+                  className="flex-1 p-3 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none resize-y min-h-[75px]"
                 />
               </div>
             </div>
@@ -318,7 +318,7 @@ export function CollaborationInquiryModal({
             <button
               type="button"
               onClick={handleClose}
-              className="h-9 px-4 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
+              className="h-9 px-4 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#7A2253] transition-colors cursor-pointer"
             >
               Cancel
             </button>

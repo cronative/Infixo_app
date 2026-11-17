@@ -136,13 +136,13 @@ export function EpisodeQuickDrawer({
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="fixed inset-0 z-[999] w-screen h-[100dvh] flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-[999] w-screen h-[100dvh] flex items-center justify-center p-3 sm:p-4 bg-zinc-950/70 backdrop-blur-sm animate-in fade-in duration-200"
     >
       {/* Center Card Styled Popup Surface */}
       <div
         ref={modalRef}
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-[520px] max-h-[calc(100dvh-28px)] sm:max-h-[calc(100dvh-44px)] bg-white rounded-[5px] border border-slate-200/90 shadow-2xl shadow-black/25 flex flex-col overflow-hidden text-left animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-[520px] max-h-[calc(100dvh-28px)] sm:max-h-[calc(100dvh-44px)] bg-white rounded-[5px] border border-zinc-200/90 shadow-2xl shadow-black/25 flex flex-col overflow-hidden text-left animate-in zoom-in-95 duration-200"
       >
         {/* 1. Full-Width Hero Cover Header with Platform Thumbnail Fallback */}
         <div className="relative w-full overflow-hidden shrink-0 aspect-[21/10] sm:aspect-[21/9] min-h-[165px] sm:min-h-[190px]">
@@ -224,7 +224,7 @@ export function EpisodeQuickDrawer({
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 text-left scrollbar-none">
           {/* Series Description */}
           {series.description && series.description.trim() && (
-            <div className="rounded-[5px] border border-slate-200/80 bg-slate-50/70 p-3.5 sm:p-4 text-xs sm:text-[13px] text-slate-600 leading-relaxed font-normal">
+            <div className="rounded-[5px] border border-zinc-200/80 bg-zinc-50/70 p-3.5 sm:p-4 text-xs sm:text-[13px] text-zinc-600 leading-relaxed font-normal">
               <p>{series.description}</p>
             </div>
           )}
@@ -239,7 +239,7 @@ export function EpisodeQuickDrawer({
                   onClick={() => setActiveSeasonIndex(idx)}
                   className={`tap-scale px-3 py-1.5 rounded-[5px] text-xs font-bold transition-all shrink-0 cursor-pointer border ${activeSeasonIndex === idx
                       ? "bg-[#7A2253] text-white border-[#7A2253] shadow-xs"
-                      : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
+                      : "bg-white text-zinc-700 border-zinc-200 hover:border-zinc-300"
                     }`}
                 >
                   {sn.title || `Season ${sn.seasonNumber || idx + 1}`} ({sn.episodes?.length || 0})
@@ -251,7 +251,7 @@ export function EpisodeQuickDrawer({
           {/* Episode Tracklist Header */}
           <div className="space-y-2 pt-0.5">
             <div className="flex items-center justify-between px-1">
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">
+              <span className="text-[11px] font-black uppercase tracking-wider text-zinc-400">
                 {seasonsList.length > 1
                   ? `${seasonsList[activeSeasonIndex]?.title || `Season ${activeSeasonIndex + 1}`} Episodes (${currentEpisodes.length})`
                   : `Episodes Tracklist (${currentEpisodes.length})`}
@@ -260,11 +260,11 @@ export function EpisodeQuickDrawer({
 
             {/* Episodes List */}
             {currentEpisodes.length === 0 ? (
-              <div className="p-6 text-center text-xs text-slate-500 font-semibold border border-dashed border-slate-200 rounded-[5px] bg-slate-50">
+              <div className="p-6 text-center text-xs text-zinc-500 font-semibold border border-dashed border-zinc-200 rounded-[5px] bg-zinc-50">
                 No episodes uploaded for this series yet.
               </div>
             ) : (
-              <div className="rounded-[5px] border border-slate-200/90 bg-white divide-y divide-slate-100 overflow-hidden shadow-xs">
+              <div className="rounded-[5px] border border-zinc-200/90 bg-white divide-y divide-zinc-100 overflow-hidden shadow-xs">
                 {currentEpisodes.map((ep, idx) => {
                   const partNum = ep.episodeNumber || idx + 1;
                   const partNumStr = partNum < 10 ? `0${partNum}` : `${partNum}`;
@@ -276,12 +276,12 @@ export function EpisodeQuickDrawer({
                       href={ep.externalUrl || "#"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-center justify-between gap-3 px-3.5 py-3 transition-colors hover:bg-slate-50 text-left"
+                      className="group flex items-center justify-between gap-3 px-3.5 py-3 transition-colors hover:bg-zinc-50 text-left"
                     >
-                      <span className="text-xs sm:text-[13px] font-semibold text-slate-900 group-hover:text-[#7A2253] transition-colors truncate">
+                      <span className="text-xs sm:text-[13px] font-semibold text-zinc-900 group-hover:text-[#7A2253] transition-colors truncate">
                         Ep {partNum} · {epTitleStr}
                       </span>
-                      <ExternalLink className="h-3.5 w-3.5 text-slate-400 group-hover:text-[#7A2253] shrink-0" />
+                      <ExternalLink className="h-3.5 w-3.5 text-zinc-400 group-hover:text-[#7A2253] shrink-0" />
                     </a>
                   );
                 })}
@@ -291,7 +291,7 @@ export function EpisodeQuickDrawer({
         </div>
 
         {/* 3. Pinned Center Card Style Footer */}
-        <div className="px-4 py-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-center shrink-0 select-none">
+        <div className="px-4 py-3 border-t border-zinc-100 bg-zinc-50/50 flex items-center justify-center shrink-0 select-none">
           <MadeWithInflixo />
         </div>
       </div>

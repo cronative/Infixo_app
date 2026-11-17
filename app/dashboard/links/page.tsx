@@ -41,9 +41,9 @@ import { OverLimitBadge } from "@/components/ui/OverLimitBadge";
 const MAX_TITLE = 60;
 const MAX_CHILDREN = 10;
 const primaryButton = "dash-btn-primary";
-const fieldClass = "relative flex items-center h-11 rounded-[5px] border border-slate-200 bg-white focus-within:border-[#7A2253] focus-within:ring-1 focus-within:ring-[#7A2253]/20 overflow-hidden";
-const fieldIconClass = "flex h-full w-12 shrink-0 items-center justify-center border-r border-slate-200 bg-white text-slate-500";
-const fieldInputClass = "w-full h-full px-3.5 text-xs sm:text-[13px] font-medium text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:outline-none bg-transparent";
+const fieldClass = "relative flex items-center h-11 rounded-[5px] border border-zinc-200 bg-white focus-within:border-[#7A2253] focus-within:ring-1 focus-within:ring-[#7A2253]/20 overflow-hidden";
+const fieldIconClass = "flex h-full w-12 shrink-0 items-center justify-center border-r border-zinc-200 bg-white text-zinc-500";
+const fieldInputClass = "w-full h-full px-3.5 text-xs sm:text-[13px] font-medium text-zinc-900 placeholder:text-zinc-400 placeholder:font-normal focus:outline-none bg-transparent";
 
 interface ChildRow { key: string; id?: string; title: string; url: string }
 
@@ -410,7 +410,7 @@ export default function DashboardLinksPage() {
         <div className="flex-1 min-w-0 space-y-5">
           {loading ? (
             <div role="status" aria-label="Loading links" className="space-y-2">
-          {[1, 2, 3].map((id) => <div key={id} className="h-[58px] animate-pulse rounded-[5px] border border-[#e2e8f0] bg-slate-100" />)}
+          {[1, 2, 3].map((id) => <div key={id} className="h-[58px] animate-pulse rounded-[5px] border border-[#ECECF0] bg-zinc-100" />)}
         </div>
       ) : loadError ? (
         <div role="alert" className="rounded-[5px] border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
@@ -440,7 +440,7 @@ export default function DashboardLinksPage() {
                 key={link.id}
                 onDragOver={(e: DragEvent) => e.preventDefault()}
                 onDrop={() => void drop(index)}
-                className={`text-left transition-colors ${dragIndex === index ? "opacity-50" : ""} ${isExpired ? "bg-slate-50/70" : ""}`}
+                className={`text-left transition-colors ${dragIndex === index ? "opacity-50" : ""} ${isExpired ? "bg-zinc-50/70" : ""}`}
               >
                 <div className={`flex items-center justify-between gap-3 px-3.5 sm:px-4 py-3 min-h-[58px] hover:bg-[#FAFAFB] ${isExpired ? "opacity-75" : ""}`}>
                   <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -448,7 +448,7 @@ export default function DashboardLinksPage() {
                       draggable
                       onDragStart={() => setDragIndex(index)}
                       onDragEnd={() => setDragIndex(null)}
-                      className="text-[#cbd5e1] hover:text-[#94a3b8] cursor-grab active:cursor-grabbing shrink-0"
+                      className="text-[#D4D4D8] hover:text-[#A1A1AA] cursor-grab active:cursor-grabbing shrink-0"
                       title="Drag to reorder"
                       aria-label={`Drag to reorder ${link.title}`}
                     >
@@ -464,25 +464,25 @@ export default function DashboardLinksPage() {
                       className="min-w-0 flex-1 text-left cursor-pointer group"
                     >
                       <span className="flex items-center gap-1.5 min-w-0 flex-wrap">
-                        <span className={`line-clamp-2 break-words text-[14px] font-semibold transition-colors ${isExpired ? "text-slate-600 line-through" : "text-[#18181B] group-hover:text-[#7A2253]"}`} title={link.title}>{link.title}</span>
+                        <span className={`line-clamp-2 break-words text-[14px] font-semibold transition-colors ${isExpired ? "text-zinc-600 line-through" : "text-[#18181B] group-hover:text-[#7A2253]"}`} title={link.title}>{link.title}</span>
                         {isExpired && (
-                          <span className="shrink-0 h-5 inline-flex items-center text-[11px] font-bold bg-slate-200 text-slate-700 px-1.5 rounded-[4px] leading-none uppercase tracking-wider">Expired</span>
+                          <span className="shrink-0 h-5 inline-flex items-center text-[11px] font-bold bg-zinc-200 text-zinc-700 px-1.5 rounded-[5px] leading-none uppercase tracking-wider">Expired</span>
                         )}
                         {limit !== null && index >= limit && <OverLimitBadge />}
                         {link.pinned && !isExpired && (
                           <span className="shrink-0 h-6 inline-flex items-center text-[12px] font-medium bg-[#F7EEF2] text-[#7A2253] px-2 rounded-[5px] leading-none">Pinned</span>
                         )}
-                        {isGroup && <ChevronDown className={`h-3.5 w-3.5 shrink-0 text-[#94a3b8] transition-transform ${isOpen ? "rotate-180" : ""}`} />}
+                        {isGroup && <ChevronDown className={`h-3.5 w-3.5 shrink-0 text-[#A1A1AA] transition-transform ${isOpen ? "rotate-180" : ""}`} />}
                       </span>
                       <span className="block line-clamp-2 break-words text-[12px] text-[#6B6B76]">
                         {link.description && (
-                          <span className="text-slate-700 font-normal mr-1.5">&ldquo;{link.description}&rdquo; ·</span>
+                          <span className="text-zinc-700 font-normal mr-1.5">&ldquo;{link.description}&rdquo; ·</span>
                         )}
                         <span>
                           {isGroup ? `${link.children.length} ${link.children.length === 1 ? "link" : "links"}` : extractBareDomain(link.url)}
                         </span>
                         {link.expiresAt && (
-                          <span className={`ml-2 text-[11px] ${isExpired ? "text-slate-500 font-normal" : "text-amber-700 font-medium"}`}>
+                          <span className={`ml-2 text-[11px] ${isExpired ? "text-zinc-500 font-normal" : "text-amber-700 font-medium"}`}>
                             · {formatHidesOn(link.expiresAt)}
                           </span>
                         )}
@@ -596,23 +596,23 @@ export default function DashboardLinksPage() {
         onClose={() => { if (!saving) setOpen(false); }}
         size="lg"
         showCloseButton={false}
-        className="rounded-[5px] border border-slate-200 shadow-2xl overflow-hidden max-w-2xl"
+        className="rounded-[5px] border border-zinc-200 shadow-2xl overflow-hidden max-w-2xl"
       >
-        <div className="relative border-b border-slate-100 bg-white px-5 sm:px-6 pt-5 pb-4">
+        <div className="relative border-b border-zinc-100 bg-white px-5 sm:px-6 pt-5 pb-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]">
                 <LinkIcon className="h-5 w-5 stroke-[2.2]" />
               </div>
               <div>
-                <h3 className="font-display text-lg font-bold tracking-tight text-slate-900">{editing ? "Edit link" : "Add link"}</h3>
-                <p className="mt-0.5 text-xs text-slate-500 font-normal">Add a useful destination to your public creator profile.</p>
+                <h3 className="font-display text-lg font-bold tracking-tight text-zinc-900">{editing ? "Edit link" : "Add link"}</h3>
+                <p className="mt-0.5 text-xs text-zinc-500 font-normal">Add a useful destination to your public creator profile.</p>
               </div>
             </div>
             <button
               type="button"
               onClick={() => { if (!saving) setOpen(false); }}
-              className="flex h-8 w-8 items-center justify-center rounded-[5px] text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
+              className="flex h-8 w-8 items-center justify-center rounded-[5px] text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors cursor-pointer shrink-0"
               aria-label="Close"
             >
               <X className="h-4 w-4" />
@@ -622,17 +622,17 @@ export default function DashboardLinksPage() {
 
         <form onSubmit={save} noValidate className="flex flex-col flex-1 min-h-0">
           <ModalBody className="p-5 sm:p-6 space-y-4 text-left">
-            <div className="grid grid-cols-2 p-1 bg-white border border-slate-200 rounded-[5px] gap-1">
+            <div className="grid grid-cols-2 p-1 bg-white border border-zinc-200 rounded-[5px] gap-1">
               {(["link", "group"] as const).map((value) => (
                 <button
                   key={value}
                   type="button"
                   onClick={() => setMode(value)}
                   aria-pressed={mode === value}
-                  className={`py-2 px-3 rounded-[5px] text-center transition-all cursor-pointer ${mode === value ? "bg-[#7A2253] text-white shadow-xs" : "bg-transparent text-slate-700 hover:bg-slate-50"}`}
+                  className={`py-2 px-3 rounded-[5px] text-center transition-all cursor-pointer ${mode === value ? "bg-[#7A2253] text-white shadow-xs" : "bg-transparent text-zinc-700 hover:bg-zinc-50"}`}
                 >
                   <span className="block text-xs sm:text-[13px] font-bold">{value === "link" ? "Single link" : "Group"}</span>
-                  <span className={`block text-[10.5px] font-normal mt-0.5 ${mode === value ? "text-white/80" : "text-slate-400"}`}>
+                  <span className={`block text-[11px] font-normal mt-0.5 ${mode === value ? "text-white/80" : "text-zinc-400"}`}>
                     {value === "link" ? "Add one link to your profile" : "Group up to 10 related links"}
                   </span>
                 </button>
@@ -643,8 +643,8 @@ export default function DashboardLinksPage() {
               <div className="space-y-4">
                 <div className="space-y-1.5">
                   <div className="flex items-baseline gap-2">
-                    <label htmlFor="link-url" className="text-xs sm:text-[13px] font-bold text-slate-900">URL <span className="text-[#C2414B]">*</span></label>
-                    <span className="text-[11px] sm:text-xs text-slate-400 font-normal">Paste the full link.</span>
+                    <label htmlFor="link-url" className="text-xs sm:text-[13px] font-bold text-zinc-900">URL <span className="text-[#C2414B]">*</span></label>
+                    <span className="text-[11px] sm:text-xs text-zinc-400 font-normal">Paste the full link.</span>
                   </div>
                   <div className={fieldClass}>
                     <div className={fieldIconClass}><LinkIcon className="h-4 w-4" /></div>
@@ -665,8 +665,8 @@ export default function DashboardLinksPage() {
 
                 <div className="space-y-1.5">
                   <div className="flex items-baseline justify-between gap-2">
-                    <label htmlFor="link-title" className="text-xs sm:text-[13px] font-bold text-slate-900">Title <span className="text-[#C2414B]">*</span></label>
-                    <span className="text-[11px] sm:text-xs text-slate-400 font-normal">{title.length}/{MAX_TITLE}</span>
+                    <label htmlFor="link-title" className="text-xs sm:text-[13px] font-bold text-zinc-900">Title <span className="text-[#C2414B]">*</span></label>
+                    <span className="text-[11px] sm:text-xs text-zinc-400 font-normal">{title.length}/{MAX_TITLE}</span>
                   </div>
                   <div className={fieldClass}>
                     <div className={`${fieldIconClass} font-semibold text-sm`}>T</div>
@@ -685,8 +685,8 @@ export default function DashboardLinksPage() {
 
                 <div className="space-y-1.5">
                   <div className="flex items-baseline justify-between gap-2">
-                    <label htmlFor="link-desc" className="text-xs sm:text-[13px] font-bold text-slate-900">Why click? <span className="text-slate-400 font-normal">(optional)</span></label>
-                    <span className="text-[11px] sm:text-xs text-slate-400 font-normal">{description.length}/60</span>
+                    <label htmlFor="link-desc" className="text-xs sm:text-[13px] font-bold text-zinc-900">Why click? <span className="text-zinc-400 font-normal">(optional)</span></label>
+                    <span className="text-[11px] sm:text-xs text-zinc-400 font-normal">{description.length}/60</span>
                   </div>
                   <div className={fieldClass}>
                     <input
@@ -703,7 +703,7 @@ export default function DashboardLinksPage() {
 
                 <div className="space-y-1.5">
                   <div className="flex items-baseline justify-between gap-2">
-                    <label htmlFor="link-expires" className="text-xs sm:text-[13px] font-bold text-slate-900">Hide automatically after <span className="text-slate-400 font-normal">(optional)</span></label>
+                    <label htmlFor="link-expires" className="text-xs sm:text-[13px] font-bold text-zinc-900">Hide automatically after <span className="text-zinc-400 font-normal">(optional)</span></label>
                     {expiresAtLocal && (
                       <button
                         type="button"
@@ -725,14 +725,14 @@ export default function DashboardLinksPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-3.5 rounded-[5px] border border-slate-200 bg-white hover:bg-slate-50/50 transition-colors">
+                <div className="flex items-center justify-between p-3.5 rounded-[5px] border border-zinc-200 bg-white hover:bg-zinc-50/50 transition-colors">
                   <div className="space-y-0.5 pr-3">
-                    <label htmlFor="link-pin" className="text-xs sm:text-[13px] font-bold text-slate-900 cursor-pointer">Pin this link</label>
-                    <p className="text-[11px] text-slate-500 font-normal">Shows at the top of your Links tab. Pinning it unpins any other link.</p>
+                    <label htmlFor="link-pin" className="text-xs sm:text-[13px] font-bold text-zinc-900 cursor-pointer">Pin this link</label>
+                    <p className="text-[11px] text-zinc-500 font-normal">Shows at the top of your Links tab. Pinning it unpins any other link.</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer shrink-0">
                     <input id="link-pin" type="checkbox" checked={pinned} onChange={(e) => setPinned(e.target.checked)} className="sr-only peer" />
-                    <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#7A2253]"></div>
+                    <div className="w-9 h-5 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#7A2253]"></div>
                   </label>
                 </div>
               </div>
@@ -740,8 +740,8 @@ export default function DashboardLinksPage() {
               <div className="space-y-4">
                 <div className="space-y-1.5">
                   <div className="flex items-baseline justify-between gap-2">
-                    <label htmlFor="group-title" className="text-xs sm:text-[13px] font-bold text-slate-900">Group title <span className="text-[#C2414B]">*</span></label>
-                    <span className="text-[11px] sm:text-xs text-slate-400 font-normal">{title.length}/{MAX_TITLE}</span>
+                    <label htmlFor="group-title" className="text-xs sm:text-[13px] font-bold text-zinc-900">Group title <span className="text-[#C2414B]">*</span></label>
+                    <span className="text-[11px] sm:text-xs text-zinc-400 font-normal">{title.length}/{MAX_TITLE}</span>
                   </div>
                   <div className={fieldClass}>
                     <div className={fieldIconClass}><FolderOpen className="h-4 w-4" /></div>
@@ -760,8 +760,8 @@ export default function DashboardLinksPage() {
 
                 <div className="space-y-1.5">
                   <div className="flex items-baseline justify-between gap-2">
-                    <label htmlFor="group-desc" className="text-xs sm:text-[13px] font-bold text-slate-900">Why click? <span className="text-slate-400 font-normal">(optional)</span></label>
-                    <span className="text-[11px] sm:text-xs text-slate-400 font-normal">{description.length}/60</span>
+                    <label htmlFor="group-desc" className="text-xs sm:text-[13px] font-bold text-zinc-900">Why click? <span className="text-zinc-400 font-normal">(optional)</span></label>
+                    <span className="text-[11px] sm:text-xs text-zinc-400 font-normal">{description.length}/60</span>
                   </div>
                   <div className={fieldClass}>
                     <input
@@ -778,7 +778,7 @@ export default function DashboardLinksPage() {
 
                 <div className="space-y-1.5">
                   <div className="flex items-baseline justify-between gap-2">
-                    <label htmlFor="group-expires" className="text-xs sm:text-[13px] font-bold text-slate-900">Hide automatically after <span className="text-slate-400 font-normal">(optional)</span></label>
+                    <label htmlFor="group-expires" className="text-xs sm:text-[13px] font-bold text-zinc-900">Hide automatically after <span className="text-zinc-400 font-normal">(optional)</span></label>
                     {expiresAtLocal && (
                       <button
                         type="button"
@@ -800,16 +800,16 @@ export default function DashboardLinksPage() {
                   </div>
                 </div>
 
-                <div className="rounded-[5px] border border-slate-200 bg-white p-4 space-y-3">
+                <div className="rounded-[5px] border border-zinc-200 bg-white p-4 space-y-3">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-xs sm:text-[13px] font-bold text-slate-900">Links in this group</p>
-                    <span className="text-[11px] text-slate-400">{children.length}/{MAX_CHILDREN}</span>
+                    <p className="text-xs sm:text-[13px] font-bold text-zinc-900">Links in this group</p>
+                    <span className="text-[11px] text-zinc-400">{children.length}/{MAX_CHILDREN}</span>
                   </div>
                   <div className="space-y-2.5">
                     {children.map((row, index) => (
                       <div key={row.key} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                        <div className="relative flex-1 flex items-center h-10 rounded-[5px] border border-slate-200 bg-white focus-within:border-[#7A2253] focus-within:ring-1 focus-within:ring-[#7A2253]/20 overflow-hidden">
-                          <div className="flex h-full w-9 shrink-0 items-center justify-center border-r border-slate-200 bg-white text-slate-500 font-semibold text-xs">T</div>
+                        <div className="relative flex-1 flex items-center h-10 rounded-[5px] border border-zinc-200 bg-white focus-within:border-[#7A2253] focus-within:ring-1 focus-within:ring-[#7A2253]/20 overflow-hidden">
+                          <div className="flex h-full w-9 shrink-0 items-center justify-center border-r border-zinc-200 bg-white text-zinc-500 font-semibold text-xs">T</div>
                           <input
                             type="text"
                             aria-label={`Link ${index + 1} title`}
@@ -817,11 +817,11 @@ export default function DashboardLinksPage() {
                             onChange={(e) => updateChild(row.key, { title: e.target.value })}
                             maxLength={MAX_TITLE}
                             placeholder="Title"
-                            className="w-full h-full px-3 text-xs font-medium text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:outline-none bg-transparent"
+                            className="w-full h-full px-3 text-xs font-medium text-zinc-900 placeholder:text-zinc-400 placeholder:font-normal focus:outline-none bg-transparent"
                           />
                         </div>
-                        <div className="relative flex-1 flex items-center h-10 rounded-[5px] border border-slate-200 bg-white focus-within:border-[#7A2253] focus-within:ring-1 focus-within:ring-[#7A2253]/20 overflow-hidden">
-                          <div className="flex h-full w-9 shrink-0 items-center justify-center border-r border-slate-200 bg-white text-slate-500"><LinkIcon className="h-3.5 w-3.5" /></div>
+                        <div className="relative flex-1 flex items-center h-10 rounded-[5px] border border-zinc-200 bg-white focus-within:border-[#7A2253] focus-within:ring-1 focus-within:ring-[#7A2253]/20 overflow-hidden">
+                          <div className="flex h-full w-9 shrink-0 items-center justify-center border-r border-zinc-200 bg-white text-zinc-500"><LinkIcon className="h-3.5 w-3.5" /></div>
                           <input
                             type="url"
                             inputMode="url"
@@ -834,7 +834,7 @@ export default function DashboardLinksPage() {
                             }}
                             maxLength={1000}
                             placeholder="https://example.com"
-                            className="w-full h-full px-3 text-xs font-mono font-medium text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:outline-none bg-transparent"
+                            className="w-full h-full px-3 text-xs font-mono font-medium text-zinc-900 placeholder:text-zinc-400 placeholder:font-normal focus:outline-none bg-transparent"
                           />
                         </div>
                         <button
@@ -845,7 +845,7 @@ export default function DashboardLinksPage() {
                             else setChildren((rows) => rows.filter((item) => item.key !== row.key));
                           }}
                           disabled={children.length <= 1}
-                          className="self-end sm:self-center p-2 rounded-[5px] text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+                          className="self-end sm:self-center p-2 rounded-[5px] text-zinc-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
                           aria-label={`Remove link ${index + 1}`}
                         >
                           <X className="h-4 w-4" />
@@ -868,12 +868,12 @@ export default function DashboardLinksPage() {
             )}
           </ModalBody>
 
-          <ModalFooter className="px-6 py-4 flex items-center justify-end gap-3 border-t border-slate-100 bg-white">
+          <ModalFooter className="px-6 py-4 flex items-center justify-end gap-3 border-t border-zinc-100 bg-white">
             <button
               type="button"
               onClick={() => setOpen(false)}
               disabled={saving}
-              className="h-10 px-5 rounded-[5px] border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
+              className="h-10 px-5 rounded-[5px] border border-zinc-200 bg-white text-xs font-semibold text-zinc-700 hover:bg-zinc-50 transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>

@@ -262,7 +262,7 @@ export function PlatformThumbnailBox({
       ) : (
         config.pillLabel && badgeText !== null && badgeText !== "" ? (
           <div className="absolute top-2 right-2 z-20 pointer-events-none">
-            <span className="shrink-0 rounded-full border border-white/25 bg-black/55 px-2 py-0.5 text-[10px] sm:text-[10.5px] font-bold text-white/95 backdrop-blur-xs shadow-xs">
+            <span className="shrink-0 rounded-full border border-white/25 bg-black/55 px-2 py-0.5 text-[10px] sm:text-[11px] font-bold text-white/95 backdrop-blur-xs shadow-xs">
               {config.pillLabel}
             </span>
           </div>

@@ -148,11 +148,11 @@ export function LimitReachedModal({
             {/* Encouraging Card */}
             <div className="rounded-[5px] bg-gradient-to-r from-[#FFF5F7] to-[#FDF2F8] border border-[#FCE7F3] p-4 flex items-center justify-between gap-3 relative overflow-hidden">
               <div className="min-w-0 flex-1 space-y-1">
-                <h4 className="font-bold text-sm text-[#0f172a] flex items-center gap-1.5">
+                <h4 className="font-bold text-sm text-[#18181B] flex items-center gap-1.5">
                   <span>You&apos;re doing great!</span>
                   <span>🎉</span>
                 </h4>
-                <p className="text-xs text-[#64748b] leading-relaxed">
+                <p className="text-xs text-[#6B6B76] leading-relaxed">
                   {encouragingText}
                 </p>
               </div>
@@ -170,14 +170,14 @@ export function LimitReachedModal({
 
             {/* Current Usage Section */}
             <div className="space-y-1.5">
-              <p className="text-xs font-bold text-[#0f172a]">Your current usage</p>
-              <div className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2.5">
+              <p className="text-xs font-bold text-[#18181B]">Your current usage</p>
+              <div className="rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] p-3.5 space-y-2.5">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253] shrink-0">
                       {resourceIcon}
                     </div>
-                    <span className="text-xs font-semibold text-[#0f172a] truncate">
+                    <span className="text-xs font-semibold text-[#18181B] truncate">
                       {resourcePlural}
                     </span>
                   </div>
@@ -188,11 +188,11 @@ export function LimitReachedModal({
                 </div>
 
                 {/* Progress bar (100% full since limit reached) */}
-                <div className="h-2 w-full bg-[#e2e8f0] rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-[#ECECF0] rounded-full overflow-hidden">
                   <div className="h-full bg-[#7A2253] rounded-full w-full" />
                 </div>
 
-                <p className="text-[11px] text-[#64748b]">
+                <p className="text-[11px] text-[#6B6B76]">
                   You&apos;ve reached the limit for your {planName} plan.
                 </p>
               </div>
@@ -204,7 +204,7 @@ export function LimitReachedModal({
             {/* Plan Header */}
             <div>
               <div className="flex items-center justify-between gap-1.5 mb-2.5">
-                <span className="font-bold text-xs sm:text-sm text-[#0f172a] flex items-center gap-1.5">
+                <span className="font-bold text-xs sm:text-sm text-[#18181B] flex items-center gap-1.5">
                   <Crown className="h-4 w-4 text-amber-500 fill-amber-500/20 shrink-0" />
                   <span>{targetPlanTitle}</span>
                 </span>
@@ -216,14 +216,14 @@ export function LimitReachedModal({
               {/* Pricing */}
               <div className="space-y-0.5">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-black text-[#0f172a]">
+                  <span className="text-2xl font-black text-[#18181B]">
                     {formatPlanPrice(targetUpgradePlan, "monthly", pricingCurrency)}
                   </span>
-                  <span className="text-xs font-medium text-[#64748b]">/ month</span>
+                  <span className="text-xs font-medium text-[#6B6B76]">/ month</span>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-xs text-[#64748b]">
-                  <span className="font-semibold text-[#0f172a]">
+                <div className="flex items-center gap-1.5 text-xs text-[#6B6B76]">
+                  <span className="font-semibold text-[#18181B]">
                     or {formatPlanPrice(targetUpgradePlan, "yearly", pricingCurrency)} / year
                   </span>
                   <span className="rounded-full bg-[#FCE7F3] px-2 py-0.5 text-[10px] font-bold text-[#7A2253]">
@@ -234,13 +234,13 @@ export function LimitReachedModal({
             </div>
 
             {/* Feature Bullets */}
-            <ul className="space-y-2 text-xs text-[#334155] py-1 border-t border-[#f1f5f9]">
+            <ul className="space-y-2 text-xs text-[#3F3F46] py-1 border-t border-[#F4F4F5]">
               {features.map((feat, idx) => (
                 <li key={idx} className="flex items-center gap-2">
                   <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#10b981] text-white">
                     <Check className="h-2.5 w-2.5 stroke-[3]" />
                   </div>
-                  <span className={feat.highlight ? "font-bold text-[#0f172a]" : "text-[#475569]"}>
+                  <span className={feat.highlight ? "font-bold text-[#18181B]" : "text-[#52525B]"}>
                     {feat.text}
                   </span>
                 </li>
@@ -270,7 +270,7 @@ export function LimitReachedModal({
               <p className="text-xs font-bold text-[#7A2253]">
                 Why upgrade?
               </p>
-              <p className="text-[11px] text-[#64748b] mt-0.5">
+              <p className="text-[11px] text-[#6B6B76] mt-0.5">
                 {whyUpgradeText}
               </p>
             </div>
@@ -300,7 +300,7 @@ export function LimitReachedModal({
           <button
             type="button"
             onClick={onClose}
-            className="h-9 px-4 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer"
+            className="h-9 px-4 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#52525B] hover:bg-[#FAFAFB] hover:text-[#18181B] transition-colors cursor-pointer"
           >
             Close for now
           </button>

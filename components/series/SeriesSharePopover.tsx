@@ -129,10 +129,10 @@ export function SeriesSharePopover({
       role="dialog"
       aria-modal="true"
       aria-label="Share Series"
-      className="absolute right-0 top-full mt-1.5 z-50 w-64 rounded-[5px] border border-[#e2e8f0] bg-white p-2 shadow-xl shadow-slate-900/10 animate-in fade-in zoom-in-95 duration-150"
+      className="absolute right-0 top-full mt-1.5 z-50 w-64 rounded-[5px] border border-[#ECECF0] bg-white p-2 shadow-xl shadow-zinc-900/10 animate-in fade-in zoom-in-95 duration-150"
     >
-      <div className="px-2 py-1.5 border-b border-slate-100">
-        <p className="text-xs font-semibold text-[#0f172a] truncate">Share &ldquo;{title}&rdquo;</p>
+      <div className="px-2 py-1.5 border-b border-zinc-100">
+        <p className="text-xs font-semibold text-[#18181B] truncate">Share &ldquo;{title}&rdquo;</p>
       </div>
 
       <div className="py-1 flex flex-col gap-0.5">
@@ -140,24 +140,24 @@ export function SeriesSharePopover({
         <button
           type="button"
           onClick={handleCopyLink}
-          className="flex w-full items-center justify-between rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f8fafc] transition-colors cursor-pointer"
+          className="flex w-full items-center justify-between rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer"
         >
           <span className="flex items-center gap-2">
             {copied ? (
               <Check className="h-4 w-4 text-emerald-600 animate-in zoom-in-75" />
             ) : (
-              <Copy className="h-4 w-4 text-[#64748b]" />
+              <Copy className="h-4 w-4 text-[#6B6B76]" />
             )}
             <span>{copied ? "Link Copied!" : "Copy link"}</span>
           </span>
-          <span className="text-[11px] text-[#94a3b8]">{copied ? "✓" : "URL"}</span>
+          <span className="text-[11px] text-[#A1A1AA]">{copied ? "✓" : "URL"}</span>
         </button>
 
         {/* WhatsApp */}
         <button
           type="button"
           onClick={handleWhatsApp}
-          className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f8fafc] transition-colors cursor-pointer"
+          className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer"
         >
           <MessageCircle className="h-4 w-4 text-emerald-500" />
           <span>WhatsApp</span>
@@ -167,7 +167,7 @@ export function SeriesSharePopover({
         <button
           type="button"
           onClick={handleInstagramStory}
-          className="flex w-full items-center justify-between rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f8fafc] transition-colors cursor-pointer"
+          className="flex w-full items-center justify-between rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer"
         >
           <span className="flex items-center gap-2">
             <InstagramIcon className="h-4 w-4 text-pink-500" />
@@ -180,9 +180,9 @@ export function SeriesSharePopover({
         <button
           type="button"
           onClick={handleTwitter}
-          className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#0f172a] hover:bg-[#f8fafc] transition-colors cursor-pointer"
+          className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer"
         >
-          <XTwitterIcon className="h-4 w-4 text-slate-800" />
+          <XTwitterIcon className="h-4 w-4 text-zinc-800" />
           <span>Post on X</span>
         </button>
 
@@ -191,7 +191,7 @@ export function SeriesSharePopover({
           <button
             type="button"
             onClick={handleNativeShare}
-            className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#7A2253] hover:bg-[#fdf2f8] transition-colors cursor-pointer border-t border-slate-100 mt-1"
+            className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#7A2253] hover:bg-[#fdf2f8] transition-colors cursor-pointer border-t border-zinc-100 mt-1"
           >
             <Share2 className="h-4 w-4 text-[#7A2253]" />
             <span>More share options…</span>

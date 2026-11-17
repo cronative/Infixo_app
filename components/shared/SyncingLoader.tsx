@@ -55,7 +55,7 @@ export function SyncingLoader({
   }, []);
 
   const containerClass = fullScreen
-    ? "fixed inset-0 z-[9999] flex flex-col items-center justify-center px-4 text-center selection:bg-slate-200 overflow-hidden"
+    ? "fixed inset-0 z-[9999] flex flex-col items-center justify-center px-4 text-center selection:bg-zinc-200 overflow-hidden"
     : "flex flex-col items-center justify-center p-8 text-center w-full min-h-[320px]";
 
   const currentQuote = CREATOR_QUOTES[quoteIndex] || CREATOR_QUOTES[0];
@@ -92,7 +92,7 @@ export function SyncingLoader({
             </span>
           </div>
 
-          <p className="text-xs font-semibold text-[#64748b] min-h-[18px]">
+          <p className="text-xs font-semibold text-[#6B6B76] min-h-[18px]">
             {message}{dots}
           </p>
         </div>
@@ -100,7 +100,7 @@ export function SyncingLoader({
         {/* Horizontal Progress Bar */}
         {!hideProgressBar && (
           <div className="w-48 space-y-1">
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 border border-slate-200">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 border border-zinc-200">
               <div
                 className="h-full bg-gradient-to-r from-[#7A2253] to-[#A24B5A] transition-all duration-300 ease-out"
                 style={{ width: `${progress}%` }}

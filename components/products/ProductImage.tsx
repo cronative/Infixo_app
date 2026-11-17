@@ -17,7 +17,7 @@ export function ProductImage({ src, name, className = "", cover = false }: { src
   const resolvedSrc = resolveProductImageSrc(src);
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   return (
-    <div className={`relative flex shrink-0 items-center justify-center overflow-hidden ${cover ? "bg-(--surface)/80" : "bg-[#F8FAFC]"} ${className}`}>
+    <div className={`relative flex shrink-0 items-center justify-center overflow-hidden ${cover ? "bg-(--surface)/80" : "bg-[#FAFAFB]"} ${className}`}>
       {resolvedSrc && failedSrc !== resolvedSrc ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img

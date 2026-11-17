@@ -80,20 +80,20 @@ export function BrandLeadQualifierModal({
       <form id="brand-lead-form" onSubmit={handleSendWhatsApp} className="flex flex-col flex-1 min-h-0">
         <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
           {/* Deliverable Summary Badge */}
-          <div className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-3 flex items-center gap-3">
+          <div className="rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] p-3 flex items-center gap-3">
             <Package className="h-4 w-4 text-[#7A2253] shrink-0" />
             <div className="min-w-0 text-xs">
               <p className="font-bold text-[#7A2253] truncate">{packageName}</p>
-              {deliverableText && <p className="text-[#64748b] font-medium truncate mt-0.5">{deliverableText}</p>}
+              {deliverableText && <p className="text-[#6B6B76] font-medium truncate mt-0.5">{deliverableText}</p>}
             </div>
           </div>
 
           <div className="space-y-1">
-            <label className="block text-[13px] font-medium text-[#0f172a]">
+            <label className="block text-[13px] font-medium text-[#18181B]">
               Brand or Agency name <span className="text-[#C2414B]">*</span>
             </label>
-            <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                 <Building2 className="h-4 w-4" />
               </span>
               <input
@@ -102,17 +102,17 @@ export function BrandLeadQualifierModal({
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
                 placeholder="e.g. Mamaearth / Local Brand / Agency"
-                className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
               />
             </div>
           </div>
 
           <div className="space-y-1">
-            <label className="block text-[13px] font-medium text-[#0f172a]">
+            <label className="block text-[13px] font-medium text-[#18181B]">
               Campaign budget <span className="text-[#C2414B]">*</span>
             </label>
-            <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#17845B] font-bold text-sm">
+            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#17845B] font-bold text-sm">
                 ₹
               </span>
               <input
@@ -121,17 +121,17 @@ export function BrandLeadQualifierModal({
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
                 placeholder="e.g. 15,000 or 25,000"
-                className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
               />
             </div>
           </div>
 
           <div className="space-y-1">
-            <label className="block text-[13px] font-medium text-[#0f172a]">
+            <label className="block text-[13px] font-medium text-[#18181B]">
               Selected package
             </label>
-            <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                 <Package className="h-4 w-4" />
               </span>
               <input
@@ -148,7 +148,7 @@ export function BrandLeadQualifierModal({
           <button
             type="button"
             onClick={onClose}
-            className="h-9 px-4 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
+            className="h-9 px-4 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#7A2253] transition-colors cursor-pointer"
           >
             Cancel
           </button>

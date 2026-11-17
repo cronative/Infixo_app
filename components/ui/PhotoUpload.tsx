@@ -33,7 +33,7 @@ export function PhotoUpload({
   return (
     <div className="flex flex-col items-center sm:items-start gap-2">
       <div
-        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#e2e8f0] bg-[#f8fafc] shadow-xs transition-colors hover:border-[#7A2253] ${shape === "circle"
+        className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#ECECF0] bg-[#FAFAFB] shadow-xs transition-colors hover:border-[#7A2253] ${shape === "circle"
           ? "rounded-full aspect-square overflow-hidden shrink-0"
           : shape === "landscape"
             ? "aspect-video w-44 rounded-xl"
@@ -54,7 +54,7 @@ export function PhotoUpload({
               }`}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center gap-1 p-2 text-center text-[#64748b]">
+          <div className="flex flex-col items-center justify-center gap-1 p-2 text-center text-[#6B6B76]">
             {isLandscape ? (
               <>
                 <Film className="h-5 w-5 text-[#7A2253]" />

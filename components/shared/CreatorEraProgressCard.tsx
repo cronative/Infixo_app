@@ -81,7 +81,7 @@ export function CreatorEraProgressCard({
             <button
               type="button"
               onClick={onShareClick}
-              className="inline-flex h-8 items-center gap-1.5 px-3 rounded-[5px] bg-[#7A2253] text-white hover:bg-[#681c46] text-[13px] font-medium transition-colors cursor-pointer shrink-0"
+              className="inline-flex h-8 items-center gap-1.5 px-3 rounded-[5px] bg-[#7A2253] text-white hover:bg-[#631841] text-[13px] font-medium transition-colors cursor-pointer shrink-0"
               title="Share Creator Era card"
             >
               <Share2 className="h-3.5 w-3.5" />

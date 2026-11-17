@@ -121,8 +121,8 @@ export function SectionOrderManager() {
   };
 
   return (
-    <section className="space-y-4 rounded-[5px] border border-[#e2e8f0] bg-white p-4 text-left shadow-xs sm:p-5">
-      <div className="flex items-center justify-between border-b border-[#e2e8f0] pb-3.5">
+    <section className="space-y-4 rounded-[5px] border border-[#ECECF0] bg-white p-4 text-left shadow-xs sm:p-5">
+      <div className="flex items-center justify-between border-b border-[#ECECF0] pb-3.5">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-[5px] bg-[#7A225314] text-[#7A2253] border border-[#7A2253]/20 shrink-0">
             <Layers className="h-5 w-5" />
@@ -132,7 +132,7 @@ export function SectionOrderManager() {
               Profile Sections &amp; Layout
               {saving && <Loader2 className="h-3.5 w-3.5 animate-spin text-[#7A2253]" />}
             </h2>
-            <p className="text-xs text-[#64748b] font-medium mt-0.5">
+            <p className="text-xs text-[#6B6B76] font-medium mt-0.5">
               Customize the order and visibility of sections displayed on your public creator page.
             </p>
           </div>
@@ -141,7 +141,7 @@ export function SectionOrderManager() {
         <button
           type="button"
           onClick={handleResetDefault}
-          className="inline-flex cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white px-3 py-1.5 text-xs font-semibold text-[#64748b] shadow-xs transition-all hover:-translate-y-0.5 hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:text-[#7A2253] hover:shadow-sm"
+          className="inline-flex cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-3 py-1.5 text-xs font-semibold text-[#6B6B76] shadow-xs transition-all hover:-translate-y-0.5 hover:border-[#D4D4D8] hover:bg-[#FAFAFB] hover:text-[#7A2253] hover:shadow-sm"
           title="Reset to default order"
         >
           <RotateCcw className="h-3.5 w-3.5" />
@@ -164,13 +164,13 @@ export function SectionOrderManager() {
             return (
               <div
                 key={section.sectionKey}
-                className={`flex items-center justify-between rounded-[5px] border p-3 transition-all hover:border-[#cbd5e1] hover:shadow-sm sm:p-3.5 ${section.isVisible
-                  ? "bg-white border-[#e2e8f0] shadow-xs"
-                  : "bg-[#f8fafc] border-[#e2e8f0]/60 opacity-60"
+                className={`flex items-center justify-between rounded-[5px] border p-3 transition-all hover:border-[#D4D4D8] hover:shadow-sm sm:p-3.5 ${section.isVisible
+                  ? "bg-white border-[#ECECF0] shadow-xs"
+                  : "bg-[#FAFAFB] border-[#ECECF0]/60 opacity-60"
                   }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] bg-[#f8fafc] border border-[#e2e8f0] text-[11px] font-bold text-[#64748b]">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0] text-[11px] font-bold text-[#6B6B76]">
                     {idx + 1}
                   </span>
 
@@ -183,7 +183,7 @@ export function SectionOrderManager() {
                         </span>
                       )}
                     </p>
-                    <p className="text-[11px] text-[#64748b] line-clamp-2 break-words" title={info.desc}>{info.desc}</p>
+                    <p className="text-[11px] text-[#6B6B76] line-clamp-2 break-words" title={info.desc}>{info.desc}</p>
                   </div>
                 </div>
 
@@ -194,7 +194,7 @@ export function SectionOrderManager() {
                     onClick={() => handleToggleVisibility(section.sectionKey)}
                     disabled={isAbout}
                     className={`flex h-7 w-7 items-center justify-center rounded-[5px] border transition-colors cursor-pointer ${section.isVisible
-                      ? "border-[#e2e8f0] bg-[#f8fafc] text-[#7A2253] hover:bg-[#f1f5f9] hover:text-[#7A2253]"
+                      ? "border-[#ECECF0] bg-[#FAFAFB] text-[#7A2253] hover:bg-[#F4F4F5] hover:text-[#7A2253]"
                       : "border-[#C1443A]/20 bg-[#C1443A]/10 text-[#C1443A]"
                       } disabled:opacity-40 disabled:cursor-not-allowed`}
                     title={section.isVisible ? "Hide section from profile" : "Show section on profile"}
@@ -211,7 +211,7 @@ export function SectionOrderManager() {
                     type="button"
                     onClick={() => handleMove(idx, "up")}
                     disabled={isFirst}
-                    className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] hover:text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76] hover:text-[#7A2253] hover:bg-[#F4F4F5] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                     title="Move up"
                   >
                     <ArrowUp className="h-3.5 w-3.5" />
@@ -222,7 +222,7 @@ export function SectionOrderManager() {
                     type="button"
                     onClick={() => handleMove(idx, "down")}
                     disabled={isLast}
-                    className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] hover:text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76] hover:text-[#7A2253] hover:bg-[#F4F4F5] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                     title="Move down"
                   >
                     <ArrowDown className="h-3.5 w-3.5" />

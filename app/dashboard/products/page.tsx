@@ -62,9 +62,9 @@ const blank: ProductForm = {
 const FETCH_FAILED = "Couldn't fetch details. Please add them manually.";
 const FETCH_BLOCKED_MSG = "Couldn't auto-fetch details from this link. You can fill them in manually.";
 const SEARCH_THRESHOLD = 6;
-const fieldClass = "flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors";
-const iconBoxClass = "flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]";
-const inputClass = "flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none";
+const fieldClass = "flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors";
+const iconBoxClass = "flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]";
+const inputClass = "flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none";
 const primaryButton = "dash-btn-primary";
 
 const formatRupees = (price: number) => `₹${price.toLocaleString("en-IN")}`;
@@ -356,17 +356,17 @@ export default function ProductsPage() {
         <div className="flex-1 min-w-0 space-y-5">
           {showSearch && (
         <div className="relative flex items-center h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 gap-2 w-full sm:w-64 focus-within:border-[#7A2253] transition-colors">
-          <Search className="h-4 w-4 text-[#94a3b8] shrink-0" />
+          <Search className="h-4 w-4 text-[#A1A1AA] shrink-0" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search products..."
             aria-label="Search products"
-            className="w-full text-[13px] text-[#18181B] placeholder:text-[#94a3b8] bg-transparent outline-none"
+            className="w-full text-[13px] text-[#18181B] placeholder:text-[#A1A1AA] bg-transparent outline-none"
           />
           {searchQuery && (
-            <button type="button" aria-label="Clear search" onClick={() => setSearchQuery("")} className="text-[#94a3b8] hover:text-[#18181B]">
+            <button type="button" aria-label="Clear search" onClick={() => setSearchQuery("")} className="text-[#A1A1AA] hover:text-[#18181B]">
               <X className="h-3.5 w-3.5" />
             </button>
           )}
@@ -376,7 +376,7 @@ export default function ProductsPage() {
       {loading ? (
         <div role="status" aria-label="Loading products" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((id) => (
-            <div key={id} className="h-64 animate-pulse rounded-[5px] border border-[#ECECF0] bg-slate-100" />
+            <div key={id} className="h-64 animate-pulse rounded-[5px] border border-[#ECECF0] bg-zinc-100" />
           ))}
         </div>
       ) : loadError ? (
@@ -431,7 +431,7 @@ export default function ProductsPage() {
                   draggable
                   onDragStart={() => setDragIndex(index)}
                   onDragEnd={() => setDragIndex(null)}
-                  className="text-[#94a3b8] hover:text-[#0f172a] cursor-grab active:cursor-grabbing p-1 -ml-1 shrink-0"
+                  className="text-[#A1A1AA] hover:text-[#18181B] cursor-grab active:cursor-grabbing p-1 -ml-1 shrink-0"
                   title="Drag to reorder"
                   aria-label={`Drag to reorder ${product.name}`}
                 >
@@ -439,17 +439,17 @@ export default function ProductsPage() {
                 </span>
                 <div className="flex items-center gap-1.5 flex-wrap justify-end min-w-0">
                   {product.isTopPick && (
-                    <span className="h-5 inline-flex items-center gap-1 rounded-[4px] bg-amber-50 border border-amber-200 px-1.5 text-[10.5px] font-bold text-amber-800 shrink-0">
+                    <span className="h-5 inline-flex items-center gap-1 rounded-[5px] bg-amber-50 border border-amber-200 px-1.5 text-[11px] font-bold text-amber-800 shrink-0">
                       ⭐ Top Pick
                     </span>
                   )}
                   {product.couponCode && (
-                    <span className="h-5 inline-flex items-center rounded-[4px] bg-[#FFF5F8] border border-[#7A2253]/25 px-1.5 text-[10.5px] font-semibold text-[#7A2253] shrink-0 font-mono">
+                    <span className="h-5 inline-flex items-center rounded-[5px] bg-[#FFF5F8] border border-[#7A2253]/25 px-1.5 text-[11px] font-semibold text-[#7A2253] shrink-0 font-mono">
                       Code: {product.couponCode}
                     </span>
                   )}
                   {product.discountText && (
-                    <span className="h-5 inline-flex items-center rounded-[4px] bg-emerald-50 border border-emerald-200 px-1.5 text-[10.5px] font-semibold text-emerald-800 shrink-0">
+                    <span className="h-5 inline-flex items-center rounded-[5px] bg-emerald-50 border border-emerald-200 px-1.5 text-[11px] font-semibold text-emerald-800 shrink-0">
                       {product.discountText}
                     </span>
                   )}
@@ -523,10 +523,10 @@ export default function ProductsPage() {
               {/* 1. Product link */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between gap-2">
-                  <label htmlFor="product-url" className="block text-[13px] font-medium text-[#0f172a]">
+                  <label htmlFor="product-url" className="block text-[13px] font-medium text-[#18181B]">
                     Product link <span className="text-[#C2414B]">*</span>
                   </label>
-                  <span className="text-[11px] text-[#64748b] text-right">
+                  <span className="text-[11px] text-[#6B6B76] text-right">
                     {previewState === "loading" ? "Fetching details…" : "Paste the link first."}
                   </span>
                 </div>
@@ -560,10 +560,10 @@ export default function ProductsPage() {
               {/* 2. Product name */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between gap-2">
-                  <label htmlFor="product-name" className="block text-[13px] font-medium text-[#0f172a]">
+                  <label htmlFor="product-name" className="block text-[13px] font-medium text-[#18181B]">
                     Product name <span className="text-[#C2414B]">*</span>
                   </label>
-                  <span className="text-[11px] text-[#64748b]">{form.name.length}/80</span>
+                  <span className="text-[11px] text-[#6B6B76]">{form.name.length}/80</span>
                 </div>
                 <div className={fieldClass}>
                   <div className={iconBoxClass}>
@@ -583,12 +583,12 @@ export default function ProductsPage() {
               {/* 3. Product image */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="block text-[13px] font-medium text-[#0f172a]">
+                  <span className="block text-[13px] font-medium text-[#18181B]">
                     Product image <span className="text-[#C2414B]">*</span>
                   </span>
-                  <span className="text-[11px] text-[#64748b]">JPG, PNG or WebP · Max 5MB</span>
+                  <span className="text-[11px] text-[#6B6B76]">JPG, PNG or WebP · Max 5MB</span>
                 </div>
-                <label className="relative flex flex-col items-center justify-center p-4 border border-dashed border-[#cbd5e1] rounded-[5px] bg-[#f8fafc] hover:bg-[#f1f5f9] transition-colors cursor-pointer min-h-[108px] group">
+                <label className="relative flex flex-col items-center justify-center p-4 border border-dashed border-[#D4D4D8] rounded-[5px] bg-[#FAFAFB] hover:bg-[#F4F4F5] transition-colors cursor-pointer min-h-[108px] group">
                   <input
                     aria-label="Product image"
                     type="file"
@@ -599,19 +599,19 @@ export default function ProductsPage() {
                   />
                   {form.image ? (
                     <div className="flex items-center gap-3 w-full">
-                      <ProductImage src={form.image} name="Product preview" className="h-16 w-16 rounded-[5px] shrink-0 border border-[#e2e8f0] bg-white" />
+                      <ProductImage src={form.image} name="Product preview" className="h-16 w-16 rounded-[5px] shrink-0 border border-[#ECECF0] bg-white" />
                       <div className="min-w-0 flex-1">
-                        <span className="block text-xs font-semibold text-[#0f172a]">{imageBusy ? "Preparing..." : "Image added"}</span>
+                        <span className="block text-xs font-semibold text-[#18181B]">{imageBusy ? "Preparing..." : "Image added"}</span>
                         <span className="block text-[11px] text-[#7A2253] font-medium">Replace</span>
                       </div>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center text-center">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#64748b] group-hover:text-[#7A2253] mb-1">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#6B6B76] group-hover:text-[#7A2253] mb-1">
                         <ImageIcon className="h-5 w-5" />
                       </div>
-                      <span className="text-xs font-semibold text-[#0f172a]">{imageBusy ? "Preparing..." : "Upload image"}</span>
-                      <span className="text-[11px] text-[#94a3b8]">Filled automatically from the link when available</span>
+                      <span className="text-xs font-semibold text-[#18181B]">{imageBusy ? "Preparing..." : "Upload image"}</span>
+                      <span className="text-[11px] text-[#A1A1AA]">Filled automatically from the link when available</span>
                     </div>
                   )}
                 </label>
@@ -620,10 +620,10 @@ export default function ProductsPage() {
               {/* 4. Price */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between gap-2">
-                  <label htmlFor="product-price" className="block text-[13px] font-medium text-[#0f172a]">
-                    Price <span className="font-normal text-[#94a3b8]">(₹, optional)</span>
+                  <label htmlFor="product-price" className="block text-[13px] font-medium text-[#18181B]">
+                    Price <span className="font-normal text-[#A1A1AA]">(₹, optional)</span>
                   </label>
-                  <span className="text-[11px] text-[#64748b]">Whole rupees.</span>
+                  <span className="text-[11px] text-[#6B6B76]">Whole rupees.</span>
                 </div>
                 <div className={fieldClass}>
                   <div className={`${iconBoxClass} text-sm font-semibold`}>₹</div>
@@ -646,10 +646,10 @@ export default function ProductsPage() {
               {/* 5. Coupon code */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between gap-2">
-                  <label htmlFor="product-coupon" className="block text-[13px] font-medium text-[#0f172a]">
-                    Coupon code <span className="font-normal text-[#94a3b8]">(optional)</span>
+                  <label htmlFor="product-coupon" className="block text-[13px] font-medium text-[#18181B]">
+                    Coupon code <span className="font-normal text-[#A1A1AA]">(optional)</span>
                   </label>
-                  <span className="text-[11px] text-[#64748b]">{form.couponCode.length}/20</span>
+                  <span className="text-[11px] text-[#6B6B76]">{form.couponCode.length}/20</span>
                 </div>
                 <div className={fieldClass}>
                   <div className={iconBoxClass}>
@@ -670,10 +670,10 @@ export default function ProductsPage() {
               {/* 6. Discount text */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between gap-2">
-                  <label htmlFor="product-discount" className="block text-[13px] font-medium text-[#0f172a]">
-                    Discount text <span className="font-normal text-[#94a3b8]">(optional)</span>
+                  <label htmlFor="product-discount" className="block text-[13px] font-medium text-[#18181B]">
+                    Discount text <span className="font-normal text-[#A1A1AA]">(optional)</span>
                   </label>
-                  <span className="text-[11px] text-[#64748b]">{form.discountText.length}/30</span>
+                  <span className="text-[11px] text-[#6B6B76]">{form.discountText.length}/30</span>
                 </div>
                 <div className={fieldClass}>
                   <div className={iconBoxClass}>
@@ -694,10 +694,10 @@ export default function ProductsPage() {
               {/* 7. Why I recommend it */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between gap-2">
-                  <label htmlFor="product-note" className="block text-[13px] font-medium text-[#0f172a]">
-                    Why I recommend it <span className="font-normal text-[#94a3b8]">(optional)</span>
+                  <label htmlFor="product-note" className="block text-[13px] font-medium text-[#18181B]">
+                    Why I recommend it <span className="font-normal text-[#A1A1AA]">(optional)</span>
                   </label>
-                  <span className="text-[11px] text-[#64748b]">{form.note.length}/120</span>
+                  <span className="text-[11px] text-[#6B6B76]">{form.note.length}/120</span>
                 </div>
                 <div className={fieldClass}>
                   <div className={iconBoxClass}>
@@ -715,10 +715,10 @@ export default function ProductsPage() {
               </div>
 
               {/* 8. Top Pick toggle */}
-              <div className="flex items-center justify-between gap-3 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-3">
+              <div className="flex items-center justify-between gap-3 rounded-[5px] border border-[#ECECF0] bg-white px-3.5 py-3">
                 <div className="min-w-0">
-                  <p id="product-toppick-label" className="text-[13px] font-medium text-[#0f172a]">⭐ Mark as Top Pick</p>
-                  <p className="text-[11px] text-[#64748b]">Pinned as the hero card at the top of your shop. At most 1.</p>
+                  <p id="product-toppick-label" className="text-[13px] font-medium text-[#18181B]">⭐ Mark as Top Pick</p>
+                  <p className="text-[11px] text-[#6B6B76]">Pinned as the hero card at the top of your shop. At most 1.</p>
                 </div>
                 <button
                   type="button"
@@ -727,7 +727,7 @@ export default function ProductsPage() {
                   aria-labelledby="product-toppick-label"
                   onClick={() => setForm({ ...form, isTopPick: !form.isTopPick })}
                   className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 ${
-                    form.isTopPick ? "bg-[#7A2253]" : "bg-[#e2e8f0]"
+                    form.isTopPick ? "bg-[#7A2253]" : "bg-[#ECECF0]"
                   }`}
                 >
                   <span
@@ -739,10 +739,10 @@ export default function ProductsPage() {
               </div>
 
               {/* 9. Affiliate product */}
-              <div className="flex items-center justify-between gap-3 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-3">
+              <div className="flex items-center justify-between gap-3 rounded-[5px] border border-[#ECECF0] bg-white px-3.5 py-3">
                 <div className="min-w-0">
-                  <p id="product-affiliate-label" className="text-[13px] font-medium text-[#0f172a]">Affiliate product</p>
-                  <p className="text-[11px] text-[#64748b]">Shows a small &quot;Affiliate&quot; tag and adds FTC disclosure to footer.</p>
+                  <p id="product-affiliate-label" className="text-[13px] font-medium text-[#18181B]">Affiliate product</p>
+                  <p className="text-[11px] text-[#6B6B76]">Shows a small &quot;Affiliate&quot; tag and adds FTC disclosure to footer.</p>
                 </div>
                 <button
                   type="button"
@@ -751,7 +751,7 @@ export default function ProductsPage() {
                   aria-labelledby="product-affiliate-label"
                   onClick={() => setForm({ ...form, isAffiliate: !form.isAffiliate })}
                   className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 ${
-                    form.isAffiliate ? "bg-[#7A2253]" : "bg-[#e2e8f0]"
+                    form.isAffiliate ? "bg-[#7A2253]" : "bg-[#ECECF0]"
                   }`}
                 >
                   <span
@@ -775,7 +775,7 @@ export default function ProductsPage() {
               type="button"
               disabled={busy}
               onClick={closeForm}
-              className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer disabled:opacity-50"
+              className="h-10 px-5 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>

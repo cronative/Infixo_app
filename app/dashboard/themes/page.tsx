@@ -203,7 +203,7 @@ export default function DashboardThemesPage() {
   const statusLine = isPreviewDifferent ? (
     <>Previewing: <strong className="font-semibold text-[#7A2253]">{previewDisplayName}</strong> · not applied</>
   ) : (
-    <>Active: <strong className="font-semibold text-[#0f172a]">{previewDisplayName}</strong></>
+    <>Active: <strong className="font-semibold text-[#18181B]">{previewDisplayName}</strong></>
   );
 
   const applyButton = isThemeLocked(previewThemeKey) ? (
@@ -246,7 +246,7 @@ export default function DashboardThemesPage() {
                   className={`shrink-0 h-8 rounded-[5px] border px-3 text-[13px] font-medium transition-colors cursor-pointer ${
                     isSelected
                       ? "border-[#7A2253] bg-[#7A2253] text-white shadow-none"
-                      : "border-[#ECECF0] bg-white text-[#6B6B76] hover:border-[#cbd5e1] hover:bg-[#FAFAFB] hover:text-[#18181B]"
+                      : "border-[#ECECF0] bg-white text-[#6B6B76] hover:border-[#D4D4D8] hover:bg-[#FAFAFB] hover:text-[#18181B]"
                   }`}
                 >
                   {filter.label}
@@ -258,8 +258,8 @@ export default function DashboardThemesPage() {
           {groupedThemes.map((group) => (
             <section key={group.id} className="space-y-2.5">
               <div className="space-y-0.5">
-                <h2 className="text-sm sm:text-base font-bold text-[#0f172a]">{group.title}</h2>
-                <p className="text-xs text-[#64748b]">{group.subtitle}</p>
+                <h2 className="text-sm sm:text-base font-bold text-[#18181B]">{group.title}</h2>
+                <p className="text-xs text-[#6B6B76]">{group.subtitle}</p>
               </div>
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                 {group.themes.map((t) => (
@@ -284,7 +284,7 @@ export default function DashboardThemesPage() {
           style={{ height: panelHeight ? `${panelHeight}px` : "calc(100dvh - 2rem)" }}
           className="hidden lg:flex flex-col gap-2 w-[380px] xl:w-[440px] shrink-0 sticky top-6 min-h-[820px] max-h-[1080px]"
         >
-          <p className="w-full text-xs text-[#64748b] text-center line-clamp-2 break-words">{statusLine}</p>
+          <p className="w-full text-xs text-[#6B6B76] text-center line-clamp-2 break-words">{statusLine}</p>
           <ProfilePreview themeKey={previewThemeKey} className="flex-1 w-full" />
         </aside>
       </div>
@@ -299,14 +299,14 @@ export default function DashboardThemesPage() {
           <div
             role="region"
             aria-label="Apply theme"
-            className="pointer-events-auto w-full max-w-[560px] flex items-center justify-between gap-3 rounded-[5px] border border-[#e2e8f0] bg-white px-3.5 py-2.5 shadow-[0_8px_24px_rgba(0,0,0,.12)] animate-in fade-in slide-in-from-bottom-4 duration-200"
+            className="pointer-events-auto w-full max-w-[560px] flex items-center justify-between gap-3 rounded-[5px] border border-[#ECECF0] bg-white px-3.5 py-2.5 shadow-[0_8px_24px_rgba(0,0,0,.12)] animate-in fade-in slide-in-from-bottom-4 duration-200"
           >
             <p className="min-w-0 flex items-center gap-1.5 text-xs">
               <span className="h-2.5 w-2.5 shrink-0 rounded-full border border-black/10" style={{ background: getThemeDefinition(theme).listing.swatches[0] }} />
-              <span className="line-clamp-2 break-words text-[#64748b]">{getThemeDefinition(theme).name}</span>
-              <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[#94a3b8]" />
+              <span className="line-clamp-2 break-words text-[#6B6B76]">{getThemeDefinition(theme).name}</span>
+              <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[#A1A1AA]" />
               <span className="h-2.5 w-2.5 shrink-0 rounded-full border border-black/10" style={{ background: getThemeDefinition(previewThemeKey).listing.swatches[0] }} />
-              <span className="line-clamp-2 break-words font-bold text-[#0f172a]" title={previewDisplayName}>{previewDisplayName}</span>
+              <span className="line-clamp-2 break-words font-bold text-[#18181B]" title={previewDisplayName}>{previewDisplayName}</span>
             </p>
             <div className="flex shrink-0 items-center gap-2">
               <button
@@ -324,14 +324,14 @@ export default function DashboardThemesPage() {
       )}
 
       {sheetOpen && (
-        <div role="dialog" aria-modal="true" aria-label="Theme preview" className="lg:hidden fixed inset-0 z-[1000] flex flex-col bg-[#f8fafc]">
-          <div className="flex items-center justify-between gap-3 border-b border-[#e2e8f0] bg-white px-4 py-3">
-            <p className="min-w-0 text-xs text-[#64748b] line-clamp-2 break-words">{statusLine}</p>
+        <div role="dialog" aria-modal="true" aria-label="Theme preview" className="lg:hidden fixed inset-0 z-[1000] flex flex-col bg-[#FAFAFB]">
+          <div className="flex items-center justify-between gap-3 border-b border-[#ECECF0] bg-white px-4 py-3">
+            <p className="min-w-0 text-xs text-[#6B6B76] line-clamp-2 break-words">{statusLine}</p>
             <button
               type="button"
               onClick={() => setSheetOpen(false)}
               aria-label="Close preview"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] text-[#64748b] hover:text-[#0f172a] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] text-[#6B6B76] hover:text-[#18181B] hover:bg-[#F4F4F5] transition-colors cursor-pointer"
             >
               <X className="h-4 w-4" />
             </button>
@@ -340,7 +340,7 @@ export default function DashboardThemesPage() {
             <ProfilePreview themeKey={previewThemeKey} className="flex-1 w-full max-w-[440px]" />
           </div>
           {isPreviewDifferent && (
-            <div className="border-t border-[#e2e8f0] bg-white px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] flex justify-center [&>button]:w-full [&>button]:justify-center">
+            <div className="border-t border-[#ECECF0] bg-white px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] flex justify-center [&>button]:w-full [&>button]:justify-center">
               {applyButton}
             </div>
           )}
@@ -392,7 +392,7 @@ function ThemeCard({
       className={`group relative flex flex-col justify-between w-full rounded-[5px] border p-2 text-left transition-all duration-200 cursor-pointer shadow-none ${
         isSelected
           ? "border-2 border-[#7A2253] bg-white"
-          : "border-[#ECECF0] bg-white hover:border-[#cbd5e1]"
+          : "border-[#ECECF0] bg-white hover:border-[#D4D4D8]"
       }`}
     >
       {/* Visual Thumbnail */}
@@ -427,7 +427,7 @@ function ThemeCard({
           <div className="flex items-center gap-1.5">
             <p
               className={`line-clamp-2 break-words text-sm font-bold ${
-                isSelected ? "text-[#7A2253]" : "text-[#0f172a]"
+                isSelected ? "text-[#7A2253]" : "text-[#18181B]"
               } leading-tight`}
             >
               {displayName}
@@ -444,7 +444,7 @@ function ThemeCard({
               </span>
             )}
           </div>
-          <p className="mt-0.5 line-clamp-2 break-words text-xs text-[#64748b] font-medium leading-tight">
+          <p className="mt-0.5 line-clamp-2 break-words text-xs text-[#6B6B76] font-medium leading-tight">
             {subtitle}
           </p>
         </div>

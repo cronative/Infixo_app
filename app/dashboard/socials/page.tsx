@@ -509,14 +509,14 @@ export default function DashboardSocialsPage() {
         size="sm"
       >
         <ModalBody className="p-5 text-left">
-          <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] overflow-hidden">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-xs text-[#64748b]">@</span>
+          <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] overflow-hidden">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-xs text-[#6B6B76]">@</span>
             <input
               type="text"
               value={editHandle}
               onChange={(e) => setEditHandle(e.target.value.trim().replace(/^@/, ""))}
               onKeyDown={(e) => e.key === "Enter" && handleSaveEdit()}
-              className="h-9 flex-1 bg-transparent px-3 text-sm text-[#0f172a] outline-none"
+              className="h-9 flex-1 bg-transparent px-3 text-sm text-[#18181B] outline-none"
               autoFocus
             />
           </div>
@@ -536,7 +536,7 @@ export default function DashboardSocialsPage() {
         <button
           type="button"
           onClick={() => setIsInfoModalOpen(true)}
-          className="text-xs text-[#64748b] hover:text-[#7A2253] hover:underline cursor-pointer transition-colors"
+          className="text-xs text-[#6B6B76] hover:text-[#7A2253] hover:underline cursor-pointer transition-colors"
         >
           How we count fans &amp; creator eras
         </button>
@@ -556,7 +556,7 @@ export default function DashboardSocialsPage() {
         <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
           <ModalBody className="p-5 sm:p-6 text-left space-y-4 flex-1 min-h-0 overflow-y-auto">
             {/* Platform Tabs */}
-            <div className="flex items-stretch rounded-[5px] border border-[#E2E8F0] bg-[#F8FAFC] overflow-hidden divide-x divide-[#E2E8F0]">
+            <div className="flex items-stretch rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] overflow-hidden divide-x divide-[#ECECF0]">
               {(["instagram", "youtube", "facebook"] as const).map((plat) => {
                 const active = addPlatform === plat;
                 const label = plat === "instagram" ? "Instagram" : plat === "youtube" ? "YouTube" : "Facebook";
@@ -568,27 +568,27 @@ export default function DashboardSocialsPage() {
                     className={`group flex-1 flex items-center justify-center gap-2 py-2 px-3 text-xs font-bold transition-all cursor-pointer select-none ${
                       active
                         ? "bg-white text-[#7A2253] shadow-xs relative z-10"
-                        : "bg-[#F8FAFC] text-[#64748b] hover:bg-slate-100 hover:text-[#0f172a]"
+                        : "bg-[#FAFAFB] text-[#6B6B76] hover:bg-zinc-100 hover:text-[#18181B]"
                     }`}
                   >
                     {plat === "instagram" && (
                       <InstagramIcon
                         className={`h-3.5 w-3.5 shrink-0 transition-colors ${
-                          active ? "text-[#E1306C]" : "text-[#64748b] group-hover:text-[#E1306C]"
+                          active ? "text-[#E1306C]" : "text-[#6B6B76] group-hover:text-[#E1306C]"
                         }`}
                       />
                     )}
                     {plat === "youtube" && (
                       <YoutubeIcon
                         className={`h-3.5 w-3.5 shrink-0 transition-colors ${
-                          active ? "text-[#FF0000]" : "text-[#64748b] group-hover:text-[#FF0000]"
+                          active ? "text-[#FF0000]" : "text-[#6B6B76] group-hover:text-[#FF0000]"
                         }`}
                       />
                     )}
                     {plat === "facebook" && (
                       <FacebookIcon
                         className={`h-3.5 w-3.5 shrink-0 transition-colors ${
-                          active ? "text-[#1877F2]" : "text-[#64748b] group-hover:text-[#1877F2]"
+                          active ? "text-[#1877F2]" : "text-[#6B6B76] group-hover:text-[#1877F2]"
                         }`}
                       />
                     )}
@@ -600,9 +600,9 @@ export default function DashboardSocialsPage() {
 
             {/* Primary vs Secondary Note */}
             {existingPrimaryForAddPlatform ? (
-              <div className="rounded-[5px] border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-2 text-xs text-[#475569] leading-relaxed">
+              <div className="rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] px-3 py-2 text-xs text-[#52525B] leading-relaxed">
                 Primary already linked (
-                <span className="font-semibold text-[#0f172a]">
+                <span className="font-semibold text-[#18181B]">
                   @{existingPrimaryForAddPlatform.username.replace(/^@/, "")}
                 </span>
                 ). This will be added as a secondary account — username only, no follower count.
@@ -617,8 +617,8 @@ export default function DashboardSocialsPage() {
             {existingPrimaryForAddPlatform ? (
               <div className="space-y-3 pt-1">
                 <div className="flex items-center gap-2">
-                  <div className="flex flex-1 items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc]">
+                  <div className="flex flex-1 items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB]">
                       {addPlatform === "instagram" && <InstagramIcon className="h-4 w-4 text-[#E1306C]" />}
                       {addPlatform === "youtube" && <YoutubeIcon className="h-4 w-4 text-[#FF0000]" />}
                       {addPlatform === "facebook" && <FacebookIcon className="h-4 w-4 text-[#1877F2]" />}
@@ -640,7 +640,7 @@ export default function DashboardSocialsPage() {
                           ? "YouTube channel handle"
                           : "Facebook page username"
                       }
-                      className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
+                      className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/60 bg-transparent outline-none"
                     />
                   </div>
                   <button
@@ -659,8 +659,8 @@ export default function DashboardSocialsPage() {
                 {/* Primary flow: handle -> Fetch -> Confirm & Link */}
                 {addPlatform === "instagram" && (
                   <div className="space-y-3 pt-1">
-                    <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#E1306C]">
+                    <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#E1306C]">
                         <InstagramIcon className="h-4 w-4" />
                       </span>
                       <input
@@ -668,7 +668,7 @@ export default function DashboardSocialsPage() {
                         value={draftInsta}
                         onChange={(e) => setDraftInsta(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="Instagram username"
-                        className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
+                        className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/60 bg-transparent outline-none"
                       />
                     </div>
                     <InstagramFetcher username={draftInsta} onConfirmSync={handleConfirmedAdd} />
@@ -677,8 +677,8 @@ export default function DashboardSocialsPage() {
 
                 {addPlatform === "youtube" && (
                   <div className="space-y-3 pt-1">
-                    <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#FF0000]">
+                    <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#FF0000]">
                         <YoutubeIcon className="h-4 w-4" />
                       </span>
                       <input
@@ -686,7 +686,7 @@ export default function DashboardSocialsPage() {
                         value={draftYt}
                         onChange={(e) => setDraftYt(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="YouTube channel handle"
-                        className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
+                        className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/60 bg-transparent outline-none"
                       />
                     </div>
                     <YoutubeFetcher handle={draftYt} onConfirmSync={handleConfirmedAdd} />
@@ -695,8 +695,8 @@ export default function DashboardSocialsPage() {
 
                 {addPlatform === "facebook" && (
                   <div className="space-y-3 pt-1">
-                    <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#1877F2]">
+                    <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#1877F2]">
                         <FacebookIcon className="h-4 w-4" />
                       </span>
                       <input
@@ -704,7 +704,7 @@ export default function DashboardSocialsPage() {
                         value={draftFb}
                         onChange={(e) => setDraftFb(e.target.value.trim().replace(/^@/, ""))}
                         placeholder="Facebook page username"
-                        className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/60 bg-transparent outline-none"
+                        className="flex-1 h-9 px-3 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/60 bg-transparent outline-none"
                       />
                     </div>
                     <FacebookFetcher username={draftFb} onConfirmSync={handleConfirmedAdd} />
@@ -718,7 +718,7 @@ export default function DashboardSocialsPage() {
             <button
               type="button"
               onClick={() => setAddModalOpen(false)}
-              className="h-9 px-4 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
+              className="h-9 px-4 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -736,25 +736,25 @@ export default function DashboardSocialsPage() {
         description="Inflixo combines public follower & subscriber counts from your primary accounts."
         size="lg"
       >
-        <ModalBody className="p-5 sm:p-6 text-left space-y-4 text-xs sm:text-sm text-[#475569] leading-relaxed">
+        <ModalBody className="p-5 sm:p-6 text-left space-y-4 text-xs sm:text-sm text-[#52525B] leading-relaxed">
           <div className="space-y-3">
-            <div className="p-3 rounded-[5px] bg-[#F8FAFC] border border-[#E2E8F0] space-y-1">
-              <h4 className="font-bold text-[#0f172a]">Primary accounts count</h4>
-              <p className="text-xs text-[#64748b]">
+            <div className="p-3 rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0] space-y-1">
+              <h4 className="font-bold text-[#18181B]">Primary accounts count</h4>
+              <p className="text-xs text-[#6B6B76]">
                 Your first account on each platform is your primary account. Only primary accounts (one per platform) are added to your Total Fans and Creator Era. Secondary accounts display your username and profile link without fetching follower counts.
               </p>
             </div>
 
-            <div className="p-3 rounded-[5px] bg-[#F8FAFC] border border-[#E2E8F0] space-y-1">
-              <h4 className="font-bold text-[#0f172a]">Public data only</h4>
-              <p className="text-xs text-[#64748b]">
+            <div className="p-3 rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0] space-y-1">
+              <h4 className="font-bold text-[#18181B]">Public data only</h4>
+              <p className="text-xs text-[#6B6B76]">
                 We fetch public follower and subscriber counts directly for your primary accounts. No passwords or account permissions are ever requested or stored.
               </p>
             </div>
 
-            <div className="p-3 rounded-[5px] bg-[#F8FAFC] border border-[#E2E8F0] space-y-1">
-              <h4 className="font-bold text-[#0f172a]">Creator Era calculation</h4>
-              <p className="text-xs text-[#64748b]">
+            <div className="p-3 rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0] space-y-1">
+              <h4 className="font-bold text-[#18181B]">Creator Era calculation</h4>
+              <p className="text-xs text-[#6B6B76]">
                 Your Creator Era updates based on the combined public counts of your connected primary accounts.
               </p>
             </div>
@@ -787,7 +787,7 @@ export default function DashboardSocialsPage() {
             type="button"
             disabled={deleting}
             onClick={() => setAccountToDelete(null)}
-            className="h-8 px-3.5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] transition-colors cursor-pointer disabled:opacity-50"
+            className="h-8 px-3.5 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] transition-colors cursor-pointer disabled:opacity-50"
           >
             Cancel
           </button>
@@ -880,7 +880,7 @@ function PlatformSection({
     <button
       type="button"
       onClick={onAdd}
-      className="inline-flex h-7 shrink-0 items-center gap-1 rounded-[5px] border border-[#E2E8F0] bg-white px-2.5 text-xs font-semibold text-[#18181B] hover:border-[#7A2253]/40 hover:text-[#7A2253] transition-colors cursor-pointer"
+      className="inline-flex h-7 shrink-0 items-center gap-1 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-xs font-semibold text-[#18181B] hover:border-[#7A2253]/40 hover:text-[#7A2253] transition-colors cursor-pointer"
     >
       <Plus className="h-3.5 w-3.5" />
       Add
@@ -892,21 +892,21 @@ function PlatformSection({
       <div className="flex items-center justify-between gap-2 rounded-t-[5px] border-b border-[#ECECF0] bg-[#7A2253]/[0.07] px-3 py-2.5">
         <div className="flex min-w-0 items-center gap-2">
           <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] ${row.iconBg}`}>{row.icon}</span>
-          <h3 className="truncate text-[13.5px] font-semibold text-[#18181B]">
+          <h3 className="truncate text-[14px] font-semibold text-[#18181B]">
             {SECTION_TITLES[row.platform]}{" "}
             <span className="text-xs font-normal text-[#6B6B76] tabular-nums">
               ({row.accounts.length}/{maxPerPlatform})
             </span>
           </h3>
         </div>
-        {ordered.length === 0 && !loading ? null : canAddMore ? addBtn : <span className="shrink-0 text-[11px] font-medium text-[#94A3B8]">Max reached</span>}
+        {ordered.length === 0 && !loading ? null : canAddMore ? addBtn : <span className="shrink-0 text-[11px] font-medium text-[#A1A1AA]">Max reached</span>}
       </div>
 
       {loading ? (
         <div className="px-3 py-4 text-xs text-[#6B6B76]">Loading…</div>
       ) : ordered.length === 0 ? (
         <div className="flex min-h-[52px] items-center justify-between gap-2 px-3 py-2">
-          <span className="text-[13px] text-[#94A3B8]">No {row.title} account yet</span>
+          <span className="text-[13px] text-[#A1A1AA]">No {row.title} account yet</span>
           {canAddMore && addBtn}
         </div>
       ) : (

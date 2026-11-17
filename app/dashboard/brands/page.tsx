@@ -235,7 +235,7 @@ export default function DashboardBrandsPage() {
 
       {/* Main Content Area */}
       {loading ? (
-        <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-6 text-center text-xs text-[#64748b]">
+        <div className="rounded-[5px] border border-[#ECECF0] bg-white p-6 text-center text-xs text-[#6B6B76]">
           Loading brands...
         </div>
       ) : brands.length === 0 ? (
@@ -376,7 +376,7 @@ export default function DashboardBrandsPage() {
                       e.stopPropagation();
                       setActiveMenuId(activeMenuId === brand.id ? null : brand.id);
                     }}
-                    className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f1f5f9] text-[#64748b] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
+                    className="tap-scale flex h-7.5 w-7.5 items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#F4F4F5] text-[#6B6B76] hover:text-[#7A2253] transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm"
                     aria-label="Brand options"
                   >
                     <MoreVertical className="h-3.5 w-3.5" />
@@ -386,7 +386,7 @@ export default function DashboardBrandsPage() {
                     <div
                       onClick={(e) => e.stopPropagation()}
                       data-menu
-                      className="absolute right-0 top-full mt-1.5 w-44 rounded-[5px] border border-[#e2e8f0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in text-left"
+                      className="absolute right-0 top-full mt-1.5 w-44 rounded-[5px] border border-[#ECECF0] bg-white p-1 shadow-lg z-50 space-y-0.5 animate-in fade-in text-left"
                     >
                       {brand.websiteUrl && (
                         <a
@@ -394,9 +394,9 @@ export default function DashboardBrandsPage() {
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() => setActiveMenuId(null)}
-                          className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors"
+                          className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#F4F4F5] transition-colors"
                         >
-                          <Globe className="h-3.5 w-3.5 text-[#64748b]" />
+                          <Globe className="h-3.5 w-3.5 text-[#6B6B76]" />
                           <span>Visit Website</span>
                         </a>
                       )}
@@ -407,9 +407,9 @@ export default function DashboardBrandsPage() {
                           setActiveMenuId(null);
                           handleToggleBrand(brand);
                         }}
-                        className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                        className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#F4F4F5] transition-colors cursor-pointer"
                       >
-                        {brand.isActive ? <EyeOff className="h-3.5 w-3.5 text-[#64748b]" /> : <Eye className="h-3.5 w-3.5 text-[#17845B]" />}
+                        {brand.isActive ? <EyeOff className="h-3.5 w-3.5 text-[#6B6B76]" /> : <Eye className="h-3.5 w-3.5 text-[#17845B]" />}
                         <span>{brand.isActive ? "Hide from profile" : "Show on profile"}</span>
                       </button>
 
@@ -419,13 +419,13 @@ export default function DashboardBrandsPage() {
                           setActiveMenuId(null);
                           handleOpenModal(brand);
                         }}
-                        className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                        className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#7A2253] hover:bg-[#F4F4F5] transition-colors cursor-pointer"
                       >
-                        <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
+                        <Pencil className="h-3.5 w-3.5 text-[#6B6B76]" />
                         <span>Edit Brand</span>
                       </button>
 
-                      <div className="my-1 border-t border-[#e2e8f0]" />
+                      <div className="my-1 border-t border-[#ECECF0]" />
 
                       <button
                         type="button"
@@ -433,7 +433,7 @@ export default function DashboardBrandsPage() {
                           setActiveMenuId(null);
                           setBrandToDelete(brand);
                         }}
-                        className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                        className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#C2414B] hover:bg-[#F4F4F5] transition-colors cursor-pointer"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                         <span>Remove Brand</span>
@@ -459,8 +459,8 @@ export default function DashboardBrandsPage() {
         <form onSubmit={handleSaveBrand} className="flex flex-col flex-1 min-h-0">
           <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
             {/* Live Brand Initials Badge Preview */}
-            <div className="flex items-center gap-3 p-2.5 rounded-[5px] bg-[#f8fafc] border border-[#e2e8f0]">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#7A225314] border border-[#e2e8f0] text-[#7A2253] font-bold text-xs shrink-0">
+            <div className="flex items-center gap-3 p-2.5 rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#7A225314] border border-[#ECECF0] text-[#7A2253] font-bold text-xs shrink-0">
                 {getInitials(brandName || "Brand")}
               </div>
               <div className="min-w-0">
@@ -470,11 +470,11 @@ export default function DashboardBrandsPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="block text-[13px] font-medium text-[#0f172a]">
+              <label className="block text-[13px] font-medium text-[#18181B]">
                 Brand Name <span className="text-[#C2414B]">*</span>
               </label>
-              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Building2 className="h-4 w-4" />
                 </span>
                 <input
@@ -483,17 +483,17 @@ export default function DashboardBrandsPage() {
                   value={brandName}
                   onChange={(e) => setBrandName(e.target.value)}
                   placeholder="e.g. CreatorCloths or The Tech Show"
-                  className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="block text-[13px] font-medium text-[#0f172a]">
+              <label className="block text-[13px] font-medium text-[#18181B]">
                 Website URL (Optional)
               </label>
-              <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Globe className="h-4 w-4" />
                 </span>
                 <input
@@ -501,23 +501,23 @@ export default function DashboardBrandsPage() {
                   value={websiteUrl}
                   onChange={(e) => setWebsiteUrl(e.target.value)}
                   placeholder="https://mybrand.com"
-                  className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                  className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                 />
               </div>
             </div>
 
-            <div className="space-y-2.5 pt-2 border-t border-[#e2e8f0]">
+            <div className="space-y-2.5 pt-2 border-t border-[#ECECF0]">
               <div>
                 <p className="text-xs font-bold text-[#7A2253]">Brand Social Links (Optional)</p>
-                <p className="text-[11px] text-[#64748b]">Enter username only — profile links are generated automatically.</p>
+                <p className="text-[11px] text-[#6B6B76]">Enter username only — profile links are generated automatically.</p>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[11px] font-semibold text-[#64748b]">
+                <label className="block text-[11px] font-semibold text-[#6B6B76]">
                   Instagram Username
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#E1306C]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#E1306C]">
                     <InstagramIcon className="h-4 w-4" />
                   </span>
                   <input
@@ -525,17 +525,17 @@ export default function DashboardBrandsPage() {
                     value={instagramUrl}
                     onChange={(e) => setInstagramUrl(extractHandle(e.target.value, "instagram"))}
                     placeholder="Enter username (e.g. brandname)"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[11px] font-semibold text-[#64748b]">
+                <label className="block text-[11px] font-semibold text-[#6B6B76]">
                   YouTube Channel Username
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#FF0000]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#FF0000]">
                     <YoutubeIcon className="h-4 w-4" />
                   </span>
                   <input
@@ -543,17 +543,17 @@ export default function DashboardBrandsPage() {
                     value={youtubeUrl}
                     onChange={(e) => setYoutubeUrl(extractHandle(e.target.value, "youtube"))}
                     placeholder="Enter channel handle (e.g. brandchannel)"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[11px] font-semibold text-[#64748b]">
+                <label className="block text-[11px] font-semibold text-[#6B6B76]">
                   Facebook Username
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#1877F2]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#1877F2]">
                     <FacebookIcon className="h-4 w-4" />
                   </span>
                   <input
@@ -561,7 +561,7 @@ export default function DashboardBrandsPage() {
                     value={facebookUrl}
                     onChange={(e) => setFacebookUrl(extractHandle(e.target.value, "facebook"))}
                     placeholder="Enter page username (e.g. brandpage)"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                   />
                 </div>
               </div>
@@ -572,7 +572,7 @@ export default function DashboardBrandsPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="h-9 px-3.5 rounded-[5px] border border-[#e2e8f0] text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
+              className="h-9 px-3.5 rounded-[5px] border border-[#ECECF0] text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#7A2253] transition-colors cursor-pointer"
             >
               Cancel
             </button>

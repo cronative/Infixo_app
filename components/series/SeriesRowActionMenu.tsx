@@ -70,7 +70,7 @@ export function SeriesRowActionMenu({
       role="menu"
       aria-label="Series options"
       onClick={(e) => e.stopPropagation()}
-      className="absolute right-0 top-full mt-1 z-40 w-44 rounded-[5px] border border-[#e2e8f0] bg-white p-1 shadow-lg shadow-slate-900/10 animate-in fade-in zoom-in-95 duration-100"
+      className="absolute right-0 top-full mt-1 z-40 w-44 rounded-[5px] border border-[#ECECF0] bg-white p-1 shadow-lg shadow-zinc-900/10 animate-in fade-in zoom-in-95 duration-100"
     >
       <button
         type="button"
@@ -79,9 +79,9 @@ export function SeriesRowActionMenu({
           onClose();
           onEdit();
         }}
-        className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#0f172a] hover:bg-[#f8fafc] transition-colors cursor-pointer text-left"
+        className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer text-left"
       >
-        <Pencil className="h-3.5 w-3.5 text-[#64748b]" />
+        <Pencil className="h-3.5 w-3.5 text-[#6B6B76]" />
         <span>Edit details</span>
       </button>
 
@@ -92,9 +92,9 @@ export function SeriesRowActionMenu({
           onClose();
           onViewLive();
         }}
-        className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#0f172a] hover:bg-[#f8fafc] transition-colors cursor-pointer text-left"
+        className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer text-left"
       >
-        <ExternalLink className="h-3.5 w-3.5 text-[#64748b]" />
+        <ExternalLink className="h-3.5 w-3.5 text-[#6B6B76]" />
         <span>View live</span>
       </button>
 
@@ -105,13 +105,13 @@ export function SeriesRowActionMenu({
           onClose();
           onImportCsv();
         }}
-        className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#0f172a] hover:bg-[#f8fafc] transition-colors cursor-pointer text-left"
+        className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-1.5 text-xs font-medium text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer text-left"
       >
-        <FileSpreadsheet className="h-3.5 w-3.5 text-[#64748b]" />
+        <FileSpreadsheet className="h-3.5 w-3.5 text-[#6B6B76]" />
         <span>Import CSV</span>
       </button>
 
-      <div className="my-1 border-t border-slate-100" />
+      <div className="my-1 border-t border-zinc-100" />
 
       <button
         type="button"

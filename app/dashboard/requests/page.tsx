@@ -16,7 +16,7 @@ const STATUS_CONFIG: Record<CollaborationStatus, { label: string; bg: string; te
   NEW: { label: "New", bg: "bg-[#EAF7F0]", text: "text-[#17845B]", border: "border-[#17845B]/20" },
   VIEWED: { label: "Viewed", bg: "bg-[#7A2253]/[0.09]", text: "text-[#7A2253]", border: "border-[#7A2253]/20" },
   REPLIED: { label: "Replied", bg: "bg-[#7A2253]/[0.09]", text: "text-[#7A2253]", border: "border-[#7A2253]/20" },
-  CLOSED: { label: "Closed", bg: "bg-[#f8fafc]", text: "text-[#64748b]", border: "border-[#e2e8f0]" },
+  CLOSED: { label: "Closed", bg: "bg-[#FAFAFB]", text: "text-[#6B6B76]", border: "border-[#ECECF0]" },
 };
 
 function formatDate(dateStr: string): string {
@@ -291,15 +291,15 @@ export default function DashboardRequestsPage() {
           <div className="flex flex-col flex-1 min-h-0">
             <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
               {/* Sender summary card */}
-              <div className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc]/60 p-3 space-y-2">
+              <div className="rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB]/60 p-3 space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-xs sm:text-sm text-[#0f172a]">{selectedRequest.senderName}</h3>
+                  <h3 className="font-semibold text-xs sm:text-sm text-[#18181B]">{selectedRequest.senderName}</h3>
                   <span className={`inline-flex items-center px-2 py-0.5 rounded-[5px] text-[10px] font-bold border ${STATUS_CONFIG[selectedRequest.status].bg} ${STATUS_CONFIG[selectedRequest.status].text} ${STATUS_CONFIG[selectedRequest.status].border}`}>
                     {STATUS_CONFIG[selectedRequest.status].label}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#64748b]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#6B6B76]">
                   {selectedRequest.companyName && (
                     <div className="flex items-center gap-1.5">
                       <Building2 className="h-3.5 w-3.5 text-[#7A2253]" />
@@ -330,17 +330,17 @@ export default function DashboardRequestsPage() {
 
               {/* Message Content */}
               <div className="space-y-1">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
+                <label className="block text-[13px] font-medium text-[#18181B]">
                   Message / Requirement:
                 </label>
-                <div className="rounded-[5px] border border-[#e2e8f0] bg-white p-3 text-xs text-[#7A2253] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
+                <div className="rounded-[5px] border border-[#ECECF0] bg-white p-3 text-xs text-[#7A2253] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
                   {selectedRequest.message}
                 </div>
               </div>
 
               {/* Status Update Selector */}
               <div className="space-y-1">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
+                <label className="block text-[13px] font-medium text-[#18181B]">
                   Update Request Status:
                 </label>
                 <div className="grid grid-cols-4 gap-2">
@@ -352,7 +352,7 @@ export default function DashboardRequestsPage() {
                       onClick={() => handleStatusChange(st)}
                       className={`tap-scale py-1.5 px-2 rounded-[5px] text-xs font-bold transition-all border cursor-pointer ${selectedRequest.status === st
                         ? "bg-[#7A2253]/[0.08] text-[#7A2253] border-[#7A2253]/30"
-                        : "border-[#e2e8f0] bg-white text-[#64748b] hover:bg-[#f1f5f9]"
+                        : "border-[#ECECF0] bg-white text-[#6B6B76] hover:bg-[#F4F4F5]"
                         }`}
                     >
                       {STATUS_CONFIG[st].label}

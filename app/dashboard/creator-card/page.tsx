@@ -63,12 +63,12 @@ interface ThemeOption {
 const THEME_OPTIONS: ThemeOption[] = [
   { id: "profile", name: "My Theme", swatch: ["#D4A373", "#10B981", "#7A2253"] },
   { id: "royal", name: "Inflixo", swatch: ["#7A2253", "#2563EB", "#93C5FD"] },
-  { id: "obsidian", name: "Midnight", swatch: ["#0F172A", "#2563EB", "#64748B"] },
+  { id: "obsidian", name: "Midnight", swatch: ["#18181B", "#2563EB", "#6B6B76"] },
   { id: "emerald", name: "Emerald", swatch: ["#03281E", "#D97706", "#D4A373"] },
   { id: "sunset", name: "Sunset", swatch: ["#881337", "#FB923C", "#FED7AA"] },
   { id: "cyber", name: "Electric", swatch: ["#0D091F", "#06B6D4", "#7C3AED"] },
-  { id: "ivory", name: "Minimal", swatch: ["#F59E0B", "#EA580C", "#E2E8F0"] },
-  { id: "monochrome", name: "Pure", swatch: ["#000000", "#64748B", "#E2E8F0"] },
+  { id: "ivory", name: "Minimal", swatch: ["#F59E0B", "#EA580C", "#ECECF0"] },
+  { id: "monochrome", name: "Pure", swatch: ["#000000", "#6B6B76", "#ECECF0"] },
 ];
 
 interface QuickTag {
@@ -256,10 +256,10 @@ export default function CreatorCardPage() {
                 <Heart className="h-4 w-4 fill-current animate-pulse" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">
+                <h3 className="text-sm font-bold text-zinc-900">
                   Don&apos;t let your creative journey pause here, {profile.displayName || "Creator"}! ❤️
                 </h3>
-                <p className="mt-0.5 text-xs text-slate-600 leading-relaxed max-w-xl">
+                <p className="mt-0.5 text-xs text-zinc-600 leading-relaxed max-w-xl">
                   Your 7-day free trial has ended. Right now, anyone scanning your Creator Card QR code sees that your profile is currently hidden. Reactivate your plan so fans and brands can explore your world.
                 </p>
               </div>
@@ -278,7 +278,7 @@ export default function CreatorCardPage() {
       )}
 
       {!username ? (
-        <div className="rounded-[5px] border border-(--border) bg-white p-5 text-sm text-[#475569] shadow-2xs">
+        <div className="rounded-[5px] border border-(--border) bg-white p-5 text-sm text-[#52525B] shadow-2xs">
           Set your username first so your card can link to your public profile.{" "}
           <Link href="/dashboard/profile" className="font-semibold text-[#7A2253] underline underline-offset-2">
             Go to Profile
@@ -385,7 +385,7 @@ export default function CreatorCardPage() {
                       className={`group relative flex flex-col items-center rounded-[5px] border p-2 text-center transition-all cursor-pointer ${
                         active
                           ? "border-2 border-[#7A2253] bg-white shadow-none"
-                          : "border-[#ECECF0] bg-[#FAFAFB] hover:border-[#cbd5e1] hover:bg-white"
+                          : "border-[#ECECF0] bg-[#FAFAFB] hover:border-[#D4D4D8] hover:bg-white"
                       }`}
                     >
                       {active && (
@@ -403,10 +403,10 @@ export default function CreatorCardPage() {
                               <div className="-mt-3.5 h-5 w-5 rounded-full bg-white border border-[#93C5FD] shadow-2xs flex items-center justify-center">
                                 <div className="h-3 w-3 rounded-full bg-[#BFDBFE]" />
                               </div>
-                              <div className="w-8 h-1 bg-[#CBD5E1] rounded-full mt-1.5" />
-                              <div className="w-5 h-1 bg-[#E2E8F0] rounded-full mt-1" />
-                              <div className="w-6 h-6 bg-white border border-[#CBD5E1] rounded-[2px] mt-2 flex items-center justify-center">
-                                <div className="w-3.5 h-3.5 bg-[#64748B] rounded-[1px]" />
+                              <div className="w-8 h-1 bg-[#D4D4D8] rounded-full mt-1.5" />
+                              <div className="w-5 h-1 bg-[#ECECF0] rounded-full mt-1" />
+                              <div className="w-6 h-6 bg-white border border-[#D4D4D8] rounded-[2px] mt-2 flex items-center justify-center">
+                                <div className="w-3.5 h-3.5 bg-[#6B6B76] rounded-[1px]" />
                               </div>
                             </div>
                           </div>
@@ -437,10 +437,10 @@ export default function CreatorCardPage() {
 
                         {layout.id === "cyber" && (
                           <div className="w-full h-full bg-[#0B0F19] flex flex-col items-center justify-center p-1.5">
-                            <div className="h-5 w-5 rounded-full bg-[#1E293B] border border-[#38BDF8] shadow-[0_0_6px_rgba(56,189,248,0.5)]" />
+                            <div className="h-5 w-5 rounded-full bg-[#27272A] border border-[#38BDF8] shadow-[0_0_6px_rgba(56,189,248,0.5)]" />
                             <div className="w-8 h-1 bg-[#38BDF8]/60 rounded-full mt-1.5" />
-                            <div className="w-5 h-1 bg-[#334155] rounded-full mt-1" />
-                            <div className="w-6 h-6 bg-[#0F172A] border border-[#38BDF8]/50 rounded-[2px] mt-2 flex items-center justify-center">
+                            <div className="w-5 h-1 bg-[#3F3F46] rounded-full mt-1" />
+                            <div className="w-6 h-6 bg-[#18181B] border border-[#38BDF8]/50 rounded-[2px] mt-2 flex items-center justify-center">
                               <div className="w-3.5 h-3.5 bg-[#38BDF8] rounded-[1px]" />
                             </div>
                           </div>
@@ -453,10 +453,10 @@ export default function CreatorCardPage() {
                             <div className="relative z-10 h-5 w-5 rounded-full bg-white border border-[#D4A373] shadow-2xs flex items-center justify-center">
                               <div className="h-3 w-3 rounded-full bg-[#7A2253]" />
                             </div>
-                            <div className="relative z-10 w-8 h-1 bg-[#0F172A] rounded-full mt-1.5" />
+                            <div className="relative z-10 w-8 h-1 bg-[#18181B] rounded-full mt-1.5" />
                             <div className="relative z-10 w-5 h-1 bg-[#7A2253] rounded-full mt-1" />
-                            <div className="relative z-10 w-6 h-6 bg-white border border-[#E2E8F0] rounded-[2px] mt-1.5 flex items-center justify-center shadow-2xs">
-                              <div className="w-3.5 h-3.5 bg-[#0F172A] rounded-[1px]" />
+                            <div className="relative z-10 w-6 h-6 bg-white border border-[#ECECF0] rounded-[2px] mt-1.5 flex items-center justify-center shadow-2xs">
+                              <div className="w-3.5 h-3.5 bg-[#18181B] rounded-[1px]" />
                             </div>
                           </div>
                         )}
@@ -464,12 +464,12 @@ export default function CreatorCardPage() {
 
                       <span
                         className={`text-xs font-bold line-clamp-2 break-words max-w-full ${
-                          active ? "text-[#7A2253]" : "text-[#0f172a]"
+                          active ? "text-[#7A2253]" : "text-[#18181B]"
                         }`}
                       >
                         {layout.name}
                       </span>
-                      <span className="text-[10px] text-[#64748b] line-clamp-2 break-words max-w-full mt-0.5">
+                      <span className="text-[10px] text-[#6B6B76] line-clamp-2 break-words max-w-full mt-0.5">
                         {layout.subtitle}
                       </span>
                     </button>
@@ -512,7 +512,7 @@ export default function CreatorCardPage() {
                       className={`flex flex-col items-center justify-center gap-2 rounded-[5px] border p-2.5 text-center transition-all cursor-pointer ${
                         active
                           ? "border-2 border-[#7A2253] bg-white shadow-none"
-                          : "border-[#ECECF0] bg-[#FAFAFB] hover:border-[#cbd5e1] hover:bg-white"
+                          : "border-[#ECECF0] bg-[#FAFAFB] hover:border-[#D4D4D8] hover:bg-white"
                       }`}
                     >
                       <div className="flex items-center gap-1.5">
@@ -564,7 +564,7 @@ export default function CreatorCardPage() {
                       className={`inline-flex items-center justify-center gap-1.5 rounded-[5px] border px-2.5 py-2 text-[12px] font-medium transition-all cursor-pointer ${
                         active
                           ? "border-[#7A2253] bg-[#F7EEF2] text-[#7A2253]"
-                          : "border-[#ECECF0] bg-[#FAFAFB] text-[#3F3F46] hover:border-[#cbd5e1] hover:bg-white"
+                          : "border-[#ECECF0] bg-[#FAFAFB] text-[#3F3F46] hover:border-[#D4D4D8] hover:bg-white"
                       }`}
                     >
                       <span className="shrink-0">{tag.emoji}</span>
@@ -593,7 +593,7 @@ export default function CreatorCardPage() {
                     onChange={(e) => setCustomTagline(e.target.value)}
                     placeholder={activePreset.tagline}
                     maxLength={60}
-                    className="w-full rounded-[5px] border border-[#ECECF0] bg-white px-3.5 py-2 text-[13px] text-[#18181B] placeholder-[#94a3b8] transition-colors focus:border-[#7A2253] focus:outline-none"
+                    className="w-full rounded-[5px] border border-[#ECECF0] bg-white px-3.5 py-2 text-[13px] text-[#18181B] placeholder-[#A1A1AA] transition-colors focus:border-[#7A2253] focus:outline-none"
                   />
                   {customTagline && (
                     <button

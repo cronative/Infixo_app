@@ -249,7 +249,7 @@ export default function DashboardProfilePage() {
                     title="Copy profile link"
                   >
                     <span>inflixo.com/{handleStr}</span>
-                    <Copy className="h-3.5 w-3.5 text-[#94a3b8] group-hover:text-[#7A2253] transition-colors" />
+                    <Copy className="h-3.5 w-3.5 text-[#A1A1AA] group-hover:text-[#7A2253] transition-colors" />
                   </button>
                 </div>
               </div>
@@ -312,9 +312,9 @@ export default function DashboardProfilePage() {
                   <CreatorAvatar
                     src={profile.photoDataUrl}
                     name={profile.displayName || profile.username || "Creator"}
-                    className="w-20 h-20 sm:w-22 sm:h-22 rounded-full border-2 border-[#e2e8f0] shadow-xs"
+                    className="w-20 h-20 sm:w-22 sm:h-22 rounded-full border-2 border-[#ECECF0] shadow-xs"
                     textClassName="text-xl font-extrabold text-[#7A2253]"
-                    fallbackBgClass="bg-[#f8fafc]"
+                    fallbackBgClass="bg-[#FAFAFB]"
                   />
 
                   {/* Hover / Camera overlay button */}
@@ -333,14 +333,14 @@ export default function DashboardProfilePage() {
                     ref={photoButtonRef}
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className={`inline-flex items-center gap-1.5 rounded-[5px] border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] px-4 py-2 text-xs font-semibold text-[#7A2253] transition-all cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7A2253] focus-visible:ring-offset-2 ${
+                    className={`inline-flex items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] px-4 py-2 text-xs font-semibold text-[#7A2253] transition-all cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7A2253] focus-visible:ring-offset-2 ${
                       highlightPhoto ? "ring-2 ring-[#7A2253] ring-offset-2 animate-pulse" : ""
                     }`}
                   >
                     <Camera className="h-3.5 w-3.5" />
                     <span>Upload photo</span>
                   </button>
-                  <p className="text-[11px] text-[#64748b] leading-tight pt-0.5">
+                  <p className="text-[11px] text-[#6B6B76] leading-tight pt-0.5">
                     JPG or PNG, square (1:1), up to 5MB.
                   </p>
                 </div>
@@ -358,17 +358,17 @@ export default function DashboardProfilePage() {
               <div className="md:col-span-7 space-y-4">
                 {/* Display Name Input */}
                 <div>
-                  <label className="block text-xs sm:text-[13px] font-semibold text-[#0f172a] mb-1.5">
+                  <label className="block text-xs sm:text-[13px] font-semibold text-[#18181B] mb-1.5">
                     Display name <span className="text-red-500">*</span>
                   </label>
                   <div
                     className={`flex items-center h-11 rounded-[5px] border overflow-hidden transition-colors ${
                       errors.displayName
                         ? "border-[#C2414B] bg-rose-50/20 focus-within:border-[#C2414B]"
-                        : "border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-1 focus-within:ring-[#7A2253]"
+                        : "border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-1 focus-within:ring-[#7A2253]"
                     }`}
                   >
-                    <span className="flex h-11 w-11 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                       <User className="h-4 w-4" />
                     </span>
                     <input
@@ -380,33 +380,33 @@ export default function DashboardProfilePage() {
                         updateProfile({ displayName: e.target.value });
                         if (errors.displayName) setErrors((prev) => ({ ...prev, displayName: undefined }));
                       }}
-                      className="flex-1 h-full px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                      className="flex-1 h-full px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                     />
                   </div>
                   {errors.displayName ? (
                     <p className="text-xs font-medium text-[#C2414B] mt-1">{errors.displayName}</p>
                   ) : (
-                    <p className="text-[11px] text-[#64748b] mt-1">This name will be visible to your followers and brands.</p>
+                    <p className="text-[11px] text-[#6B6B76] mt-1">This name will be visible to your followers and brands.</p>
                   )}
                 </div>
 
                 {/* Profile URL */}
                 <div>
-                  <label className="block text-xs sm:text-[13px] font-semibold text-[#0f172a] mb-1.5">
+                  <label className="block text-xs sm:text-[13px] font-semibold text-[#18181B] mb-1.5">
                     Profile URL <span className="text-red-500">*</span>
                   </label>
-                  <div className="flex items-center h-11 rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] overflow-hidden">
-                    <span className="flex h-11 items-center px-3.5 border-r border-[#e2e8f0] bg-[#f1f5f9] text-xs sm:text-sm font-medium text-[#64748b] select-none">
+                  <div className="flex items-center h-11 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] overflow-hidden">
+                    <span className="flex h-11 items-center px-3.5 border-r border-[#ECECF0] bg-[#F4F4F5] text-xs sm:text-sm font-medium text-[#6B6B76] select-none">
                       inflixo.com/
                     </span>
-                    <div className="flex-1 px-3.5 h-full flex items-center text-xs sm:text-sm font-semibold text-[#0f172a]">
+                    <div className="flex-1 px-3.5 h-full flex items-center text-xs sm:text-sm font-semibold text-[#18181B]">
                       {handleStr}
                     </div>
                     <span className="pr-3.5 flex items-center justify-center">
                       <CheckCircle2 className="h-4 w-4 text-emerald-600 fill-emerald-50" />
                     </span>
                   </div>
-                  <p className="text-[11px] text-[#64748b] mt-1">
+                  <p className="text-[11px] text-[#6B6B76] mt-1">
                     Your unique Inflixo profile address.
                   </p>
                 </div>
@@ -463,7 +463,7 @@ export default function DashboardProfilePage() {
                 value={profile.bio || ""}
                 placeholder="Write a clear introduction to your content and creator identity..."
                 onChange={(e) => updateProfile({ bio: e.target.value })}
-                className={`w-full rounded-[5px] border bg-white p-3 text-[13px] font-normal text-[#18181B] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:ring-1 focus:ring-[#7A2253] outline-none min-h-[88px] resize-y transition-colors ${
+                className={`w-full rounded-[5px] border bg-white p-3 text-[13px] font-normal text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:ring-1 focus:ring-[#7A2253] outline-none min-h-[88px] resize-y transition-colors ${
                   errors.bio ? "border-[#C2414B] bg-rose-50/20" : "border-[#ECECF0]"
                 }`}
               />

@@ -404,7 +404,7 @@ export function EpisodeEditModal({
         <form onSubmit={handleBulkSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden text-left">
           <ModalBody className="p-5 sm:p-6 space-y-4 flex-1 min-h-0 overflow-y-auto">
             <div className="flex items-center justify-between">
-              <label className="block text-xs font-semibold text-[#0f172a]">
+              <label className="block text-xs font-semibold text-[#18181B]">
                 Video links (one per line) <span className="text-rose-500">*</span>
               </label>
               <button
@@ -427,7 +427,7 @@ export function EpisodeEditModal({
                 disabled={saving}
                 rows={7}
                 placeholder={`https://${seriesPlatform.toLowerCase() === "instagram" ? "instagram.com/reel/..." : seriesPlatform.toLowerCase() === "facebook" ? "facebook.com/watch/..." : "youtube.com/watch?v=..."}\nhttps://${seriesPlatform.toLowerCase() === "instagram" ? "instagram.com/reel/..." : seriesPlatform.toLowerCase() === "facebook" ? "facebook.com/watch/..." : "youtube.com/watch?v=..."}`}
-                className="w-full rounded-[4px] border border-[#e2e8f0] bg-white p-3 font-mono text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none transition-colors"
+                className="w-full rounded-[4px] border border-[#ECECF0] bg-white p-3 font-mono text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none transition-colors"
               />
               {bulkError && <p className="mt-1.5 text-xs text-rose-500 font-medium">{bulkError}</p>}
             </div>
@@ -456,7 +456,7 @@ export function EpisodeEditModal({
                   value={bulkStartNumber}
                   disabled={saving}
                   onChange={(e) => setBulkStartNumber(Math.max(1, parseInt(e.target.value, 10) || 1))}
-                  className="w-14 rounded-[4px] border border-[#e2e8f0] bg-white px-2 py-1 text-xs text-center text-[#0f172a] focus:outline-none focus:border-[#7A2253]"
+                  className="w-14 rounded-[4px] border border-[#ECECF0] bg-white px-2 py-1 text-xs text-center text-[#18181B] focus:outline-none focus:border-[#7A2253]"
                 />
               </div>
             </div>
@@ -469,12 +469,12 @@ export function EpisodeEditModal({
             )}
           </ModalBody>
 
-          <ModalFooter className="px-5 sm:px-6 py-3.5 flex justify-end gap-2 border-t border-[#e2e8f0]">
+          <ModalFooter className="px-5 sm:px-6 py-3.5 flex justify-end gap-2 border-t border-[#ECECF0]">
             <button
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="h-9 px-4 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer disabled:opacity-50"
+              className="h-9 px-4 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
@@ -501,7 +501,7 @@ export function EpisodeEditModal({
             {/* 1. Video link (MOVED TO TOP) */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-semibold text-[#0f172a]">
+                <label className="block text-xs font-semibold text-[#18181B]">
                   Video link <span className="text-rose-500">*</span>
                 </label>
                 {isAddMode && (
@@ -543,10 +543,10 @@ export function EpisodeEditModal({
                   placeholder={`https://${seriesPlatform.toLowerCase() === "instagram" ? "instagram.com/reel/..." : seriesPlatform.toLowerCase() === "facebook" ? "facebook.com/watch/..." : "youtube.com/watch?v=..."}`}
                   className={`w-full rounded-[4px] border bg-white pl-3 ${
                     detectedPlatform && detectedPlatform !== "Other" ? "pr-9" : "pr-3"
-                  } py-2 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none transition-colors ${
+                  } py-2 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:outline-none transition-colors ${
                     showUrlErr
                       ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-edit-error"
-                      : "border-[#e2e8f0] focus:border-[#7A2253]"
+                      : "border-[#ECECF0] focus:border-[#7A2253]"
                   }`}
                 />
                 {detectedPlatform && detectedPlatform !== "Other" && (
@@ -572,10 +572,10 @@ export function EpisodeEditModal({
             {/* 2. Title (with char counter and subtle loader, never blocks Save) */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-semibold text-[#0f172a]">
+                <label className="block text-xs font-semibold text-[#18181B]">
                   Title <span className="text-rose-500">*</span>
                 </label>
-                <span className="text-[11px] text-[#94a3b8] tabular-nums">
+                <span className="text-[11px] text-[#A1A1AA] tabular-nums">
                   {title.length}/100
                 </span>
               </div>
@@ -597,10 +597,10 @@ export function EpisodeEditModal({
                   placeholder="Episode title"
                   className={`w-full rounded-[4px] border bg-white pl-3 ${
                     loadingTitle ? "pr-8" : "pr-3"
-                  } py-2 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none transition-colors ${
+                  } py-2 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:outline-none transition-colors ${
                     showTitleErr
                       ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-edit-error"
-                      : "border-[#e2e8f0] focus:border-[#7A2253]"
+                      : "border-[#ECECF0] focus:border-[#7A2253]"
                   }`}
                 />
                 {loadingTitle && (
@@ -617,7 +617,7 @@ export function EpisodeEditModal({
 
             {/* 3. Episode No. */}
             <div>
-              <label className="block text-xs font-semibold text-[#0f172a] mb-1">
+              <label className="block text-xs font-semibold text-[#18181B] mb-1">
                 Episode No. <span className="text-rose-500">*</span>
               </label>
               <input
@@ -635,22 +635,22 @@ export function EpisodeEditModal({
                   setNumberError(validateNumber(number));
                 }}
                 placeholder="e.g. 1"
-                className={`w-full rounded-[4px] border bg-white px-3 py-2 text-xs text-[#0f172a] focus:outline-none transition-colors ${
+                className={`w-full rounded-[4px] border bg-white px-3 py-2 text-xs text-[#18181B] focus:outline-none transition-colors ${
                   showNumberErr
                     ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-edit-error"
-                    : "border-[#e2e8f0] focus:border-[#7A2253]"
+                    : "border-[#ECECF0] focus:border-[#7A2253]"
                 }`}
               />
               {showNumberErr && <p className="mt-1 text-xs text-rose-500 font-medium">{showNumberErr}</p>}
             </div>
           </ModalBody>
 
-          <ModalFooter className="px-5 sm:px-6 py-3.5 flex justify-end gap-2 border-t border-[#e2e8f0]">
+          <ModalFooter className="px-5 sm:px-6 py-3.5 flex justify-end gap-2 border-t border-[#ECECF0]">
             <button
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="h-9 px-4 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer disabled:opacity-50"
+              className="h-9 px-4 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>

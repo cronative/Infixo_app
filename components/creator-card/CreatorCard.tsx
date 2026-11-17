@@ -753,7 +753,7 @@ function ClassicLayout(props: CreatorCardProps & { height: number; square: boole
       {node}
     </div>
   );
-  const pillSkin: Skin = { ...skin, logoWhite: false, text: "#0F172A", muted: "#64748B", accent: accentOnLight(a.accent) };
+  const pillSkin: Skin = { ...skin, logoWhite: false, text: "#18181B", muted: "#6B6B76", accent: accentOnLight(a.accent) };
   const header = (_: ReactNode) => pill(<Header skin={pillSkin} assets={props.assets} compact={props.square} />);
 
   return (

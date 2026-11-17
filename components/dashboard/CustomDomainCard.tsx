@@ -148,8 +148,8 @@ export function CustomDomainCard() {
 
   if (loading) {
     return (
-      <section className="rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-xs">
-        <div className="flex items-center gap-2 text-xs font-semibold text-[#64748b]">
+      <section className="rounded-[5px] border border-[#ECECF0] bg-white p-4 sm:p-5 shadow-xs">
+        <div className="flex items-center gap-2 text-xs font-semibold text-[#6B6B76]">
           <RefreshCw className="h-4 w-4 animate-spin text-[#7A2253]" />
           <span>Loading domain settings...</span>
         </div>
@@ -166,13 +166,13 @@ export function CustomDomainCard() {
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <Globe className="h-4 w-4 text-[#7A2253]" />
-              <h2 className="text-sm font-bold text-[#0f172a]">Custom Domain Mapping</h2>
+              <h2 className="text-sm font-bold text-[#18181B]">Custom Domain Mapping</h2>
               <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#7A2253]/[0.08] px-2 py-0.5 text-[10px] font-bold text-[#7A2253]">
                 <Lock className="h-2.5 w-2.5" />
                 Pro & VIP Feature
               </span>
             </div>
-            <p className="text-xs text-[#64748b] leading-relaxed max-w-xl">
+            <p className="text-xs text-[#6B6B76] leading-relaxed max-w-xl">
               Connect your own vanity domain (e.g. <span className="font-semibold text-[#7A2253]">links.yourname.com</span> or <span className="font-semibold text-[#7A2253]">yourbrand.in</span>) to your Inflixo creator bio link.
             </p>
           </div>
@@ -193,14 +193,14 @@ export function CustomDomainCard() {
   const targetCname = config?.targetCname || "cname.inflixo.com";
 
   return (
-    <section className="group relative overflow-hidden rounded-[5px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-xs space-y-4">
+    <section className="group relative overflow-hidden rounded-[5px] border border-[#ECECF0] bg-white p-4 sm:p-5 shadow-xs space-y-4">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#7A2253]" aria-hidden="true" />
 
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#e2e8f0] pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#ECECF0] pb-3">
         <div className="flex items-center gap-2">
           <Globe className="h-4 w-4 text-[#7A2253]" />
-          <h2 className="text-sm font-bold text-[#0f172a]">Custom Domain Mapping</h2>
+          <h2 className="text-sm font-bold text-[#18181B]">Custom Domain Mapping</h2>
         </div>
 
         {hasDomain && (
@@ -226,25 +226,25 @@ export function CustomDomainCard() {
       </div>
 
       {/* Description */}
-      <p className="text-xs text-[#64748b] leading-relaxed">
-        Point your own subdomain or domain (e.g. <strong className="text-[#0f172a]">links.yourname.com</strong>) to Inflixo so fans can visit your bio link on your brand domain.
+      <p className="text-xs text-[#6B6B76] leading-relaxed">
+        Point your own subdomain or domain (e.g. <strong className="text-[#18181B]">links.yourname.com</strong>) to Inflixo so fans can visit your bio link on your brand domain.
       </p>
 
       {/* Form */}
       <form onSubmit={handleSaveDomain} className="space-y-3">
         <div className="flex flex-col sm:flex-row gap-2">
-          <div className="flex-1 flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+          <div className="flex-1 flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
               <Globe className="h-4 w-4" />
             </span>
-            <span className="pl-3 pr-1 text-xs font-semibold text-[#94a3b8] select-none">https://</span>
+            <span className="pl-3 pr-1 text-xs font-semibold text-[#A1A1AA] select-none">https://</span>
             <input
               type="text"
               value={domainInput}
               onChange={(e) => setDomainInput(e.target.value.toLowerCase().trim())}
               placeholder="links.yourdomain.com"
               disabled={saving || hasDomain}
-              className="flex-1 h-10 pr-3 text-xs sm:text-sm font-semibold text-[#0f172a] placeholder:text-[#94a3b8] bg-transparent outline-none disabled:bg-[#f8fafc] disabled:text-[#64748b]"
+              className="flex-1 h-10 pr-3 text-xs sm:text-sm font-semibold text-[#18181B] placeholder:text-[#A1A1AA] bg-transparent outline-none disabled:bg-[#FAFAFB] disabled:text-[#6B6B76]"
             />
           </div>
 
@@ -292,9 +292,9 @@ export function CustomDomainCard() {
 
       {/* DNS Configuration Instructions (Shown when domain is saved) */}
       {hasDomain && (
-        <div className="rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] p-3.5 space-y-2.5 text-xs text-left">
+        <div className="rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] p-3.5 space-y-2.5 text-xs text-left">
           <div className="flex items-center justify-between">
-            <span className="font-bold text-[#0f172a]">Required DNS Record:</span>
+            <span className="font-bold text-[#18181B]">Required DNS Record:</span>
             {isVerified && (
               <a
                 href={`https://${config?.customDomain}`}
@@ -308,25 +308,25 @@ export function CustomDomainCard() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-white rounded-[5px] border border-[#e2e8f0] p-2.5 text-[11px]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-white rounded-[5px] border border-[#ECECF0] p-2.5 text-[11px]">
             <div>
-              <p className="text-[#64748b] font-medium">Record Type</p>
-              <p className="font-bold text-[#0f172a]">CNAME</p>
+              <p className="text-[#6B6B76] font-medium">Record Type</p>
+              <p className="font-bold text-[#18181B]">CNAME</p>
             </div>
             <div>
-              <p className="text-[#64748b] font-medium">Name / Host</p>
-              <p className="font-bold text-[#0f172a]">
+              <p className="text-[#6B6B76] font-medium">Name / Host</p>
+              <p className="font-bold text-[#18181B]">
                 {config?.instructions?.host || "links"}
               </p>
             </div>
             <div>
-              <p className="text-[#64748b] font-medium">Target / Points To</p>
+              <p className="text-[#6B6B76] font-medium">Target / Points To</p>
               <div className="flex items-center gap-1">
                 <span className="font-mono font-bold text-[#7A2253] line-clamp-2 break-words" title={targetCname}>{targetCname}</span>
                 <button
                   type="button"
                   onClick={() => handleCopyCname(targetCname)}
-                  className="text-[#64748b] hover:text-[#7A2253] cursor-pointer"
+                  className="text-[#6B6B76] hover:text-[#7A2253] cursor-pointer"
                   title="Copy CNAME target"
                 >
                   {copiedTarget ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}
@@ -335,7 +335,7 @@ export function CustomDomainCard() {
             </div>
           </div>
 
-          <p className="text-[11px] text-[#64748b] leading-relaxed">
+          <p className="text-[11px] text-[#6B6B76] leading-relaxed">
             Log in to your domain registrar (GoDaddy, Cloudflare, Namecheap, Google Domains) and add this CNAME record. DNS changes may take up to a few minutes to propagate worldwide.
           </p>
         </div>

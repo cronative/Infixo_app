@@ -57,7 +57,7 @@ export function LanguageSelect({
   return (
     <div className="relative w-full" ref={containerRef}>
       {label && (
-        <label className="mb-1.5 block text-[13px] font-medium text-[#0f172a]">
+        <label className="mb-1.5 block text-[13px] font-medium text-[#18181B]">
           {label}
         </label>
       )}
@@ -71,31 +71,31 @@ export function LanguageSelect({
             ? "border-[#7A2253] ring-2 ring-[#7A2253]/10"
             : error
             ? "border-rose-400"
-            : "border-[#e2e8f0] hover:border-[#7A2253]/40"
+            : "border-[#ECECF0] hover:border-[#7A2253]/40"
         }`}
       >
         <div className="flex items-center gap-2.5 min-w-0">
           <Globe className="h-4 w-4 text-[#7A2253] shrink-0" />
           {value ? (
-            <span className="truncate text-sm font-medium text-[#0f172a]">
+            <span className="truncate text-sm font-medium text-[#18181B]">
               {selectedLang ? `${selectedLang.name} (${selectedLang.nativeName})` : value}
             </span>
           ) : (
-            <span className="text-sm text-[#94a3b8]">{placeholder}</span>
+            <span className="text-sm text-[#A1A1AA]">{placeholder}</span>
           )}
         </div>
-        <ChevronDown className={`h-4 w-4 text-[#64748b] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+        <ChevronDown className={`h-4 w-4 text-[#6B6B76] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
       {error && <p className="mt-1.5 text-xs font-medium text-rose-500">{error}</p>}
 
       {/* Searchable Dropdown Popover */}
       {isOpen && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-1.5 max-h-72 w-full overflow-hidden rounded-[5px] border border-[#e2e8f0] bg-white p-2 shadow-xl ring-1 ring-black/5 animate-in fade-in-50 slide-in-from-top-2">
+        <div className="absolute left-0 right-0 top-full z-50 mt-1.5 max-h-72 w-full overflow-hidden rounded-[5px] border border-[#ECECF0] bg-white p-2 shadow-xl ring-1 ring-black/5 animate-in fade-in-50 slide-in-from-top-2">
           {/* Search Box */}
           <div className="mb-2 px-1">
-            <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                 <Search className="h-3.5 w-3.5" />
               </span>
               <input
@@ -103,7 +103,7 @@ export function LanguageSelect({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search language..."
-                className="h-9 flex-1 min-w-0 bg-transparent px-3 text-xs font-medium text-[#0f172a] placeholder:text-[#94a3b8] outline-none"
+                className="h-9 flex-1 min-w-0 bg-transparent px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] outline-none"
                 autoFocus
               />
             </div>
@@ -112,7 +112,7 @@ export function LanguageSelect({
           {/* Languages List */}
           <div className="no-scrollbar max-h-52 overflow-y-auto space-y-0.5 pr-1">
             {filtered.length === 0 ? (
-              <div className="p-4 text-center text-xs text-[#94a3b8]">No language found for &quot;{search}&quot;</div>
+              <div className="p-4 text-center text-xs text-[#A1A1AA]">No language found for &quot;{search}&quot;</div>
             ) : (
               filtered.map((l) => {
                 const isSelected =
@@ -130,12 +130,12 @@ export function LanguageSelect({
                     className={`flex w-full items-center justify-between rounded-[5px] px-3 py-2 text-left text-xs transition-colors cursor-pointer ${
                       isSelected
                         ? "bg-[#FFF0F5] text-[#7A2253] font-bold"
-                        : "text-[#0f172a] hover:bg-[#f1f5f9]"
+                        : "text-[#18181B] hover:bg-[#F4F4F5]"
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <span className="font-semibold">{l.name}</span>
-                      <span className="text-[#94a3b8] font-normal">({l.nativeName})</span>
+                      <span className="text-[#A1A1AA] font-normal">({l.nativeName})</span>
                     </div>
                     {isSelected && <Check className="h-4 w-4 text-[#7A2253] stroke-[3]" />}
                   </button>

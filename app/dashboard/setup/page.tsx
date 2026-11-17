@@ -556,14 +556,14 @@ export default function DashboardSetupPage() {
           <div>
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-[#7A2253]" />
-              <h3 className="text-xs sm:text-sm font-bold text-[#0f172a]">Where I started</h3>
+              <h3 className="text-xs sm:text-sm font-bold text-[#18181B]">Where I started</h3>
             </div>
-            <p className="text-[11px] text-[#64748b] mt-0.5">
+            <p className="text-[11px] text-[#6B6B76] mt-0.5">
               Tell your audience how you started creating (max 150 chars). Shown at the top of your setup page.
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] text-[#94a3b8] font-mono">{whereIStarted.length}/150</span>
+            <span className="text-[11px] text-[#A1A1AA] font-mono">{whereIStarted.length}/150</span>
             <button
               type="button"
               onClick={handleSaveIntro}
@@ -580,7 +580,7 @@ export default function DashboardSetupPage() {
           placeholder="e.g. I shot my first 50 videos on an iPhone 8 with window light. Upgrade only when your gear holds you back."
           rows={2}
           maxLength={150}
-          className="w-full rounded-[5px] border border-[#e2e8f0] p-2.5 text-xs text-[#0f172a] placeholder-[#94a3b8] focus:border-[#7A2253] focus:outline-hidden transition-colors resize-none"
+          className="w-full rounded-[5px] border border-[#ECECF0] p-2.5 text-xs text-[#18181B] placeholder-[#A1A1AA] focus:border-[#7A2253] focus:outline-hidden transition-colors resize-none"
         />
       </div>
 
@@ -594,7 +594,7 @@ export default function DashboardSetupPage() {
             className={`shrink-0 rounded-[5px] px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
               selectedCategoryFilter === "All"
                 ? "bg-[#7A2253] text-white shadow-xs"
-                : "border border-[#e2e8f0] bg-white text-[#475569] hover:border-[#cbd5e1] hover:text-[#0f172a]"
+                : "border border-[#ECECF0] bg-white text-[#52525B] hover:border-[#D4D4D8] hover:text-[#18181B]"
             }`}
           >
             <span className="h-1.5 w-1.5 rounded-full bg-white" />
@@ -607,7 +607,7 @@ export default function DashboardSetupPage() {
             className={`shrink-0 rounded-[5px] border px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
               selectedCategoryFilter === "Hardware & Gear"
                 ? "border-[#7A2253] bg-[#7A2253] text-white shadow-xs"
-                : "border-[#e2e8f0] bg-white text-[#475569] hover:border-[#cbd5e1] hover:text-[#0f172a]"
+                : "border-[#ECECF0] bg-white text-[#52525B] hover:border-[#D4D4D8] hover:text-[#18181B]"
             }`}
           >
             <Camera className="h-3.5 w-3.5" />
@@ -620,7 +620,7 @@ export default function DashboardSetupPage() {
             className={`shrink-0 rounded-[5px] border px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
               selectedCategoryFilter === "Software & AI"
                 ? "border-[#7A2253] bg-[#7A2253] text-white shadow-xs"
-                : "border-[#e2e8f0] bg-white text-[#475569] hover:border-[#cbd5e1] hover:text-[#0f172a]"
+                : "border-[#ECECF0] bg-white text-[#52525B] hover:border-[#D4D4D8] hover:text-[#18181B]"
             }`}
           >
             <Laptop className="h-3.5 w-3.5" />
@@ -630,18 +630,18 @@ export default function DashboardSetupPage() {
 
         {/* Search Input Box */}
         <div className="relative w-full sm:w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#94a3b8]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#A1A1AA]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search gear or software..."
-            className="h-9 w-full rounded-[5px] border border-[#e2e8f0] bg-white pl-9 pr-8 text-xs text-[#0f172a] placeholder-[#94a3b8] focus:border-[#7A2253] focus:outline-hidden transition-colors"
+            className="h-9 w-full rounded-[5px] border border-[#ECECF0] bg-white pl-9 pr-8 text-xs text-[#18181B] placeholder-[#A1A1AA] focus:border-[#7A2253] focus:outline-hidden transition-colors"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#94a3b8] hover:text-[#7A2253] cursor-pointer"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#A1A1AA] hover:text-[#7A2253] cursor-pointer"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -651,8 +651,8 @@ export default function DashboardSetupPage() {
 
       {/* Items Listing Cards Grid */}
       {loading ? (
-        <div className="flex min-h-[220px] items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white">
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#64748b]">
+        <div className="flex min-h-[220px] items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white">
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#6B6B76]">
             <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#7A2253] border-t-transparent" />
             <span>Loading your creator setup...</span>
           </div>
@@ -714,7 +714,7 @@ export default function DashboardSetupPage() {
                         {item.isActive ? (
                           <Eye className="h-4 w-4 text-emerald-500" />
                         ) : (
-                          <EyeOff className="h-4 w-4 text-[#94a3b8]" />
+                          <EyeOff className="h-4 w-4 text-[#A1A1AA]" />
                         )}
                       </button>
                     </div>
@@ -723,7 +723,7 @@ export default function DashboardSetupPage() {
                   {/* Middle Row: Product Image on Left + Info on Right */}
                   <div className="flex items-start gap-3 pt-2.5 pb-1.5">
                     {/* Image Container */}
-                    <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[5px] bg-[#fafafa] p-1.5 border border-[#f1f5f9]">
+                    <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[5px] bg-[#fafafa] p-1.5 border border-[#F4F4F5]">
                       {item.imageUrl ? (
                         <Image
                           src={item.imageUrl}
@@ -733,22 +733,22 @@ export default function DashboardSetupPage() {
                           className="h-full w-full object-contain"
                         />
                       ) : (
-                        <IconComponent className="h-7 w-7 text-[#cbd5e1]" />
+                        <IconComponent className="h-7 w-7 text-[#D4D4D8]" />
                       )}
                     </div>
 
                     {/* Product Details: Brand, Name, Using since */}
                     <div className="min-w-0 flex-1 space-y-0.5">
                       {item.brand && (
-                        <p className="line-clamp-1 break-words text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">
+                        <p className="line-clamp-1 break-words text-[11px] font-semibold uppercase tracking-wide text-[#6B6B76]">
                           {item.brand}
                         </p>
                       )}
-                      <h3 className="font-display text-sm sm:text-[15px] font-bold text-[#0f172a] leading-tight line-clamp-2 break-words" title={item.name}>
+                      <h3 className="font-display text-sm sm:text-[15px] font-bold text-[#18181B] leading-tight line-clamp-2 break-words" title={item.name}>
                         {item.name}
                       </h3>
                       {usingText && (
-                        <p className="line-clamp-1 break-words text-[11px] text-[#94a3b8] font-normal leading-tight">
+                        <p className="line-clamp-1 break-words text-[11px] text-[#A1A1AA] font-normal leading-tight">
                           Using since {usingText}
                         </p>
                       )}
@@ -757,14 +757,14 @@ export default function DashboardSetupPage() {
 
                   {/* Why I love it (120 chars) */}
                   {whyText && (
-                    <p className="mt-1 text-xs text-[#64748b] leading-relaxed line-clamp-2 italic">
+                    <p className="mt-1 text-xs text-[#6B6B76] leading-relaxed line-clamp-2 italic">
                       &ldquo;{whyText}&rdquo;
                     </p>
                   )}
 
                   {/* Budget alternative callout */}
                   {item.budgetAlt && (
-                    <div className="mt-2 rounded-[4px] border border-[#f1f5f9] bg-[#f8fafc] px-2 py-1 text-[11px] leading-tight text-[#475569]">
+                    <div className="mt-2 rounded-[5px] border border-[#F4F4F5] bg-[#FAFAFB] px-2 py-1 text-[11px] leading-tight text-[#52525B]">
                       <span className="font-semibold text-[#7A2253]">Starting out? Try this instead: </span>
                       <span>{item.budgetAlt}</span>
                     </div>
@@ -772,7 +772,7 @@ export default function DashboardSetupPage() {
                 </div>
 
                 {/* Footer: View Gear + Affiliate tag on left, Edit & Delete on right */}
-                <div className="mt-3 flex items-center justify-between border-t border-[#f1f5f9] pt-2.5">
+                <div className="mt-3 flex items-center justify-between border-t border-[#F4F4F5] pt-2.5">
                   <div className="flex items-center gap-2 min-w-0">
                     {item.isAffiliate && (
                       <span className="inline-flex items-center text-[10px] font-semibold uppercase tracking-wider text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded-[3px] border border-amber-200/60 shrink-0">
@@ -790,7 +790,7 @@ export default function DashboardSetupPage() {
                         <span className="text-sm font-bold">&rarr;</span>
                       </a>
                     ) : (
-                      <span className="text-xs text-[#94a3b8]">No link</span>
+                      <span className="text-xs text-[#A1A1AA]">No link</span>
                     )}
                   </div>
 
@@ -832,9 +832,9 @@ export default function DashboardSetupPage() {
           <ModalBody className="p-4 sm:p-5 space-y-4 text-left">
             {/* Category Grid */}
             <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-[#0f172a]">
+              <label className="block text-[13px] font-medium text-[#18181B]">
                 Category <span className="text-rose-500">*</span>
-                <span className="block text-xs font-normal text-[#64748b]">Select the category that best fits your item.</span>
+                <span className="block text-xs font-normal text-[#6B6B76]">Select the category that best fits your item.</span>
               </label>
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 pt-1">
                 {CATEGORIES.map((cat) => {
@@ -865,10 +865,10 @@ export default function DashboardSetupPage() {
                       className={`flex flex-col items-center justify-center p-2.5 h-16 rounded-[5px] border text-center transition-all cursor-pointer ${
                         isSelected
                           ? "border-[#7A2253] bg-[#FFF0F5] text-[#7A2253] ring-1 ring-[#7A2253]"
-                          : "border-[#e2e8f0] bg-white text-[#475569] hover:bg-[#f8fafc] hover:border-[#cbd5e1]"
+                          : "border-[#ECECF0] bg-white text-[#52525B] hover:bg-[#FAFAFB] hover:border-[#D4D4D8]"
                       }`}
                     >
-                      <div className={`mb-1 shrink-0 ${isSelected ? "text-[#7A2253]" : "text-[#64748b]"}`}>
+                      <div className={`mb-1 shrink-0 ${isSelected ? "text-[#7A2253]" : "text-[#6B6B76]"}`}>
                         {icon}
                       </div>
                       <span className="text-[11px] font-semibold line-clamp-2 break-words w-full leading-tight">
@@ -883,11 +883,11 @@ export default function DashboardSetupPage() {
             {/* Name & Brand */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="space-y-1">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
+                <label className="block text-[13px] font-medium text-[#18181B]">
                   Item Name <span className="text-rose-500">*</span>
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Tag className="h-4 w-4" />
                   </div>
                   <input
@@ -895,18 +895,18 @@ export default function DashboardSetupPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. A7 III, VideoMic Pro, Tripod"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
+                <label className="block text-[13px] font-medium text-[#18181B]">
                   Brand / Maker
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Building2 className="h-4 w-4" />
                   </div>
                   <input
@@ -914,7 +914,7 @@ export default function DashboardSetupPage() {
                     value={brand}
                     onChange={(e) => setBrand(e.target.value)}
                     placeholder="e.g. Sony, RØDE, Manfrotto, Godox"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                   />
                 </div>
               </div>
@@ -923,11 +923,11 @@ export default function DashboardSetupPage() {
             {/* Using since & Budget alternative */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="space-y-1">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
+                <label className="block text-[13px] font-medium text-[#18181B]">
                   Using since
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <List className="h-4 w-4" />
                   </div>
                   <input
@@ -935,20 +935,20 @@ export default function DashboardSetupPage() {
                     value={usingSince}
                     onChange={(e) => setUsingSince(e.target.value)}
                     placeholder="e.g. 2023, 2024, or 2 years"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <label className="block text-[13px] font-medium text-[#0f172a]">
-                    Budget alternative <span className="font-normal text-[#94a3b8]">(Optional)</span>
+                  <label className="block text-[13px] font-medium text-[#18181B]">
+                    Budget alternative <span className="font-normal text-[#A1A1AA]">(Optional)</span>
                   </label>
-                  <span className="text-[11px] text-[#94a3b8] font-mono">{budgetAlt.length}/80</span>
+                  <span className="text-[11px] text-[#A1A1AA] font-mono">{budgetAlt.length}/80</span>
                 </div>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Sparkles className="h-4 w-4" />
                   </div>
                   <input
@@ -957,7 +957,7 @@ export default function DashboardSetupPage() {
                     maxLength={80}
                     onChange={(e) => setBudgetAlt(e.target.value.slice(0, 80))}
                     placeholder="e.g. Sony ZV-E10 or your phone with a lapel mic"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                   />
                 </div>
               </div>
@@ -966,13 +966,13 @@ export default function DashboardSetupPage() {
             {/* Why I love it (Merged: Used for + Note, 120 chars) */}
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
+                <label className="block text-[13px] font-medium text-[#18181B]">
                   Why I love it
                 </label>
-                <span className="text-[11px] text-[#94a3b8] font-mono">{whyLoveIt.length}/120</span>
+                <span className="text-[11px] text-[#A1A1AA] font-mono">{whyLoveIt.length}/120</span>
               </div>
-              <div className="flex rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <div className="flex w-10 shrink-0 items-start justify-center pt-2.5 border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+              <div className="flex rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex w-10 shrink-0 items-start justify-center pt-2.5 border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <FileText className="h-4 w-4" />
                 </div>
                 <textarea
@@ -981,7 +981,7 @@ export default function DashboardSetupPage() {
                   onChange={(e) => setWhyLoveIt(e.target.value.slice(0, 120))}
                   placeholder="e.g. Best camera for vlogging, low light and cinematic 4K shots."
                   rows={2}
-                  className="flex-1 p-2.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none resize-none"
+                  className="flex-1 p-2.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none resize-none"
                 />
               </div>
             </div>
@@ -989,11 +989,11 @@ export default function DashboardSetupPage() {
             {/* Link URL & Affiliate toggle */}
             <div className="space-y-2">
               <div className="space-y-1">
-                <label className="block text-[13px] font-medium text-[#0f172a]">
+                <label className="block text-[13px] font-medium text-[#18181B]">
                   Product / Affiliate / Store Link
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <LinkIcon className="h-4 w-4" />
                   </div>
                   <input
@@ -1001,9 +1001,9 @@ export default function DashboardSetupPage() {
                     value={linkUrl}
                     onChange={(e) => setLinkUrl(e.target.value)}
                     placeholder="https://amazon.com/... or https://company.com"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#0f172a] placeholder:text-[#64748b]/50 bg-transparent outline-none"
+                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
                   />
-                  <div className="pr-3 text-[#64748b]">
+                  <div className="pr-3 text-[#6B6B76]">
                     <ExternalLink className="h-4 w-4" />
                   </div>
                 </div>
@@ -1015,23 +1015,23 @@ export default function DashboardSetupPage() {
                   type="checkbox"
                   checked={isAffiliate}
                   onChange={(e) => setIsAffiliate(e.target.checked)}
-                  className="h-4 w-4 rounded-[3px] border-[#cbd5e1] text-[#7A2253] focus:ring-[#7A2253] cursor-pointer"
+                  className="h-4 w-4 rounded-[3px] border-[#D4D4D8] text-[#7A2253] focus:ring-[#7A2253] cursor-pointer"
                 />
-                <span className="text-xs font-semibold text-[#0f172a]">
+                <span className="text-xs font-semibold text-[#18181B]">
                   This is an affiliate link{" "}
-                  <span className="text-[11px] font-normal text-[#64748b]">(displays an honest &quot;Affiliate&quot; badge)</span>
+                  <span className="text-[11px] font-normal text-[#6B6B76]">(displays an honest &quot;Affiliate&quot; badge)</span>
                 </span>
               </label>
             </div>
 
             {/* Image Upload + Tips Container */}
             <div className="space-y-1">
-              <label className="block text-[13px] font-medium text-[#0f172a]">
-                Item Photo / Icon <span className="font-normal text-[#94a3b8]">(Optional)</span>
+              <label className="block text-[13px] font-medium text-[#18181B]">
+                Item Photo / Icon <span className="font-normal text-[#A1A1AA]">(Optional)</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch">
                 {/* Upload Dropzone */}
-                <div className="relative flex flex-col items-center justify-center p-4 border border-dashed border-[#cbd5e1] rounded-[5px] bg-[#f8fafc] hover:bg-[#f1f5f9] transition-colors cursor-pointer min-h-[96px] group">
+                <div className="relative flex flex-col items-center justify-center p-4 border border-dashed border-[#D4D4D8] rounded-[5px] bg-[#FAFAFB] hover:bg-[#F4F4F5] transition-colors cursor-pointer min-h-[96px] group">
                   <input
                     type="file"
                     accept="image/*"
@@ -1041,7 +1041,7 @@ export default function DashboardSetupPage() {
                   />
                   {imageUrl ? (
                     <div className="relative flex items-center gap-3 w-full">
-                      <div className="relative h-14 w-14 shrink-0 rounded-[5px] overflow-hidden border border-[#e2e8f0] bg-white">
+                      <div className="relative h-14 w-14 shrink-0 rounded-[5px] overflow-hidden border border-[#ECECF0] bg-white">
                         <Image
                           src={imageUrl}
                           alt="Preview"
@@ -1050,8 +1050,8 @@ export default function DashboardSetupPage() {
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <span className="block text-xs font-semibold text-[#0f172a]">Image selected</span>
-                        <span className="block text-[11px] text-[#64748b]">Click to change image</span>
+                        <span className="block text-xs font-semibold text-[#18181B]">Image selected</span>
+                        <span className="block text-[11px] text-[#6B6B76]">Click to change image</span>
                       </div>
                       <button
                         type="button"
@@ -1059,7 +1059,7 @@ export default function DashboardSetupPage() {
                           e.stopPropagation();
                           setImageUrl(null);
                         }}
-                        className="relative z-20 h-7 w-7 flex items-center justify-center rounded-[5px] text-[#64748b] hover:text-rose-600 hover:bg-rose-50 cursor-pointer"
+                        className="relative z-20 h-7 w-7 flex items-center justify-center rounded-[5px] text-[#6B6B76] hover:text-rose-600 hover:bg-rose-50 cursor-pointer"
                       >
                         <X className="h-4 w-4" />
                       </button>
@@ -1069,8 +1069,8 @@ export default function DashboardSetupPage() {
                       <div className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#7A2253] mb-1">
                         <Camera className="h-5 w-5" />
                       </div>
-                      <span className="text-xs font-semibold text-[#0f172a]">Upload Image</span>
-                      <span className="text-[11px] text-[#94a3b8]">JPG, PNG (Max 5MB)</span>
+                      <span className="text-xs font-semibold text-[#18181B]">Upload Image</span>
+                      <span className="text-[11px] text-[#A1A1AA]">JPG, PNG (Max 5MB)</span>
                     </div>
                   )}
                 </div>
@@ -1081,7 +1081,7 @@ export default function DashboardSetupPage() {
                     <span>💡</span>
                     <span>Tips</span>
                   </div>
-                  <ul className="text-[11px] text-[#64748b] space-y-0.5 leading-snug list-disc list-inside">
+                  <ul className="text-[11px] text-[#6B6B76] space-y-0.5 leading-snug list-disc list-inside">
                     <li>Use a clean product photo or company logo</li>
                     <li>Square 1:1 image works best</li>
                     <li>Leave empty to use category icon</li>
@@ -1098,7 +1098,7 @@ export default function DashboardSetupPage() {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-[#7A2253]">Show on public profile</p>
-                  <p className="text-[11px] text-[#64748b]">Turn off to keep as private gear reference.</p>
+                  <p className="text-[11px] text-[#6B6B76]">Turn off to keep as private gear reference.</p>
                 </div>
               </div>
               <button
@@ -1107,7 +1107,7 @@ export default function DashboardSetupPage() {
                 aria-checked={isActive}
                 onClick={() => setIsActive(!isActive)}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isActive ? "bg-[#7A2253]" : "bg-slate-200"
+                  isActive ? "bg-[#7A2253]" : "bg-zinc-200"
                 }`}
               >
                 <span
@@ -1124,7 +1124,7 @@ export default function DashboardSetupPage() {
               type="button"
               onClick={() => setIsModalOpen(false)}
               disabled={isSubmitting}
-              className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer"
+              className="h-10 px-5 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#FAFAFB] hover:text-[#18181B] transition-colors cursor-pointer"
             >
               Cancel
             </button>

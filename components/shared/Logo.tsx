@@ -200,7 +200,7 @@ export function Logo({
         gradient: "bg-[#7A2253]",
         black: "bg-[#7A2253]",
         brand: "bg-[#7A2253]",
-        white: "bg-white border border-[#e2e8f0]",
+        white: "bg-white border border-[#ECECF0]",
         color: "bg-[#fdf2f8] border border-[#fbcfe8]",
       }[variant] || "bg-[#7A2253]");
 

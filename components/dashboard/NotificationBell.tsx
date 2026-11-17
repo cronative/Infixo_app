@@ -147,7 +147,7 @@ export function NotificationBell() {
             <div className="flex items-center gap-1.5">
               <span className="text-[13px] font-bold text-[#18181B]">Notifications</span>
               {unreadCount > 0 && (
-                <span className="rounded-[3px] bg-[#F7EEF2] px-1.5 py-0.2 text-[10.5px] font-bold text-[#7A2253]">
+                <span className="rounded-[3px] bg-[#F7EEF2] px-1.5 py-0.2 text-[11px] font-bold text-[#7A2253]">
                   {unreadCount} new
                 </span>
               )}
@@ -177,7 +177,7 @@ export function NotificationBell() {
           <div className="max-h-80 overflow-y-auto divide-y divide-[#ECECF0]">
             {notifications.length === 0 ? (
               <div className="p-6 text-center text-[#6B6B76]">
-                <Bell className="h-6 w-6 mx-auto mb-2 text-[#CBD5E1]" />
+                <Bell className="h-6 w-6 mx-auto mb-2 text-[#D4D4D8]" />
                 <p className="text-xs font-semibold text-[#18181B]">No new notifications</p>
                 <p className="text-[11px] text-[#6B6B76] mt-0.5">
                   When fans interact with your profile, updates will appear here!
@@ -197,7 +197,7 @@ export function NotificationBell() {
                     }`}
                   >
                     <div className="flex items-start gap-2.5">
-                      <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] border border-[#ECECF0] bg-white">
+                      <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white">
                         {getIcon(notif.type)}
                       </div>
 
@@ -211,7 +211,7 @@ export function NotificationBell() {
                           </span>
                         </div>
 
-                        <p className="text-[11.5px] text-[#52525B] mt-0.5 line-clamp-2 leading-relaxed">
+                        <p className="text-[12px] text-[#52525B] mt-0.5 line-clamp-2 leading-relaxed">
                           {notif.message}
                         </p>
 

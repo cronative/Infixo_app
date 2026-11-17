@@ -11,7 +11,7 @@ import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import { NotificationBell } from "@/components/dashboard/NotificationBell";
 
 const ICON_BTN =
-  "flex h-10 w-10 cursor-pointer items-center justify-center rounded-[5px] text-[#334155] transition-colors hover:bg-[#fdf2f8] hover:text-[#7A2253] active:bg-[#fce7f3]";
+  "flex h-10 w-10 cursor-pointer items-center justify-center rounded-[5px] text-[#3F3F46] transition-colors hover:bg-[#fdf2f8] hover:text-[#7A2253] active:bg-[#fce7f3]";
 
 /** Native-style mobile app bar: menu · brand (or title) · profile shortcuts. */
 export function DashboardMobileHeader({
@@ -40,7 +40,7 @@ export function DashboardMobileHeader({
   };
 
   return (
-    <header className="sticky top-0 z-20 border-b border-[#e2e8f0] bg-white/95 px-2 pb-1.5 pt-[calc(env(safe-area-inset-top)+0.375rem)] backdrop-blur-xl lg:hidden">
+    <header className="sticky top-0 z-20 border-b border-[#ECECF0] bg-white/95 px-2 pb-1.5 pt-[calc(env(safe-area-inset-top)+0.375rem)] backdrop-blur-xl lg:hidden">
       <div className="flex items-center gap-1">
         {showBack ? (
           <button onClick={() => router.back()} className={ICON_BTN} aria-label="Back">
@@ -54,7 +54,7 @@ export function DashboardMobileHeader({
 
         <div className="min-w-0 flex-1 px-1">
           {title ? (
-            <p className="line-clamp-2 break-words text-[17px] font-semibold tracking-tight text-[#0f172a]" title={title}>{title}</p>
+            <p className="line-clamp-2 break-words text-[17px] font-semibold tracking-tight text-[#18181B]" title={title}>{title}</p>
           ) : (
             <Image
               src="/images/inflixo-wordmark-title.png"

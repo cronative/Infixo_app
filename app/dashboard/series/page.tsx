@@ -622,26 +622,26 @@ export default function MySeriesPage() {
           {/* Search Input: Only when > 5 series */}
           {seriesList.length > 5 && (
         <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94a3b8]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A1A1AA]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search series by title..."
-            className="w-full rounded-[5px] border border-[#e2e8f0] bg-white pl-9 pr-3 py-2 text-xs text-[#0f172a] placeholder:text-[#94a3b8] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20"
+            className="w-full rounded-[5px] border border-[#ECECF0] bg-white pl-9 pr-3 py-2 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20"
           />
         </div>
       )}
 
       {/* C6: Empty State (0 Series) */}
       {seriesList.length === 0 && (
-        <div className="rounded-[5px] border-2 border-dashed border-slate-200 bg-white p-8 sm:p-12 text-center space-y-4">
+        <div className="rounded-[5px] border-2 border-dashed border-zinc-200 bg-white p-8 sm:p-12 text-center space-y-4">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[5px] bg-[#7A2253]/10 text-[#7A2253]">
             <Film className="h-6 w-6" />
           </div>
           <div className="space-y-1 max-w-md mx-auto">
-            <h3 className="text-base font-bold text-[#0f172a]">Create your first series</h3>
-            <p className="text-xs text-[#64748b]">
+            <h3 className="text-base font-bold text-[#18181B]">Create your first series</h3>
+            <p className="text-xs text-[#6B6B76]">
               Organize your YouTube videos, Shorts, and Instagram Reels into binge-worthy seasons with sequential episodes.
             </p>
           </div>
@@ -687,7 +687,7 @@ export default function MySeriesPage() {
               {/* C3: Series Row Header */}
               <div
                 onClick={() => handleToggleExpand(series.id)}
-                className="flex items-center justify-between gap-3 p-3 sm:p-4 cursor-pointer hover:bg-slate-50/70 transition-colors select-none"
+                className="flex items-center justify-between gap-3 p-3 sm:p-4 cursor-pointer hover:bg-zinc-50/70 transition-colors select-none"
               >
                 {/* Left: Drag handle + Cover + Title + Stats */}
                 <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
@@ -700,7 +700,7 @@ export default function MySeriesPage() {
                     }}
                     onDragEnd={() => setDraggedSeriesIndex(null)}
                     onClick={(e) => e.stopPropagation()}
-                    className="p-1 text-slate-300 hover:text-slate-600 cursor-grab active:cursor-grabbing shrink-0"
+                    className="p-1 text-zinc-300 hover:text-zinc-600 cursor-grab active:cursor-grabbing shrink-0"
                     title="Drag to reorder series"
                     aria-label={`Drag to reorder ${series.title}`}
                   >
@@ -708,7 +708,7 @@ export default function MySeriesPage() {
                   </span>
 
                   {/* 16:9 96px Cover Thumbnail or Platform Icon */}
-                  <div className="relative h-12 w-20 sm:h-14 sm:w-24 shrink-0 rounded-[5px] bg-slate-100 overflow-hidden border border-[#ECECF0]">
+                  <div className="relative h-12 w-20 sm:h-14 sm:w-24 shrink-0 rounded-[5px] bg-zinc-100 overflow-hidden border border-[#ECECF0]">
                     {coverImg && !failedCovers.has(series.id) ? (
                       <img
                         src={coverImg}
@@ -726,13 +726,13 @@ export default function MySeriesPage() {
 
                   {/* Title & Info */}
                   <div className="min-w-0 flex-1 text-left">
-                    <h2 className="text-[13.5px] sm:text-[14px] font-semibold text-[#18181B] leading-snug">
+                    <h2 className="text-[14px] sm:text-[14px] font-semibold text-[#18181B] leading-snug">
                       <span className="line-clamp-2 break-words" title={series.title}>{series.title}</span>
                       {seriesList.indexOf(series) >= getPlanQuota(subscription?.planKey).maxSeries && (
                         <OverLimitBadge className="ml-1.5 inline-block align-middle" />
                       )}
                     </h2>
-                    <div className="mt-1 block text-[11.5px] sm:text-[12px] text-[#6B6B76] leading-normal break-words">
+                    <div className="mt-1 block text-[12px] sm:text-[12px] text-[#6B6B76] leading-normal break-words">
                       <span>
                         {episodes.length} {episodes.length === 1 ? "episode" : "episodes"} ·{" "}
                         {series.language || "Hindi"} · {series.platform || "YouTube"}
@@ -788,7 +788,7 @@ export default function MySeriesPage() {
                         setActiveShareId(null);
                         setActiveMenuId(activeMenuId === series.id ? null : series.id);
                       }}
-                      className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-[#e2e8f0] bg-white text-[#64748b] hover:bg-[#f8fafc] hover:text-[#0f172a] transition-colors cursor-pointer"
+                      className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white text-[#6B6B76] hover:bg-[#FAFAFB] hover:text-[#18181B] transition-colors cursor-pointer"
                       aria-label="More options"
                     >
                       <MoreVertical className="h-4 w-4" />
@@ -814,7 +814,7 @@ export default function MySeriesPage() {
                       e.stopPropagation();
                       handleToggleExpand(series.id);
                     }}
-                    className="p-1 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer rounded-[4px] hover:bg-slate-100"
+                    className="p-1 text-zinc-400 hover:text-zinc-700 transition-colors cursor-pointer rounded-[5px] hover:bg-zinc-100"
                     aria-label={isExpanded ? "Collapse series" : "Expand series"}
                     title={isExpanded ? "Collapse episodes" : "Expand episodes"}
                   >
@@ -829,10 +829,10 @@ export default function MySeriesPage() {
 
               {/* C4: Expanded Episodes List */}
               {isExpanded && (
-                <div className="border-t border-[#e2e8f0] bg-[#fafafa] p-3 sm:p-4 space-y-3">
+                <div className="border-t border-[#ECECF0] bg-[#fafafa] p-3 sm:p-4 space-y-3">
                   {/* Episode Rows */}
                   {episodes.length === 0 ? (
-                    <p className="text-xs text-[#94a3b8] italic py-2 text-center">
+                    <p className="text-xs text-[#A1A1AA] italic py-2 text-center">
                       No episodes added yet. Click &quot;+ Add Episode&quot; below to get started.
                     </p>
                   ) : (
@@ -851,7 +851,7 @@ export default function MySeriesPage() {
                                 e.dataTransfer.dropEffect = "move";
                               }}
                               onDrop={() => handleEpisodeDrop(series.id, epIndex)}
-                              className={`group flex items-center justify-between gap-3 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] px-3 py-2 text-[13px] transition-colors hover:border-[#cbd5e1] ${
+                              className={`group flex items-center justify-between gap-3 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] px-3 py-2 text-[13px] transition-colors hover:border-[#D4D4D8] ${
                                 draggedEpisode?.seriesId === series.id && draggedEpisode?.index === epIndex
                                   ? "opacity-40"
                                   : ""
@@ -868,7 +868,7 @@ export default function MySeriesPage() {
                                   }}
                                   onDragEnd={handleEpisodeDragEnd}
                                   onClick={(e) => e.stopPropagation()}
-                                  className="text-slate-300 hover:text-slate-600 cursor-grab active:cursor-grabbing p-1 -ml-1 shrink-0"
+                                  className="text-zinc-300 hover:text-zinc-600 cursor-grab active:cursor-grabbing p-1 -ml-1 shrink-0"
                                   title="Drag to reorder episode"
                                   aria-label={`Drag to reorder ${ep.title}`}
                                 >
@@ -899,7 +899,7 @@ export default function MySeriesPage() {
                                       setInlineEditingEpNumberId(ep.id);
                                       setInlineNumberValue(ep.episodeNumber || epIndex + 1);
                                     }}
-                                    className="font-mono text-[12px] font-medium text-[#6B6B76] hover:text-[#7A2253] hover:bg-slate-100 px-1 py-0.5 rounded cursor-pointer shrink-0 text-center select-none"
+                                    className="font-mono text-[12px] font-medium text-[#6B6B76] hover:text-[#7A2253] hover:bg-zinc-100 px-1 py-0.5 rounded cursor-pointer shrink-0 text-center select-none"
                                     title="Click to edit episode number"
                                   >
                                     {formatEpisodeNumber(ep.episodeNumber || epIndex + 1)}

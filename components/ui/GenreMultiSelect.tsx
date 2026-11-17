@@ -128,11 +128,11 @@ export function GenreMultiSelect({
     <div className="w-full space-y-2 text-left">
       {/* Header: Genres * · {selected}/3 selected · {TOTAL} genres */}
       <div className="flex items-center justify-between">
-        <label className="flex items-center gap-1.5 text-[13px] font-semibold text-[#0f172a]">
-          <Tag className="h-3.5 w-3.5 text-[#94a3b8]" />
+        <label className="flex items-center gap-1.5 text-[13px] font-semibold text-[#18181B]">
+          <Tag className="h-3.5 w-3.5 text-[#A1A1AA]" />
           <span>Genres</span>
           <span className="text-rose-500">*</span>
-          <span className="text-[11px] font-normal text-[#64748b]">
+          <span className="text-[11px] font-normal text-[#6B6B76]">
             · {selectedGenres.length}/{max} selected · {totalGenres} genres
           </span>
         </label>
@@ -141,13 +141,13 @@ export function GenreMultiSelect({
       {/* Main Container with Sticky Search Bar and Scrollable Groups */}
       <div
         className={`rounded-[6px] border ${
-          error ? "border-rose-400 bg-rose-50/10" : "border-[#e2e8f0]"
+          error ? "border-rose-400 bg-rose-50/10" : "border-[#ECECF0]"
         } bg-white overflow-hidden shadow-2xs`}
       >
         {/* Sticky search on top */}
-        <div className="sticky top-0 z-10 border-b border-[#f1f5f9] bg-white p-2 sm:p-2.5">
-          <div className="flex items-center rounded-[5px] border border-[#e2e8f0] bg-[#f8fafc] focus-within:bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center border-r border-[#e2e8f0] bg-white text-[#64748b]">
+        <div className="sticky top-0 z-10 border-b border-[#F4F4F5] bg-white p-2 sm:p-2.5">
+          <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] focus-within:bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-white text-[#6B6B76]">
               <Search className="h-3.5 w-3.5" />
             </span>
             <input
@@ -155,13 +155,13 @@ export function GenreMultiSelect({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={`Search ${totalGenres} genres…`}
-              className="h-8 flex-1 min-w-0 bg-transparent px-2.5 text-xs text-[#0f172a] placeholder:text-[#94a3b8] outline-none"
+              className="h-8 flex-1 min-w-0 bg-transparent px-2.5 text-xs text-[#18181B] placeholder:text-[#A1A1AA] outline-none"
             />
             {search && (
               <button
                 type="button"
                 onClick={() => setSearch("")}
-                className="pr-2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="pr-2 text-zinc-400 hover:text-zinc-600 cursor-pointer"
                 aria-label="Clear genre search"
               >
                 <X className="h-3.5 w-3.5" />
@@ -178,7 +178,7 @@ export function GenreMultiSelect({
             return (
               <div key={group.slug} className="space-y-1.5">
                 {/* Small group label: icon + name, muted, uppercase-ish */}
-                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#64748b]">
+                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#6B6B76]">
                   <span className="text-[12px] leading-none shrink-0" role="img" aria-label={group.name}>
                     {group.emoji}
                   </span>
@@ -203,8 +203,8 @@ export function GenreMultiSelect({
                           isSelected
                             ? "border-[#7A2253] bg-[#7A2253]/[0.08] font-semibold text-[#7A2253]"
                             : isMaxReached
-                            ? "opacity-40 cursor-not-allowed border-[#e2e8f0] bg-white text-[#64748b]"
-                            : "border-[#e2e8f0] bg-white text-[#475569] hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:text-[#0f172a]"
+                            ? "opacity-40 cursor-not-allowed border-[#ECECF0] bg-white text-[#6B6B76]"
+                            : "border-[#ECECF0] bg-white text-[#52525B] hover:border-[#D4D4D8] hover:bg-[#FAFAFB] hover:text-[#18181B]"
                         }`}
                       >
                         {isSelected && <Check className="h-3 w-3 stroke-[3] shrink-0" />}
@@ -218,7 +218,7 @@ export function GenreMultiSelect({
           })}
 
           {filteredGroups.length === 0 && (
-            <p className="text-xs text-[#94a3b8] py-6 text-center">
+            <p className="text-xs text-[#A1A1AA] py-6 text-center">
               No matching genres found for &ldquo;{search}&rdquo;.
             </p>
           )}

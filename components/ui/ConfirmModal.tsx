@@ -55,7 +55,7 @@ export function ConfirmModal({
       wrapHeader
     >
       <ModalBody className="p-5 sm:p-6 text-left">
-        <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#52525B] leading-relaxed">
           {description}
         </p>
       </ModalBody>
@@ -66,7 +66,7 @@ export function ConfirmModal({
           onClick={onClose}
           disabled={loading}
           autoFocus={focusCancel}
-          className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer disabled:opacity-50"
+          className="h-10 px-5 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer disabled:opacity-50"
         >
           {cancelText}
         </button>

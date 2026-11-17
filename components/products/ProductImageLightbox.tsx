@@ -182,7 +182,7 @@ export function ProductImageLightbox({
           }}
         >
           {product.imageUrl && !imageError ? (
-            <div className="relative max-h-[70vh] sm:max-h-[76vh] max-w-[85vw] sm:max-w-[70vw] rounded-2xl overflow-hidden shadow-2xl shadow-black/80 ring-1 ring-white/15 bg-slate-900/60 flex items-center justify-center">
+            <div className="relative max-h-[70vh] sm:max-h-[76vh] max-w-[85vw] sm:max-w-[70vw] rounded-2xl overflow-hidden shadow-2xl shadow-black/80 ring-1 ring-white/15 bg-zinc-900/60 flex items-center justify-center">
               <Image
                 src={product.imageUrl}
                 alt={product.name}
@@ -206,7 +206,7 @@ export function ProductImageLightbox({
 
       {/* 3. BOTTOM FLOATING ZOOM CONTROL TOOLBAR */}
       <footer className="relative z-20 flex shrink-0 items-center justify-center pb-5 pt-2 px-4 safe-bottom pointer-events-none">
-        <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-2 rounded-2xl bg-slate-900/90 border border-white/15 p-1.5 shadow-2xl backdrop-blur-xl">
+        <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-2 rounded-2xl bg-zinc-900/90 border border-white/15 p-1.5 shadow-2xl backdrop-blur-xl">
           <button
             type="button"
             onClick={handleZoomOut}

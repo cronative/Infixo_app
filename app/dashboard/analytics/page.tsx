@@ -305,7 +305,7 @@ function Section<T>({
             <button
               type="button"
               onClick={() => setShowAll((v) => !v)}
-              className="mt-auto border-t border-[#ECECF0] px-4 py-2 text-left text-[12.5px] font-medium text-[#7A2253] hover:underline underline-offset-2 cursor-pointer"
+              className="mt-auto border-t border-[#ECECF0] px-4 py-2 text-left text-[13px] font-medium text-[#7A2253] hover:underline underline-offset-2 cursor-pointer"
             >
               {showAll ? "Show less" : `View all (${items.length})`}
             </button>

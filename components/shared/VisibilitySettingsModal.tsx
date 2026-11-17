@@ -165,14 +165,14 @@ export function VisibilitySettingsModal({
       <div className="flex flex-col flex-1 min-h-0">
         <ModalBody className="p-4 sm:p-5 space-y-3 text-left max-h-[65vh] overflow-y-auto">
           {/* Header Action: Reset Default */}
-          <div className="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
-            <span className="text-[11px] font-bold text-[#64748b] uppercase tracking-wider">
+          <div className="flex items-center justify-between pb-2 border-b border-[#ECECF0]">
+            <span className="text-[11px] font-bold text-[#6B6B76] uppercase tracking-wider">
               SECTIONS ({sections.length})
             </span>
             <button
               type="button"
               onClick={handleResetDefault}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748b] hover:text-[#7A2253] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6B6B76] hover:text-[#7A2253] transition-colors cursor-pointer"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               <span>Reset to Default</span>
@@ -195,8 +195,8 @@ export function VisibilitySettingsModal({
                     key={section.sectionKey}
                     className={`flex items-center justify-between p-3 rounded-[5px] border transition-all ${
                       section.isVisible
-                        ? "bg-white border-[#e2e8f0] shadow-xs"
-                        : "bg-[#f8fafc] border-[#e2e8f0]/80 opacity-70"
+                        ? "bg-white border-[#ECECF0] shadow-xs"
+                        : "bg-[#FAFAFB] border-[#ECECF0]/80 opacity-70"
                     }`}
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -205,7 +205,7 @@ export function VisibilitySettingsModal({
                       </span>
 
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs sm:text-sm font-bold text-[#0f172a] truncate flex items-center gap-1.5">
+                        <p className="text-xs sm:text-sm font-bold text-[#18181B] truncate flex items-center gap-1.5">
                           <span>{info.name}</span>
                           {isAbout && (
                             <span className="text-[10px] font-semibold text-[#7A2253] bg-[#FFF0F5] border border-[#FCE7F1] px-1.5 py-0.5 rounded-[5px]">
@@ -213,17 +213,17 @@ export function VisibilitySettingsModal({
                             </span>
                           )}
                         </p>
-                        <p className="text-[11px] text-[#64748b] truncate mt-0.5">{info.desc}</p>
+                        <p className="text-[11px] text-[#6B6B76] truncate mt-0.5">{info.desc}</p>
                       </div>
                     </div>
 
                     <div className="shrink-0 ml-3">
                       {isAbout ? (
                         <div className="flex items-center gap-2">
-                          <span className="relative inline-flex h-5 w-9 shrink-0 rounded-full bg-slate-200 opacity-60">
+                          <span className="relative inline-flex h-5 w-9 shrink-0 rounded-full bg-zinc-200 opacity-60">
                             <span className="inline-block h-4 w-4 transform rounded-full bg-white shadow-xs translate-x-4 mt-0.5" />
                           </span>
-                          <span className="text-xs font-medium text-[#64748b]">Always shown</span>
+                          <span className="text-xs font-medium text-[#6B6B76]">Always shown</span>
                         </div>
                       ) : (
                         <button
@@ -235,7 +235,7 @@ export function VisibilitySettingsModal({
                         >
                           <span
                             className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors duration-200 ease-in-out ${
-                              section.isVisible ? "bg-[#7A2253]" : "bg-slate-200"
+                              section.isVisible ? "bg-[#7A2253]" : "bg-zinc-200"
                             }`}
                           >
                             <span
@@ -246,7 +246,7 @@ export function VisibilitySettingsModal({
                           </span>
                           <span
                             className={`text-xs font-semibold w-8 text-left ${
-                              section.isVisible ? "text-[#7A2253]" : "text-[#64748b]"
+                              section.isVisible ? "text-[#7A2253]" : "text-[#6B6B76]"
                             }`}
                           >
                             {section.isVisible ? "Show" : "Hide"}
@@ -264,7 +264,7 @@ export function VisibilitySettingsModal({
           <button
             type="button"
             onClick={onClose}
-            className="h-10 px-5 rounded-[5px] border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors cursor-pointer"
+            className="h-10 px-5 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer"
           >
             Cancel
           </button>
