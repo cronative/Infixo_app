@@ -36,8 +36,9 @@ export function SectionCard({
 
   return (
     <section id={id} className={`overflow-hidden rounded-[5px] border border-[#ECECF0] bg-white shadow-none ${className}`}>
-      <div className="flex items-center justify-between gap-3 border-b border-[#ECECF0] bg-[#FAFAFB] px-4 py-3">
-        <div className="flex items-center gap-3 min-w-0">
+      {/* Wraps on narrow screens: the action drops below the title instead of squeezing it. */}
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-[#ECECF0] bg-[#FAFAFB] px-4 py-3">
+        <div className="flex min-w-0 flex-1 basis-[220px] items-center gap-3">
           {renderedIcon && (
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
               {renderedIcon}

@@ -56,14 +56,14 @@ export function PageHeader({
 
         {/* Right: Meta (e.g. 2 of 3 series) before Action buttons */}
         {(meta || actions) && (
-          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0 flex-wrap sm:flex-nowrap">
+          <div className="flex min-w-0 items-center gap-2.5 sm:gap-3 sm:shrink-0 flex-wrap sm:flex-nowrap">
             {meta && (
               <div className="text-[12px] text-[#6B6B76] whitespace-nowrap flex items-center gap-1 font-medium">
                 {meta}
               </div>
             )}
             {actions && (
-              <div className="flex items-center gap-2 shrink-0 flex-wrap sm:flex-nowrap">
+              <div className="flex min-w-0 items-center gap-2 sm:shrink-0 flex-wrap sm:flex-nowrap">
                 {actions}
               </div>
             )}
