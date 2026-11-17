@@ -413,8 +413,8 @@ async function migrateDatabase(target) {
     }
 
     // 024: Media kit redesign — location, package cover, past-collaboration video card
-    const [mkSettingsTables] = await connection.query("SHOW TABLES LIKE 'mediakit_settings'");
-    if (mkSettingsTables.length) await addColumnIfMissing("mediakit_settings", "location", "VARCHAR(120) DEFAULT NULL");
+    const [mkSettingsTables024] = await connection.query("SHOW TABLES LIKE 'mediakit_settings'");
+    if (mkSettingsTables024.length) await addColumnIfMissing("mediakit_settings", "location", "VARCHAR(120) DEFAULT NULL");
     const [mkGigTables2] = await connection.query("SHOW TABLES LIKE 'mediakit_gigs'");
     if (mkGigTables2.length) await addColumnIfMissing("mediakit_gigs", "cover_image_url", "TEXT DEFAULT NULL");
     const [collabTables] = await connection.query("SHOW TABLES LIKE 'creator_collaborations'");
