@@ -3180,7 +3180,8 @@ export function LivePreviewCard({
                     colors={aboutColors}
                     onEnquire={(pkg) => openEnquiry(pkg)}
                     compact={isPremiumLayout}
-                    onCustomRequest={isPremiumLayout ? () => openEnquiry(null) : undefined}
+                    // "Get in touch for collaboration" button hidden for now; pass () => openEnquiry(null) to bring it back.
+                    onCustomRequest={undefined}
                   />
                 )}
                 <WhatBrandsSay
