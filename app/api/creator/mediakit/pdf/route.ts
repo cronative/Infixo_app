@@ -1,14 +1,14 @@
 import { withPdfPage } from "@/lib/pdfBrowser";
 import { db } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/session";
+import { getCachedMediaKitPdf, setCachedMediaKitPdf } from "@/lib/mediakitPdfCache";
 
-interface CachedPdf {
-  buffer: Uint8Array;
-  expiresAt: number;
-}
-
-// In-memory PDF cache with 1-hour TTL
-const pdfCache = new Map<string, CachedPdf>();
+// Always fetched fresh by the browser; the server keeps it for a few minutes and drops it on any save.
+const PDF_HEADERS = (username: string) => ({
+  "Content-Type": "application/pdf",
+  "Content-Disposition": `attachment; filename="${username}-media-kit.pdf"`,
+  "Cache-Control": "private, no-store",
+});
 
 function getOriginFromReq(req: Request): string {
   const urlObj = new URL(req.url);
@@ -57,17 +57,9 @@ export async function GET(req: Request) {
       return new Response("Creator not found", { status: 404 });
     }
 
-    // Check 1-hour in-memory cache
-    const cached = pdfCache.get(cleanUsername);
-    if (cached && Date.now() < cached.expiresAt) {
-      return new Response(Buffer.from(cached.buffer), {
-        status: 200,
-        headers: {
-          "Content-Type": "application/pdf",
-          "Content-Disposition": `attachment; filename="${cleanUsername}-media-kit.pdf"`,
-          "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
-        },
-      });
+    const cached = getCachedMediaKitPdf(cleanUsername);
+    if (cached) {
+      return new Response(Buffer.from(cached), { status: 200, headers: PDF_HEADERS(cleanUsername) });
     }
 
     const origin = getOriginFromReq(req);
@@ -89,20 +81,8 @@ export async function GET(req: Request) {
       return new Uint8Array(generated);
     });
 
-    // Cache for 1 hour
-    pdfCache.set(cleanUsername, {
-      buffer: pdfBuffer,
-      expiresAt: Date.now() + 3600 * 1000,
-    });
-
-    return new Response(Buffer.from(pdfBuffer), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="${cleanUsername}-media-kit.pdf"`,
-        "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
-      },
-    });
+    setCachedMediaKitPdf(cleanUsername, pdfBuffer);
+    return new Response(Buffer.from(pdfBuffer), { status: 200, headers: PDF_HEADERS(cleanUsername) });
   } catch (err) {
     // Real error stays in server logs; the client only gets a generic message.
     console.error("MediaKit PDF generation failed:", err);

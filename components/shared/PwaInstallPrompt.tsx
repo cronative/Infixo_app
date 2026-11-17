@@ -110,7 +110,7 @@ export function PwaInstallPrompt() {
   if (!showPrompt || isStandalone) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md animate-fade-in-up">
+    <div className="print:hidden fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md animate-fade-in-up">
       <div className="relative overflow-hidden rounded-3xl border border-[#ECECF0] bg-white/95 p-4 sm:p-5 shadow-2xl shadow-[#7A2253]/15 backdrop-blur-xl">
         {/* Ambient Top Glow */}
         <div className="pointer-events-none absolute -top-10 left-1/2 h-20 w-40 -translate-x-1/2 rounded-full bg-[#7A2253]/10 blur-xl" />

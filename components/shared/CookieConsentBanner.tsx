@@ -157,7 +157,7 @@ export function CookieConsentBanner() {
         <aside
           role="region"
           aria-label="Cookie consent banner"
-          className="fixed bottom-3 left-3 right-3 sm:left-auto sm:right-6 sm:bottom-6 z-50 max-w-lg animate-in fade-in slide-in-from-bottom-5 duration-300 pointer-events-auto"
+          className="print:hidden fixed bottom-3 left-3 right-3 sm:left-auto sm:right-6 sm:bottom-6 z-50 max-w-lg animate-in fade-in slide-in-from-bottom-5 duration-300 pointer-events-auto"
         >
           <div className="rounded-2xl border border-[#DDD8CF] bg-white p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/[0.03]">
             <div className="space-y-4">
@@ -236,7 +236,7 @@ export function CookieConsentBanner() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="cookie-preferences-title"
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-200"
+          className="print:hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-200"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowPreferences(false);

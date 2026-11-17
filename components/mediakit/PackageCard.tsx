@@ -139,9 +139,15 @@ export function PackageCard({
         style={pkg.isPopular ? { borderColor: "color-mix(in srgb, var(--accent-text) 45%, var(--surface-border))" } : undefined}
       >
         <div className="flex items-start justify-between gap-3">
-          <h4 title={pkg.title} className="line-clamp-2 min-w-0 break-words text-[14px] font-bold leading-[19px] text-(--text)">
-            {pkg.title || "Untitled package"}
-          </h4>
+          <div className="flex min-w-0 items-start gap-2.5">
+            {pkg.coverImage && (
+              // eslint-disable-next-line @next/next/no-img-element -- uploaded package cover
+              <img src={pkg.coverImage} alt="" className="h-11 w-11 shrink-0 rounded-[5px] object-cover" />
+            )}
+            <h4 title={pkg.title} className="line-clamp-2 min-w-0 break-words text-[14px] font-bold leading-[19px] text-(--text)">
+              {pkg.title || "Untitled package"}
+            </h4>
+          </div>
           <p className="shrink-0 text-right leading-tight">
             <span className="block whitespace-nowrap text-[14px] font-extrabold text-(--accent-text)">{price}</span>
             {gst && <span className="text-[10px] font-semibold text-(--text-muted)">{gst}</span>}
@@ -246,6 +252,10 @@ export function PackageCard({
           <Star aria-hidden className="h-3 w-3 fill-current" />
           Most popular
         </p>
+      )}
+      {pkg.coverImage && (
+        // eslint-disable-next-line @next/next/no-img-element -- uploaded package cover
+        <img src={pkg.coverImage} alt="" className="h-36 w-full object-cover" />
       )}
       <div className="space-y-3 p-3.5">
         {/* Meta: platforms · collab type · delivery · category · badge */}

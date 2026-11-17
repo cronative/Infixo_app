@@ -5,6 +5,7 @@ import { requireCreator } from "@/lib/creatorAuth";
 import { authorizeCreatorRead } from "@/lib/creatorReadAccess";
 import { apiSuccess, apiError } from "@/lib/apiResponse";
 import { sanitizeUrl } from "@/lib/urlSanitizer";
+import { invalidateMediaKitPdfs } from "@/lib/mediakitPdfCache";
 
 async function resolveCreatorId(lookupVal: string): Promise<{ id: string; email: string } | null> {
   if (!lookupVal) return null;
@@ -140,6 +141,7 @@ export async function POST(req: Request) {
       ]
     );
 
+    invalidateMediaKitPdfs();
     return apiSuccess({ collabId }, "Collaboration saved successfully");
   } catch (err: any) {
     console.error("POST collaboration error:", err);
@@ -165,6 +167,7 @@ export async function DELETE(req: Request) {
 
     await db.query("DELETE FROM creator_collaborations WHERE id = ? AND creator_id = ?", [id, targetId]);
 
+    invalidateMediaKitPdfs();
     return apiSuccess({}, "Collaboration removed successfully");
   } catch (err: any) {
     console.error("DELETE collaboration error:", err);

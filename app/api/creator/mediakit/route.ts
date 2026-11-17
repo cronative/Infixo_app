@@ -9,6 +9,7 @@ import { getPlanLimit } from "@/config/plans";
 import type { BarterPolicy, CommercialTerms } from "@/types";
 import { sanitizePackageDetails } from "@/lib/collabPackage";
 import { saveBase64ImageToStorage } from "@/lib/imageStorage";
+import { invalidateMediaKitPdfs } from "@/lib/mediakitPdfCache";
 
 let mediaKitTablesEnsured = false;
 
@@ -534,6 +535,7 @@ export async function POST(req: Request) {
       }
     }
 
+    invalidateMediaKitPdfs();
     return apiSuccess({
       creatorId: resolvedCreatorId,
     }, "Media Kit settings & gigs saved to MySQL DB by creator_id successfully!");

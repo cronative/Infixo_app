@@ -44,7 +44,7 @@ function platformFromUrl(url: string): Platform | "" {
 function CollabTile({ c, onEdit, onDelete, className = "" }: { c: CreatorCollaboration; onEdit: () => void; onDelete: () => void; className?: string }) {
   return (
     <article className={`group overflow-hidden rounded-[5px] border border-[#ECECF0] bg-white ${c.isActive ? "" : "opacity-60"} ${className}`}>
-      <div className="relative aspect-[16/10] bg-[#F7EEF2]">
+      <div className="relative h-[104px] bg-[#F7EEF2]">
         {c.thumbnailUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={c.thumbnailUrl} alt="" className="h-full w-full object-cover" />
@@ -60,33 +60,33 @@ function CollabTile({ c, onEdit, onDelete, className = "" }: { c: CreatorCollabo
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Watch ${c.brandName} campaign`}
-            className="absolute inset-0 m-auto flex h-11 w-11 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-[2px] transition-transform hover:scale-105"
+            className="absolute inset-0 m-auto flex h-9 w-9 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-[2px] transition-transform hover:scale-105"
           >
-            <Play className="ml-0.5 h-5 w-5 fill-current" />
+            <Play className="ml-0.5 h-4 w-4 fill-current" />
           </a>
         )}
-        {c.duration && <span className="absolute bottom-2 right-2 rounded-[4px] bg-black/70 px-1.5 py-0.5 text-[11px] font-semibold text-white">{c.duration}</span>}
+        {c.duration && <span className="absolute bottom-1.5 right-1.5 rounded-[4px] bg-black/70 px-1.5 py-px text-[10px] font-semibold text-white">{c.duration}</span>}
         {!c.isActive && (
           <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-[4px] bg-white/90 px-1.5 py-0.5 text-[11px] font-semibold text-[#52525B]">
             <EyeOff className="h-3 w-3" /> Hidden
           </span>
         )}
-        <div className="absolute right-2 top-2 flex gap-1">
-          <button type="button" onClick={onEdit} aria-label={`Edit ${c.brandName}`} className="flex h-7 w-7 items-center justify-center rounded-[5px] bg-white/95 text-[#3F3F46] shadow-xs hover:text-[#7A2253] cursor-pointer">
+        <div className="absolute right-1.5 top-1.5 flex gap-1">
+          <button type="button" onClick={onEdit} aria-label={`Edit ${c.brandName}`} className="flex h-6 w-6 items-center justify-center rounded-[5px] bg-white/95 text-[#3F3F46] shadow-xs hover:text-[#7A2253] cursor-pointer">
             <Pencil className="h-3.5 w-3.5" />
           </button>
-          <button type="button" onClick={onDelete} aria-label={`Delete ${c.brandName}`} className="flex h-7 w-7 items-center justify-center rounded-[5px] bg-white/95 text-[#3F3F46] shadow-xs hover:text-[#C2414B] cursor-pointer">
+          <button type="button" onClick={onDelete} aria-label={`Delete ${c.brandName}`} className="flex h-6 w-6 items-center justify-center rounded-[5px] bg-white/95 text-[#3F3F46] shadow-xs hover:text-[#C2414B] cursor-pointer">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
-      <div className="flex items-start gap-2 p-3">
+      <div className="flex items-start gap-2 px-2.5 py-2">
         <div className="min-w-0 flex-1">
-          <p className="flex items-center gap-1.5 truncate text-[14px] font-bold text-[#18181B]">
+          <p className="flex items-center gap-1.5 truncate text-[13px] font-bold text-[#18181B]">
             <PlatformGlyph platform={c.platform} />
             <span className="truncate">{c.brandName}</span>
           </p>
-          {c.campaignTitle && <p className="mt-0.5 truncate text-[12px] text-[#6B6B76]">{c.campaignTitle}</p>}
+          {c.campaignTitle && <p className="truncate text-[11px] text-[#6B6B76]">{c.campaignTitle}</p>}
         </div>
         {c.campaignUrl && (
           <a href={c.campaignUrl} target="_blank" rel="noopener noreferrer" aria-label="Open campaign" className="shrink-0 text-[#7A2253] hover:opacity-80">
@@ -211,7 +211,7 @@ export function PastCollaborationsCard({ creatorId, onCountChange }: { creatorId
         {loading ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {[0, 1, 2].map((i) => (
-              <div key={i} className="aspect-[16/14] animate-pulse rounded-[5px] bg-[#F4F4F5]" />
+              <div key={i} className="h-[150px] animate-pulse rounded-[5px] bg-[#F4F4F5]" />
             ))}
           </div>
         ) : items.length === 0 ? (
@@ -227,7 +227,7 @@ export function PastCollaborationsCard({ creatorId, onCountChange }: { creatorId
               <CollabTile
                 key={c.id}
                 c={c}
-                className="w-[72%] shrink-0 snap-start min-[480px]:w-auto"
+                className="w-[58%] shrink-0 snap-start min-[480px]:w-auto"
                 onEdit={() => { setErrors({}); setEditing({ ...c }); }}
                 onDelete={() => setToDelete(c)}
               />
