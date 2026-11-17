@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, type ReactNode } from "react";
-import { Layers, type LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { CountPill } from "./CountPill";
 import { LockedRow } from "./LockedRow";
 import { SECTION_BG, SECTION_CARD, SECTION_FG, SECTION_LINE, type SectionColors } from "./tokens";
@@ -77,8 +77,7 @@ export function SectionHeader({ title, subtitle, count, colors, icon: Icon, soli
           {subtitle && <p className="text-[12px] leading-4 opacity-90">{subtitle}</p>}
         </div>
         {count != null && (
-          <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-[5px] bg-(--card-bg) px-1.5 py-0.5 text-[11px] font-semibold leading-4 text-(--accent-text)">
-            <Layers aria-hidden className="h-3 w-3" />
+          <span className="shrink-0 whitespace-nowrap rounded-[5px] bg-(--card-bg) px-2 py-0.5 text-[13px] font-semibold leading-5 text-(--accent-text)">
             {count}
           </span>
         )}
