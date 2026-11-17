@@ -1119,6 +1119,18 @@ export function MediaKitV2Content({
           .fixed {
             display: none !important;
           }
+          /* A4 document, not a phone column: drop the 480px card width and the card frame. */
+          main > div {
+            max-width: none !important;
+          }
+          .profile-card-glass {
+            --card-px: 0px !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+            background: #fff !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+          }
         }
       `}</style>
     </div>
