@@ -360,8 +360,7 @@ export function ProfileHeader({
   const formattedTagline = useMemo(() => {
     if (!tagline) return null;
     const parts = tagline.split(/\s*[,•·.]\s*/).filter(Boolean);
-    if (parts.length === 0) return null;
-    return parts.join(" • ");
+    return parts.length === 0 ? null : parts;
   }, [tagline]);
   // Track the failed URL (not a boolean) so a new photoUrl gets a fresh attempt; expired Instagram URLs fall back to initials.
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
@@ -432,7 +431,7 @@ export function ProfileHeader({
       {/* scrolls underneath (z above content).                          */}
       {/* ============================================================== */}
       <div
-        className="sticky top-0 z-30 -mx-[var(--card-px,16px)] -mt-5 mb-2 flex h-12 items-center justify-between gap-2 px-3 rounded-none border-b border-(--divider) bg-(--card-bg)"
+        className="sticky top-0 z-30 -mx-[var(--card-px,16px)] -mt-5 flex h-12 items-center justify-between gap-2 px-3 rounded-none border-b border-(--divider) bg-[var(--header-bg,var(--card-bg))]"
       >
         {/* Creator name, centred, once the profile name has scrolled under the nav */}
         <span
@@ -494,19 +493,21 @@ export function ProfileHeader({
       {/* ============================================================== */}
       {/* ROW 2: STACKED PROFILE (photo on top, details centered below)       */}
       {/* ============================================================== */}
-      <div className="flex w-full flex-col items-center gap-2.5 mt-1 sm:mt-1.5 mx-auto text-center">
+      {/* Profile block on the header surface (white on light themes), bleeding to the card edges. */}
+      <div className="-mx-[var(--card-px,16px)] mb-1 border-b border-(--divider) bg-[var(--header-bg,var(--card-bg))] px-[var(--card-px,16px)] pb-3 pt-3">
+      <div className="flex w-full flex-col items-center gap-2.5 mx-auto text-center">
         {/* LEFT: Creator Avatar (reduced slightly as requested: 68px on mobile, 76px on sm) */}
         <div className="relative shrink-0">
           <div className="p-[2px] sm:p-[2.5px] rounded-full " style={{ background: eraCfg ? eraRing(eraCfg) : "var(--avatar-ring)" }}>
-            <div className="p-[1.5px] bg-(--card-bg) rounded-full">
-              <div className="relative h-[76px] w-[76px] sm:h-[84px] sm:w-[84px] rounded-full overflow-hidden bg-(--card-bg) ">
+            <div className="p-[2px] bg-[var(--header-bg,var(--card-bg))] rounded-full">
+              <div className="relative h-[88px] w-[88px] sm:h-24 sm:w-24 rounded-full overflow-hidden bg-(--card-bg) ">
                 {hasAvatar && photoUrl ? (
                   <Image
                     src={photoUrl}
                     alt={displayName || "Creator"}
                     width={152}
                     height={152}
-                    sizes="84px"
+                    sizes="96px"
                     priority
                     unoptimized={isDataUrl}
                     onError={() => setFailedSrc(photoUrl)}
@@ -524,11 +525,11 @@ export function ProfileHeader({
           {/* Proportional Verified Badge at Bottom-Right */}
           {isVerified && (
             <span
-              className="absolute bottom-0 right-0 flex h-[22px] w-[22px] sm:h-6 sm:w-6 items-center justify-center rounded-full bg-white "
+              className="absolute bottom-0.5 right-0.5 flex h-6 w-6 sm:h-[26px] sm:w-[26px] items-center justify-center rounded-full bg-white "
               title="Verified Creator"
               aria-label="Verified creator"
             >
-              <BadgeCheck className={`h-[17px] w-[17px] sm:h-[19px] sm:w-[19px] ${BRAND_VERIFIED_FILL} text-white`} strokeWidth={2.2} />
+              <BadgeCheck className={`h-[19px] w-[19px] sm:h-[21px] sm:w-[21px] ${BRAND_VERIFIED_FILL} text-white`} strokeWidth={2.2} />
             </span>
           )}
         </div>
@@ -536,31 +537,36 @@ export function ProfileHeader({
         {/* DETAILS (centered under the photo): Name / @username / Category */}
         <div className="min-w-0 w-full text-center space-y-0.5">
           {/* 1. Title / Name */}
-          <h1 ref={nameRef} className="text-lg sm:text-xl font-bold tracking-tight text-(--text) break-words leading-tight">
+          <h1 ref={nameRef} className="text-[22px] sm:text-2xl font-bold tracking-tight text-(--text) break-words leading-tight">
             {displayName || "Creator"}
           </h1>
 
           {/* 2. @username */}
-          <p className="text-xs sm:text-[13px] font-normal text-(--text-muted) break-all leading-tight">
+          <p className="text-[13px] sm:text-sm font-normal text-(--text-muted) break-all leading-tight">
             @{cleanHandle}
           </p>
 
           {/* 3. Category / Tagline with . separator */}
           {formattedTagline && (
-            <p className="text-xs sm:text-[13px] font-normal text-(--text-secondary) break-words leading-tight">
-              {formattedTagline}
-            </p>
+            <ul className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 pt-2" aria-label="Categories">
+              {formattedTagline.map((t, i) => (
+                <li key={`${t}-${i}`} className="flex items-center gap-1.5">
+                  {i > 0 && <span aria-hidden className="h-1 w-1 rounded-full bg-(--text-muted) opacity-50" />}
+                  <span className="rounded-full bg-(--accent-soft) px-2.5 py-0.5 text-[12px] font-medium text-(--accent-text) sm:text-[13px]">{t}</span>
+                </li>
+              ))}
+            </ul>
           )}
 
           {/* 4. Social Icons directly under Category */}
           {(allActiveSocials.length > 0 || onWorkWithMe) && (
-            <div className="flex flex-wrap items-center justify-center gap-1.5 pt-2 sm:gap-2">
+            <div className="flex w-full flex-wrap items-center justify-center gap-2 pt-3">
               {allActiveSocials.map((item) => {
                 const hasUrl = Boolean(item.url && item.url !== "#");
 
                 const iconContent = (
-                  <span className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-(--surface-border) bg-(--card-bg) text-(--text) transition-colors hover:border-(--accent-text) hover:text-(--accent-text) sm:h-8 sm:w-8">
-                    {getPlatformIcon(item.platform, "h-4 w-4 sm:h-[18px] sm:w-[18px] text-current")}
+                  <span className="flex h-10 w-10 items-center justify-center rounded-[5px] border border-(--surface-border) bg-(--surface) text-(--text) transition-colors hover:border-(--accent-text) hover:text-(--accent-text)">
+                    {getPlatformIcon(item.platform, "h-[18px] w-[18px] text-current")}
                   </span>
                 );
 
@@ -584,18 +590,14 @@ export function ProfileHeader({
               })}
               {onWorkWithMe && (
                 <>
-                  {allActiveSocials.length > 0 && <span aria-hidden style={{ backgroundColor: "color-mix(in srgb, var(--accent) 28%, var(--surface-border))" }} className="mx-0.5 h-5 w-px" />}
                   <button
                     type="button"
                     onClick={onWorkWithMe}
-                    style={{
-                      backgroundColor: "var(--accent-soft)",
-                      borderColor: "color-mix(in srgb, var(--accent-text) 30%, transparent)",
-                    }}
-                    className="tap-44 tap-scale inline-flex h-7 items-center gap-1.5 rounded-[5px] border px-2.5 text-[12px] font-semibold text-(--accent-text) transition-opacity hover:opacity-90 cursor-pointer whitespace-nowrap focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden sm:h-8 sm:text-[13px]"
+                    style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
+                    className="tap-scale inline-flex h-10 min-w-[140px] flex-1 items-center justify-center gap-2 rounded-[5px] px-4 text-[14px] font-semibold transition-opacity hover:opacity-95 cursor-pointer whitespace-nowrap focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-2 focus-visible:outline-hidden"
                     title="See collab packages"
                   >
-                    <Handshake className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+                    <Handshake className="h-4 w-4 shrink-0" />
                     <span>Work with me</span>
                   </button>
                 </>
@@ -735,9 +737,11 @@ export function ProfileHeader({
                 className="tap-44 tap-scale inline-flex h-8 items-center gap-1.5 rounded-[5px] px-2 transition-colors cursor-pointer hover:bg-(--surface)/60 focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden sm:h-9"
                 title="See fans by platform"
               >
-                <Users className="h-4 w-4 shrink-0 text-(--accent-text) sm:h-[18px] sm:w-[18px]" aria-hidden />
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--accent-soft) sm:h-7 sm:w-7">
+                  <Users className="h-3.5 w-3.5 text-(--accent-text) sm:h-4 sm:w-4" aria-hidden />
+                </span>
                 <span className="text-[13px] sm:text-sm font-bold text-(--text) tabular-nums leading-none">{formatFans(effectiveFanbase)}</span>
-                <span className="text-[12px] sm:text-[13px] text-(--text-muted) leading-none whitespace-nowrap"><span className="hidden min-[400px]:inline">Total </span>Fans</span>
+                <span className="text-[12px] sm:text-[13px] text-(--text-muted) leading-none whitespace-nowrap"><span className="hidden min-[360px]:inline">Total </span>Fans</span>
                 <Info className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0 text-(--text-muted)" aria-hidden />
               </button>
             }
@@ -765,6 +769,7 @@ export function ProfileHeader({
           </Popover>
         </div>
       )}
+      </div>
 
     </header>
   );

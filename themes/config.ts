@@ -596,6 +596,8 @@ export function themeTokenStyle(id: string | null | undefined): CSSProperties {
     // Secondary text follows the theme (between --text and --text-muted) so it stays readable on dark cards;
     // the global fallback (#475569) is a light-UI slate.
     "--text-secondary": "color-mix(in srgb, var(--text) 70%, var(--text-muted))",
+    // Profile header block: white on light cards; dark cards keep their own surface so light text stays readable.
+    "--header-bg": tokens["--logo-variant"] === "light" ? "var(--card-bg)" : "#FFFFFF",
     ...tokens,
   } as unknown as CSSProperties;
 }
