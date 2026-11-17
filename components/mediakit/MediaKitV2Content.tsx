@@ -460,9 +460,11 @@ export function MediaKitV2Content({
   return (
     <div className="w-full space-y-2.5 text-left">
       {/* TOP BAR — Inflixo · Media Kit, share + PDF */}
-      <div style={accentStyle} className="-mx-(--card-px) -mt-5 flex items-center justify-between gap-3 rounded-t-[5px] px-4 py-2.5">
+      {/* Stays pinned while brands scroll, like the profile's nav. */}
+      <div style={accentStyle} className="sticky top-0 z-30 -mx-(--card-px) -mt-5 flex h-12 items-center justify-between gap-3 rounded-t-[5px] px-4">
         <a href={`/${cleanHandle}`} aria-label="Back to profile" className="flex items-center gap-2.5">
-          <span className="text-[20px] font-extrabold leading-none tracking-tight">Inflixo</span>
+          {/* Same Inflixo wordmark as everywhere else, drawn in the bar's text colour. */}
+          <span role="img" aria-label="Inflixo" className="inflixo-logo inline-block h-6 shrink-0" style={{ backgroundColor: "var(--on-accent)" }} />
           <span aria-hidden className="h-4 w-px bg-current opacity-50" />
           <span className="text-[14px] font-semibold">Media Kit</span>
         </a>
