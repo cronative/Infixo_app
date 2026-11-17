@@ -68,26 +68,8 @@ function gstNote(pkg: MediaKitPackage, pricesPlusGst?: boolean) {
   return pricesPlusGst ? "+ GST" : "";
 }
 
-/**
- * One collaboration package as brands see it (public media kit, and the live
- * preview in the dashboard form). Theme tokens only.
- */
-export function PackageCard({
-  pkg,
-  pricesPlusGst,
-  onRequest,
-  preview = false,
-  compact = false,
-}: {
-  pkg: MediaKitPackage;
-  /** Creator-wide "prices + 18% GST" (media kit commercial terms). */
-  pricesPlusGst?: boolean;
-  onRequest?: (pkg: MediaKitPackage) => void;
-  /** Dashboard preview: the CTA is shown but does nothing. */
-  preview?: boolean;
-  /** Tighter layout for the public profile's Work With Me: same details, inline lists. */
-  compact?: boolean;
-}) {
+/** Everything a package shows brands, computed once (PackageCard and the media kit rows). */
+export function packageView(pkg: MediaKitPackage, pricesPlusGst?: boolean) {
   const d = pkg.details;
   const badgeText = (pkg.packageName || pkg.badge || "").trim();
   const pitch = (pkg.storyPitch || "").trim();
@@ -129,6 +111,30 @@ export function PackageCard({
     req?.location && `Location / travel: ${req.location}`,
     req?.conditions,
   ].filter(Boolean) as string[];
+  return { d, badgeText, pitch, description, price, gst, platforms, deliverables, terms, requirements };
+}
+
+/**
+ * One collaboration package as brands see it (public media kit, and the live
+ * preview in the dashboard form). Theme tokens only.
+ */
+export function PackageCard({
+  pkg,
+  pricesPlusGst,
+  onRequest,
+  preview = false,
+  compact = false,
+}: {
+  pkg: MediaKitPackage;
+  /** Creator-wide "prices + 18% GST" (media kit commercial terms). */
+  pricesPlusGst?: boolean;
+  onRequest?: (pkg: MediaKitPackage) => void;
+  /** Dashboard preview: the CTA is shown but does nothing. */
+  preview?: boolean;
+  /** Tighter layout for the public profile's Work With Me: same details, inline lists. */
+  compact?: boolean;
+}) {
+  const { d, badgeText, pitch, description, price, gst, platforms, deliverables, terms, requirements } = packageView(pkg, pricesPlusGst);
 
   if (compact) {
     // Delivery is already in the meta line, so the terms line starts after it.

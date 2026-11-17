@@ -1723,6 +1723,8 @@ export function LivePreviewCard({
         // Page scroll: no box of its own, so the Inflixo nav inside stays sticky for the whole card.
         className={containedScroll ? "shrink-0 w-full z-20" : "contents"}
       >
+        {/* The media kit page draws its own top bar + hero (MediaKitV2Content). */}
+        {!mediaKitOnlyMode && (
         <ProfileHeader
           navScrolled={navScrolled}
           displayName={profile.displayName || "Creator Name"}
@@ -1773,10 +1775,11 @@ export function LivePreviewCard({
               : undefined
           }
         />
+        )}
 
 
         {/* Divider + title below ProfileHeader on the reviews / media kit pages (other listing pages start flush with their section) */}
-        {(reviewsOnlyMode || mediaKitOnlyMode) && (
+        {reviewsOnlyMode && (
           <div className="relative z-20 mt-2.5 sm:mt-3 -mx-(--card-px) select-none bg-(--card-bg)">
             <div style={{ backgroundColor: c.divider }} className="h-px opacity-60" aria-hidden="true" />
 
@@ -2607,6 +2610,7 @@ export function LivePreviewCard({
               collaborations={collaborationsList}
               hideTeam={false}
               isInformational={isInformationalMode}
+              onShare={handleShareClick}
               onEnquirePackage={(selected) => {
                 setSelectedEnquiryPackage(selected);
                 setIsEnquirySheetOpen(true);
