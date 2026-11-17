@@ -52,6 +52,7 @@ import type { SocialAccounts, CustomLink, CreatorProduct } from "@/types";
 import { getCreatorEra } from "@/lib/creatorEra";
 import { CreatorEraCelebrationModal } from "@/components/shared/CreatorEraCelebrationModal";
 import { SetupChecklist } from "@/components/dashboard/SetupChecklist";
+import { PublicPagesCard } from "@/components/dashboard/PublicPagesCard";
 import { markSetupStep, useSetupStep } from "@/lib/setupProgress";
 import { ThemeService } from "@/services/ThemeService";
 import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
@@ -407,6 +408,9 @@ export default function DashboardOverviewPage() {
           </button>
         </div>
       </div>
+
+      {/* 1b. QUICK LINKS to every public page */}
+      <PublicPagesCard handle={handle} profileUrl={profileUrl} />
 
       {/* Setup checklist: slim one-line progress (hidden at 6/6) */}
       <SetupChecklist
