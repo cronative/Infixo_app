@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { renderSVG } from "uqr";
@@ -71,6 +72,15 @@ function getSeriesEpisodes(s: Series): any[] {
   return [];
 }
 
+/** Small brand glyph for a package's platform ("Instagram", "Instagram Bundle", "YouTube" …). */
+function platformIcon(platform?: string) {
+  const p = (platform || "").toLowerCase();
+  if (p.includes("instagram") || p.includes("reel")) return <InstagramIcon className="h-3.5 w-3.5 text-[#E1306C]" />;
+  if (p.includes("youtube")) return <YoutubeIcon className="h-3.5 w-3.5 text-[#FF0000]" />;
+  if (p.includes("facebook")) return <FacebookIcon className="h-3.5 w-3.5 text-[#1877F2]" />;
+  return null;
+}
+
 function formatPackagePrice(pkg: MediaKitPackage): string {
   const unitMap: Record<string, string> = {
     per_reel: "/ reel",
@@ -104,6 +114,8 @@ export function MediaKitV2Content({
   const { showToast } = useToast();
   const [copiedLink, setCopiedLink] = useState(false);
   const [urlIsPrint, setUrlIsPrint] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -132,7 +144,7 @@ export function MediaKitV2Content({
 
   // Primary connected socials for editorial prose line
   const connectedPlatforms = useMemo(() => {
-    const list: Array<{ key: string; label: string; handle: string; count: number; url: string; icon: React.ReactNode }> = [];
+    const list: Array<{ key: string; label: string; handle: string; count: number; unit: string; url: string; icon: React.ReactNode }> = [];
     const ig = socials?.instagram;
     if (ig?.username || (ig?.followers || 0) > 0) {
       const h = (ig?.username || cleanHandle).replace(/^@/, "");
@@ -141,6 +153,7 @@ export function MediaKitV2Content({
         label: "Instagram",
         handle: h,
         count: ig?.followers || 0,
+        unit: "followers",
         url: ig?.url || `https://instagram.com/${h}`,
         icon: <InstagramIcon className="h-3.5 w-3.5 text-[#E1306C]" />,
       });
@@ -153,6 +166,7 @@ export function MediaKitV2Content({
         label: "YouTube",
         handle: h,
         count: yt?.subscribers || 0,
+        unit: "subscribers",
         url: yt?.url || `https://youtube.com/@${h}`,
         icon: <YoutubeIcon className="h-3.5 w-3.5 text-[#FF0000]" />,
       });
@@ -165,6 +179,7 @@ export function MediaKitV2Content({
         label: "Facebook",
         handle: h,
         count: fb?.followers || 0,
+        unit: "followers",
         url: fb?.url || `https://facebook.com/${h}`,
         icon: <FacebookIcon className="h-3.5 w-3.5 text-[#1877F2]" />,
       });
@@ -182,6 +197,16 @@ export function MediaKitV2Content({
   const nofitTags = (settings?.nofitTags || []).map((t) => t.trim()).filter(Boolean).slice(0, 3);
   const promises = (settings?.promises || []).map((p) => p.trim()).filter(Boolean).slice(0, 4);
 
+  // Audience numbers brands ask for first (shown only when the creator filled them in).
+  const listText = (v?: string[] | string) => (Array.isArray(v) ? v.join(", ") : (v || "")).trim();
+  const engagement = String(settings?.engagementRate ?? "").trim();
+  const audienceStats = [
+    { label: "Avg reel views", value: String(settings?.avgReelViews ?? "").trim() },
+    { label: "Engagement", value: engagement ? (engagement.endsWith("%") ? engagement : `${engagement}%`) : "" },
+    { label: "Top cities", value: (settings?.topCities || "").trim() },
+    { label: "Languages", value: listText(settings?.contentLanguages) },
+  ].filter((t) => t.value);
+
   const creatorFirstName = useMemo(() => {
     const raw = (profile.displayName || cleanHandle || "").trim();
     const firstWord = raw.split(/\s+/)[0] || "";
@@ -193,7 +218,14 @@ export function MediaKitV2Content({
     : creatorFirstName;
 
   const topSeries = useMemo(() => (series || []).slice(0, 3), [series]);
-  const activePackages = useMemo(() => (packages || []).filter((p) => p.isActive !== false), [packages]);
+  // Most popular package first.
+  const activePackages = useMemo(
+    () =>
+      (packages || [])
+        .filter((p) => p.isActive !== false)
+        .sort((a, b) => Number(Boolean(b.isPopular)) - Number(Boolean(a.isPopular))),
+    [packages]
+  );
   const visibleReviews = useMemo(
     () => (reviews || []).filter((r) => (r as any).isVisible !== false && (r as any).is_visible !== 0),
     [reviews]
@@ -211,6 +243,19 @@ export function MediaKitV2Content({
   const showPromises = promises.length > 0;
   const showReviews = visibleReviews.length > 0;
   const showTeam = !hideTeam && activeTeamMembers.length > 0;
+
+  // Section numbers follow the sections actually shown (no "03 → 05" gaps when one is empty).
+  const sectionOrder = [
+    showHello && "hello",
+    showAudience && "audience",
+    showSeries && "series",
+    showFitChips && "fit",
+    showPackages && "packages",
+    showPromises && "promises",
+    showReviews && "reviews",
+    showTeam && "team",
+  ].filter(Boolean) as string[];
+  const num = (key: string) => String(sectionOrder.indexOf(key) + 1).padStart(2, "0");
 
   const mediaKitPublicUrl = useMemo(() => {
     const base = process.env.NEXT_PUBLIC_SITE_URL || "https://inflixo.com";
@@ -247,6 +292,13 @@ export function MediaKitV2Content({
 
   const { download: downloadPdf, loading: pdfLoading } = useMediaKitPdf(cleanHandle);
 
+  // WhatsApp-first, pre-filled (most Indian brand deals start on WhatsApp).
+  const whatsappDigits = (settings?.allowWhatsapp === false ? "" : settings?.whatsappNumber || (profile as { whatsappNumber?: string }).whatsappNumber || "").replace(/\D/g, "");
+  const whatsappHref = whatsappDigits
+    ? `https://wa.me/${whatsappDigits}?text=${encodeURIComponent(`Hi ${creatorFirstName}, I'm reaching out from [brand] about a collaboration. Saw your Inflixo media kit: ${mediaKitPublicUrl}`)}`
+    : "";
+  const showStickyBar = !isInformational && !activeIsPrint;
+
   const handleDownloadPdf = () => {
     if (isInformational) {
       showToast("Downloads your 2-page A4 Media Kit PDF ✨");
@@ -268,7 +320,7 @@ export function MediaKitV2Content({
           {/* Availability + Reply Time Bar */}
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-              01 · Hello
+              {num("hello")} · Hello
             </span>
             <div className="inline-flex items-center gap-2 rounded-full border border-[#E7E0D6] bg-white px-3 py-1 text-xs font-medium text-[#1C1917]">
               <span
@@ -344,7 +396,7 @@ export function MediaKitV2Content({
         >
           <div className="flex items-center justify-between gap-2">
             <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-              02 · Audience
+              {num("audience")} · Audience
             </span>
             {creatorEra && (
               <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E7E0D6] bg-white px-3 py-1 text-xs font-semibold text-[#44403C]">
@@ -377,7 +429,20 @@ export function MediaKitV2Content({
             )}
           </div>
 
-          {/* Editorial inline reach chips (no dashboard stat grids) */}
+          {audienceStats.length > 0 && (
+            <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {audienceStats.map((t) => (
+                <div key={t.label} className="rounded-lg border border-[#E7E0D6] bg-white px-3 py-2.5">
+                  <dt className="text-[11px] font-semibold uppercase tracking-wider text-[#78716C]">{t.label}</dt>
+                  <dd title={t.value} className="mt-0.5 line-clamp-2 break-words text-[15px] font-bold leading-5 text-[#1C1917]">
+                    {t.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          )}
+
+          {/* Platform reach chips */}
           {connectedPlatforms.length > 0 && (
             <div className="pt-2 border-t border-[#E7E0D6]/80 flex flex-wrap items-center gap-2">
               {connectedPlatforms.map((plat) => (
@@ -391,7 +456,9 @@ export function MediaKitV2Content({
                   {plat.icon}
                   <span className="font-semibold">@{plat.handle}</span>
                   {plat.count > 0 && (
-                    <span className="text-[#78716C]">{formatCount(plat.count)}</span>
+                    <span className="text-[#78716C]">
+                      <span className="font-semibold text-[#1C1917]">{formatCount(plat.count)}</span> {plat.unit}
+                    </span>
                   )}
                   <ArrowUpRight className="h-3 w-3 text-[#A8A29E]" />
                 </a>
@@ -411,7 +478,7 @@ export function MediaKitV2Content({
         >
           <div className="space-y-1">
             <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-              03 · Original Series
+              {num("series")} · Original Series
             </span>
             <h3
               style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
@@ -499,7 +566,7 @@ export function MediaKitV2Content({
         >
           <div className="space-y-1">
             <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-              04 · Brand Fit
+              {num("fit")} · Brand Fit
             </span>
             <h3
               style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
@@ -569,7 +636,7 @@ export function MediaKitV2Content({
           <div className="flex flex-wrap items-end justify-between gap-2">
             <div className="space-y-1">
               <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-                05 · Ways We Can Collaborate
+                {num("packages")} · Ways We Can Collaborate
               </span>
               <h3
                 style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
@@ -599,7 +666,8 @@ export function MediaKitV2Content({
                             {pkg.category}
                           </span>
                         )}
-                        <span className="text-xs font-medium text-[#78716C]">
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-[#78716C]">
+                          {platformIcon(pkg.platform)}
                           {pkg.platform}
                         </span>
                         {pkg.turnaroundDays > 0 && (
@@ -672,7 +740,7 @@ export function MediaKitV2Content({
                       onClick={() => onEnquirePackage?.(pkg)}
                       className="inline-flex items-center gap-2 rounded-lg bg-[#7A2253] px-4 py-2.5 text-xs sm:text-sm font-semibold text-white hover:opacity-95 transition-opacity cursor-pointer"
                     >
-                      <span>Let&apos;s talk about this</span>
+                      <span>Book this package</span>
                       <ArrowUpRight className="h-4 w-4" />
                     </button>
                   </div>
@@ -693,7 +761,7 @@ export function MediaKitV2Content({
         >
           <div className="space-y-1">
             <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-              06 · My Working Promise
+              {num("promises")} · My Working Promise
             </span>
             <h3
               style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
@@ -732,7 +800,7 @@ export function MediaKitV2Content({
           <div className="flex flex-wrap items-end justify-between gap-2">
             <div className="space-y-1">
               <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-                07 · Kind Words From Partners
+                {num("reviews")} · Kind Words From Partners
               </span>
               <h3
                 style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
@@ -797,7 +865,7 @@ export function MediaKitV2Content({
         >
           <div className="space-y-1">
             <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A2253]">
-              08 · {team?.team?.teamName || "The Crew"}
+              {num("team")} · {team?.team?.teamName || "The Crew"}
             </span>
             <h3
               style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
@@ -911,6 +979,51 @@ export function MediaKitV2Content({
           </button>
         </div>
       </section>
+
+      {/* Phones: always-visible contact bar (not in previews or the PDF). */}
+      {showStickyBar && (
+        <>
+          <div aria-hidden className="h-16 sm:hidden" />
+          {/* Portalled to <body>: the card's backdrop-filter would make "fixed" stick to the card, not the screen. */}
+          {mounted && createPortal(
+          <div
+            data-no-print="true"
+            className="fixed inset-x-0 bottom-0 z-40 border-t border-[#E7E0D6] bg-white/95 px-3 pt-2 pb-[calc(8px+env(safe-area-inset-bottom))] backdrop-blur-sm sm:hidden"
+          >
+            <div className="mx-auto flex max-w-[480px] items-center gap-2">
+              <button
+                type="button"
+                onClick={() => onEnquirePackage?.(null)}
+                className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] px-3 text-[14px] font-semibold text-white cursor-pointer"
+              >
+                <MessageSquare className="h-4 w-4" />
+                <span>Enquire</span>
+              </button>
+              {whatsappHref && (
+                <a
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-[5px] border border-[#25D366]/50 bg-[#25D366]/10 px-3 text-[14px] font-semibold text-[#128C4B]"
+                >
+                  <span>WhatsApp</span>
+                </a>
+              )}
+              <button
+                type="button"
+                onClick={handleDownloadPdf}
+                disabled={pdfLoading}
+                aria-label="Download media kit PDF"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] border border-[#E7E0D6] bg-white text-[#1C1917] cursor-pointer disabled:cursor-wait"
+              >
+                {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>,
+          document.body,
+          )}
+        </>
+      )}
 
       {/* Print stylesheet for 2-Page A4 PDF layout */}
       <style jsx global>{`

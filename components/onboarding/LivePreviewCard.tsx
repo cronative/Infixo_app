@@ -2773,7 +2773,8 @@ export function LivePreviewCard({
       </div>
 
       {/* Portalled to <body>: the card's backdrop-filter would otherwise make "fixed" relative to the card. */}
-      {showMoveToTop && typeof document !== "undefined" && createPortal(
+      {/* The media kit has its own sticky contact bar on phones. */}
+      {showMoveToTop && !mediaKitOnlyMode && typeof document !== "undefined" && createPortal(
         <button
           type="button"
           onClick={handleMoveToTop}
