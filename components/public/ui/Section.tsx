@@ -56,7 +56,7 @@ export function SectionHeader({ title, subtitle, count, colors, icon: Icon, soli
   if (hero) {
     return (
       <div
-        className="flex items-center gap-3 px-3 py-3"
+        className="flex items-center gap-2.5 px-3 py-2.5"
         style={{
           // Theme tokens only: accent fading toward its soft tint.
           background: "linear-gradient(100deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 72%, var(--accent-soft)) 100%)",
@@ -65,21 +65,21 @@ export function SectionHeader({ title, subtitle, count, colors, icon: Icon, soli
       >
         {Icon && (
           <>
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] border border-[color-mix(in_srgb,var(--on-accent)_25%,transparent)] bg-[color-mix(in_srgb,var(--on-accent)_14%,transparent)]">
-              <Icon aria-hidden strokeWidth={2} className="h-6 w-6" />
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] border border-[color-mix(in_srgb,var(--on-accent)_25%,transparent)] bg-[color-mix(in_srgb,var(--on-accent)_14%,transparent)]">
+              <Icon aria-hidden strokeWidth={2} className="h-5 w-5" />
             </span>
-            <span aria-hidden className="h-9 w-px shrink-0 bg-[color-mix(in_srgb,var(--on-accent)_35%,transparent)]" />
+            <span aria-hidden className="h-7 w-px shrink-0 bg-[color-mix(in_srgb,var(--on-accent)_35%,transparent)]" />
           </>
         )}
         <div className="min-w-0 flex-1">
-          <h2 style={{ fontFamily: colors.headingFont }} className="text-[18px] font-bold leading-[22px] tracking-tight">
+          <h2 style={{ fontFamily: colors.headingFont }} className="text-[16px] font-bold leading-5 tracking-tight">
             {title}
           </h2>
-          {subtitle && <p className="text-[13px] leading-[17px] opacity-90">{subtitle}</p>}
+          {subtitle && <p className="text-[12px] leading-4 opacity-90">{subtitle}</p>}
         </div>
         {count != null && (
-          <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[5px] bg-(--card-bg) px-2.5 py-1.5 text-[13px] font-semibold text-(--accent-text)">
-            <Layers aria-hidden className="h-4 w-4" />
+          <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[5px] bg-(--card-bg) px-2 py-1 text-[12px] font-semibold text-(--accent-text)">
+            <Layers aria-hidden className="h-3.5 w-3.5" />
             {count}
           </span>
         )}
