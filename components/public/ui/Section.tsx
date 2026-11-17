@@ -15,6 +15,18 @@ export function SolidSectionsProvider({ children }: { children: ReactNode }) {
   return <SolidContext.Provider value={true}>{children}</SolidContext.Provider>;
 }
 
+// ── Full-bleed mode ──────────────────────────────────────────
+
+const FullBleedContext = createContext(false);
+
+/** Sections below run edge to edge of the profile card (no side gutter, square corners, no side borders). */
+export function FullBleedSectionsProvider({ enabled = true, children }: { enabled?: boolean; children: ReactNode }) {
+  return <FullBleedContext.Provider value={enabled}>{children}</FullBleedContext.Provider>;
+}
+
+/** Cancels the card's side padding (--card-px); `!` beats a caller's w-full / rounded / border. */
+const FULL_BLEED = "-mx-(--card-px) w-auto! rounded-none! border-x-0!";
+
 // ── Header ───────────────────────────────────────────────────
 
 export interface SectionHeaderProps {
@@ -152,11 +164,12 @@ export function SectionCard({
   children,
 }: SectionCardProps) {
   const solidCtx = useContext(SolidContext);
+  const fullBleed = useContext(FullBleedContext);
   const solid = solidProp || solidCtx;
   return (
     <Tag
       id={id}
-      className={`${SECTION_CARD} scroll-mt-2 ${className}`}
+      className={`${SECTION_CARD} scroll-mt-2 ${className} ${fullBleed ? FULL_BLEED : ""}`}
       // Solid section: the whole frame takes the header colour (inline so it wins over the base border).
       style={solid && showHeader ? { borderColor: SECTION_LINE } : undefined}
     >

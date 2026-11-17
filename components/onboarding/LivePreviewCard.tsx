@@ -155,7 +155,7 @@ import {
 import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
 import { CreatorEraBottomSheet } from "@/components/shared/CreatorEraBottomSheet";
 import { AboutMeBlock, FanbaseByPlatform, SocialAccountsBlock } from "@/components/public/about/AboutSections";
-import { BrandPlatformIcon, FooterCta, LinkGroupRow, LinkRow, ProductTiles, Section, SeriesRow, SolidSectionsProvider } from "@/components/public/ui";
+import { BrandPlatformIcon, FooterCta, FullBleedSectionsProvider, LinkGroupRow, LinkRow, ProductTiles, Section, SeriesRow, SolidSectionsProvider } from "@/components/public/ui";
 import { AudienceSnapshot, CustomCollaboration, WhatBrandsSay, WorkWithMe } from "@/components/public/collab/CollabSections";
 
 
@@ -3374,11 +3374,10 @@ export function LivePreviewCard({
 
   return (
     <div className={`relative w-full mx-auto flex-1 min-h-0 h-full max-h-full flex flex-col transition-all ${isPublicSurface ? "max-w-[480px]" : isFull ? "max-w-[580px]" : "max-w-[560px]"}`}>
-      {isPremiumLayout ? (
-        <SolidSectionsProvider>{cardContent}</SolidSectionsProvider>
-      ) : (
-        cardContent
-      )}
+      {/* Premium profile + listing pages: every section runs edge to edge of the card. */}
+      <FullBleedSectionsProvider enabled={isPremiumLayout || isListingPage}>
+        {isPremiumLayout ? <SolidSectionsProvider>{cardContent}</SolidSectionsProvider> : cardContent}
+      </FullBleedSectionsProvider>
 
       {/* Collaboration Inquiry Modal */}
       <CollaborationInquiryModal
