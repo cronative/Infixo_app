@@ -2525,10 +2525,14 @@ export function LivePreviewCard({
                   subtitle={isPremiumLayout || linksOnlyMode ? "Things I want you to see." : "Links, tickets & websites"}
                   count={`${validLinks.length} ${validLinks.length === 1 ? "link" : "links"}`}
                   colors={aboutColors}
+                  // Premium / links page: every link its own card, folders one expandable card (like the series rows).
+                  divided={!(isPremiumLayout || linksOnlyMode)}
+                  bodyClassName={isPremiumLayout || linksOnlyMode ? "space-y-2 p-2.5" : ""}
                 >
-                  {/* Featured link first (⭐ chip only), then links & folders as divided rows */}
+                  {/* Featured link first (⭐ chip), then links & folders */}
                   {pinnedLink && (
                     <LinkRow
+                      card={isPremiumLayout || linksOnlyMode}
                       link={pinnedLink}
                       isPinned={true}
                       onClick={(e) => {
@@ -2549,6 +2553,7 @@ export function LivePreviewCard({
                         const isExpandedByParam = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("expandGroup") === "1" && curGroupIndex === 0;
                         return (
                           <LinkGroupRow
+                            card={isPremiumLayout || linksOnlyMode}
                             key={item.id}
                             group={item}
                             initiallyOpen={isExpandedByParam}
@@ -2565,6 +2570,7 @@ export function LivePreviewCard({
                       }
                       return (
                         <LinkRow
+                          card={isPremiumLayout || linksOnlyMode}
                           key={item.id}
                           link={item}
                           onClick={(e) => {
@@ -2582,6 +2588,7 @@ export function LivePreviewCard({
                   {hasMoreLinks && (
                     <FooterCta
                       plain={!isPremiumLayout}
+                      boxed={isPremiumLayout}
                       onClick={() => {
                         if (isInformationalMode) {
                           showToast("Opens all creator links ✨");

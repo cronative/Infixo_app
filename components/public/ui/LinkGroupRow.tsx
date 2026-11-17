@@ -15,6 +15,8 @@ export interface LinkGroupRowProps {
   group: CustomLink;
   initiallyOpen?: boolean;
   onLinkClick?: (link: CustomLinkItem) => void;
+  /** One bordered card holding the folder header and, when open, its links. */
+  card?: boolean;
   className?: string;
 }
 
@@ -23,6 +25,7 @@ export function LinkGroupRow({
   group,
   initiallyOpen = false,
   onLinkClick,
+  card = false,
   className = "",
 }: LinkGroupRowProps) {
   const [isOpen, setIsOpen] = useState(initiallyOpen);
@@ -98,7 +101,11 @@ export function LinkGroupRow({
   return (
     <div
       className={`${
-        isOpen ? "border-l-[3px] border-l-[color-mix(in_srgb,var(--accent)_55%,transparent)]" : ""
+        card
+          ? `rounded-[5px] border bg-(--card-bg) ${isOpen ? "border-[color-mix(in_srgb,var(--accent-text)_40%,var(--surface-border))]" : "border-(--surface-border)"}`
+          : isOpen
+            ? "border-l-[3px] border-l-[color-mix(in_srgb,var(--accent)_55%,transparent)]"
+            : ""
       } overflow-hidden transition-all duration-200 shadow-none bg-transparent ${className}`}
     >
       {/* Group Trigger Button (~48px height) */}
@@ -106,7 +113,11 @@ export function LinkGroupRow({
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
-        className={`w-full min-h-[48px] h-[48px] px-3.5 py-2 flex items-center justify-between gap-3 text-left cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-1 select-none bg-[color-mix(in_srgb,var(--accent)_7%,transparent)] hover:bg-[color-mix(in_srgb,var(--accent)_10%,transparent)]`}
+        className={`w-full min-h-[48px] h-[48px] px-3.5 py-2 flex items-center justify-between gap-3 text-left cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-1 select-none ${
+          card
+            ? `min-h-[56px]! h-auto! px-3! ${isOpen ? "bg-[color-mix(in_srgb,var(--accent)_7%,transparent)]" : "bg-transparent"} hover:bg-[color-mix(in_srgb,var(--accent)_5%,transparent)]`
+            : "bg-[color-mix(in_srgb,var(--accent)_7%,transparent)] hover:bg-[color-mix(in_srgb,var(--accent)_10%,transparent)]"
+        }`}
       >
         <div className="flex items-center gap-3 min-w-0 flex-1">
           {/* Folder Icon Tile */}
@@ -157,11 +168,15 @@ export function LinkGroupRow({
             ))}
           </div>
 
-          <ChevronDown
-            className={`h-4 w-4 text-(--text-muted) shrink-0 transition-transform duration-200 ease-out ${
- isOpen ? "rotate-180" : ""
-            }`}
-          />
+          {card ? (
+            <span aria-hidden className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-(--accent-soft) text-(--accent-text)">
+              <ChevronDown className={`h-4 w-4 transition-transform duration-200 ease-out ${isOpen ? "rotate-180" : ""}`} />
+            </span>
+          ) : (
+            <ChevronDown
+              className={`h-4 w-4 text-(--text-muted) shrink-0 transition-transform duration-200 ease-out ${isOpen ? "rotate-180" : ""}`}
+            />
+          )}
         </div>
       </button>
 
@@ -174,7 +189,7 @@ export function LinkGroupRow({
               key={item.id}
               link={item}
               compact
-              className="pl-[52px]"
+              className={card ? "pl-[56px]" : "pl-[52px]"}
               onClick={() => onLinkClick?.(item)}
             />
           ))}

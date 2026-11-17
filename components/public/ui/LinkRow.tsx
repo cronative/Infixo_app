@@ -10,6 +10,8 @@ export interface LinkRowProps {
   isPinned?: boolean;
   /** Smaller row for the links inside an open folder (LinkGroupRow). */
   compact?: boolean;
+  /** Separate bordered card (premium profile / links page), like the series rows. */
+  card?: boolean;
   className?: string;
   onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
@@ -41,7 +43,7 @@ const SIZES = {
  * Divided link row inside a Section: icon tile (thumbnail, favicon, brand icon
  * or globe), 2-line title, ⭐ Featured chip + destination, ↗.
  */
-export function LinkRow({ link, isPinned = false, compact = false, className = "", onClick }: LinkRowProps) {
+export function LinkRow({ link, isPinned = false, compact = false, card = false, className = "", onClick }: LinkRowProps) {
   const url = link.url || "#";
   const platform = getPlatformFromUrl(url);
   const bareDomain = extractBareDomain(url);
@@ -70,6 +72,11 @@ export function LinkRow({ link, isPinned = false, compact = false, className = "
         ? "bg-(--accent-soft) border border-(--surface-border)"
         : platform.bgClass;
   const s = compact ? SIZES.compact : SIZES.regular;
+  const rowCls = card
+    ? `gap-3 min-h-[56px] px-3 py-2.5 rounded-[5px] border ${
+        isFeatured ? "border-[color-mix(in_srgb,var(--accent-text)_40%,var(--surface-border))]" : "border-(--surface-border)"
+      } bg-(--card-bg) text-left transition-colors hover:border-[color-mix(in_srgb,var(--accent-text)_35%,var(--surface-border))] hover:bg-[color-mix(in_srgb,var(--accent)_3%,var(--card-bg))] active:scale-[0.99]`
+    : s.row;
 
   return (
     <a
@@ -78,7 +85,7 @@ export function LinkRow({ link, isPinned = false, compact = false, className = "
       rel="noopener noreferrer"
       aria-label={`${title} – opens ${ariaDestination}`}
       onClick={onClick}
-      className={`group relative flex items-center justify-between ${s.row} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-1 cursor-pointer select-none ${className}`}
+      className={`group relative flex items-center justify-between ${rowCls} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-1 cursor-pointer select-none ${className}`}
     >
       <div className={`flex items-center ${s.inner} min-w-0 flex-1`}>
         <div className={`${s.tile} rounded-[5px] shrink-0 flex items-center justify-center overflow-hidden ${iconBg}`}>
@@ -113,7 +120,13 @@ export function LinkRow({ link, isPinned = false, compact = false, className = "
         </div>
       </div>
 
-      <ArrowUpRight className={`${s.arrow} text-(--icon) shrink-0 group-hover:text-(--icon-active) group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all`} />
+      {card ? (
+        <span aria-hidden className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-(--accent-soft) text-(--accent-text) transition-colors group-hover:bg-[color-mix(in_srgb,var(--accent-text)_18%,var(--accent-soft))]">
+          <ArrowUpRight className="h-4 w-4" />
+        </span>
+      ) : (
+        <ArrowUpRight className={`${s.arrow} text-(--icon) shrink-0 group-hover:text-(--icon-active) group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all`} />
+      )}
     </a>
   );
 }
