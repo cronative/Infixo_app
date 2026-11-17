@@ -522,6 +522,10 @@ export interface MediaKitPackage {
   badge?: string;
   isPopular?: boolean;
   isActive: boolean;
+  /** Saved but not published: hidden from the public media kit and profile. */
+  isDraft?: boolean;
+  /** Collab type, multi-platform deliverables, inclusions, commercial + delivery terms. */
+  details?: import("@/lib/collabPackage").PackageDetails;
 }
 
 export interface PastBrandItem {

@@ -1582,7 +1582,7 @@ export function LivePreviewCard({
 
   const validSetupList = (setupList || []).filter((it) => it.isActive !== false);
 
-  const navActivePackages = (mediaKitPackages || []).filter((p) => p.isActive);
+  const navActivePackages = (mediaKitPackages || []).filter((p) => p.isActive && !p.isDraft);
   const hasMediaKitV2Story = Boolean(
     mediaKitSettings?.intro?.trim() ||
     mediaKitSettings?.nowMaking?.trim() ||
@@ -2620,7 +2620,7 @@ export function LivePreviewCard({
               creatorDisplayName={profile.displayName || profile.username}
               creatorEmail={profile.email}
               creatorWhatsapp={(profile as any).whatsappNumber}
-              packages={(mediaKitPackages || []).filter((p) => p.isActive !== false)}
+              packages={(mediaKitPackages || []).filter((p) => p.isActive !== false && !p.isDraft)}
               preselectedPackage={selectedEnquiryPackage}
               settings={mediaKitSettings}
               brandPrimary="var(--accent)"
@@ -2630,7 +2630,7 @@ export function LivePreviewCard({
 
         {/* 6b. Collaboration Packages Section (Restored classic Collab tab design) */}
         {!isListingPage && isPremiumLayout && (() => {
-          const activePackages = (mediaKitPackages || []).filter((p) => p.isActive);
+          const activePackages = (mediaKitPackages || []).filter((p) => p.isActive && !p.isDraft);
 
           // All layouts: About-style sections (Audience → Packages → Reviews → Custom).
             const showPackages = effectiveVisibilitySettings.showCollabGigs !== false;
@@ -2811,7 +2811,7 @@ export function LivePreviewCard({
         creatorEmail={profile.email}
         creatorName={profile.displayName || "Creator"}
         creatorUsername={profile.username || "creator"}
-        packages={mediaKitPackages}
+        packages={(mediaKitPackages || []).filter((p) => !p.isDraft)}
         selectedPackageTitle={selectedPackageForInquiry?.title}
       />
 

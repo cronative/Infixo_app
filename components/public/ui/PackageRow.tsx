@@ -18,7 +18,9 @@ const UNIT_LABELS: Record<string, string> = {
 
 /** "₹12,000" / "From ₹5,000" / "Contact for pricing", plus its "/ reel" unit. */
 export function packagePrice(pkg: MediaKitPackage) {
+  if (pkg.details?.priceVisibility === "quote") return { value: "Request quote", unit: "", isMonthly: false };
   const raw = (pkg.price || "").trim().replace(/^₹\s*/, "");
+  if ((!raw || raw === "0") && pkg.details?.collabType === "barter") return { value: "Barter", unit: "", isMonthly: false };
   const numeric = /^[\d,]+(\.\d+)?$/.test(raw) ? Number(raw.replace(/,/g, "")) : NaN;
   const value = !raw ? "Contact for pricing" : Number.isFinite(numeric) ? `₹${numeric.toLocaleString("en-IN")}` : `₹${raw}`;
   const isMonthly = pkg.title.toLowerCase().includes("monthly");

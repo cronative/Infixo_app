@@ -7,6 +7,7 @@ import { getPlanQuota } from "@/services/subscriptionLimits";
 import { getCreatorPlanKey } from "@/lib/planServer";
 import { getPlanLimit } from "@/config/plans";
 import type { BarterPolicy, CommercialTerms } from "@/types";
+import { sanitizePackageDetails } from "@/lib/collabPackage";
 
 let mediaKitTablesEnsured = false;
 
@@ -80,6 +81,9 @@ async function ensureMediaKitTables() {
     try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN is_starting_price TINYINT(1) DEFAULT 0"); } catch {}
     try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN story_pitch VARCHAR(120) DEFAULT NULL"); } catch {}
     try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN category VARCHAR(100) DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN description TEXT DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN package_details JSON DEFAULT NULL"); } catch {}
+    try { await db.query("ALTER TABLE mediakit_gigs ADD COLUMN is_draft TINYINT(1) DEFAULT 0"); } catch {}
 
     mediaKitTablesEnsured = true;
   } catch (e) {
@@ -229,7 +233,8 @@ export async function GET(req: Request) {
               package_name AS packageName, turnaround_days AS turnaroundDays, 
               deliverables, badge, is_popular AS isPopular, is_active AS isActive,
               price_unit AS priceUnit, is_starting_price AS isStartingPrice,
-              story_pitch AS storyPitch, category
+              story_pitch AS storyPitch, category, description,
+              package_details AS packageDetails, is_draft AS isDraft
        FROM mediakit_gigs 
        WHERE creator_id = ? OR (email = ? AND (creator_id IS NULL OR creator_id = ''))
        ORDER BY created_at ASC`,
@@ -261,8 +266,19 @@ export async function GET(req: Request) {
         isActive: Boolean(row.isActive),
         priceUnit: row.priceUnit || (row.title?.toLowerCase().includes("monthly") ? "per_month" : "per_package"),
         isStartingPrice: Boolean(row.isStartingPrice),
+        description: row.description || undefined,
+        isDraft: Boolean(row.isDraft),
+        details:
+          sanitizePackageDetails(typeof row.packageDetails === "string" ? safeJson(row.packageDetails) : row.packageDetails) ||
+          undefined,
       };
     });
+
+    // Drafts are visible only to their creator (dashboard), never on public pages.
+    const viewer = getSessionFromRequest(req);
+    if (!viewer || viewer.creatorId !== resolvedCreatorId) {
+      for (let i = packages.length - 1; i >= 0; i--) if (packages[i].isDraft) packages.splice(i, 1);
+    }
 
     // Public profile: collab packages beyond the plan limit are hidden (kept in the dashboard).
     if (resolvedUsernameParam) {
@@ -447,11 +463,15 @@ export async function POST(req: Request) {
         const platform = pkg.platform || "instagram";
         const storyPitch = pkg.storyPitch ? String(pkg.storyPitch).trim().slice(0, 120) : null;
         const category = pkg.category ? String(pkg.category).trim().slice(0, 100) : null;
+        const description = pkg.description ? String(pkg.description).trim().slice(0, 1000) : null;
+        const cleanDetails = sanitizePackageDetails(pkg.details);
+        const packageDetails = cleanDetails ? JSON.stringify(cleanDetails) : null;
+        const isDraft = pkg.isDraft ? 1 : 0;
 
         await db.query(
           `INSERT INTO mediakit_gigs 
-             (id, creator_id, email, title, platform, price, min_price, max_price, package_name, turnaround_days, deliverables, badge, is_popular, is_active, price_unit, is_starting_price, story_pitch, category)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             (id, creator_id, email, title, platform, price, min_price, max_price, package_name, turnaround_days, deliverables, badge, is_popular, is_active, price_unit, is_starting_price, story_pitch, category, description, package_details, is_draft)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
            ON DUPLICATE KEY UPDATE
              creator_id = VALUES(creator_id),
              email = VALUES(email),
@@ -469,7 +489,10 @@ export async function POST(req: Request) {
              price_unit = VALUES(price_unit),
              is_starting_price = VALUES(is_starting_price),
              story_pitch = VALUES(story_pitch),
-             category = VALUES(category)`,
+             category = VALUES(category),
+             description = VALUES(description),
+             package_details = VALUES(package_details),
+             is_draft = VALUES(is_draft)`,
           [
             gigId,
             resolvedCreatorId,
@@ -489,6 +512,9 @@ export async function POST(req: Request) {
             isStartingPrice,
             storyPitch,
             category,
+            description,
+            packageDetails,
+            isDraft,
           ]
         );
       }

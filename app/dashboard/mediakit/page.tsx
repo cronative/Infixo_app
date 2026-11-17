@@ -2,14 +2,10 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
-import Link from "next/link";
 import {
   Briefcase,
   Plus,
   Trash2,
-  Check,
-  X,
-  Film,
   MoreVertical,
   Pencil,
   Eye,
@@ -22,13 +18,8 @@ import {
   MessageCircle,
   Gift,
   Share2,
-  Download,
   FileText,
   Loader2,
-  Calendar,
-  List,
-  Tag,
-  Info,
 } from "lucide-react";
 import {
   InstagramIcon,
@@ -46,7 +37,6 @@ import {
   MediaKitSettings,
   CommercialTerms,
   MEDIAKIT_PROMISE_PRESETS,
-  MEDIAKIT_PACKAGE_CATEGORIES,
 } from "@/types";
 import { authRepository } from "@/repositories/localRepository";
 import { PageContainer } from "@/components/dashboard/PageContainer";
@@ -55,6 +45,8 @@ import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import { formatFans } from "@/lib/creatorEra";
 import { SectionCard } from "@/components/dashboard/SectionCard";
 import { CommercialTermsCard } from "@/components/mediakit/CommercialTermsCard";
+import { PackageForm } from "@/components/mediakit/PackageForm";
+import { formatPackagePrice } from "@/components/mediakit/PackageCard";
 import { StatCard, StatCardGrid } from "@/components/dashboard/StatCard";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { PDF_PREPARING_LABEL, useMediaKitPdf } from "@/hooks/useMediaKitPdf";
@@ -63,257 +55,7 @@ import { LimitReachedModal } from "@/components/ui/LimitReachedModal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { Modal, ModalBody, ModalFooter } from "@/components/ui/Modal";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { formatCount } from "@/utils/format";
 import { OverLimitBadge } from "@/components/ui/OverLimitBadge";
-
-const COLLABORATION_TYPES = [
-  "Instagram Reel",
-  "Instagram Story",
-  "Instagram Post / Carousel",
-  "Instagram Bundle (Reel + Stories)",
-  "YouTube Dedicated Video",
-  "YouTube Video Integration",
-  "YouTube Shorts",
-  "UGC Content ⭐",
-  "Cafe / Restaurant Visit ⭐",
-  "Store / Product Visit ⭐",
-  "Event Appearance / Coverage ⭐",
-  "Multi-Platform Campaign",
-  "Monthly Brand Retainer",
-  "Other",
-] as const;
-
-// 10 Tailored Deliverable Suggestion Chips for all Collaboration Types
-const DELIVERABLE_SUGGESTIONS: Record<string, string[]> = {
-  "Instagram Reel": [
-    "1x 30–60s Dedicated Promo Reel",
-    "On-site Cafe / Restaurant Visit & Food Tasting",
-    "Store / Shop Walkthrough & Product Showcase",
-    "Store / Cafe Location & Map Pin Tag",
-    "Brand Collaborator Tag on Post",
-    "Exclusive Discount Code in Caption",
-    "Direct Promo Link in Bio (24 Hours)",
-    "1x Companion Instagram Story with Link",
-    "Pinned Comment with Tracked Link",
-    "Raw Video Footage Access for Brand Ads",
-  ],
-  "Instagram Story": [
-    "3x Sequential Story Slides with Direct Swipe/Link",
-    "Cafe / Store Location Map Tag",
-    "Brand Mention Tag @BrandName",
-    "Exclusive Discount Promo Code Display",
-    "Interactive Poll / Question Sticker Engagement",
-    "Story Saved to Creator's Profile Highlights",
-    "Raw Story Analytics Screenshot Delivery",
-    "Call-To-Action (CTA) Voiceover",
-    "High-Resolution Product Closeups",
-    "24-Hour Active Link Guarantee",
-  ],
-  "Instagram Post / Carousel": [
-    "1x High-Quality Feed Carousel (Up to 10 Slides)",
-    "In-depth Product Showcase & Feature Highlights",
-    "Collaborator Co-Author Tag on Post",
-    "Brand Mention in First Line of Caption",
-    "Direct Tracked Promo Link in Bio (48 Hours)",
-    "Exclusive Discount Code for Followers",
-    "1x Supporting Story Slide with Swipe Link",
-    "Pinned Comment with Call-To-Action",
-    "High-Res Photography for Brand Digital Reposting",
-    "Engagement & Reach Analytics Delivery",
-  ],
-  "Instagram Bundle (Reel + Stories)": [
-    "1x Dedicated 30–60s Instagram Reel",
-    "3x Companion Stories with Direct Links",
-    "Collaborator Co-Author Tag on Reel",
-    "Store / Product Pin & Map Location Tag",
-    "Promo Code Highlight in Caption & Stories",
-    "Bio Link Active for 7 Days",
-    "Interactive Sticker / Poll on Story",
-    "Raw Footage Access for Brand Paid Ads",
-    "Pinned Comment with Tracked Link",
-    "Full Insights & Reach Screenshot Report",
-  ],
-  "Instagram Bundle": [
-    "3x Targeted Instagram Reels",
-    "3x Companion Stories with Direct Links",
-    "Store Visit + Unboxing + Dedicated Review",
-    "Collaborator Co-Author Tag on all posts",
-    "45 Days Digital Usage & Whitelisting Rights",
-    "Bio Promo Link for Full Campaign Duration",
-    "Product / Store Tagging in Reel & Stories",
-    "Pinned Comments with Promo Codes",
-    "RAW High-Res Footage for Performance Ads",
-    "Weekly Performance & Engagement Reporting",
-  ],
-  "YouTube Dedicated Video": [
-    "1x Dedicated 8–15 Min Product Breakdown Video",
-    "First Link in Description & Pinned Comment",
-    "Verbal CTA with Discount Promo Code",
-    "Custom Logo Watermark & Graphic Overlay",
-    "YouTube Community Post & Story Shoutout",
-    "No Competitor Brand Mentions in Video",
-    "Permanent Video Listing (No Expiry)",
-    "Full Commercial Rights & Ad Whitelisting",
-    "Unboxing + In-Depth Feature Review",
-    "Full Audience Viewership Analytics",
-  ],
-  "YouTube Video Integration": [
-    "60–90s Dedicated Product Segment in Main Video",
-    "Description Top Link & Pinned Comment",
-    "Verbal Product Call-To-Action",
-    "On-Screen Brand Logo Overlay",
-    "Companion YouTube Shorts Clip",
-    "Permanent Placement in Video",
-    "No Category Competitor Sponsorship",
-    "Exclusive Discount Code for Viewers",
-    "High-CTR Thumbnail Feature Option",
-    "Full Commercial Usage Rights (60 Days)",
-  ],
-  "YouTube Shorts": [
-    "1x 30–60s High-Retention YouTube Short",
-    "Pinned Comment with Direct Website Link",
-    "Product Tagging & Shopping Link",
-    "Sound Licensing & Custom BGM",
-    "Cross-Promotion on Instagram Reels",
-    "30 Days Ad Usage & Whitelisting Rights",
-    "High-Impact Visual Hook Placement",
-    "Permanent Short Listing on Channel",
-    "Verbal CTA & Discount Code",
-    "Audience Demographic Report",
-  ],
-  "UGC Content ⭐": [
-    "Raw 9:16 Vertical Video for Brand Meta/TikTok Ads",
-    "Authentic Problem-Solution Hook (3 Variations)",
-    "High-Energy Unboxing & First Impression",
-    "Voiceover + Dynamic Captions Included",
-    "Direct-to-Camera Testimonial & Review",
-    "Multiple B-Roll Angles & Closeups",
-    "30 Days Digital Paid Ads Usage Rights",
-    "Full Commercial Rights (Whitelisting Ready)",
-    "Color Graded 4K Master Video File",
-    "Fast 48–72h Delivery Turnaround",
-  ],
-  "Cafe / Restaurant Visit ⭐": [
-    "On-Site Visit & Food Tasting Experience",
-    "1x Aesthetic Ambience & Food Reel",
-    "3x Real-Time Story Highlights with Location Tag",
-    "Google Maps / Zomato Review & Pin Tag",
-    "Exclusive Creator Menu Item / Discount Shoutout",
-    "Chef / Staff Interaction & Signature Dish Showcase",
-    "High-Res Food & Ambience Photography for Cafe",
-    "Co-Author Collaboration Tag on Instagram",
-    "Direct Geo-Tagging on All Posts",
-    "Story Added to Dedicated Food / Cafe Highlights",
-  ],
-  "Store / Product Visit ⭐": [
-    "In-Store Walkthrough & Shopping Experience",
-    "1x Dedicated Try-On / Store Tour Reel",
-    "Live Store Location & Address Tag in Bio/Stories",
-    "Staff & Collection Interaction Highlights",
-    "Special In-Store Discount Code for Followers",
-    "3x Sequential Stories with Swipe/Location Tag",
-    "High-Res In-Store Stills for Brand Use",
-    "Collaborator Tag with Brand Account",
-    "Pinned Comment with Store Landmark Directions",
-    "Post-Visit Footfall & Reach Insights",
-  ],
-  "Event Appearance / Coverage ⭐": [
-    "Creator VIP Event / Red Carpet Attendance",
-    "Live On-Ground Story Coverage (5+ Slides)",
-    "1x Event Highlights & Experience Reel",
-    "Interactive Fan / Attendee Interaction",
-    "Keynote / Panel Appearance or Ribbon Cutting",
-    "Event Location & Official Hashtag Co-Promotion",
-    "Pre-Event Announcement Story Shoutout",
-    "High-Resolution Event Photos & Media Access",
-    "Co-Author Tag on All Event Content",
-    "Full Event Day Coverage Insights",
-  ],
-  "Multi-Platform Campaign": [
-    "Cross-Platform Campaign (Reels + Shorts + Stories)",
-    "Unified Brand Messaging across Platforms",
-    "Permanent Bio Link on Instagram & YouTube",
-    "60 Days Digital Usage & Ad Rights",
-    "Product Placement in 3+ Videos",
-    "Collaborator Co-Author Tag on Instagram",
-    "Dedicated Story Highlights & Posts",
-    "Raw Content Clips for Performance Ads",
-    "Comprehensive Cross-Platform Analytics Report",
-    "Priority Fast Turnaround Delivery",
-  ],
-  "Podcast Integration": [
-    "60s Host-Read Audio Segment & Shoutout",
-    "Logo & Link in Podcast Episode Notes",
-    "Video Podcast On-Screen Banner Overlay",
-    "Short Clip Excerpt for Reels & TikTok",
-    "Exclusive Viewer / Listener Discount Code",
-    "Permanent Audio Placement in Episode",
-    "Social Media Promo Post across Channels",
-    "Host Product Testimonial & Endorsement",
-    "Category Exclusivity for Podcast Episode",
-    "Listener Impression & Download Analytics",
-  ],
-  "Podcast Episode Integration": [
-    "60s Host-Read Audio Segment & Shoutout",
-    "Logo & Link in Podcast Episode Notes",
-    "Video Podcast On-Screen Banner Overlay",
-    "Short Clip Excerpt for Reels & TikTok",
-    "Exclusive Viewer / Listener Discount Code",
-    "Permanent Audio Placement in Episode",
-    "Social Media Promo Post across Channels",
-    "Host Product Testimonial & Endorsement",
-    "Category Exclusivity for Podcast Episode",
-    "Listener Impression & Download Analytics",
-  ],
-  "Monthly Brand Retainer": [
-    "4x Dedicated Reels / Shorts per Month",
-    "8x High-Converting Companion Stories",
-    "Official Brand Ambassador Title & Tag",
-    "Permanent Bio Link for Full Month Duration",
-    "Full Paid Ad Whitelisting & Digital Usage Rights",
-    "Monthly Strategy & Content Planning Sync",
-    "Category Exclusivity (No Competitor Collaborations)",
-    "Co-Author Collaboration Tag on All Assets",
-    "Raw Footage Access for Brand Marketing",
-    "Comprehensive Monthly Analytics & ROI Report",
-  ],
-  "Monthly Creator Retainer": [
-    "4x–8x Monthly Dedicated Content Deliverables",
-    "Exclusive Brand Ambassador Status & Tag",
-    "Permanent Bio Link Placement (30 Days)",
-    "Raw High-Res Footage Access for Performance Ads",
-    "Full Commercial & Whitelisting Rights (90 Days)",
-    "Monthly Strategy Sync & Campaign Reporting",
-    "First Rights to New Series / Feature Placements",
-    "Category Exclusivity across Creator's Channels",
-    "Co-Author Collaboration Tag on All Reels",
-    "Priority Content Turnaround & Fast Edits",
-  ],
-  "Series Title Sponsorship": [
-    "Main Series Title Sponsor ('Presented by Brand')",
-    "15s Pre-Roll & Post-Roll Sponsor Billboard",
-    "Brand Logo on All Episode Posters & Cards",
-    "Product Integration inside Series Storyline",
-    "Dedicated Sponsored Finale / Special Episode",
-    "Custom Promo Link in Every Episode Description",
-    "Category Exclusivity (Zero Competitor Ads)",
-    "Social Media Co-Promotion across Reels & Shorts",
-    "Closing Credits Special Thanks & Logo",
-    "Full Rights to Series Stills & Promo Clips",
-  ],
-  "Other": [
-    "Custom Tailored Content Deliverable",
-    "Dedicated Brand Storytelling & Creative Concept",
-    "Collaborator Tag & Brand Co-Authorship",
-    "Direct Trackable Link in Bio",
-    "Exclusive Audience Promo Code",
-    "Full Commercial Rights & Digital Usage",
-    "Raw Asset Files & High-Res Footage",
-    "Companion Stories with Engagement Stickers",
-    "Category Exclusivity for Campaign",
-    "Detailed Performance & Engagement Insights",
-  ],
-};
 
 const SERVICE_EXAMPLES = [
   {
@@ -390,25 +132,6 @@ const SERVICE_EXAMPLES = [
   },
 ];
 
-function formatCurrencyString(rawStr: string): string {
-  if (!rawStr) return "";
-  const trimmed = rawStr.trim();
-  if (trimmed.startsWith("₹")) return trimmed;
-  const num = parseInt(trimmed.replace(/[^0-9]/g, ""), 10);
-  if (isNaN(num)) return trimmed;
-  return `₹${num.toLocaleString("en-IN")}`;
-}
-
-function formatDeliveryDays(days: number): string {
-  if (!days || days <= 1) return "1-day delivery";
-  return `${days}-day delivery`;
-}
-
-function formatPriceClean(price: string): string {
-  if (!price) return "Contact for pricing";
-  return price.replace(/\s*–\s*/g, "–").replace(/\s*-\s*/g, "–");
-}
-
 export default function DashboardMediaKitPage() {
   const { profile, subscription, socials, totalAudience } = useCreator();
   const { showToast } = useToast();
@@ -425,21 +148,8 @@ export default function DashboardMediaKitPage() {
   const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
   const [editingPkgId, setEditingPkgId] = useState<string | null>(null);
 
-  // Form inputs for package modal
-  const [formTitle, setFormTitle] = useState("");
-  const [formCategory, setFormCategory] = useState<string>("");
-  const [formStoryPitch, setFormStoryPitch] = useState<string>("");
-  const [formPlatform, setFormPlatform] = useState<string>("Instagram Reel");
-  const [customPlatform, setCustomPlatform] = useState("");
-  const [formMinPrice, setFormMinPrice] = useState("");
-  const [formMaxPrice, setFormMaxPrice] = useState("");
-  const [formPackageName, setFormPackageName] = useState("");
-  const [formTurnaround, setFormTurnaround] = useState<number>(2);
-  const [formPriceUnit, setFormPriceUnit] = useState<string>("per_package");
-  const [formIsStartingPrice, setFormIsStartingPrice] = useState(false);
-  const [formDeliverableInput, setFormDeliverableInput] = useState("");
-  const [formDeliverables, setFormDeliverables] = useState<string[]>([]);
-  const [showAllSuggestions, setShowAllSuggestions] = useState(false);
+  // Package being edited / template to start from (PackageForm keeps its own field state).
+  const [formInitial, setFormInitial] = useState<MediaKitPackage | null>(null);
 
   // "About you for brands" Media Kit v2 fields
   const [brandIntro, setBrandIntro] = useState("");
@@ -638,55 +348,14 @@ export default function DashboardMediaKitPage() {
       return;
     }
     setEditingPkgId(null);
-    setFormTitle("");
-    setFormCategory("");
-    setFormStoryPitch("");
-    setFormPlatform("Instagram Reel");
-    setCustomPlatform("");
-    setFormMinPrice("");
-    setFormMaxPrice("");
-    setFormPackageName("");
-    setFormTurnaround(2);
-    setFormPriceUnit("per_package");
-    setFormIsStartingPrice(false);
-    setFormDeliverableInput("");
-    setFormDeliverables([]);
-    setShowAllSuggestions(false);
+    setFormInitial(null);
     setIsModalOpen(true);
   };
 
   const handleOpenEditModal = (pkg: MediaKitPackage) => {
     setActiveMenuId(null);
     setEditingPkgId(pkg.id);
-    setFormTitle(pkg.title);
-    setFormCategory(pkg.category || "");
-    setFormStoryPitch(pkg.storyPitch || "");
-    const isStandard = (COLLABORATION_TYPES as readonly string[]).includes(pkg.platform) && pkg.platform !== "Other";
-    if (isStandard) {
-      setFormPlatform(pkg.platform);
-      setCustomPlatform("");
-    } else {
-      setFormPlatform("Other");
-      setCustomPlatform(pkg.platform === "Other" ? "" : pkg.platform);
-    }
-    if (pkg.minPrice) {
-      setFormMinPrice(pkg.minPrice);
-      setFormMaxPrice(pkg.maxPrice || "");
-    } else if (pkg.price.includes("–") || pkg.price.includes("-")) {
-      const parts = pkg.price.split(/[–-]/).map((s) => s.trim());
-      setFormMinPrice(parts[0] || "₹0");
-      setFormMaxPrice(parts[1] || "");
-    } else {
-      setFormMinPrice(pkg.price);
-      setFormMaxPrice("");
-    }
-    setFormPackageName(pkg.packageName || pkg.badge || "");
-    setFormTurnaround(pkg.turnaroundDays);
-    setFormPriceUnit(pkg.priceUnit || (pkg.title.toLowerCase().includes("monthly") ? "per_month" : "per_package"));
-    setFormIsStartingPrice(Boolean(pkg.isStartingPrice));
-    setFormDeliverableInput("");
-    setFormDeliverables([...pkg.deliverables]);
-    setShowAllSuggestions(false);
+    setFormInitial(pkg);
     setIsModalOpen(true);
   };
 
@@ -697,112 +366,69 @@ export default function DashboardMediaKitPage() {
       return;
     }
     setEditingPkgId(null);
-    setFormTitle(template.title);
-    setFormCategory("");
-    setFormStoryPitch(template.description ? template.description.slice(0, 120) : "");
-    setFormPlatform(template.platform);
-    setCustomPlatform("");
-    setFormMinPrice(template.minPrice);
-    setFormMaxPrice(template.maxPrice);
-    setFormPackageName(template.badge);
-    setFormTurnaround(template.turnaroundDays);
-    setFormPriceUnit(template.title.toLowerCase().includes("monthly") ? "per_month" : "per_package");
-    setFormIsStartingPrice(false);
-    setFormDeliverables([...template.deliverables]);
-    setFormDeliverableInput("");
-    setShowAllSuggestions(false);
+    setFormInitial({
+      id: "",
+      title: template.title,
+      description: template.description,
+      platform: template.platform,
+      price: template.minPrice,
+      minPrice: template.minPrice,
+      turnaroundDays: template.turnaroundDays,
+      deliverables: [...template.deliverables],
+      isActive: true,
+    });
     setIsExamplesModalOpen(false);
     setIsModalOpen(true);
   };
 
-  const handleAddDeliverable = () => {
-    if (!formDeliverableInput.trim()) return;
-    setFormDeliverables([...formDeliverables, formDeliverableInput.trim()]);
-    setFormDeliverableInput("");
-  };
-
-  const handleRemoveDeliverable = (index: number) => {
-    setFormDeliverables(formDeliverables.filter((_, i) => i !== index));
-  };
-
-  const handleSavePackage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formTitle.trim() || !formMinPrice.trim()) {
-      showToast("Please enter a package title and starting price", "error");
-      return;
-    }
-
-    if (!formCategory.trim()) {
-      showToast("Please select a category", "error");
-      return;
-    }
-
-    if (formPlatform === "Other" && !customPlatform.trim()) {
-      showToast("Please enter a custom collaboration type", "error");
-      return;
-    }
-
-    const resolvedPlatform = formPlatform === "Other" ? customPlatform.trim() : formPlatform;
-
-    const minStr = formatCurrencyString(formMinPrice);
-    const maxStr = formMaxPrice.trim() ? formatCurrencyString(formMaxPrice) : "";
-    const formattedPrice = maxStr ? `${minStr}–${maxStr}` : minStr;
-    const resolvedBadge = formPackageName.trim() || undefined;
-    const resolvedIsPopular = formPackageName.toLowerCase().includes("popular");
-    const resolvedStoryPitch = formStoryPitch.trim().slice(0, 120) || undefined;
-    const resolvedCategory = formCategory.trim();
-
-    let updatedPkgs: MediaKitPackage[] = [];
-    if (editingPkgId) {
-      updatedPkgs = packages.map((p) =>
-        p.id === editingPkgId
-          ? {
-            ...p,
-            title: formTitle.trim(),
-            category: resolvedCategory,
-            storyPitch: resolvedStoryPitch,
-            platform: resolvedPlatform,
-            price: formattedPrice,
-            minPrice: minStr,
-            maxPrice: maxStr || undefined,
-            packageName: formPackageName.trim() || undefined,
-            turnaroundDays: Number(formTurnaround) || 2,
-            deliverables: formDeliverables.length > 0 ? formDeliverables : ["Product Integration"],
-            badge: resolvedBadge,
-            isPopular: resolvedIsPopular,
-            priceUnit: formPriceUnit,
-            isStartingPrice: formIsStartingPrice,
-          }
-          : p
-      );
-    } else {
-      const newPkg: MediaKitPackage = {
-        id: `pkg_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-        title: formTitle.trim(),
-        category: resolvedCategory,
-        storyPitch: resolvedStoryPitch,
-        platform: resolvedPlatform,
-        price: formattedPrice,
-        minPrice: minStr,
-        maxPrice: maxStr || undefined,
-        packageName: formPackageName.trim() || undefined,
-        turnaroundDays: Number(formTurnaround) || 2,
-        deliverables: formDeliverables.length > 0 ? formDeliverables : ["Product Integration"],
-        badge: resolvedBadge,
-        isPopular: resolvedIsPopular,
-        priceUnit: formPriceUnit,
-        isStartingPrice: formIsStartingPrice,
-        isActive: true,
-      };
-      updatedPkgs = [newPkg, ...packages];
-    }
-
-    setPackages(updatedPkgs);
+  const persistPackages = async (updated: MediaKitPackage[]) => {
+    setPackages(updated);
     if (activeEmail) {
-      await MediaKitService.saveToDb(activeEmail, settings, updatedPkgs, activeCreatorId);
+      await MediaKitService.saveToDb(activeEmail, settings, updated, activeCreatorId);
     }
-    showToast(editingPkgId ? "Package updated" : "Package created");
+  };
+
+  const newPackageId = () => `pkg_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+
+  /** Save from the package form: a draft stays hidden from brands; publish makes it live. */
+  const handleSubmitPackage = async (pkg: MediaKitPackage, mode: "draft" | "publish") => {
+    const next: MediaKitPackage = {
+      ...pkg,
+      id: editingPkgId || newPackageId(),
+      isDraft: mode === "draft",
+      isActive: mode === "publish" ? true : pkg.isActive,
+    };
+    const updated = editingPkgId ? packages.map((p) => (p.id === editingPkgId ? next : p)) : [next, ...packages];
+    await persistPackages(updated);
+    showToast(
+      mode === "draft"
+        ? "Draft saved — brands won't see it until you publish"
+        : editingPkgId
+          ? "Package updated"
+          : "Package published on your media kit 🎉"
+    );
     setIsModalOpen(false);
+  };
+
+  const handleDuplicatePackage = async (pkg: MediaKitPackage) => {
+    setActiveMenuId(null);
+    setMenuAnchor(null);
+    if (!canCreateGig(packages.length, subscription?.planKey)) {
+      setIsLimitModalOpen(true);
+      return;
+    }
+    const copy: MediaKitPackage = { ...pkg, id: newPackageId(), title: `${pkg.title} (copy)`.slice(0, 80), isDraft: true, isPopular: false };
+    const index = packages.findIndex((p) => p.id === pkg.id);
+    const updated = [...packages.slice(0, index + 1), copy, ...packages.slice(index + 1)];
+    await persistPackages(updated);
+    showToast("Duplicated as a draft");
+  };
+
+  const handlePublishPackage = async (pkg: MediaKitPackage) => {
+    setActiveMenuId(null);
+    setMenuAnchor(null);
+    await persistPackages(packages.map((p) => (p.id === pkg.id ? { ...p, isDraft: false, isActive: true } : p)));
+    showToast("Package published on your media kit 🎉");
   };
 
   const handleTogglePackageActive = async (id: string, currentActive: boolean) => {
@@ -1309,7 +935,7 @@ export default function DashboardMediaKitPage() {
                 </thead>
                 <tbody className="divide-y divide-[#ECECF0]">
                   {packages.map((pkg) => {
-                    const displayPrice = formatPriceClean(pkg.price);
+                    const displayPrice = formatPackagePrice(pkg);
                     const turnaroundText = pkg.turnaroundDays ? `${pkg.turnaroundDays} ${pkg.turnaroundDays === 1 ? "day" : "days"}` : "3 days";
                     const badgeText = pkg.packageName || pkg.badge;
 
@@ -1375,7 +1001,12 @@ export default function DashboardMediaKitPage() {
 
                         {/* 6. Status */}
                         <td className="py-4 px-4 align-top whitespace-nowrap">
-                          {pkg.isActive ? (
+                          {pkg.isDraft ? (
+                            <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#FFFBEB] px-2.5 py-1 text-xs font-semibold text-[#B45309]">
+                              <span className="h-1.5 w-1.5 rounded-full bg-[#f59e0b]" />
+                              Draft
+                            </span>
+                          ) : pkg.isActive ? (
                             <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#EAF7F0] px-2.5 py-1 text-xs font-semibold text-[#047857]">
                               <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
                               Active
@@ -1436,7 +1067,7 @@ export default function DashboardMediaKitPage() {
             {/* Mobile Cards View (NO IMAGE) */}
             <div className="block md:hidden space-y-3">
               {packages.map((pkg) => {
-                const displayPrice = formatPriceClean(pkg.price);
+                const displayPrice = formatPackagePrice(pkg);
                 const turnaroundText = pkg.turnaroundDays ? `${pkg.turnaroundDays} ${pkg.turnaroundDays === 1 ? "day" : "days"}` : "3 days";
                 const badgeText = pkg.packageName || pkg.badge;
 
@@ -1455,7 +1086,12 @@ export default function DashboardMediaKitPage() {
                         </p>
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
-                        {pkg.isActive ? (
+                        {pkg.isDraft ? (
+                            <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#FFFBEB] px-2.5 py-1 text-xs font-semibold text-[#B45309]">
+                              <span className="h-1.5 w-1.5 rounded-full bg-[#f59e0b]" />
+                              Draft
+                            </span>
+                          ) : pkg.isActive ? (
                           <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#EAF7F0] px-2 py-0.5 text-[11px] font-semibold text-[#047857]">
                             <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
                             Active
@@ -1556,6 +1192,26 @@ export default function DashboardMediaKitPage() {
             >
               <Copy className="h-3.5 w-3.5 text-[#6B6B76]" />
               <span>Share Link</span>
+            </button>
+
+            {activeMenuPkg.isDraft && (
+              <button
+                type="button"
+                onClick={() => handlePublishPackage(activeMenuPkg)}
+                className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-[13px] font-semibold text-[#7A2253] hover:bg-[#F7EEF2] transition-colors cursor-pointer"
+              >
+                <Eye className="h-3.5 w-3.5" />
+                <span>Publish</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={() => handleDuplicatePackage(activeMenuPkg)}
+              className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-[13px] font-medium text-[#18181B] hover:bg-[#FAFAFB] transition-colors cursor-pointer"
+            >
+              <Copy className="h-3.5 w-3.5 text-[#6B6B76]" />
+              <span>Duplicate</span>
             </button>
 
             <button
@@ -1781,398 +1437,15 @@ export default function DashboardMediaKitPage() {
         </SectionCard>
       </div>
 
-      {/* 5. CREATE / EDIT SERVICE MODAL */}
-      <Modal
+      {/* 5. CREATE / EDIT COLLAB PACKAGE */}
+      <PackageForm
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        size="lg"
-        title={editingPkgId ? "Edit Collab Package" : "Create collab package"}
-        description="Set up your promotional reel package, deliverables, and rates for brands, cafes, and shops."
-        icon={<Briefcase className="h-4 w-4" />}
-      >
-        <form id="service-form" onSubmit={handleSavePackage} className="flex flex-col flex-1 min-h-0">
-          <ModalBody className="p-4 sm:p-5 space-y-4 text-left">
-            {/* Package title & Category */}
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
-              <div className="sm:col-span-7 space-y-1">
-                <label className="block text-[13px] font-medium text-[#18181B]">
-                  Package title <span className="text-[#C2414B]">*</span>
-                </label>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
-                    <FileText className="h-4 w-4" />
-                  </div>
-                  <input
-                    type="text"
-                    value={formTitle}
-                    onChange={(e) => setFormTitle(e.target.value)}
-                    placeholder="e.g., Cafe Visit Reel, Brand Promo Reel, or Store Launch"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="sm:col-span-5 space-y-1">
-                <label className="block text-[13px] font-medium text-[#18181B]">
-                  Category <span className="text-[#C2414B]">*</span>
-                </label>
-                <select
-                  value={formCategory}
-                  onChange={(e) => setFormCategory(e.target.value)}
-                  required
-                  className="w-full h-10 px-3 rounded-[5px] border border-[#ECECF0] bg-white text-xs sm:text-sm font-medium text-[#18181B] focus:border-[#7A2253] outline-none cursor-pointer"
-                >
-                  <option value="" disabled>
-                    Select a category...
-                  </option>
-                  {MEDIAKIT_PACKAGE_CATEGORIES.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Story Pitch (120 chars) */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label className="block text-[13px] font-medium text-[#18181B]">
-                  The story I&apos;d tell for you <span className="text-[#6B6B76] font-normal">(Optional)</span>
-                </label>
-                <span className="text-[10px] font-medium text-[#6B6B76]">{formStoryPitch.length}/120</span>
-              </div>
-              <input
-                type="text"
-                maxLength={120}
-                value={formStoryPitch}
-                onChange={(e) => setFormStoryPitch(e.target.value.slice(0, 120))}
-                placeholder="e.g., A first-person reel weaving your product into my morning routine"
-                className="w-full h-10 rounded-[5px] border border-[#ECECF0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 focus:border-[#7A2253] focus:outline-none transition-colors"
-              />
-            </div>
-
-            {/* Collaboration Type & Delivery Time */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="block text-[13px] font-medium text-[#18181B]">Collaboration Type</label>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
-                    <Film className="h-4 w-4" />
-                  </div>
-                  <select
-                    value={formPlatform}
-                    onChange={(e) => {
-                      setFormPlatform(e.target.value);
-                      setShowAllSuggestions(false);
-                    }}
-                    className="flex-1 h-10 px-3 text-xs sm:text-sm font-medium text-[#7A2253] bg-transparent outline-none cursor-pointer"
-                  >
-                    {COLLABORATION_TYPES.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <label className="block text-[13px] font-medium text-[#18181B]">Delivery time (days)</label>
-                  <span className="text-[10px] text-[#6B6B76] font-medium">
-                    {formTurnaround} {formTurnaround === 1 ? "day" : "days"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  {[2, 3, 7, 14].map((days) => {
-                    const isSelected = formTurnaround === days;
-                    return (
-                      <button
-                        key={days}
-                        type="button"
-                        onClick={() => setFormTurnaround(days)}
-                        className={`flex-1 h-10 rounded-[5px] text-xs font-semibold border transition-all cursor-pointer ${
-                          isSelected
-                            ? "bg-[#7A2253] text-white border-[#7A2253] shadow-xs"
-                            : "bg-white text-[#18181B] border-[#ECECF0] hover:bg-[#FAFAFB]"
-                        }`}
-                      >
-                        {days}D
-                      </button>
-                    );
-                  })}
-                  <div className="relative w-28 shrink-0">
-                    <input
-                      type="number"
-                      value={formTurnaround}
-                      onChange={(e) => setFormTurnaround(Math.max(1, Number(e.target.value)))}
-                      min={1}
-                      max={60}
-                      title="Custom Days"
-                      placeholder="Custom days"
-                      className="w-full h-10 rounded-[5px] border border-[#ECECF0] bg-white px-2 text-center text-xs font-semibold text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none transition-colors"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {formPlatform === "Other" && (
-              <div className="space-y-1 animate-in fade-in duration-200">
-                <label className="block text-[13px] font-medium text-[#18181B]">
-                  Specify Collaboration Type <span className="text-[#C2414B]">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={customPlatform}
-                  onChange={(e) => setCustomPlatform(e.target.value)}
-                  placeholder="e.g., Live Stream Sponsorship, Workshop, Brand Ambassador"
-                  className="w-full h-10 rounded-[5px] border border-[#7A2253] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 focus:outline-none transition-colors shadow-xs"
-                  required
-                />
-              </div>
-            )}
-
-            {/* Package Pricing Inputs */}
-            <div className="space-y-2">
-              <label className="block text-[13px] font-medium text-[#18181B]">
-                Package Pricing (INR) &amp; Billing Unit
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
-                <div className="sm:col-span-4">
-                  <label className="block text-[10px] font-bold text-[#6B6B76] mb-1">
-                    Price (₹) <span className="text-[#C2414B]">*</span>
-                  </label>
-                  <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                    <div className="flex h-10 w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-sm font-semibold text-[#6B6B76]">
-                      ₹
-                    </div>
-                    <input
-                      type="text"
-                      value={formMinPrice}
-                      onChange={(e) => setFormMinPrice(e.target.value)}
-                      placeholder="10,000"
-                      className="flex-1 h-10 px-3 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-4">
-                  <label className="block text-[10px] font-bold text-[#6B6B76] mb-1">
-                    Price Unit
-                  </label>
-                  <select
-                    value={formPriceUnit}
-                    onChange={(e) => setFormPriceUnit(e.target.value)}
-                    className="w-full h-10 px-3 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#18181B] outline-none cursor-pointer"
-                  >
-                    <option value="per_package">/ package (fixed)</option>
-                    <option value="per_reel">/ reel</option>
-                    <option value="per_post">/ post</option>
-                    <option value="per_video">/ video</option>
-                    <option value="per_month">/ month</option>
-                  </select>
-                </div>
-
-                <div className="sm:col-span-4">
-                  <div className="flex flex-col justify-center gap-1.5 h-10">
-                    <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-[#18181B]">
-                      <input
-                        type="checkbox"
-                        checked={formIsStartingPrice}
-                        onChange={(e) => setFormIsStartingPrice(e.target.checked)}
-                        className="rounded border-[#D4D4D8] text-[#7A2253] focus:ring-[#7A2253]"
-                      />
-                      <span>Starting price (&quot;From ₹...&quot;)</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Deliverables List & Suggestions */}
-            <div className="space-y-2">
-              <label className="block text-[13px] font-medium text-[#18181B]">Included deliverables</label>
-              <div className="flex items-center gap-2">
-                <div className="flex-1 flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
-                    <List className="h-4 w-4" />
-                  </div>
-                  <input
-                    type="text"
-                    value={formDeliverableInput}
-                    onChange={(e) => setFormDeliverableInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleAddDeliverable();
-                      }
-                    }}
-                    placeholder="e.g. Brand Collaborator Tag"
-                    className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={handleAddDeliverable}
-                  className="h-10 px-4 rounded-[5px] bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 shadow-md shadow-[#7A2253]/20 transition-all cursor-pointer shrink-0"
-                >
-                  + Add
-                </button>
-              </div>
-
-              {/* Suggestions */}
-              {(() => {
-                const suggestionsList = DELIVERABLE_SUGGESTIONS[formPlatform] || DELIVERABLE_SUGGESTIONS["Instagram Reel"] || [];
-                const displayedList = showAllSuggestions ? suggestionsList : suggestionsList.slice(0, 5);
-                const hasMore = suggestionsList.length > 5;
-
-                return (
-                  <div className="space-y-2 bg-[#FFF0F5]/40 border border-[#FCE7F1] rounded-[5px] p-3">
-                    <div className="flex items-center justify-between text-[11px] font-semibold text-[#18181B]">
-                      <span className="flex items-center gap-1.5">
-                        <span className="text-amber-500">💡</span> Popular suggestions for {formPlatform === "Other" ? (customPlatform.trim() || "Collaboration") : formPlatform}:
-                      </span>
-                      <span className="text-[10px] text-[#7A2253] font-bold">Click on any chip to add</span>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-                      {displayedList.map((item, idx) => {
-                        const isAdded = formDeliverables.includes(item);
-                        return (
-                          <button
-                            key={idx}
-                            type="button"
-                            onClick={() => {
-                              if (!isAdded) {
-                                setFormDeliverables([...formDeliverables, item]);
-                              }
-                            }}
-                            disabled={isAdded}
-                            className={`text-[11px] font-medium px-2.5 py-1.5 rounded-[5px] border transition-all cursor-pointer ${
-                              isAdded
-                                ? "bg-[#EAF7F0] text-[#17845B] border-[#17845B]/20 cursor-default opacity-70"
-                                : "bg-white hover:bg-zinc-50 text-[#18181B] border-[#ECECF0] hover:border-[#7A2253]/30 shadow-2xs"
-                            }`}
-                          >
-                            {isAdded ? `✓ ${item}` : `+ ${item}`}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    {hasMore && (
-                      <div className="pt-0.5 flex justify-end">
-                        <button
-                          type="button"
-                          onClick={() => setShowAllSuggestions(!showAllSuggestions)}
-                          className="text-[11px] font-bold text-[#7A2253] hover:underline cursor-pointer"
-                        >
-                          {showAllSuggestions ? "Show fewer suggestions ↑" : `+ Show ${suggestionsList.length - 5} more suggestions`}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                );
-              })()}
-
-              {/* Added Deliverables */}
-              {formDeliverables.length > 0 && (
-                <div className="space-y-1.5 max-h-28 overflow-y-auto pt-1">
-                  <p className="text-[10px] font-bold text-[#6B6B76] uppercase tracking-wider">Added Deliverables ({formDeliverables.length}):</p>
-                  {formDeliverables.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between bg-[#FAFAFB] border border-[#ECECF0] rounded-[5px] px-2.5 py-1 text-xs font-medium text-[#7A2253]">
-                      <span>• {item}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveDeliverable(idx)}
-                        className="text-[#C2414B] hover:text-[#7A2253] p-0.5 cursor-pointer"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Highlight badge with Quick Chips */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="block text-[13px] font-medium text-[#18181B] flex items-center gap-1.5">
-                  <span>👑</span> Highlight badge <span className="text-[#6B6B76] font-normal">(Optional)</span>
-                </label>
-                {formPackageName && (
-                  <button
-                    type="button"
-                    onClick={() => setFormPackageName("")}
-                    className="text-[10px] font-bold text-[#C2414B] hover:underline cursor-pointer"
-                  >
-                    Clear badge
-                  </button>
-                )}
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {[
-                  { label: "Most Popular", icon: "🔥" },
-                  { label: "Best Value", icon: "💎" },
-                  { label: "Recommended", icon: "⭐" },
-                  { label: "Premium", icon: "👑" },
-                ].map((badge) => {
-                  const isSelected = formPackageName === badge.label;
-                  return (
-                    <button
-                      key={badge.label}
-                      type="button"
-                      onClick={() => setFormPackageName(isSelected ? "" : badge.label)}
-                      className={`h-9 px-3 rounded-[5px] text-xs font-semibold border flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                        isSelected
-                          ? "bg-[#FFF0F5] text-[#7A2253] border-[#7A2253] ring-1 ring-[#7A2253]"
-                          : "bg-white text-[#18181B] border-[#ECECF0] hover:bg-[#FAFAFB]"
-                      }`}
-                    >
-                      <span>{badge.icon}</span>
-                      <span>{badge.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
-                  <Tag className="h-3.5 w-3.5" />
-                </div>
-                <input
-                  type="text"
-                  value={formPackageName}
-                  onChange={(e) => setFormPackageName(e.target.value)}
-                  placeholder="Or type a custom badge (e.g. Creator Choice, Limited Edition)"
-                  className="flex-1 h-9 px-3 text-xs font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none"
-                />
-              </div>
-            </div>
-          </ModalBody>
-
-          <ModalFooter className="px-5 sm:px-6 py-4">
-            <button
-              type="button"
-              onClick={() => setIsModalOpen(false)}
-              className="h-10 px-5 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              form="service-form"
-              className="h-10 px-5 rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5"
-            >
-              <span>{editingPkgId ? "Save changes" : "Create collab package"}</span>
-            </button>
-          </ModalFooter>
-        </form>
-      </Modal>
+        initial={formInitial}
+        isEdit={Boolean(editingPkgId)}
+        pricesPlusGst={settings.commercialTerms?.pricesPlusGst}
+        onSubmit={handleSubmitPackage}
+      />
 
       {/* 6. EXAMPLES MODAL (Not sure what to offer? See examples) */}
       <Modal

@@ -397,6 +397,14 @@ async function migrateDatabase(target) {
       await addColumnIfMissing("mediakit_settings", "commercial_terms", "JSON DEFAULT NULL");
     }
 
+    // 022: Collab package v2 — description, structured details (JSON) and drafts
+    const [mkGigTables] = await connection.query("SHOW TABLES LIKE 'mediakit_gigs'");
+    if (mkGigTables.length) {
+      await addColumnIfMissing("mediakit_gigs", "description", "TEXT DEFAULT NULL");
+      await addColumnIfMissing("mediakit_gigs", "package_details", "JSON DEFAULT NULL");
+      await addColumnIfMissing("mediakit_gigs", "is_draft", "TINYINT(1) DEFAULT 0");
+    }
+
     console.log(`✅ ${target.name} migrated successfully.`);
   } finally {
     await connection.end();

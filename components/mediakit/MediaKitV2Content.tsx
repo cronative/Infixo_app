@@ -24,7 +24,6 @@ import {
   IndianRupee,
   Mail,
   Megaphone,
-  Gift,
   BadgeCheck,
 } from "lucide-react";
 import {
@@ -50,6 +49,7 @@ import { formatFans, getCreatorEra, calculateTotalFanbase } from "@/lib/creatorE
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { useToast } from "@/contexts/ToastContext";
 import { PDF_PREPARING_LABEL, useMediaKitPdf } from "@/hooks/useMediaKitPdf";
+import { PackageCard } from "@/components/mediakit/PackageCard";
 import {
   BrandPlatformIcon,
   CARD_ITEM,
@@ -80,36 +80,6 @@ export interface MediaKitV2ContentProps {
 
 const NO_COLORS = {};
 const SERIF = "Georgia, 'Times New Roman', serif";
-
-/** Small brand glyph for a package's platform ("Instagram", "Instagram Bundle", "YouTube" …). */
-function platformIcon(platform?: string) {
-  const p = (platform || "").toLowerCase();
-  if (p.includes("instagram") || p.includes("reel")) return <InstagramIcon className="h-3.5 w-3.5 text-[#E1306C]" />;
-  if (p.includes("youtube")) return <YoutubeIcon className="h-3.5 w-3.5 text-[#FF0000]" />;
-  if (p.includes("facebook")) return <FacebookIcon className="h-3.5 w-3.5 text-[#1877F2]" />;
-  return null;
-}
-
-function formatPackagePrice(pkg: MediaKitPackage): string {
-  const unitMap: Record<string, string> = {
-    per_reel: "/ reel",
-    per_post: "/ post",
-    per_video: "/ video",
-    per_package: "/ package",
-    per_month: "/ month",
-  };
-  const unitLabel = pkg.priceUnit ? unitMap[pkg.priceUnit] || "" : "";
-  const prefix = pkg.isStartingPrice ? "From " : "";
-  const rupee = (v: string) => (v.startsWith("₹") ? v : `₹${v}`);
-  const min = (pkg.minPrice || "").trim();
-  const max = (pkg.maxPrice || "").trim();
-  // A min–max range wins over a single price ("₹8,000–₹12,000 / package").
-  if (min && max && min !== max) return `${rupee(min)}–${rupee(max)}${unitLabel ? ` ${unitLabel}` : ""}`;
-  const raw = (pkg.price || min || "").trim();
-  if (!raw) return "Custom scope";
-  const withSymbol = raw.startsWith("₹") || raw.toLowerCase().includes("contact") ? raw : `₹${raw}`;
-  return `${prefix}${withSymbol}${unitLabel ? ` ${unitLabel}` : ""}`;
-}
 
 export function MediaKitV2Content({
   profile,
@@ -238,7 +208,7 @@ export function MediaKitV2Content({
   const activePackages = useMemo(
     () =>
       (packages || [])
-        .filter((p) => p.isActive !== false)
+        .filter((p) => p.isActive !== false && !p.isDraft)
         .sort((a, b) => Number(Boolean(b.isPopular)) - Number(Boolean(a.isPopular))),
     [packages]
   );
@@ -665,111 +635,9 @@ export function MediaKitV2Content({
           className="print-avoid-break"
         >
           <div className={CARD_LIST}>
-            {activePackages.map((pkg) => {
-              const badgeText = (pkg.packageName || pkg.badge || "").trim();
-              // Story pitch as the quote; description shown too (both are written in the dashboard).
-              const pitch = (pkg.storyPitch || "").trim();
-              const details = (pkg.description || "").trim();
-              const deliverables = (Array.isArray(pkg.deliverables) ? pkg.deliverables : []).map((d) => String(d).trim()).filter(Boolean);
-              const hasPrice = Boolean((pkg.price || pkg.minPrice || "").trim());
-              return (
-                <article
-                  key={pkg.id}
-                  className={`${CARD_ITEM} overflow-hidden`}
-                  style={pkg.isPopular ? { borderColor: "color-mix(in srgb, var(--accent-text) 45%, var(--surface-border))" } : undefined}
-                >
-                  {pkg.isPopular && (
-                    <p
-                      style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
-                      className="flex items-center gap-1.5 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider"
-                    >
-                      <Star aria-hidden className="h-3 w-3 fill-current" />
-                      Most popular
-                    </p>
-                  )}
-                  <div className="space-y-3 p-3.5">
-                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-(--text-muted)">
-                      <span className="inline-flex items-center gap-1 font-medium">
-                        {platformIcon(pkg.platform)}
-                        {pkg.platform}
-                      </span>
-                      {pkg.turnaroundDays > 0 && (
-                        <span className="inline-flex items-center gap-1">
-                          <Clock aria-hidden className="h-3 w-3" />~{pkg.turnaroundDays} {pkg.turnaroundDays === 1 ? "day" : "days"} delivery
-                        </span>
-                      )}
-                      {pkg.category && (
-                        <span className="rounded-[5px] border border-(--surface-border) bg-(--surface) px-2 py-0.5 text-[11px] font-semibold text-(--text-secondary)">
-                          {pkg.category}
-                        </span>
-                      )}
-                      {badgeText && (
-                        <span className="rounded-full bg-(--accent-soft) px-2 py-0.5 text-[11px] font-bold text-(--accent-text)">{badgeText}</span>
-                      )}
-                    </div>
-
-                    {/* Phones: price under the title so the title keeps the full width. */}
-                    <div className="flex flex-col gap-1 min-[420px]:flex-row min-[420px]:items-start min-[420px]:justify-between min-[420px]:gap-3">
-                      <h4 title={pkg.title} className="line-clamp-2 min-w-0 break-words text-[16px] font-bold leading-5 text-(--text)">
-                        {pkg.title}
-                      </h4>
-                      <p className="shrink-0 min-[420px]:text-right">
-                        <span className="whitespace-nowrap text-[16px] font-extrabold leading-5 text-(--accent-text) min-[420px]:block">{formatPackagePrice(pkg)}</span>
-                        {terms?.pricesPlusGst && hasPrice && <span className="ml-1 text-[11px] font-semibold text-(--text-muted) min-[420px]:ml-0">+ GST</span>}
-                      </p>
-                    </div>
-
-                    {pitch && (
-                      <div className="rounded-[5px] border-l-2 border-(--accent) bg-(--accent-soft) px-3 py-2.5">
-                        <p className="text-[11px] font-bold uppercase tracking-wider text-(--accent-text)">The story I&apos;d tell for you</p>
-                        <p style={{ fontFamily: SERIF }} className="mt-0.5 text-[13px] italic leading-relaxed text-(--text)">
-                          &ldquo;{pitch}&rdquo;
-                        </p>
-                      </div>
-                    )}
-                    {details && <p className="break-words text-[13px] leading-[19px] text-(--text-secondary)">{details}</p>}
-
-                    {deliverables.length > 0 && (
-                      <div className="overflow-hidden rounded-[5px] border border-(--surface-border)">
-                        <div className="flex items-center justify-between gap-2 border-b border-(--surface-border) bg-(--surface) px-3 py-2">
-                          <p className="flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider text-(--text)">
-                            <Gift aria-hidden className="h-3.5 w-3.5 text-(--accent-text)" />
-                            What your brand gets
-                          </p>
-                          <span className="shrink-0 text-[11px] font-semibold text-(--text-muted)">
-                            {deliverables.length} {deliverables.length === 1 ? "deliverable" : "deliverables"}
-                          </span>
-                        </div>
-                        <ol className="divide-y divide-(--surface-border)">
-                          {deliverables.map((item, i) => (
-                            <li key={i} className="flex items-start gap-2.5 px-3 py-2.5">
-                              <span
-                                aria-hidden
-                                style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
-                                className="mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
-                              >
-                                <Check className="h-3 w-3" strokeWidth={3} />
-                              </span>
-                              <span className="min-w-0 break-words text-[13px] font-medium leading-5 text-(--text)">{item}</span>
-                            </li>
-                          ))}
-                        </ol>
-                      </div>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={() => onEnquirePackage?.(pkg)}
-                      style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
-                      className="no-print inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-[5px] px-4 text-[14px] font-semibold transition-opacity hover:opacity-95 cursor-pointer"
-                    >
-                      Book this package
-                      <ArrowUpRight aria-hidden className="h-4 w-4" />
-                    </button>
-                  </div>
-                </article>
-              );
-            })}
+            {activePackages.map((pkg) => (
+              <PackageCard key={pkg.id} pkg={pkg} pricesPlusGst={terms?.pricesPlusGst} onRequest={(p) => onEnquirePackage?.(p)} />
+            ))}
           </div>
         </SectionCard>
       )}

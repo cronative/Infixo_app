@@ -377,7 +377,7 @@ export function CollabEnquirySheet({
                       </option>
                     )}
                     {packages
-                      .filter((p) => p.isActive !== false)
+                      .filter((p) => p.isActive !== false && !p.isDraft)
                       .map((pkg) => (
                         <option key={pkg.id} value={String(pkg.id)}>
                           {pkg.title} {pkg.price ? `(${String(pkg.price).startsWith("₹") ? pkg.price : `₹${pkg.price}`})` : ""}
