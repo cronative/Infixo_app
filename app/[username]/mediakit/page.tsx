@@ -12,6 +12,8 @@ import {
   CreatorReview,
   TeamMember,
   CreatorTeam,
+  CreatorBrand,
+  CreatorCollaboration,
   ThemeKey,
   EMPTY_SOCIAL_ACCOUNTS,
 } from "@/types";
@@ -39,6 +41,8 @@ export default function PublicMediaKitPage() {
   const [settings, setSettings] = useState<MediaKitSettings | undefined>(undefined);
   const [reviews, setReviews] = useState<CreatorReview[]>([]);
   const [team, setTeam] = useState<{ team?: CreatorTeam | null; members: TeamMember[] }>({ members: [] });
+  const [brands, setBrands] = useState<CreatorBrand[]>([]);
+  const [collaborations, setCollaborations] = useState<CreatorCollaboration[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [notFound, setNotFound] = useState(false);
 
@@ -64,6 +68,8 @@ export default function PublicMediaKitPage() {
           EXPERT_DEMO_THEME,
           EXPERT_DEMO_MEDIA_KIT_SETTINGS,
           EXPERT_DEMO_TEAM,
+          EXPERT_DEMO_BRANDS,
+          EXPERT_DEMO_COLLABORATIONS,
         } = await import("@/data/expertDemoCreator");
         setProfile(EXPERT_DEMO_PROFILE);
         setSocials(EXPERT_DEMO_SOCIALS);
@@ -72,6 +78,8 @@ export default function PublicMediaKitPage() {
         setSettings(EXPERT_DEMO_MEDIA_KIT_SETTINGS);
         setReviews(EXPERT_DEMO_REVIEWS);
         setTeam(EXPERT_DEMO_TEAM);
+        setBrands(EXPERT_DEMO_BRANDS);
+        setCollaborations(EXPERT_DEMO_COLLABORATIONS);
         setTheme(EXPERT_DEMO_THEME);
         setLoaded(true);
         setNotFound(false);
@@ -86,6 +94,8 @@ export default function PublicMediaKitPage() {
           mediakitRes,
           revRes,
           teamRes,
+          brandRes,
+          collabRes,
         ] = await Promise.all([
           fetch(`/api/creator/profile?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/creator/socials?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
@@ -93,6 +103,8 @@ export default function PublicMediaKitPage() {
           fetch(`/api/creator/mediakit?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/creator/reviews?username=${encodeURIComponent(usernameParam)}&status=approved`).then((r) => r.json()).catch(() => ({ success: false })),
           fetch(`/api/creator/team?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/creator/brands?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
+          fetch(`/api/creator/collaborations?username=${encodeURIComponent(usernameParam)}`).then((r) => r.json()).catch(() => ({ success: false })),
         ]);
 
         const isProfOk = profRes.status === 1 || profRes.success === true;
@@ -155,6 +167,16 @@ export default function PublicMediaKitPage() {
           const rawReviews = revRes.data?.reviews || revRes.reviews;
           if ((revRes.status === 1 || revRes.success) && Array.isArray(rawReviews)) {
             setReviews(rawReviews);
+          }
+
+          // Brands & past campaigns the creator added in the dashboard (shown on the kit).
+          const rawBrands = brandRes.data?.brands || brandRes.brands;
+          if ((brandRes.status === 1 || brandRes.success) && Array.isArray(rawBrands)) {
+            setBrands(rawBrands.filter((b: CreatorBrand) => b.isActive !== false));
+          }
+          const rawCollabs = collabRes.data?.collaborations || collabRes.collaborations;
+          if ((collabRes.status === 1 || collabRes.success) && Array.isArray(rawCollabs)) {
+            setCollaborations(rawCollabs.filter((c: CreatorCollaboration) => c.isActive !== false));
           }
 
           const rawTeam = teamRes.data?.team || teamRes.team;
@@ -259,6 +281,8 @@ export default function PublicMediaKitPage() {
         mediaKitSettings={settings}
         reviews={reviews}
         team={team}
+        brands={brands}
+        collaborations={collaborations}
         totalAudience={totalAudience}
         variant="full"
         containedScroll={false}

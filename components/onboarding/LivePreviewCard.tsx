@@ -2603,6 +2603,8 @@ export function LivePreviewCard({
               settings={mediaKitSettings}
               reviews={approvedReviews}
               team={teamData}
+              brands={brandsList}
+              collaborations={collaborationsList}
               hideTeam={false}
               isInformational={isInformationalMode}
               onEnquirePackage={(selected) => {

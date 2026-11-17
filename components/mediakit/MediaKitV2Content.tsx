@@ -23,6 +23,9 @@ import {
   Handshake,
   IndianRupee,
   Mail,
+  Megaphone,
+  Gift,
+  BadgeCheck,
 } from "lucide-react";
 import {
   CreatorProfile,
@@ -33,6 +36,8 @@ import {
   CreatorReview,
   CreatorTeam,
   TeamMember,
+  CreatorBrand,
+  CreatorCollaboration,
 } from "@/types";
 import {
   InstagramIcon,
@@ -64,6 +69,9 @@ export interface MediaKitV2ContentProps {
   settings?: MediaKitSettings;
   reviews?: CreatorReview[];
   team?: { team?: CreatorTeam | null; members: TeamMember[] };
+  /** Brands page (logos) and Collaborations page (past campaigns) from the dashboard. */
+  brands?: CreatorBrand[];
+  collaborations?: CreatorCollaboration[];
   hideTeam?: boolean;
   onEnquirePackage?: (pkg: MediaKitPackage | null) => void;
   isInformational?: boolean;
@@ -92,7 +100,12 @@ function formatPackagePrice(pkg: MediaKitPackage): string {
   };
   const unitLabel = pkg.priceUnit ? unitMap[pkg.priceUnit] || "" : "";
   const prefix = pkg.isStartingPrice ? "From " : "";
-  const raw = (pkg.price || pkg.minPrice || "").trim();
+  const rupee = (v: string) => (v.startsWith("₹") ? v : `₹${v}`);
+  const min = (pkg.minPrice || "").trim();
+  const max = (pkg.maxPrice || "").trim();
+  // A min–max range wins over a single price ("₹8,000–₹12,000 / package").
+  if (min && max && min !== max) return `${rupee(min)}–${rupee(max)}${unitLabel ? ` ${unitLabel}` : ""}`;
+  const raw = (pkg.price || min || "").trim();
   if (!raw) return "Custom scope";
   const withSymbol = raw.startsWith("₹") || raw.toLowerCase().includes("contact") ? raw : `₹${raw}`;
   return `${prefix}${withSymbol}${unitLabel ? ` ${unitLabel}` : ""}`;
@@ -107,6 +120,8 @@ export function MediaKitV2Content({
   settings,
   reviews = [],
   team,
+  brands = [],
+  collaborations = [],
   hideTeam = false,
   onEnquirePackage,
   isInformational = false,
@@ -237,7 +252,7 @@ export function MediaKitV2Content({
   }, [team]);
 
   const showHello = Boolean(introText || nowMaking || profile.photoDataUrl || settings?.availability);
-  const showAudience = Boolean(calculatedFans > 0 || audienceDesc || connectedPlatforms.length > 0 || (settings?.pastBrands || []).some((b) => b?.name?.trim()));
+  const showAudience = Boolean(calculatedFans > 0 || audienceDesc || connectedPlatforms.length > 0 || brands.length > 0 || (settings?.pastBrands || []).some((b) => b?.name?.trim()));
   const showSeries = topSeries.length > 0;
   const showFitChips = fitTags.length > 0 || nofitTags.length > 0;
   const showPackages = activePackages.length > 0;
@@ -252,9 +267,22 @@ export function MediaKitV2Content({
     const list = Array.isArray(raw) ? raw : (raw || "").split(",");
     return Array.from(new Set(list.map((c) => String(c).trim()).filter(Boolean))).slice(0, 6);
   }, [settings?.categories]);
-  const pastBrands = useMemo(
-    () => Array.from(new Set((settings?.pastBrands || []).map((b) => (b?.name || "").trim()).filter(Boolean))).slice(0, 12),
-    [settings?.pastBrands]
+  const pastBrands = useMemo(() => {
+    const seen = new Set<string>();
+    const out: { name: string; logo?: string | null; url?: string }[] = [];
+    const add = (name: string, logo?: string | null, url?: string) => {
+      const n = name.trim();
+      if (!n || seen.has(n.toLowerCase())) return;
+      seen.add(n.toLowerCase());
+      out.push({ name: n, logo, url });
+    };
+    brands.filter((b) => b.isActive !== false).forEach((b) => add(b.brandName || "", b.brandLogoUrl, b.websiteUrl || b.instagramUrl || b.youtubeUrl || undefined));
+    (settings?.pastBrands || []).forEach((b) => add(b?.name || "", b?.logoUrl));
+    return out.slice(0, 12);
+  }, [brands, settings?.pastBrands]);
+  const pastCampaigns = useMemo(
+    () => collaborations.filter((c) => c.isActive !== false && c.brandName?.trim()).slice(0, 6),
+    [collaborations]
   );
   // Instagram / YouTube / Facebook first, then any other connected platform.
   const allPlatforms = useMemo(() => {
@@ -289,6 +317,7 @@ export function MediaKitV2Content({
           ].filter(Boolean).join(" · "),
         }
       : null,
+    settings?.minBudget?.trim() ? { label: "Min budget", value: settings.minBudget.trim().startsWith("₹") ? settings.minBudget.trim() : `₹${settings.minBudget.trim()}` } : null,
     terms?.paymentTerms ? { label: "Payment", value: terms.paymentTerms } : null,
     terms?.barter
       ? {
@@ -347,6 +376,7 @@ export function MediaKitV2Content({
     ? `https://wa.me/${whatsappDigits}?text=${encodeURIComponent(`Hi ${creatorFirstName}, I'm reaching out from [brand] about a collaboration. Saw your Inflixo media kit: ${mediaKitPublicUrl}`)}`
     : "";
   const showStickyBar = !isInformational && !activeIsPrint;
+  const businessEmail = settings?.allowEmail === false ? "" : (settings?.sponsorEmail || "").trim();
 
   const handleDownloadPdf = () => {
     if (isInformational) {
@@ -481,11 +511,31 @@ export function MediaKitV2Content({
               <div className={`${CARD_ITEM} space-y-2 p-3.5`}>
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-(--text-muted)">Brands I&apos;ve worked with</p>
                 <ul className="flex flex-wrap gap-1.5">
-                  {pastBrands.map((b) => (
-                    <li key={b} className="rounded-[5px] border border-(--surface-border) bg-(--surface) px-2.5 py-1 text-[12px] font-semibold text-(--text)">
-                      {b}
-                    </li>
-                  ))}
+                  {pastBrands.map((b) => {
+                    const chip = (
+                      <>
+                        {b.logo ? (
+                          // eslint-disable-next-line @next/next/no-img-element -- brand logos of any host
+                          <img src={b.logo} alt="" className="h-5 w-5 rounded-full object-cover" />
+                        ) : (
+                          <span aria-hidden className="flex h-5 w-5 items-center justify-center rounded-full bg-(--accent-soft) text-[10px] font-bold text-(--accent-text)">
+                            {b.name.charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                        <span>{b.name}</span>
+                      </>
+                    );
+                    const cls = "inline-flex items-center gap-1.5 rounded-full border border-(--surface-border) bg-(--surface) py-0.5 pl-0.5 pr-2.5 text-[12px] font-semibold text-(--text)";
+                    return (
+                      <li key={b.name}>
+                        {b.url ? (
+                          <a href={b.url} target="_blank" rel="noopener noreferrer" className={`${cls} hover:border-(--accent-text)`}>{chip}</a>
+                        ) : (
+                          <span className={cls}>{chip}</span>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}
@@ -516,6 +566,47 @@ export function MediaKitV2Content({
                   }
                 }}
               />
+            ))}
+          </div>
+        </SectionCard>
+      )}
+
+      {/* PAST CAMPAIGNS — Collaborations page (proof of results) */}
+      {pastCampaigns.length > 0 && (
+        <SectionCard
+          as="section"
+          icon={Megaphone}
+          title="Past Campaigns"
+          subtitle="Brand work I'm proud of."
+          count={`${pastCampaigns.length} ${pastCampaigns.length === 1 ? "campaign" : "campaigns"}`}
+          colors={NO_COLORS}
+          className="print-avoid-break"
+        >
+          <div className={CARD_LIST}>
+            {pastCampaigns.map((c) => (
+              <article key={c.id} className={`${CARD_ITEM} flex items-start gap-3 p-3.5`}>
+                {c.brandLogoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- brand logos of any host
+                  <img src={c.brandLogoUrl} alt="" className="h-10 w-10 shrink-0 rounded-full border border-(--surface-border) object-cover" />
+                ) : (
+                  <span aria-hidden className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-(--accent-soft) text-[14px] font-bold text-(--accent-text)">
+                    {c.brandName.trim().charAt(0).toUpperCase()}
+                  </span>
+                )}
+                <div className="min-w-0 flex-1 space-y-1">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-(--accent-text)">{c.brandName}</p>
+                  {c.campaignTitle && (
+                    <h4 title={c.campaignTitle} className="line-clamp-2 break-words text-[14px] font-bold leading-[18px] text-(--text)">{c.campaignTitle}</h4>
+                  )}
+                  {c.description && <p className="break-words text-[13px] leading-[18px] text-(--text-secondary)">{c.description}</p>}
+                  {c.campaignUrl && (
+                    <a href={c.campaignUrl} target="_blank" rel="noopener noreferrer" className="no-print inline-flex items-center gap-1 pt-0.5 text-[12px] font-semibold text-(--accent-text) hover:underline">
+                      View campaign
+                      <ArrowUpRight aria-hidden className="h-3.5 w-3.5" />
+                    </a>
+                  )}
+                </div>
+              </article>
             ))}
           </div>
         </SectionCard>
@@ -576,72 +667,106 @@ export function MediaKitV2Content({
           <div className={CARD_LIST}>
             {activePackages.map((pkg) => {
               const badgeText = (pkg.packageName || pkg.badge || "").trim();
-              const storyPitch = (pkg.storyPitch || pkg.description || "").trim();
+              // Story pitch as the quote; description shown too (both are written in the dashboard).
+              const pitch = (pkg.storyPitch || "").trim();
+              const details = (pkg.description || "").trim();
+              const deliverables = (Array.isArray(pkg.deliverables) ? pkg.deliverables : []).map((d) => String(d).trim()).filter(Boolean);
               const hasPrice = Boolean((pkg.price || pkg.minPrice || "").trim());
               return (
-                <article key={pkg.id} className={`${CARD_ITEM} space-y-3 p-3.5`}>
-                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-(--text-muted)">
-                    {pkg.category && (
-                      <span className="rounded-[5px] border border-(--surface-border) bg-(--surface) px-2 py-0.5 text-[11px] font-semibold text-(--text-secondary)">
-                        {pkg.category}
-                      </span>
-                    )}
-                    <span className="inline-flex items-center gap-1 font-medium">
-                      {platformIcon(pkg.platform)}
-                      {pkg.platform}
-                    </span>
-                    {pkg.turnaroundDays > 0 && (
-                      <span className="inline-flex items-center gap-1">
-                        <Clock aria-hidden className="h-3 w-3" />~{pkg.turnaroundDays} {pkg.turnaroundDays === 1 ? "day" : "days"}
-                      </span>
-                    )}
-                    {badgeText && (
-                      <span className="rounded-full bg-(--accent-soft) px-2 py-0.5 text-[11px] font-bold text-(--accent-text)">{badgeText}</span>
-                    )}
-                  </div>
-
-                  <div className="flex items-start justify-between gap-3">
-                    <h4 title={pkg.title} className="line-clamp-2 min-w-0 break-words text-[15px] font-bold leading-5 text-(--text)">
-                      {pkg.title}
-                    </h4>
-                    <p className="shrink-0 text-right">
-                      <span className="block whitespace-nowrap text-[15px] font-extrabold text-(--accent-text)">{formatPackagePrice(pkg)}</span>
-                      {terms?.pricesPlusGst && hasPrice && <span className="text-[11px] font-semibold text-(--text-muted)">+ GST</span>}
+                <article
+                  key={pkg.id}
+                  className={`${CARD_ITEM} overflow-hidden`}
+                  style={pkg.isPopular ? { borderColor: "color-mix(in srgb, var(--accent-text) 45%, var(--surface-border))" } : undefined}
+                >
+                  {pkg.isPopular && (
+                    <p
+                      style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
+                      className="flex items-center gap-1.5 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider"
+                    >
+                      <Star aria-hidden className="h-3 w-3 fill-current" />
+                      Most popular
                     </p>
-                  </div>
+                  )}
+                  <div className="space-y-3 p-3.5">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-(--text-muted)">
+                      <span className="inline-flex items-center gap-1 font-medium">
+                        {platformIcon(pkg.platform)}
+                        {pkg.platform}
+                      </span>
+                      {pkg.turnaroundDays > 0 && (
+                        <span className="inline-flex items-center gap-1">
+                          <Clock aria-hidden className="h-3 w-3" />~{pkg.turnaroundDays} {pkg.turnaroundDays === 1 ? "day" : "days"} delivery
+                        </span>
+                      )}
+                      {pkg.category && (
+                        <span className="rounded-[5px] border border-(--surface-border) bg-(--surface) px-2 py-0.5 text-[11px] font-semibold text-(--text-secondary)">
+                          {pkg.category}
+                        </span>
+                      )}
+                      {badgeText && (
+                        <span className="rounded-full bg-(--accent-soft) px-2 py-0.5 text-[11px] font-bold text-(--accent-text)">{badgeText}</span>
+                      )}
+                    </div>
 
-                  {storyPitch && (
-                    <div className="rounded-[5px] bg-(--accent-soft) px-3 py-2.5">
-                      <p className="text-[11px] font-bold uppercase tracking-wider text-(--accent-text)">The story I&apos;d tell for you</p>
-                      <p style={{ fontFamily: SERIF }} className="mt-0.5 text-[13px] italic leading-relaxed text-(--text)">
-                        &ldquo;{storyPitch}&rdquo;
+                    {/* Phones: price under the title so the title keeps the full width. */}
+                    <div className="flex flex-col gap-1 min-[420px]:flex-row min-[420px]:items-start min-[420px]:justify-between min-[420px]:gap-3">
+                      <h4 title={pkg.title} className="line-clamp-2 min-w-0 break-words text-[16px] font-bold leading-5 text-(--text)">
+                        {pkg.title}
+                      </h4>
+                      <p className="shrink-0 min-[420px]:text-right">
+                        <span className="whitespace-nowrap text-[16px] font-extrabold leading-5 text-(--accent-text) min-[420px]:block">{formatPackagePrice(pkg)}</span>
+                        {terms?.pricesPlusGst && hasPrice && <span className="ml-1 text-[11px] font-semibold text-(--text-muted) min-[420px]:ml-0">+ GST</span>}
                       </p>
                     </div>
-                  )}
 
-                  {Array.isArray(pkg.deliverables) && pkg.deliverables.length > 0 && (
-                    <div className="space-y-1.5">
-                      <p className="text-[11px] font-bold uppercase tracking-wider text-(--text-muted)">What your brand gets</p>
-                      <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-                        {pkg.deliverables.map((item, i) => (
-                          <li key={i} className="flex items-start gap-2 text-[13px] leading-[18px] text-(--text)">
-                            <Check aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0 text-(--accent-text)" strokeWidth={2.5} />
-                            <span className="min-w-0 break-words">{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                    {pitch && (
+                      <div className="rounded-[5px] border-l-2 border-(--accent) bg-(--accent-soft) px-3 py-2.5">
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-(--accent-text)">The story I&apos;d tell for you</p>
+                        <p style={{ fontFamily: SERIF }} className="mt-0.5 text-[13px] italic leading-relaxed text-(--text)">
+                          &ldquo;{pitch}&rdquo;
+                        </p>
+                      </div>
+                    )}
+                    {details && <p className="break-words text-[13px] leading-[19px] text-(--text-secondary)">{details}</p>}
 
-                  <button
-                    type="button"
-                    onClick={() => onEnquirePackage?.(pkg)}
-                    style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
-                    className="no-print inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-[5px] px-4 text-[14px] font-semibold transition-opacity hover:opacity-95 cursor-pointer"
-                  >
-                    Book this package
-                    <ArrowUpRight aria-hidden className="h-4 w-4" />
-                  </button>
+                    {deliverables.length > 0 && (
+                      <div className="overflow-hidden rounded-[5px] border border-(--surface-border)">
+                        <div className="flex items-center justify-between gap-2 border-b border-(--surface-border) bg-(--surface) px-3 py-2">
+                          <p className="flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider text-(--text)">
+                            <Gift aria-hidden className="h-3.5 w-3.5 text-(--accent-text)" />
+                            What your brand gets
+                          </p>
+                          <span className="shrink-0 text-[11px] font-semibold text-(--text-muted)">
+                            {deliverables.length} {deliverables.length === 1 ? "deliverable" : "deliverables"}
+                          </span>
+                        </div>
+                        <ol className="divide-y divide-(--surface-border)">
+                          {deliverables.map((item, i) => (
+                            <li key={i} className="flex items-start gap-2.5 px-3 py-2.5">
+                              <span
+                                aria-hidden
+                                style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
+                                className="mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+                              >
+                                <Check className="h-3 w-3" strokeWidth={3} />
+                              </span>
+                              <span className="min-w-0 break-words text-[13px] font-medium leading-5 text-(--text)">{item}</span>
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => onEnquirePackage?.(pkg)}
+                      style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
+                      className="no-print inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-[5px] px-4 text-[14px] font-semibold transition-opacity hover:opacity-95 cursor-pointer"
+                    >
+                      Book this package
+                      <ArrowUpRight aria-hidden className="h-4 w-4" />
+                    </button>
+                  </div>
                 </article>
               );
             })}
@@ -718,24 +843,68 @@ export function MediaKitV2Content({
           <div className={CARD_LIST}>
             {visibleReviews.map((rev) => {
               const stars = Number(rev.rating) || 5;
+              const subRatings = [
+                { label: "Content", value: Number(rev.ratingContentQuality) || 0 },
+                { label: "Professional", value: Number(rev.ratingProfessionalism) || 0 },
+                { label: "On time", value: Number(rev.ratingTimelyDelivery) || 0 },
+              ].filter((r) => r.value > 0);
+              const reviewedOn = rev.createdAt
+                ? new Date(rev.createdAt).toLocaleDateString("en-IN", { month: "short", year: "numeric" })
+                : "";
               return (
-                <blockquote key={rev.id} className={`${CARD_ITEM} space-y-2 p-3.5`}>
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="flex items-center gap-0.5" aria-label={`${stars} out of 5`}>
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} aria-hidden className={`h-3.5 w-3.5 ${i < stars ? "fill-amber-400 text-amber-500" : "text-(--surface-border)"}`} />
-                      ))}
+                <blockquote key={rev.id} className={`${CARD_ITEM} space-y-2.5 p-3.5`}>
+                  <div className="flex items-start gap-2.5">
+                    <span aria-hidden className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-(--accent-soft) text-[13px] font-bold text-(--accent-text)">
+                      {(rev.clientName || "B").trim().charAt(0).toUpperCase()}
                     </span>
-                    <span className="text-[11px] font-medium text-(--text-muted)">Reviewed via Inflixo invite</span>
+                    <div className="min-w-0 flex-1">
+                      <p className="flex items-center gap-1 text-[14px] font-bold leading-[18px] text-(--text)">
+                        <span className="min-w-0 break-words">{rev.clientName}</span>
+                        {rev.isVerified && <BadgeCheck aria-label="Verified" className="h-4 w-4 shrink-0 text-(--accent-text)" />}
+                      </p>
+                      {(rev.clientDesignation || rev.projectTitle) && (
+                        <p className="break-words text-[12px] leading-4 text-(--text-muted)">
+                          {[rev.clientDesignation, rev.projectTitle].filter(Boolean).join(" · ")}
+                        </p>
+                      )}
+                    </div>
+                    <span className="shrink-0 text-right">
+                      <span className="flex items-center gap-0.5" aria-label={`${stars} out of 5`}>
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star key={i} aria-hidden className={`h-3.5 w-3.5 ${i < Math.round(stars) ? "fill-amber-400 text-amber-500" : "text-(--surface-border)"}`} />
+                        ))}
+                      </span>
+                      <span className="text-[11px] font-semibold text-(--text-muted)">{stars.toFixed(1)}/5</span>
+                    </span>
                   </div>
+
                   {rev.comment && (
                     <p style={{ fontFamily: SERIF }} className="text-[14px] italic leading-relaxed text-(--text)">
                       &ldquo;{rev.comment.trim()}&rdquo;
                     </p>
                   )}
-                  <footer className="text-[12px] text-(--text-muted)">
-                    <strong className="font-bold text-(--text)">{rev.clientName}</strong>
-                    {rev.projectTitle ? ` · ${rev.projectTitle}` : ""}
+
+                  {subRatings.length > 0 && (
+                    <dl className="grid grid-cols-3 gap-1.5">
+                      {subRatings.map((sr) => (
+                        <div key={sr.label} className="rounded-[5px] bg-(--surface) px-2 py-1.5 text-center">
+                          <dt className="text-[10px] font-semibold uppercase leading-3 tracking-wide text-(--text-muted)">{sr.label}</dt>
+                          <dd className="mt-0.5 text-[13px] font-bold text-(--text)">{sr.value.toFixed(1)}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  )}
+
+                  <footer className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-(--text-muted)">
+                    <span>
+                      Reviewed via Inflixo{reviewedOn ? ` · ${reviewedOn}` : ""}
+                    </span>
+                    {rev.contentUrl && (
+                      <a href={rev.contentUrl} target="_blank" rel="noopener noreferrer" className="no-print inline-flex items-center gap-1 text-[12px] font-semibold text-(--accent-text) hover:underline">
+                        See the content
+                        <ArrowUpRight aria-hidden className="h-3.5 w-3.5" />
+                      </a>
+                    )}
                   </footer>
                 </blockquote>
               );
@@ -792,7 +961,7 @@ export function MediaKitV2Content({
           )}
 
           {!activeIsPrint && (
-            <div className="no-print grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <div className="no-print grid grid-cols-1 gap-2 sm:grid-cols-2">
               <button
                 type="button"
                 onClick={() => onEnquirePackage?.(null)}
@@ -812,6 +981,15 @@ export function MediaKitV2Content({
                 {pdfLoading ? <Loader2 aria-hidden className="h-4 w-4 animate-spin text-(--accent-text)" /> : <Download aria-hidden className="h-4 w-4 text-(--accent-text)" />}
                 {pdfLoading ? PDF_PREPARING_LABEL : "Download PDF"}
               </button>
+              {businessEmail && (
+                <a
+                  href={`mailto:${businessEmail}?subject=${encodeURIComponent(`Collaboration enquiry for ${displayName}`)}`}
+                  className={`inline-flex h-10 items-center justify-center gap-1.5 px-4 text-[14px] font-semibold text-(--text) ${CARD_ITEM} ${CARD_ITEM_HOVER}`}
+                >
+                  <Mail aria-hidden className="h-4 w-4 text-(--accent-text)" />
+                  Email me
+                </a>
+              )}
               <button
                 type="button"
                 onClick={handleCopyMediaKitLink}

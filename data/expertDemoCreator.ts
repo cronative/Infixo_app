@@ -11,6 +11,7 @@ import {
   CreatorProduct,
   OtherSocialAccount,
   CreatorBrand,
+  CreatorCollaboration,
   CreatorTeam,
   DEFAULT_VISIBILITY_SETTINGS,
 } from "@/types";
@@ -874,4 +875,29 @@ export const EXPERT_DEMO_BRANDS: CreatorBrand[] = [
   { id: "br_desimasala", creatorId: "cr_expert_demo_creator", brandName: "Desi Masala Co.", brandLogoUrl: null, websiteUrl: "", sortOrder: 2, isActive: true },
   { id: "br_trailpack", creatorId: "cr_expert_demo_creator", brandName: "TrailPack Bags", brandLogoUrl: null, websiteUrl: "", sortOrder: 3, isActive: true },
   { id: "br_goroam", creatorId: "cr_expert_demo_creator", brandName: "GoRoam Forex Card", brandLogoUrl: null, websiteUrl: "", sortOrder: 4, isActive: true },
+];
+
+export const EXPERT_DEMO_COLLABORATIONS: CreatorCollaboration[] = [
+  {
+    id: "col_safarstay_hampi",
+    creatorId: "cr_expert_demo_creator",
+    brandName: "SafarStay Hostels",
+    brandLogoUrl: null,
+    campaignTitle: "Hampi in ₹3,000 — stay integration",
+    campaignUrl: "https://youtube.com/@aaravkasafar",
+    description: "2-day budget vlog with a native SafarStay stay segment. 4.2L views, 1,900 promo-code bookings in 30 days.",
+    sortOrder: 1,
+    isActive: true,
+  },
+  {
+    id: "col_desimasala_reel",
+    creatorId: "cr_expert_demo_creator",
+    brandName: "Desi Masala Co.",
+    brandLogoUrl: null,
+    campaignTitle: "Dakshin Ka Swaad recipe reel",
+    campaignUrl: "https://instagram.com/aaravkasafar",
+    description: "Street-food recipe reel using their spice mix. 2.8L views, 6.1% engagement, sold out the hero pack on launch day.",
+    sortOrder: 2,
+    isActive: true,
+  },
 ];
