@@ -505,7 +505,7 @@ export function ProfileHeader({
       {/* Profile block on the header surface (white on light themes), bleeding to the card edges. */}
       <div className={`-mx-[var(--card-px,16px)] mb-[var(--header-mb,4px)] border-b border-(--divider) [border-bottom-width:var(--header-bb,1px)] bg-[var(--header-bg,var(--card-bg))] px-[var(--card-px,16px)] pt-3 ${compact ? "pb-3" : "pb-[var(--header-pb,12px)]"}`}>
       {compact ? (
-        <div className="flex w-full items-center gap-3 text-left">
+        <div className="flex w-full flex-col items-center gap-2 text-center">
           <div className="relative shrink-0">
             <div className="rounded-full p-[2px]" style={{ background: eraCfg ? eraRing(eraCfg) : "var(--avatar-ring)" }}>
               <div className="rounded-full bg-[var(--header-bg,var(--card-bg))] p-[2px]">
@@ -536,16 +536,16 @@ export function ProfileHeader({
               </span>
             )}
           </div>
-          <div className="min-w-0 flex-1">
-            <h1 ref={nameRef} className="truncate text-[18px] font-bold leading-6 tracking-tight text-(--text)">
+          <div className="flex w-full min-w-0 flex-col items-center">
+            <h1 ref={nameRef} className="max-w-full truncate text-[18px] font-bold leading-6 tracking-tight text-(--text)">
               {displayName || "Creator"}
             </h1>
-            <p className="truncate text-[12px] leading-5 text-(--text-muted)">@{cleanHandle}</p>
+            <p className="max-w-full truncate text-[12px] leading-5 text-(--text-muted)">@{cleanHandle}</p>
             {formattedTagline?.[0] && (
               <span className="mt-0.5 inline-block rounded-full bg-(--accent-soft) px-2 text-[11px] font-medium leading-[18px] text-(--accent-text)">{formattedTagline[0]}</span>
             )}
             {allActiveSocials.length > 0 && (
-              <div className="mt-1.5 flex items-center gap-1.5">
+              <div className="mt-2 flex items-center justify-center gap-1.5">
                 {allActiveSocials.slice(0, 4).map((item) => {
                   const hasUrl = Boolean(item.url && item.url !== "#");
                   const icon = (
