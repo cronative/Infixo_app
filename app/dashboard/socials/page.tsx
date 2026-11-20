@@ -34,6 +34,7 @@ import { EraBadge } from "@/components/shared/EraBadge";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PAGE_COPY } from "@/components/dashboard/pageCopy";
+import { SectionHeading } from "@/components/dashboard/SectionHeading";
 import { getCreatorEra, getEraProgress, formatFans } from "@/lib/creatorEra";
 import { CreatorEraCelebrationModal } from "@/components/shared/CreatorEraCelebrationModal";
 import { PLANS } from "@/config/plans";
@@ -889,18 +890,16 @@ function PlatformSection({
 
   return (
     <section className="rounded-[5px] border border-[#ECECF0] bg-white">
-      <div className="flex items-center justify-between gap-2 rounded-t-[5px] border-b border-[#ECECF0] bg-[#C21B5C]/[0.07] px-3 py-2.5">
-        <div className="flex min-w-0 items-center gap-2">
-          <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] ${row.iconBg}`}>{row.icon}</span>
-          <h3 className="truncate text-[14px] font-semibold text-[#18181B]">
-            {SECTION_TITLES[row.platform]}{" "}
-            <span className="text-xs font-normal text-[#6B6B76] tabular-nums">
-              ({row.accounts.length}/{maxPerPlatform})
-            </span>
-          </h3>
-        </div>
-        {ordered.length === 0 && !loading ? null : canAddMore ? addBtn : <span className="shrink-0 text-[11px] font-medium text-[#A1A1AA]">Max reached</span>}
-      </div>
+      <SectionHeading
+        as="h3"
+        icon={row.icon}
+        iconBoxClassName={row.iconBg}
+        title={SECTION_TITLES[row.platform]}
+        subtitle="Your first account counts toward total fans."
+        count={`${row.accounts.length}/${maxPerPlatform}`}
+        action={ordered.length === 0 && !loading ? null : canAddMore ? addBtn : <span className="shrink-0 text-[11px] font-medium text-[#A1A1AA]">Max reached</span>}
+        className="rounded-t-[5px]"
+      />
 
       {loading ? (
         <div className="px-3 py-4 text-xs text-[#6B6B76]">Loading…</div>

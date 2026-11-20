@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Briefcase, Check, Clapperboard, Copy, ExternalLink, Link2, ShoppingBag, Star, User, Users, type LucideIcon } from "lucide-react";
+import { Briefcase, Globe, Check, Clapperboard, Copy, ExternalLink, Link2, ShoppingBag, Star, User, Users, type LucideIcon } from "lucide-react";
 import { copyToClipboard } from "@/lib/copyToClipboard";
 import { useToast } from "@/contexts/ToastContext";
+import { SectionHeading } from "./SectionHeading";
 
 const PAGES: { label: string; path: string; icon: LucideIcon }[] = [
   { label: "Profile", path: "", icon: User },
@@ -35,12 +36,12 @@ export function PublicPagesCard({ handle, profileUrl }: { handle: string; profil
 
   return (
     <section className="rounded-[5px] border border-[#ECECF0] bg-white">
-      <div className="flex items-center justify-between gap-3 border-b border-[#ECECF0] bg-[#FAFAFB] px-4 py-2.5">
-        <div className="min-w-0">
-          <h2 className="text-[14px] font-semibold text-[#18181B]">Your public pages</h2>
-          <p className="text-[12px] text-[#6B6B76]">Open or copy the link of any page to share it.</p>
-        </div>
-      </div>
+      <SectionHeading
+        icon={Globe}
+        title="Your public pages"
+        subtitle="Open or copy the link of any page to share it."
+        count={`${PAGES.length} pages`}
+      />
       <ul className="grid grid-cols-1 gap-2 p-3 @md:grid-cols-2 @3xl:grid-cols-3">
         {PAGES.map(({ label, path, icon: Icon }) => {
           const url = `/${clean}${path}`;

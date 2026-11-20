@@ -16,6 +16,7 @@ import { useCreator } from "@/contexts/CreatorContext";
 import { useToast } from "@/contexts/ToastContext";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { PAGE_COPY } from "@/components/dashboard/pageCopy";
+import { SectionHeading } from "@/components/dashboard/SectionHeading";
 import type { AnalyticsPeriod, AnalyticsSummary, AnalyticsTotals } from "@/lib/analyticsSummary";
 
 const TILE_GROUPS: { label: string; tiles: { key: keyof AnalyticsTotals; label: string }[] }[] = [
@@ -147,6 +148,7 @@ export default function DashboardAnalyticsPage() {
         <Section
           id="series"
           title="Series"
+          subtitle="Episodes fans opened."
           icon={<Tv className="h-4 w-4" />}
           total={data?.totals.episodeClicks}
           unit="clicks"
@@ -192,6 +194,7 @@ export default function DashboardAnalyticsPage() {
         <Section
           id="links"
           title="Links"
+          subtitle="Links fans tapped."
           icon={<Link2 className="h-4 w-4" />}
           total={data?.totals.linkClicks}
           unit="clicks"
@@ -205,6 +208,7 @@ export default function DashboardAnalyticsPage() {
         <Section
           id="products"
           title="Products"
+          subtitle="Products fans opened."
           icon={<ShoppingBag className="h-4 w-4" />}
           total={data?.totals.productClicks}
           unit="clicks"
@@ -218,6 +222,7 @@ export default function DashboardAnalyticsPage() {
         <Section
           id="setup"
           title="My Setup"
+          subtitle="Gear fans checked out."
           icon={<Wrench className="h-4 w-4" />}
           total={data?.totals.setupClicks}
           unit="clicks"
@@ -231,6 +236,7 @@ export default function DashboardAnalyticsPage() {
         <Section
           id="packages"
           title="Collab Packages"
+          subtitle="Packages brands viewed."
           icon={<Package className="h-4 w-4" />}
           total={data?.totals.collabPackageViews}
           unit="views"
@@ -248,6 +254,7 @@ export default function DashboardAnalyticsPage() {
 function Section<T>({
   id,
   title,
+  subtitle,
   icon,
   total,
   unit,
@@ -259,6 +266,7 @@ function Section<T>({
 }: {
   id: string;
   title: string;
+  subtitle?: string;
   icon: React.ReactNode;
   total?: number;
   unit: string;
@@ -273,17 +281,13 @@ function Section<T>({
 
   return (
     <section id={id} className="flex min-w-0 scroll-mt-20 flex-col self-stretch rounded-[5px] border border-[#ECECF0] bg-white">
-      <header className="flex items-center justify-between gap-3 rounded-t-[5px] border-b border-[#ECECF0] bg-[#C21B5C]/[0.07] px-4 py-2.5">
-        <span className="flex min-w-0 items-center gap-2">
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[5px] bg-white text-[#C21B5C]">{icon}</span>
-          <h2 className="truncate text-[14px] font-semibold text-[#18181B]">{title}</h2>
-        </span>
-        {!loading && total !== undefined && (
-          <span className="shrink-0 text-[12px] text-[#6B6B76]">
-            <span className="font-semibold tabular-nums text-[#18181B]">{fmt(total)}</span> {unit}
-          </span>
-        )}
-      </header>
+      <SectionHeading
+        icon={icon}
+        title={title}
+        subtitle={subtitle}
+        count={!loading && total !== undefined ? `${fmt(total)} ${unit}` : undefined}
+        className="rounded-t-[5px]"
+      />
       {loading ? (
         <p className="px-4 py-3 text-[13px] text-[#6B6B76]">Loading…</p>
       ) : empty ? (

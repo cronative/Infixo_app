@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { BadgeCheck, Copy, ExternalLink, MapPin, Pencil } from "lucide-react";
+import { BadgeCheck, Copy, ExternalLink, MapPin, Pencil, UserRound } from "lucide-react";
+import { SectionHeading } from "./SectionHeading";
 import { CreatorAvatar } from "@/components/shared/CreatorAvatar";
 import { EraAwardMedal } from "@/components/shared/EraBadge";
 import { BrandPlatformIcon } from "@/components/public/ui";
@@ -44,13 +45,17 @@ export function ProfileHeroCard({
 
   return (
     <section className="overflow-hidden rounded-[5px] border border-[#ECECF0] bg-white">
-      <div className="flex items-center justify-between border-b border-[#ECECF0] bg-[#FAFAFB] px-4 py-2.5">
-        <p className="text-[13px] font-semibold text-[#18181B]">Your public profile</p>
-        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-(--success)">
+      <SectionHeading
+        icon={UserRound}
+        title="Your public profile"
+        subtitle="What fans see first."
+        action={
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-(--success)">
           <span className="h-1.5 w-1.5 rounded-full bg-(--success)" />
           Live
         </span>
-      </div>
+        }
+      />
 
       <div className="mx-auto flex max-w-[520px] flex-col items-center px-4 pb-5 pt-6 text-center">
         {/* Photo with the Creator Era ring, like the public header */}

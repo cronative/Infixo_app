@@ -53,6 +53,7 @@ import { getCreatorEra } from "@/lib/creatorEra";
 import { CreatorEraCelebrationModal } from "@/components/shared/CreatorEraCelebrationModal";
 import { SetupChecklist } from "@/components/dashboard/SetupChecklist";
 import { PublicPagesCard } from "@/components/dashboard/PublicPagesCard";
+import { SectionHeading } from "@/components/dashboard/SectionHeading";
 import { markSetupStep, useSetupStep } from "@/lib/setupProgress";
 import { ThemeService } from "@/services/ThemeService";
 import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
@@ -431,18 +432,22 @@ export default function DashboardOverviewPage() {
         <div className="grid grid-cols-1 gap-3 @xl:grid-cols-2 @4xl:grid-cols-3">
           {/* Card 1: Series */}
           <div className="rounded-[5px] border border-[#ECECF0] bg-white flex flex-col overflow-hidden">
-            <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-[#ECECF0] bg-[#FAFAFB]">
-              <h3 className="text-[14px] font-semibold text-[#18181B]">
-                My Series ({series.length})
-              </h3>
-              <Link
-                href="/dashboard/series?new=true"
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-[5px] bg-[#C21B5C] text-white text-[12px] font-semibold hover:bg-[#A3164E] transition-colors cursor-pointer"
-              >
-                <Plus className="h-3 w-3" />
-                <span>Add<span className="sr-only"> series</span></span>
-              </Link>
-            </div>
+            <SectionHeading
+              as="h3"
+              icon={Film}
+              title="My Series"
+              subtitle="Your shows, in order."
+              count={`${series.length} series`}
+              action={
+                <Link
+                  href="/dashboard/series?new=true"
+                  className="inline-flex h-7 items-center gap-1 rounded-[5px] bg-[#C21B5C] px-2.5 text-[12px] font-semibold text-white transition-colors hover:bg-[#A3164E] cursor-pointer"
+                >
+                  <Plus className="h-3 w-3" />
+                  <span>Add<span className="sr-only"> series</span></span>
+                </Link>
+              }
+            />
 
             <div className="flex-1 max-h-[280px] overflow-y-auto divide-y divide-[#F4F4F5]">
               {sortedSeries.length === 0 ? (
@@ -507,18 +512,22 @@ export default function DashboardOverviewPage() {
 
           {/* Card 2: Shop */}
           <div className="rounded-[5px] border border-[#ECECF0] bg-white flex flex-col overflow-hidden">
-            <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-[#ECECF0] bg-[#FAFAFB]">
-              <h3 className="text-[14px] font-semibold text-[#18181B]">
-                My Shop ({products.length})
-              </h3>
-              <Link
-                href="/dashboard/products?new=true"
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-[5px] bg-[#C21B5C] text-white text-[12px] font-semibold hover:bg-[#A3164E] transition-colors cursor-pointer"
-              >
-                <Plus className="h-3 w-3" />
-                <span>Add<span className="sr-only"> product</span></span>
-              </Link>
-            </div>
+            <SectionHeading
+              as="h3"
+              icon={ShoppingBag}
+              title="My Shop"
+              subtitle="Products you recommend."
+              count={`${products.length} ${products.length === 1 ? "product" : "products"}`}
+              action={
+                <Link
+                  href="/dashboard/products?new=true"
+                  className="inline-flex h-7 items-center gap-1 rounded-[5px] bg-[#C21B5C] px-2.5 text-[12px] font-semibold text-white transition-colors hover:bg-[#A3164E] cursor-pointer"
+                >
+                  <Plus className="h-3 w-3" />
+                  <span>Add<span className="sr-only"> product</span></span>
+                </Link>
+              }
+            />
 
             <div className="flex-1 max-h-[280px] overflow-y-auto divide-y divide-[#F4F4F5]">
               {sortedProducts.length === 0 ? (
@@ -583,18 +592,22 @@ export default function DashboardOverviewPage() {
 
           {/* Card 3: Links */}
           <div className="rounded-[5px] border border-[#ECECF0] bg-white flex flex-col overflow-hidden">
-            <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-[#ECECF0] bg-[#FAFAFB]">
-              <h3 className="text-[14px] font-semibold text-[#18181B]">
-                My Links ({customLinks.length})
-              </h3>
-              <Link
-                href="/dashboard/links?new=true"
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-[5px] bg-[#C21B5C] text-white text-[12px] font-semibold hover:bg-[#A3164E] transition-colors cursor-pointer"
-              >
-                <Plus className="h-3 w-3" />
-                <span>Add<span className="sr-only"> link</span></span>
-              </Link>
-            </div>
+            <SectionHeading
+              as="h3"
+              icon={Link2}
+              title="My Links"
+              subtitle="Everything fans should find."
+              count={`${customLinks.length} ${customLinks.length === 1 ? "link" : "links"}`}
+              action={
+                <Link
+                  href="/dashboard/links?new=true"
+                  className="inline-flex h-7 items-center gap-1 rounded-[5px] bg-[#C21B5C] px-2.5 text-[12px] font-semibold text-white transition-colors hover:bg-[#A3164E] cursor-pointer"
+                >
+                  <Plus className="h-3 w-3" />
+                  <span>Add<span className="sr-only"> link</span></span>
+                </Link>
+              }
+            />
 
             <div className="flex-1 max-h-[280px] overflow-y-auto divide-y divide-[#F4F4F5]">
               {sortedLinks.length === 0 ? (
