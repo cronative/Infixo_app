@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
+  ArrowUpRight,
   Share2,
   Film,
   Copy,
@@ -216,6 +217,7 @@ export function SeriesDetailClient({
               category: EXPERT_DEMO_PROFILE.category,
               themeKey: EXPERT_DEMO_THEME,
               totalFanbase: calculateTotalAudience(EXPERT_DEMO_SOCIALS),
+              seriesCount: EXPERT_DEMO_SERIES.length,
             });
             setLoading(false);
             return;
@@ -767,25 +769,37 @@ export function SeriesDetailClient({
 
             {/* 5. Series by: compact "More series from" card (demo creator) or the Section-style row */}
             {isCardDesign ? (
-              <Link
-                href={profileUrl}
-                className="tap-scale flex items-center gap-3 rounded-[12px] bg-[color-mix(in_srgb,var(--text)_4%,var(--surface))] p-3 transition-colors hover:bg-(--accent-soft)"
-              >
-                <span className="h-10 w-10 shrink-0 overflow-hidden rounded-full bg-(--accent-soft)">
+              <div className="flex items-center gap-3 rounded-[12px] border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] p-3">
+                <span className="h-12 w-12 shrink-0 overflow-hidden rounded-full bg-(--accent-soft)">
                   {creator?.photoDataUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={creator.photoDataUrl} alt="" className="h-full w-full object-cover" />
                   ) : (
-                    <span className="flex h-full w-full items-center justify-center text-[13px] font-bold text-(--accent-text)">
+                    <span className="flex h-full w-full items-center justify-center text-[14px] font-bold text-(--accent-text)">
                       {getInitials(creator?.displayName || username)}
                     </span>
                   )}
                 </span>
-                <span className="min-w-0 flex-1 text-[13px] leading-5 text-(--text-muted)">
-                  More series from <span className="font-bold text-(--text)">{creator?.displayName || username}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-[15px] font-bold leading-5 text-(--text)">{creator?.displayName || username}</span>
+                  <span className="mt-1 flex flex-wrap items-center gap-1.5 text-[12px] leading-4 text-(--text-muted)">
+                    {creator?.category && (
+                      <span className="rounded-full bg-(--accent-soft) px-2 py-0.5 font-semibold text-(--accent-text)">{creator.category}</span>
+                    )}
+                    {typeof creator?.seriesCount === "number" && (
+                      <span>
+                        {creator.seriesCount} series
+                      </span>
+                    )}
+                  </span>
                 </span>
-                <span className="shrink-0 text-[13px] font-bold text-(--accent-text)">View profile</span>
-              </Link>
+                <Link
+                  href={profileUrl}
+                  className="tap-scale inline-flex h-9 shrink-0 items-center gap-1 rounded-[8px] border border-[color-mix(in_srgb,var(--accent)_45%,transparent)] px-3 text-[12px] font-bold text-(--accent-text) transition-colors hover:bg-(--accent-soft)"
+                >
+                  View profile <ArrowUpRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
             ) : (
             <Section solid icon={UserRound} title="Series by" subtitle="The creator behind this series." colors={sectionColors}>
               <div className="flex items-start gap-3 px-3 py-3 sm:px-3.5">

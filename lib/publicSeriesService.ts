@@ -12,6 +12,8 @@ export interface PublicCreatorInfo {
   category?: string | null;
   themeKey?: string;
   totalFanbase?: number;
+  /** Number of public series (set for the demo creator; used by the "More series from" card). */
+  seriesCount?: number;
   publicProfileLayout?: import("@/types").PublicProfileLayout;
 }
 
@@ -118,6 +120,7 @@ export async function getPublicSeriesData(
             // Same theme and fan total as the demo profile page.
             themeKey: EXPERT_DEMO_THEME,
             totalFanbase: calculateTotalAudience(EXPERT_DEMO_SOCIALS),
+            seriesCount: EXPERT_DEMO_SERIES.length,
           },
         };
       }
