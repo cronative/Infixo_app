@@ -1784,8 +1784,9 @@ export function LivePreviewCard({
           }
           usesDarkControls={usesDarkControls}
           onShareClick={handleShareClick}
+          // Demo profile: no "Work with me" button in the header (Work With Me has its own section).
           onWorkWithMe={
-            isPremiumLayout && (hasWorkCollab || hasReviewsContent)
+            isPremiumLayout && !isCardSectionsMode && (hasWorkCollab || hasReviewsContent)
               ? () => {
                   const el = document.getElementById("collab-section");
                   if (el) window.scrollTo({ top: window.scrollY + el.getBoundingClientRect().top - 52, behavior: "smooth" });
