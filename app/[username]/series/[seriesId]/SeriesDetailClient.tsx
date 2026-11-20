@@ -772,7 +772,7 @@ export function SeriesDetailClient({
 
             {/* 5. Series by: compact "More series from" card (demo creator) or the Section-style row */}
             {isCardDesign ? (
-              <div className="flex items-center gap-3 rounded-[12px] border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] p-3">
+              <div className="flex items-center gap-3 rounded-[5px] border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] p-3">
                 <span className="h-12 w-12 shrink-0 overflow-hidden rounded-full bg-(--accent-soft)">
                   {creator?.photoDataUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element

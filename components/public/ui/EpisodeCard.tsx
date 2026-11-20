@@ -24,10 +24,10 @@ export function EpisodeCard({ number, title, href, platform, isFirst = false, on
       rel="noopener noreferrer"
       onClick={onClick}
       aria-label={`Episode ${number}: ${clean}. Watch${platform ? ` on ${platform}` : ""}`}
-      className="press-card group flex items-center gap-3 rounded-[12px] border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] p-2.5 transition-[transform,box-shadow,border-color] duration-200 hover:border-[color-mix(in_srgb,var(--accent)_35%,var(--surface-border))] hover:shadow-[0_10px_24px_-12px_color-mix(in_srgb,var(--accent)_40%,transparent)] motion-safe:hover:scale-[1.02]"
+      className="press-card group flex items-center gap-3 rounded-[5px] border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] p-2.5 transition-[transform,box-shadow,border-color] duration-200 hover:border-[color-mix(in_srgb,var(--accent)_35%,var(--surface-border))] hover:shadow-[0_10px_24px_-12px_color-mix(in_srgb,var(--accent)_40%,transparent)] motion-safe:hover:scale-[1.02]"
     >
       <span
-        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] text-[17px] font-extrabold tabular-nums"
+        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[5px] text-[17px] font-extrabold tabular-nums"
         style={{
           backgroundColor: isFirst ? "var(--accent-soft)" : "color-mix(in srgb, var(--text) 5%, var(--surface))",
           color: isFirst ? "var(--accent-text)" : "var(--text)",
@@ -41,7 +41,7 @@ export function EpisodeCard({ number, title, href, platform, isFirst = false, on
       </span>
       <span
         aria-hidden
-        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] border transition-colors ${
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] border transition-colors ${
           isFirst
             ? "border-(--accent) bg-(--accent) text-(--on-accent)"
             : "border-[color-mix(in_srgb,var(--accent)_45%,transparent)] text-(--accent-text) group-hover:bg-(--accent-soft)"

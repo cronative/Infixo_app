@@ -29,7 +29,13 @@ export function WorkWithMe({
   lockedCount = 0,
   pricesPlusGst,
   preview = false,
+  previewLimit,
+  allHref,
 }: {
+  /** Show only this many packages here; the rest live on allHref (a separate page). */
+  previewLimit?: number;
+  /** Page with every package; with previewLimit, the footer links there instead of expanding. */
+  allHref?: string;
   lockedCount?: number;
   /** Creator-wide "prices + 18% GST" from the media kit terms. */
   pricesPlusGst?: boolean;
@@ -41,7 +47,8 @@ export function WorkWithMe({
   onCustomRequest?: () => void;
 }) {
   const [showAllPackages, setShowAllPackages] = useState(false);
-  const shownPackages = showAllPackages ? packages : packages.slice(0, 3);
+  const linksOut = Boolean(allHref && previewLimit);
+  const shownPackages = linksOut ? packages.slice(0, previewLimit) : showAllPackages ? packages : packages.slice(0, 3);
   return (
     <SectionCard
       icon={Handshake}
@@ -73,7 +80,12 @@ export function WorkWithMe({
           </button>
         </div>
       )}
-      {packages.length > 3 && (
+      {linksOut && packages.length > (previewLimit ?? 0) && (
+        <div className="px-2.5 pb-2.5">
+          <FooterCta boxed href={allHref}>{`View all packages (${packages.length})`}</FooterCta>
+        </div>
+      )}
+      {!linksOut && packages.length > 3 && (
         <div className="px-2.5 pb-2.5">
           <FooterCta
             boxed

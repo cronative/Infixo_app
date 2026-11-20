@@ -1547,10 +1547,10 @@ nextjs-portal,
 
 /* ============================================================
    DEMO LISTING PAGES: item cards like the series listing
-   (12px corners, hover lift on mouse devices, clear tap feedback)
+   (5px corners, hover lift on mouse devices, clear tap feedback)
    ============================================================ */
 [data-listing-plain] .card-item {
-  border-radius: 12px !important;
+  border-radius: 5px !important;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
@@ -1584,7 +1584,7 @@ nextjs-portal,
 [data-sections-float] .plain-section {
   background-color: color-mix(in srgb, var(--accent) 4%, var(--surface));
   border: 1px solid var(--surface-border);
-  border-radius: 16px;
+  border-radius: 5px;
   padding: 10px 2px 4px;
   margin-top: 12px;
 }

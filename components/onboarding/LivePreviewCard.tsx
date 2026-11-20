@@ -2742,6 +2742,9 @@ export function LivePreviewCard({
                     onEnquire={(pkg) => openEnquiry(pkg)}
                     // "Get in touch for collaboration" button hidden for now; pass () => openEnquiry(null) to bring it back.
                     onCustomRequest={undefined}
+                    // Demo profile: one package here, every package on the media kit page.
+                    previewLimit={isCardSectionsMode ? 1 : undefined}
+                    allHref={isCardSectionsMode ? `/${cleanHandle || "creator"}/mediakit` : undefined}
                   />
                 )}
                 <WhatBrandsSay

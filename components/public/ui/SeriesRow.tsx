@@ -32,7 +32,7 @@ export interface SeriesRowProps {
   /** Public series page for this series (all episodes, in order). */
   seriesHref: string;
   onOpenSeries?: (e: React.MouseEvent, series: Series) => void;
-  /** Card look like the episode cards: 12px corners and an outlined arrow button. */
+  /** Card look like the episode cards: 5px corners and an outlined arrow button. */
   variant?: "row" | "card";
 }
 
@@ -55,9 +55,9 @@ export function SeriesRow({ series, seriesHref, onOpenSeries, variant = "row" }:
       href={seriesHref}
       onClick={(e) => onOpenSeries?.(e, series)}
       // Separate white card (white on light themes, card colour on dark ones).
-      className={isCard ? `press-card gap-3 rounded-[12px]! border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] p-2.5 transition-[transform,box-shadow,border-color] duration-200 hover:border-[color-mix(in_srgb,var(--accent)_35%,var(--surface-border))] hover:shadow-[0_10px_24px_-12px_color-mix(in_srgb,var(--accent)_40%,transparent)] motion-safe:hover:scale-[1.02]` : `gap-3 p-2 ${CARD_ITEM} ${CARD_ITEM_HOVER}`}
+      className={isCard ? `press-card gap-3 rounded-[5px]! border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] p-2.5 transition-[transform,box-shadow,border-color] duration-200 hover:border-[color-mix(in_srgb,var(--accent)_35%,var(--surface-border))] hover:shadow-[0_10px_24px_-12px_color-mix(in_srgb,var(--accent)_40%,transparent)] motion-safe:hover:scale-[1.02]` : `gap-3 p-2 ${CARD_ITEM} ${CARD_ITEM_HOVER}`}
       leading={
-        <span className={`relative h-[52px] w-[92px] shrink-0 overflow-hidden bg-(--accent) min-[400px]:h-[63px] min-[400px]:w-28 ${isCard ? "rounded-[10px]" : "rounded-[5px]"}`}>
+        <span className={`relative h-[52px] w-[92px] shrink-0 overflow-hidden bg-(--accent) min-[400px]:h-[63px] min-[400px]:w-28 ${"rounded-[5px]"}`}>
           {hasCover ? (
             <Image
               src={cover!}
@@ -107,7 +107,7 @@ export function SeriesRow({ series, seriesHref, onOpenSeries, variant = "row" }:
       }
       arrow={
         isCard ? (
-          <span aria-hidden className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] border border-[color-mix(in_srgb,var(--accent)_45%,transparent)] text-(--accent-text) transition-colors group-hover:bg-(--accent-soft)">
+          <span aria-hidden className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] border border-[color-mix(in_srgb,var(--accent)_45%,transparent)] text-(--accent-text) transition-colors group-hover:bg-(--accent-soft)">
             <ChevronRight className="h-5 w-5" />
           </span>
         ) : (
