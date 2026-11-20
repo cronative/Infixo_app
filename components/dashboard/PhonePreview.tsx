@@ -196,7 +196,7 @@ export function PhonePreview({
   return (
     <aside
       aria-label="Profile preview"
-      className={`hidden lg:flex flex-col gap-2 w-[380px] xl:w-[440px] shrink-0 sticky top-6 h-[calc(100vh-7rem)] ${className}`}
+      className={`hidden lg:flex flex-col gap-2 w-[400px] xl:w-[512px] shrink-0 sticky top-6 h-[calc(100vh-7rem)] ${className}`}
     >
       {/* Top Header Bar: Page title badge, copy link button & open in new tab */}
       <div className="w-full flex items-center justify-between gap-2 px-1 shrink-0">
@@ -299,7 +299,9 @@ export function PhonePreview({
                 productsOnlyMode={cleanSubpath === "products" || cleanSubpath === "shop"}
                 linksOnlyMode={cleanSubpath === "links"}
                 pageHeader={undefined}
-                hideFooter={false}
+                // Section pages (Series / Links / Shop): just the list, no creator header or footer.
+                hideProfileHeader={Boolean(cleanSubpath)}
+                hideFooter={Boolean(cleanSubpath)}
                 isInformational={true}
               />
             </div>

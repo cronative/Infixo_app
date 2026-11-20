@@ -386,6 +386,8 @@ export interface LivePreviewCardProps {
   showSettingsIcon?: boolean;
   onShare?: () => void;
   hideFooter?: boolean;
+  /** Dashboard section previews (Series / Links / Shop): skip the creator header and show only the list. */
+  hideProfileHeader?: boolean;
   isInformational?: boolean;
   isOnboarding?: boolean;
   isFinishStep?: boolean;
@@ -642,6 +644,7 @@ export function LivePreviewCard({
   showSettingsIcon: showSettingsIconProp,
   onShare,
   hideFooter = false,
+  hideProfileHeader = false,
   isInformational: isInformationalProp,
   isOnboarding: isOnboardingProp,
   isFinishStep: isFinishStepProp,
@@ -1740,7 +1743,7 @@ export function LivePreviewCard({
         className={containedScroll ? "shrink-0 w-full z-20" : "contents"}
       >
         {/* The media kit page draws its own top bar + hero (MediaKitV2Content). */}
-        {!mediaKitOnlyMode && (
+        {!mediaKitOnlyMode && !hideProfileHeader && (
         <ProfileHeader
           navScrolled={navScrolled}
           displayName={profile.displayName || "Creator Name"}
