@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ChevronRight, Clapperboard, Copy, Play, Share2 } from "lucide-react";
 import { EXPERT_DEMO_PROFILE, EXPERT_DEMO_SERIES } from "@/data/expertDemoCreator";
+import { InflixoWordmark } from "@/components/brand/InflixoLogo";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 
 /** "Ep 01: The Bootstrapped Broker — How We Built…" → "The Bootstrapped Broker" */
@@ -123,10 +124,9 @@ export function HeroPhoneMockup() {
               >
                 <div className="mx-1.5 mt-6 overflow-hidden rounded-[5px]" style={{ background: G.header }}>
                   {/* top bar */}
-                  <div className="flex items-center justify-between px-2 py-1.5" style={{ borderBottom: `1px solid ${G.border}` }}>
-                    <span className="flex h-5 w-5 items-center justify-center rounded-[5px]" style={{ background: G.surface }}>
-                      <ArrowLeft className="h-3 w-3" style={{ color: G.text }} />
-                    </span>
+                  <div className="flex items-center justify-between py-1.5 pl-4 pr-2" style={{ borderBottom: `1px solid ${G.border}` }}>
+                    {/* Listing opened directly: Inflixo logo instead of a back arrow */}
+                    <InflixoWordmark className="h-3.5" />
                     <span className="flex items-center gap-1 rounded-[5px] px-1.5 py-0.5 text-[8.5px] font-semibold" style={{ background: G.soft, color: G.accent }}>
                       <Share2 className="h-2.5 w-2.5" /> Share
                     </span>
