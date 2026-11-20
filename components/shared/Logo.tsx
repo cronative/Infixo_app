@@ -109,6 +109,7 @@ export function Logo({
   casing = "title",
   showTagline = true,
   showIcon = true,
+  tone = "maroon",
 }: {
   size?: "sm" | "md" | "lg" | "xl";
   href?: string;
@@ -122,6 +123,8 @@ export function Logo({
   showTagline?: boolean;
   /** false shows only the wordmark and tagline, without the square icon. */
   showIcon?: boolean;
+  /** Wordmark + tagline colour: brand maroon (default) or the Kesar Sunset saffron. */
+  tone?: "maroon" | "kesar";
 }) {
   const router = useRouter();
 
@@ -280,6 +283,8 @@ export function Logo({
             src={
               light
                 ? "/images/inflixo-wordmark-title-white.png"
+                : tone === "kesar"
+                ? "/images/inflixo-wordmark-title-kesar.png"
                 : "/images/inflixo-wordmark-title.png"
             }
             alt="Inflixo - For Creators. By Creators."
@@ -304,7 +309,7 @@ export function Logo({
             <span
               className={`
                 font-bold tracking-[0.05em] leading-none select-none whitespace-nowrap mt-0.5
-                ${light ? "text-white/90" : "text-[#7A2253]"}
+                ${light ? "text-white/90" : tone === "kesar" ? "text-[#C2410C]" : "text-[#7A2253]"}
                 ${
                   size === "sm"
                     ? "text-[8px]"
