@@ -9,6 +9,7 @@ import {
   Award,
   Briefcase,
   Check,
+  CircleCheck,
   Clapperboard,
   ExternalLink,
   Globe,
@@ -192,6 +193,20 @@ function IconTile({ icon: Icon }: { icon: LucideIcon }) {
 }
 
 /** A mini version of a profile section, like the real page: icon, title, subtitle, count, then rows. */
+/** "What you get" checklist used in every landing section (creator benefits, 3 points). */
+function Benefits({ items, className = "" }: { items: string[]; className?: string }) {
+  return (
+    <ul className={`space-y-2.5 rounded-[5px] border border-[#F6E0DC] bg-white px-4 py-3.5 text-left ${className}`}>
+      {items.map((t) => (
+        <li key={t} className="flex items-start gap-2.5 text-[14px] leading-snug text-[#1C1917] sm:text-[15px]">
+          <CircleCheck aria-hidden className="mt-px h-[18px] w-[18px] shrink-0 text-[#15803D]" />
+          <span>{t}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function LandingHomePage() {
   const router = useRouter();
   const pricingCurrency = usePricingCurrency();
@@ -371,6 +386,7 @@ export default function LandingHomePage() {
             <p className="mt-4 text-[13px] font-bold tracking-wide text-[#C21B5C]">
               One profile · Every series · Every episode · Every product
             </p>
+            <Benefits className="mx-auto mt-5 max-w-md lg:mx-0" items={["Fans find Episode 1 and binge your series in order.","Every view and like still counts on YouTube & Instagram.","One link for your series, shop, links and brand collabs."]} />
             <div className="mt-7 flex justify-center lg:justify-start">{claimForm}</div>
             <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
               <Link href="/demo_creator" className={secondaryBtn}>
@@ -408,6 +424,7 @@ export default function LandingHomePage() {
               Your content isn&apos;t missing. <span className="text-[#C21B5C]">It&apos;s simply scattered.</span>
             </p>
             <p className="mt-2 text-[15px] text-[#52525B]">What if your audience could discover more of your work without searching through hundreds of posts? That&apos;s why we built Inflixo.</p>
+            <Benefits className="mx-auto mt-6 max-w-md" items={["Older episodes keep getting found instead of getting buried.","Fans see all your series, not just your latest post.","Brands understand your work from one page."]} />
           </div>
         </div>
       </section>
@@ -428,6 +445,7 @@ export default function LandingHomePage() {
               </div>
             ))}
           </div>
+          <Benefits className="mx-auto mt-10 max-w-md" items={["Replace a dozen scattered links with one creator profile.","Fans explore more of your work in a single visit.","Brands get everything they need to say yes."]} />
           <div className="mt-10 flex flex-col items-center gap-2 text-center">
             <p className="text-[16px] font-bold text-[#1C1917]">You focus on creating. Inflixo helps people explore what you&apos;ve created.</p>
             {ctaRow("Create my Inflixo profile", () => handleClaim(username))}
@@ -456,6 +474,7 @@ export default function LandingHomePage() {
                 Tapping an episode opens the original video on Instagram, YouTube or Facebook. Nothing is re-uploaded, so older episodes and other series get more chances to be watched where your content already lives.
               </p>
             </div>
+            <Benefits className="mt-5" items={["Help followers discover more of your series.","Send viewers to the original video, so views stay yours.","Give older episodes a second chance to be watched."]} />
             <p className="mt-5 text-[15px] font-bold text-[#C21B5C]">More content discovered. More opportunities to be watched.</p>
             <div className="mt-4">{ctaRow("Organize my video series", () => handleClaim(username))}</div>
           </div>
@@ -472,6 +491,7 @@ export default function LandingHomePage() {
               title="One link. Everything your audience needs."
               sub="Instagram, YouTube, Facebook, your website, your latest campaign, your favorite resources. Why make your audience search for each one? Keep them all on one creator profile, and group related links into folders."
             />
+            <Benefits className="mt-5" items={["Fans find every link without DMing you.","Group links into folders and pin the one that matters.","Your links sit right next to your series, shop and media kit."]} />
             <p className="mt-5 text-[15px] font-bold text-[#C21B5C]">Less searching. Easier access. One Inflixo link.</p>
             <div className="mt-4">{ctaRow("Organize my links", () => handleClaim(username))}</div>
           </div>
@@ -497,6 +517,7 @@ export default function LandingHomePage() {
             <p className="mt-5 text-[15px] leading-relaxed text-[#52525B]">
               Add product images, names, prices and shopping links. Fans browse your picks and buy from the original store, and Inflixo takes no cut. Fashion, food, tech, beauty or lifestyle: your recommendations become easy to find.
             </p>
+            <Benefits className="mt-5" items={["Answer “which camera?” once, not in a hundred DMs.","Earn from your affiliate links; Inflixo takes no cut.","Fans buy straight from the original store."]} />
             <div className="mt-4">{ctaRow("Build my Creator Shop", () => handleClaim(username))}</div>
           </div>
         </div>
@@ -523,6 +544,7 @@ export default function LandingHomePage() {
                 </li>
               ))}
             </ul>
+            <Benefits className="mt-6" items={["Share one link instead of PDFs and screenshots.","Brands see your packages and send you collab requests.","Look professional from the very first message."]} />
             <div className="mt-6">{ctaRow("Create my media kit", () => handleClaim(username))}</div>
           </div>
           <ProfileSectionPreview kind="packages" />
@@ -549,6 +571,7 @@ export default function LandingHomePage() {
                   </span>
                 </span>
               </div>
+              <Benefits className="mt-5" items={["Show your total reach across every platform.","Reviews and your crew build trust with new brands.","Celebrate your growth with your Creator Era."]} />
             </div>
             <ProfileSectionPreview kind="fans" />
           </div>
@@ -606,6 +629,7 @@ export default function LandingHomePage() {
               </li>
             ))}
           </ol>
+          <Benefits className="mx-auto mt-10 max-w-md" items={["Set up in minutes; no website or coding.","Paste your video links; there's nothing to upload.","Update anytime; changes show on your profile instantly."]} />
           <div className="mt-10 flex justify-center">
             <button onClick={() => handleClaim(username)} className={primaryBtn}>
               Get started free <ArrowRight className="h-4 w-4" />
@@ -623,6 +647,7 @@ export default function LandingHomePage() {
             sub={`Big dreams don't need an expensive beginning. Plans start at ${starterMonthly}/month, about ${starterPerDay} a day.`}
           />
 
+          <Benefits className="mx-auto mt-8 max-w-md" items={["Every plan includes series, shop, links and a media kit.","Pay with UPI, cards or netbanking.","Switch or cancel anytime; nothing you add is deleted."]} />
           <div className="mx-auto mt-10 flex max-w-3xl flex-col items-center justify-between gap-4 rounded-2xl border border-[#F0CFCB] bg-white p-5 text-center sm:flex-row sm:text-left">
             <div>
               <p className="text-[18px] font-extrabold text-[#1C1917]">Try Inflixo free for {PLANS.trial.trialDays} days</p>
@@ -701,6 +726,7 @@ export default function LandingHomePage() {
             <p className="mt-2 text-[14px] leading-relaxed text-[#52525B]">
               Episodes would still open on Instagram, YouTube or Facebook, giving creators a chance to reach audiences beyond their current followers.
             </p>
+            <Benefits className="mt-5" items={["Get discovered by people who don't follow you yet.","Views would still go to your original platform.","Your series will be ready the day discovery launches."]} />
             <p className="mt-5 text-[12px] text-[#71717A]">The OTT-style discovery experience is part of our future roadmap and is not available yet.</p>
           </div>
           <div className="grid grid-cols-2 gap-3" aria-hidden="true">
@@ -746,6 +772,7 @@ export default function LandingHomePage() {
             <p className="mt-3 text-[15px] leading-relaxed text-[#52525B]">
               A vision this big can&apos;t be built by one company alone. It needs creators like you, from the beginning.
             </p>
+            <Benefits className="mt-5" items={["Meet and collaborate with other creators.","Learn from creators who have grown before you.","Be part of the community from the very beginning."]} />
             <p className="mt-5 text-[18px] font-extrabold italic text-[#C21B5C]">&ldquo;We started building this dream together.&rdquo;</p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
               <button onClick={() => handleClaim(username)} className={primaryBtn}>
@@ -799,6 +826,7 @@ export default function LandingHomePage() {
           <p className="text-[16px] leading-relaxed text-[#52525B]">
             Your series, your recommendations, your collaborations and the community you&apos;ve built. Bring it all together with Inflixo.
           </p>
+          <Benefits className="mx-auto max-w-md" items={["Fans find and binge your series in order.","Brands see your work and packages in one place.","Start free and set up in minutes."]} />
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             <button onClick={() => handleClaim(username)} className={primaryBtn}>
               Claim your creator profile <ArrowRight className="h-4 w-4" />
