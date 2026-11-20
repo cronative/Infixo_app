@@ -17,6 +17,8 @@ export interface LinkGroupRowProps {
   onLinkClick?: (link: CustomLinkItem) => void;
   /** One bordered card holding the folder header and, when open, its links. */
   card?: boolean;
+  /** When open, list the links as separate link cards (like single links) instead of indented rows. */
+  separateItems?: boolean;
   className?: string;
 }
 
@@ -26,6 +28,7 @@ export function LinkGroupRow({
   initiallyOpen = false,
   onLinkClick,
   card = false,
+  separateItems = false,
   className = "",
 }: LinkGroupRowProps) {
   const [isOpen, setIsOpen] = useState(initiallyOpen);
@@ -182,7 +185,14 @@ export function LinkGroupRow({
 
       {/* Expanded inner links (light & compact with thin dividers, no nested boxes) */}
       {/* Open folder: plain indented rows, icons line up with the folder title */}
-      {isOpen && (
+      {isOpen && separateItems && (
+        <div className="space-y-2 border-t border-(--surface-border) p-2 animate-in fade-in duration-200">
+          {items.map((item) => (
+            <LinkRow key={item.id} link={item} card onClick={() => onLinkClick?.(item)} />
+          ))}
+        </div>
+      )}
+      {isOpen && !separateItems && (
         <div className="border-t border-(--surface-border) divide-y divide-(--surface-border) animate-in fade-in duration-200">
           {items.map((item) => (
             <LinkRow
