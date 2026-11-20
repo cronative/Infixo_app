@@ -232,6 +232,10 @@ export default function RootLayout({
             <CookieConsentBanner />
           </ToastProvider>
         </SessionProvider>
+        {/* iOS Safari only applies :active (tap feedback) when the page has a touch listener. */}
+        <Script id="touch-active" strategy="afterInteractive">
+          {`document.addEventListener("touchstart", function () {}, { passive: true });`}
+        </Script>
       </body>
     </html>
   );
