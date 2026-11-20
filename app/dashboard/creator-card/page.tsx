@@ -138,7 +138,7 @@ export default function CreatorCardPage() {
   const themeMeta = ThemeService.getThemeMeta(theme);
 
   const avatar = useExportableImage(profile.photoDataUrl, 480);
-  const wordmark = useExportableAsset("/images/inflixo-wordmark-title.png");
+  const wordmark = useExportableAsset("/images/inflixo-wordmark-title-gulaal.png");
   const wordmarkWhite = useExportableAsset("/images/inflixo-wordmark-title-white.png");
   const logoIcon = useExportableAsset("/images/inflixo-logo-icon-brand.png");
   const assetsReady =

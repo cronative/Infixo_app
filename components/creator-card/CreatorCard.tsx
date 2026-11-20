@@ -628,10 +628,6 @@ function QrRow({ skin, props }: { skin: Skin; props: CreatorCardProps }) {
 function Footer({ skin, assets }: { skin: Skin; assets: CreatorCardAssets }) {
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, color: skin.muted, fontSize: 14, fontWeight: 600, whiteSpace: "nowrap" }}>
-      {assets.icon && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={assets.icon} alt="" style={{ width: 22, height: 22, borderRadius: 6, display: "block" }} />
-      )}
       <span>
         {TAGLINE} <span style={{ color: skin.text, fontWeight: 800 }}>inflixo.com</span>
       </span>

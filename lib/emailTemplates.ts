@@ -93,7 +93,7 @@ function renderHeader(tagline: string = "For Creators. By Creators."): string {
                   <![endif]-->
                   <!--[if !mso]><!-->
                   <img
-                    src="${baseUrl}/images/inflixo-logo-horizontal-white.png"
+                    src="${baseUrl}/images/inflixo-wordmark-title-white.png"
                     alt="Inflixo"
                     height="32"
                     style="height: 32px; width: auto; max-height: 32px; display: block; border: 0; outline: none; text-decoration: none;"

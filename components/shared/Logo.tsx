@@ -108,7 +108,7 @@ export function Logo({
   className = "",
   casing = "title",
   showTagline = true,
-  showIcon = true,
+  showIcon = false,
   tone = "gulaal",
 }: {
   size?: "sm" | "md" | "lg" | "xl";
