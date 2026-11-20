@@ -149,7 +149,7 @@ import {
 import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
 import { CreatorEraBottomSheet } from "@/components/shared/CreatorEraBottomSheet";
 import { AboutMeBlock, FanbaseByPlatform, SocialAccountsBlock } from "@/components/public/about/AboutSections";
-import { BrandPlatformIcon, CardSectionsProvider, FooterCta, FullBleedSectionsProvider, PlainSectionsProvider, LinkGroupRow, LinkRow, ProductTiles, Section, SeriesRow, SolidSectionsProvider } from "@/components/public/ui";
+import { BrandPlatformIcon, CardSectionsProvider, FooterCta, FullBleedSectionsProvider, PlainSectionsProvider, LinkGroupRow, LinkRow, ProductTiles, Section, SectionHeader, SeriesRow, SolidSectionsProvider } from "@/components/public/ui";
 import { WhatBrandsSay, WorkWithMe } from "@/components/public/collab/CollabSections";
 
 
@@ -2368,16 +2368,14 @@ export function LivePreviewCard({
               );
               if (isDemoSeriesListing) {
                 return (
-                  <div>
-                    <div className="px-2.5 pb-1 pt-1 text-center">
-                      <div className="min-w-0">
-                        <h2 style={{ color: c.primaryText }} className="flex items-center justify-center gap-2 text-[18px] font-bold leading-6 tracking-tight">
-                          My Series
-                          <span className="rounded-full bg-(--accent-soft) px-2 py-0.5 text-[12px] font-bold leading-4 text-(--accent-text)">{series.length}</span>
-                        </h2>
-                        <p className="mt-0.5 text-[12px] leading-4 text-(--text-muted)">All my shows in one place. Start from Ep 1.</p>
-                      </div>
-                    </div>
+                  <div className="plain-section text-left">
+                    <SectionHeader
+                      icon={Clapperboard}
+                      title="My Series"
+                      subtitle="All my shows in one place. Start from Ep 1."
+                      count={`${series.length} series`}
+                      colors={aboutColors}
+                    />
                     {seriesBody}
                   </div>
                 );

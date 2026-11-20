@@ -1609,3 +1609,13 @@ nextjs-portal,
   from { transform: scale(1); }
   to { transform: scale(1.08); }
 }
+
+/* Separate pages (/links, /series, /shop…): the section runs edge to edge of
+   the profile card — no side gap before it starts. The main profile keeps its
+   floating blocks (reset below). */
+.plain-section {
+  margin-inline: calc(var(--card-px, 0px) * -1);
+}
+[data-sections-float] .plain-section {
+  margin-inline: 0;
+}
