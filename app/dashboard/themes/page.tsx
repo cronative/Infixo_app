@@ -9,7 +9,6 @@ import {
   Loader2,
   Lock,
   Settings,
-  X,
 } from "lucide-react";
 import { canUseThemeGroup } from "@/config/plans";
 import { useCreator } from "@/contexts/CreatorContext";
@@ -76,11 +75,14 @@ function ProfilePreview({
   themeKey,
   data,
   visibilitySettings,
+  wide = false,
   className = "",
 }: {
   themeKey: ThemeKey;
   data: PreviewData;
   visibilitySettings: VisibilitySettings;
+  /** Full-width canvas: theme background edge to edge, profile card centred (old Live Preview page). */
+  wide?: boolean;
   className?: string;
 }) {
   const { profile, socials, series, totalAudience } = useCreator();
@@ -109,9 +111,9 @@ function ProfilePreview({
         />
       )}
       {!t.hasPhotoBackdrop && <FocusOverlay overlay={meta.focusOverlay} contained={true} />}
-      <div className="relative z-10 h-full flex flex-col px-4 py-4 min-h-0">
+      <div className={`relative z-10 h-full flex flex-col min-h-0 ${wide ? "px-5 py-5" : "px-4 py-4"}`}>
         {/* Inner box scrolls like a phone (padding stays outside, so nothing shows above the pinned nav). */}
-        <div className="flex min-h-0 flex-1 flex-col rounded-[5px] overflow-y-auto overflow-x-hidden overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className={`flex min-h-0 flex-1 flex-col rounded-[5px] overflow-y-auto ${wide ? "mx-auto w-full max-w-[620px]" : ""} overflow-x-hidden overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}>
           <div className="flex min-h-full shrink-0 flex-col">
             <LivePreviewCard
               profile={{ ...profile, visibilitySettings }}
@@ -224,9 +226,7 @@ export default function DashboardThemesPage() {
     resolveThemeKey(theme)
   );
   const [isApplying, setIsApplying] = useState(false);
-  const [sheetOpen, setSheetOpen] = useState(false);
   const panelRef = useRef<HTMLElement>(null);
-  const [panelHeight, setPanelHeight] = useState<number | null>(null);
 
   const previewThemeMeta = useMemo(() => {
     return ThemeService.getThemeMeta(previewThemeKey);
@@ -248,17 +248,6 @@ export default function DashboardThemesPage() {
   const isPreviewDifferent = previewThemeKey !== theme;
 
 
-  // Full-screen sticky height matching viewport
-  useLayoutEffect(() => {
-    const measure = () => {
-      const vh = typeof window !== "undefined" ? window.innerHeight : 800;
-      setPanelHeight(Math.max(820, vh - 32));
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, []);
-
   // Apply bar sits over the content area (the dashboard's <main>), not the sidebar.
   const [contentBox, setContentBox] = useState<{ left: number; width: number } | null>(null);
   useLayoutEffect(() => {
@@ -274,14 +263,6 @@ export default function DashboardThemesPage() {
     window.addEventListener("resize", measure);
     return () => { observer.disconnect(); window.removeEventListener("resize", measure); };
   }, []);
-
-  // Full-screen sheet (<1024px): lock the page behind it and close on Escape.
-  useEffect(() => {
-    if (!sheetOpen) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setSheetOpen(false); };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [sheetOpen]);
 
   // Apply Theme: ONLY when user clicks "Apply theme"!
   const handleApplyTheme = async () => {
@@ -307,7 +288,6 @@ export default function DashboardThemesPage() {
       markSetupStep("theme");
     }
     setPreviewThemeKey(tKey);
-    if (window.matchMedia("(max-width: 1023px)").matches) setSheetOpen(true);
   };
 
   const statusLine = isPreviewDifferent ? (
@@ -367,9 +347,9 @@ export default function DashboardThemesPage() {
         }
       />
 
-      <div className="flex items-start gap-8">
-        {/* LEFT: group filter + grouped theme grid */}
-        <div className={`flex-1 min-w-0 space-y-5 ${isPreviewDifferent ? "pb-28" : ""}`}>
+      {/* 1. Theme strip: group filters + one horizontal, scrollable row of themes */}
+      <div className="space-y-2.5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none" role="tablist" aria-label="Theme groups">
             {GROUP_FILTERS.map((filter) => {
               const isSelected = groupFilter === filter.id;
@@ -391,42 +371,34 @@ export default function DashboardThemesPage() {
               );
             })}
           </div>
-
-          {groupedThemes.map((group) => (
-            <section key={group.id} className="space-y-2.5">
-              <div className="space-y-0.5">
-                <h2 className="text-sm sm:text-base font-bold text-[#18181B]">{group.title}</h2>
-                <p className="text-xs text-[#6B6B76]">{group.subtitle}</p>
-              </div>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-                {group.themes.map((t) => (
-                  <ThemeCard
-                    key={t.key}
-                    theme={t}
-                    isSelected={previewThemeKey === t.key}
-                    isActive={theme === t.key}
-                    isLocked={isThemeLocked(t.key)}
-                    onSelect={() => handleSelectTheme(t.key)}
-                  />
-                ))}
-              </div>
-            </section>
+          <p className="text-xs text-[#6B6B76] line-clamp-1 break-words">{statusLine}</p>
+        </div>
+        <div className="-mx-1 flex snap-x gap-3 overflow-x-auto px-1 pb-2 [scrollbar-width:thin]" aria-label="Themes">
+          {groupedThemes.flatMap((group) => group.themes).map((t) => (
+            <div key={t.key} className="w-[180px] shrink-0 snap-start">
+              <ThemeCard
+                theme={t}
+                isSelected={previewThemeKey === t.key}
+                isActive={theme === t.key}
+                isLocked={isThemeLocked(t.key)}
+                onSelect={() => handleSelectTheme(t.key)}
+              />
+            </div>
           ))}
         </div>
-
-        {/* RIGHT: sticky phone preview (hidden below 1024px; the sheet takes over) */}
-        <aside
-          ref={panelRef}
-          aria-label="Profile preview"
-          style={{ height: panelHeight ? `${panelHeight}px` : "calc(100dvh - 2rem)" }}
-          className="hidden lg:flex flex-col gap-2 w-[400px] xl:w-[512px] shrink-0 sticky top-6 min-h-[820px] max-h-[1080px]"
-        >
-          <p className="w-full text-xs text-[#6B6B76] text-center line-clamp-2 break-words">{statusLine}</p>
-          <ProfilePreview themeKey={previewThemeKey} data={previewData} visibilitySettings={visibilitySettings} className="flex-1 w-full" />
-        </aside>
       </div>
 
-      {/* <1024px: full-screen preview sheet */}
+      {/* 2. Full-width live preview, like the old Live Preview page; follows the theme being tried */}
+      <section ref={panelRef} aria-label="Profile preview" className={isPreviewDifferent ? "pb-24" : ""}>
+        <ProfilePreview
+          themeKey={previewThemeKey}
+          data={previewData}
+          visibilitySettings={visibilitySettings}
+          wide
+          className="w-full min-h-[880px] lg:min-h-[940px] xl:min-h-[980px] h-[max(920px,calc(100dvh-120px))]"
+        />
+      </section>
+
       {/* Apply bar: shown while previewing a theme that isn't active */}
       {isPreviewDifferent && contentBox && (
         <div
@@ -467,29 +439,6 @@ export default function DashboardThemesPage() {
         onSave={handleSaveVisibility}
       />
 
-      {sheetOpen && (
-        <div role="dialog" aria-modal="true" aria-label="Theme preview" className="lg:hidden fixed inset-0 z-[1000] flex flex-col bg-[#FAFAFB]">
-          <div className="flex items-center justify-between gap-3 border-b border-[#ECECF0] bg-white px-4 py-3">
-            <p className="min-w-0 text-xs text-[#6B6B76] line-clamp-2 break-words">{statusLine}</p>
-            <button
-              type="button"
-              onClick={() => setSheetOpen(false)}
-              aria-label="Close preview"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] text-[#6B6B76] hover:text-[#18181B] hover:bg-[#F4F4F5] transition-colors cursor-pointer"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-          <div className="flex-1 min-h-0 flex flex-col items-center p-4">
-            <ProfilePreview themeKey={previewThemeKey} data={previewData} visibilitySettings={visibilitySettings} className="flex-1 w-full max-w-[512px]" />
-          </div>
-          {isPreviewDifferent && (
-            <div className="border-t border-[#ECECF0] bg-white px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] flex justify-center [&>button]:w-full [&>button]:justify-center">
-              {applyButton}
-            </div>
-          )}
-        </div>
-      )}
     </PageContainer>
   );
 }
