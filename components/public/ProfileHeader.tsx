@@ -32,6 +32,7 @@ import {
 import { formatCount, initials } from "@/utils/format";
 import { BRAND_BG, BRAND_VERIFIED_FILL } from "@/lib/brandColors";
 import { InflixoWordmark } from "@/components/brand/InflixoLogo";
+import { useArrivedInApp } from "@/lib/inAppNav";
 import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
 import { EraAwardMedal, EraBadge } from "@/components/shared/EraBadge";
 import { eraInk, eraRing, getEraConfig } from "@/lib/eraConfig";
@@ -353,6 +354,9 @@ export function ProfileHeader({
   showPlatformBreakdown = false,
   onWorkWithMe,
 }: ProfileHeaderProps) {
+  // Back arrow only when the visitor came here inside Inflixo (e.g. "View all");
+  // a page opened straight from a shared link shows the Inflixo logo instead.
+  const arrivedInApp = useArrivedInApp();
   // Once the big name scrolls under the sticky nav, the nav shows it centred.
   const nameRef = useRef<HTMLHeadingElement>(null);
   const [nameUnderNav, setNameUnderNav] = useState(false);
@@ -451,7 +455,7 @@ export function ProfileHeader({
         </span>
         {/* Left: Back button (on subpages) OR Small Inflixo Logo (no tagline) */}
         <div className="shrink-0 flex items-center">
-          {pageHeader ? (
+          {pageHeader && arrivedInApp ? (
             <Link
               href={pageHeader.backHref}
               className="tap-scale flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] border border-(--surface-border)/[0.08] bg-(--card-bg)/80 text-(--text)   hover:bg-(--surface)  transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:outline-hidden"

@@ -43,6 +43,7 @@ import {
 import { PlatformThumbnailBox, extractYouTubeVideoId } from "@/components/shared/PlatformThumbnailBox";
 import { resolveThemeKey } from "@/lib/themeKeys";
 import { EpisodeCard, EpisodeRow, FooterCta, Section } from "@/components/public/ui";
+import { useArrivedInApp } from "@/lib/inAppNav";
 import { getCreatorEra } from "@/lib/creatorEra";
 import { eraRing, getEraConfig } from "@/lib/eraConfig";
 import { getInitials } from "@/lib/avatar";
@@ -145,6 +146,9 @@ export function SeriesDetailClient({
   initialCreator,
 }: SeriesDetailClientProps) {
   const router = useRouter();
+  // Back button only when the visitor came from the profile / series list; a
+  // series opened straight from a shared link is a single page (no back).
+  const arrivedInApp = useArrivedInApp();
   const { showToast } = useToast();
 
   const [series, setSeries] = useState<Series | null>(initialSeries);
@@ -542,6 +546,7 @@ export function SeriesDetailClient({
 
             {/* Top Floating Glass Controls */}
             <div className="absolute top-3 inset-x-3 sm:top-4 sm:inset-x-4 flex items-center justify-between z-30 pointer-events-auto">
+              {arrivedInApp && (
               <button
                 type="button"
                 onClick={() => {
@@ -563,8 +568,9 @@ export function SeriesDetailClient({
               >
                 <ArrowLeft className="h-5 w-5" />
               </button>
+              )}
 
-              <div className="flex items-center gap-2 relative">
+              <div className="ml-auto flex items-center gap-2 relative">
                 <button
                   type="button"
                   onClick={handleCopyLink}
