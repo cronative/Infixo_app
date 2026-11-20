@@ -506,14 +506,14 @@ export function ProfileHeader({
           <div className="relative shrink-0">
             <div className="rounded-full p-[2px]" style={{ background: eraCfg ? eraRing(eraCfg) : "var(--avatar-ring)" }}>
               <div className="rounded-full bg-[var(--header-bg,var(--card-bg))] p-[2px]">
-                <div className="relative h-14 w-14 overflow-hidden rounded-full bg-(--card-bg)">
+                <div className="relative h-[72px] w-[72px] overflow-hidden rounded-full bg-(--card-bg)">
                   {hasAvatar && photoUrl ? (
                     <Image
                       src={photoUrl}
                       alt={displayName || "Creator"}
-                      width={112}
-                      height={112}
-                      sizes="56px"
+                      width={144}
+                      height={144}
+                      sizes="72px"
                       priority
                       unoptimized={isDataUrl}
                       onError={() => setFailedSrc(photoUrl)}
@@ -540,37 +540,37 @@ export function ProfileHeader({
             <p className="flex min-w-0 items-center gap-1.5 text-[12px] leading-5 text-(--text-muted)">
               <span className="truncate">@{cleanHandle}</span>
               {formattedTagline?.[0] && (
-                <span className="hidden shrink-0 rounded-full bg-(--accent-soft) px-2 text-[11px] font-medium leading-[18px] text-(--accent-text) min-[420px]:inline">{formattedTagline[0]}</span>
+                <span className="shrink-0 rounded-full bg-(--accent-soft) px-2 text-[11px] font-medium leading-[18px] text-(--accent-text)">{formattedTagline[0]}</span>
               )}
             </p>
+            {allActiveSocials.length > 0 && (
+              <div className="mt-1.5 flex items-center gap-1.5">
+                {allActiveSocials.slice(0, 4).map((item) => {
+                  const hasUrl = Boolean(item.url && item.url !== "#");
+                  const icon = (
+                    <span className="flex h-8 w-8 items-center justify-center rounded-[8px] border border-(--surface-border) bg-(--surface) text-(--text) transition-colors hover:border-(--accent-text) hover:text-(--accent-text)">
+                      {getPlatformIcon(item.platform, "h-4 w-4 text-current")}
+                    </span>
+                  );
+                  return hasUrl ? (
+                    <a
+                      key={item.platform}
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={`Visit ${item.label || item.platform}`}
+                      aria-label={`Visit ${item.label || item.platform}`}
+                      className="tap-scale inline-flex cursor-pointer"
+                    >
+                      {icon}
+                    </a>
+                  ) : (
+                    <span key={item.platform} className="inline-flex">{icon}</span>
+                  );
+                })}
+              </div>
+            )}
           </div>
-          {allActiveSocials.length > 0 && (
-            <div className="flex shrink-0 items-center gap-1.5">
-              {allActiveSocials.slice(0, 3).map((item) => {
-                const hasUrl = Boolean(item.url && item.url !== "#");
-                const icon = (
-                  <span className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-(--surface-border) bg-(--surface) text-(--text) transition-colors hover:border-(--accent-text) hover:text-(--accent-text)">
-                    {getPlatformIcon(item.platform, "h-4 w-4 text-current")}
-                  </span>
-                );
-                return hasUrl ? (
-                  <a
-                    key={item.platform}
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={`Visit ${item.label || item.platform}`}
-                    aria-label={`Visit ${item.label || item.platform}`}
-                    className="tap-44 tap-scale inline-flex cursor-pointer"
-                  >
-                    {icon}
-                  </a>
-                ) : (
-                  <span key={item.platform} className="inline-flex">{icon}</span>
-                );
-              })}
-            </div>
-          )}
         </div>
       ) : (
       <div className="flex w-full flex-col items-center gap-2.5 mx-auto text-center">

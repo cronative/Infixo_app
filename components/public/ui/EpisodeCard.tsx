@@ -24,7 +24,7 @@ export function EpisodeCard({ number, title, href, platform, isFirst = false, on
       rel="noopener noreferrer"
       onClick={onClick}
       aria-label={`Episode ${number}: ${clean}. Watch${platform ? ` on ${platform}` : ""}`}
-      className="tap-scale group flex items-center gap-3 rounded-[12px] border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] p-2.5 transition-colors hover:border-[color-mix(in_srgb,var(--accent)_35%,var(--surface-border))]"
+      className="tap-scale group flex items-center gap-3 rounded-[12px] border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] p-2.5 transition-[transform,box-shadow,border-color] duration-200 hover:border-[color-mix(in_srgb,var(--accent)_35%,var(--surface-border))] hover:shadow-[0_10px_24px_-12px_color-mix(in_srgb,var(--accent)_40%,transparent)] motion-safe:hover:scale-[1.02]"
     >
       <span
         className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] text-[17px] font-extrabold tabular-nums"
