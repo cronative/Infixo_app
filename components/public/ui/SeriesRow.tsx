@@ -49,6 +49,14 @@ export function SeriesRow({ series, seriesHref, onOpenSeries, variant = "row" }:
   const focal = (series as { focalPoint?: string }).focalPoint || (series as { posterPosition?: string }).posterPosition || "center";
   const pKey = platformKey(series.platform) || platformKey(episodes[0]?.platform);
   const language = series.language?.trim();
+  // Genres ("Travel, Road Trip, Budget") as small chips on the card variant.
+  const genres = isCard
+    ? (series.genre || "")
+        .split(/[,•|/]/)
+        .map((g) => g.trim().replace(/^Genre:\s*/i, ""))
+        .filter(Boolean)
+        .slice(0, 3)
+    : [];
 
   return (
     <ListRow
@@ -82,6 +90,7 @@ export function SeriesRow({ series, seriesHref, onOpenSeries, variant = "row" }:
       title={series.title}
       titleClassName="text-[15px] font-bold leading-[19px] text-(--text)"
       subtitle={
+        <>
         <span className={`mt-1 flex min-w-0 items-center gap-1.5 min-[400px]:gap-2 text-[12px] text-(--text-muted) ${isCard ? "flex-wrap gap-y-0.5" : "whitespace-nowrap"}`} title={[`${episodes.length} episodes`, language, pKey && PLATFORM_LABEL[pKey]].filter(Boolean).join(" · ")}>
           <span className="inline-flex shrink-0 items-center gap-1">
             <Layers aria-hidden className="h-3.5 w-3.5" />
@@ -104,6 +113,16 @@ export function SeriesRow({ series, seriesHref, onOpenSeries, variant = "row" }:
             </>
           )}
         </span>
+          {genres.length > 0 && (
+            <span className="mt-1.5 flex flex-wrap gap-1">
+              {genres.map((g) => (
+                <span key={g} className="rounded-[5px] bg-(--accent-soft) px-1.5 py-px text-[10.5px] font-semibold leading-4 text-(--accent-text)">
+                  {g}
+                </span>
+              ))}
+            </span>
+          )}
+        </>
       }
       arrow={
         isCard ? (
