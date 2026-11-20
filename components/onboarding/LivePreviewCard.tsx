@@ -659,12 +659,12 @@ export function LivePreviewCard({
   const series: Series[] = incomingSeries || [];
   const isListingPage = Boolean(seriesOnlyMode || productsOnlyMode || reviewsOnlyMode || linksOnlyMode || mediaKitOnlyMode || teamOnlyMode || setupOnlyMode);
   const isPremiumLayout = !isListingPage && (layoutMode === "premium" || layoutMode === "stacked");
-  /** Card-style sections with soft buttons: trying it on the demo creator's public profile first. */
-  const isCardSectionsMode = isPremiumLayout && !landingDemo && profile.username === "demo_creator";
-  /** Series listing styled like the series page episodes (heading + count, card rows): demo creator first. */
-  const isDemoSeriesListing = Boolean(seriesOnlyMode) && !landingDemo && profile.username === "demo_creator";
-  /** Other demo listing pages (links, shop, reviews, setup, team) in the same look as the series listing. */
-  const isDemoPlainListing = isListingPage && !seriesOnlyMode && !mediaKitOnlyMode && !landingDemo && profile.username === "demo_creator";
+  /** Public profile: plain centred sections, soft buttons, card rows (all creators). */
+  const isCardSectionsMode = isPremiumLayout && !landingDemo;
+  /** Series listing styled like the series page episodes (heading + count, card rows). */
+  const isDemoSeriesListing = Boolean(seriesOnlyMode) && !landingDemo;
+  /** Other listing pages (links, shop, reviews, setup, team) in the same look as the series listing. */
+  const isDemoPlainListing = isListingPage && !seriesOnlyMode && !mediaKitOnlyMode && !landingDemo;
   /** Centred listing heading (title + count pill + subtitle), same as the series listing. */
   const listingHeading = (title: string, count: number, subtitle: string) => (
     <div className="px-2.5 pb-1 pt-1 text-center">
@@ -1784,7 +1784,7 @@ export function LivePreviewCard({
           }
           usesDarkControls={usesDarkControls}
           onShareClick={handleShareClick}
-          // Demo profile: no "Work with me" button in the header (Work With Me has its own section).
+          // Public profile: no "Work with me" button in the header (Work With Me has its own section).
           onWorkWithMe={
             isPremiumLayout && !isCardSectionsMode && (hasWorkCollab || hasReviewsContent)
               ? () => {
@@ -2743,7 +2743,7 @@ export function LivePreviewCard({
                     onEnquire={(pkg) => openEnquiry(pkg)}
                     // "Get in touch for collaboration" button hidden for now; pass () => openEnquiry(null) to bring it back.
                     onCustomRequest={undefined}
-                    // Demo profile: one package here, every package on the media kit page.
+                    // Public profile: one package here, every package on the media kit page.
                     previewLimit={isCardSectionsMode ? 1 : undefined}
                     allHref={isCardSectionsMode ? `/${cleanHandle || "creator"}/mediakit` : undefined}
                   />

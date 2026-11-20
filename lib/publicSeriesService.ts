@@ -12,7 +12,7 @@ export interface PublicCreatorInfo {
   category?: string | null;
   themeKey?: string;
   totalFanbase?: number;
-  /** Number of public series (set for the demo creator; used by the "More series from" card). */
+  /** Number of the creator's series (used by the "More series from" card). */
   seriesCount?: number;
   publicProfileLayout?: import("@/types").PublicProfileLayout;
 }
@@ -151,6 +151,7 @@ export async function getPublicSeriesData(
     const creator = creatorRows[0] || null;
 
     let s: any = null;
+    let creatorSeriesCount = 0;
 
     if (creator) {
       // Find all series for this creator
@@ -158,6 +159,7 @@ export async function getPublicSeriesData(
         "SELECT * FROM series WHERE creator_id = ? ORDER BY display_order ASC, created_at DESC",
         [creator.id]
       );
+      creatorSeriesCount = allCreatorSeries.length;
 
       // Match by exact id OR by slugified title
       s = allCreatorSeries.find(
@@ -247,6 +249,7 @@ export async function getPublicSeriesData(
           category: creator.category || null,
           themeKey: resolveThemeKey(creator.theme_key),
           totalFanbase,
+          seriesCount: creatorSeriesCount,
           publicProfileLayout: creator.settings_layout || creator.public_profile_layout || "default",
         }
       : null;

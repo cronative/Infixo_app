@@ -1577,13 +1577,13 @@ nextjs-portal,
 }
 
 /* ============================================================
-   SECTION BLOCKS (demo profile): the profile card stays white; each
+   SECTION BLOCKS (public profile): the profile card stays white; each
    section is its own softly tinted rounded block, so the white card
    shows in the gaps between sections.
    ============================================================ */
-/* The profile card behind the sections is plain white. */
+/* The profile card behind the sections: white on light themes, the theme's own card colour on dark / glass ones. */
 [data-sections-float] > div {
-  background-color: #ffffff !important;
+  background-color: var(--header-bg, var(--card-bg)) !important;
 }
 /* Section blocks use the same background as the series pages (the theme's card colour). */
 [data-sections-float] .plain-section {

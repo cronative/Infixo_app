@@ -244,6 +244,7 @@ export function SeriesDetailClient({
             category: profile.category,
             themeKey: resolveThemeKey(profile.themeKey),
             totalFanbase: profile.totalFanbase || 0,
+            seriesCount: list.length,
           });
           setNotFound(false);
         } else {
@@ -285,8 +286,8 @@ export function SeriesDetailClient({
     if (t) setDemoTheme(t);
   }, [creator?.username, initialUsername]);
   const themeKey = resolveThemeKey(demoTheme || creator?.themeKey);
-  /** Card-style episodes + "More series from" card: trying it on the demo creator first. */
-  const isCardDesign = (creator?.username || initialUsername) === "demo_creator";
+  /** Card-style episodes + "More series from" card (all creators). */
+  const isCardDesign = true;
   const pt = getPublicTheme(themeKey);
   const c = pt.colors;
   const sectionColors = { primary: c.primaryText, secondary: c.secondaryText, muted: c.mutedText };
@@ -787,7 +788,7 @@ export function SeriesDetailClient({
                   <span className="block truncate text-[15px] font-bold leading-5 text-(--text)">{creator?.displayName || username}</span>
                   <span className="mt-1 flex flex-wrap items-center gap-1.5 text-[12px] leading-4 text-(--text-muted)">
                     {creator?.category && (
-                      <span className="rounded-full bg-(--accent-soft) px-2 py-0.5 font-semibold text-(--accent-text)">{creator.category}</span>
+                      <span className="max-w-full truncate rounded-full bg-(--accent-soft) px-2 py-0.5 font-semibold text-(--accent-text)">{creator.category.split(/\s*[,•|]\s*/)[0]}</span>
                     )}
                     {typeof creator?.seriesCount === "number" && (
                       <span>
