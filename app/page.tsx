@@ -385,15 +385,19 @@ export default function LandingHomePage() {
               🇮🇳 Made in India. Built for creators worldwide.
             </p>
             <h1 className="landing-text-hero font-extrabold tracking-tight text-[#1C1917]">
-              Your content deserves more than <span className="bg-gradient-to-r from-[#FF6A1A] to-[#E8246F] bg-clip-text text-transparent">a social media feed.</span>
+              Turn your videos into <span className="bg-gradient-to-r from-[#FF6A1A] to-[#E8246F] bg-clip-text text-transparent">series fans can binge.</span>
             </h1>
             <p className="landing-text-18 mx-auto mt-5 max-w-xl text-[#52525B] lg:mx-0">
-              You create the content. Inflixo brings your creator world together: one profile where your audience discovers your series, products, links and the creator behind them.
+              You post on Instagram, YouTube and Facebook every day, but your best work gets lost in the feed. Inflixo gives you one profile for your series, links, shop and media kit.
             </p>
-            <p className="mt-4 text-[13px] font-bold tracking-wide text-[#C21B5C]">
-              One profile · Every series · Every episode · Every product
-            </p>
-            <Benefits className="mx-auto mt-5 max-w-md lg:mx-0" items={["Fans find Episode 1 and binge your series in order.","Every view and like still counts on YouTube & Instagram.","One link for your series, shop, links and brand collabs."]} />
+            <Benefits
+              className="mx-auto mt-6 max-w-xl lg:mx-0"
+              items={[
+                { title: "Series in Order", text: "Fans start at Part 1 and keep watching." },
+                { title: "Views Stay Yours", text: "Every view and like counts on the original platform." },
+                { title: "One Link for Everything", text: "Series, links, shop and media kit together." },
+              ]}
+            />
             <div className="mt-7 flex justify-center lg:justify-start">{claimForm}</div>
             <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
               <Link href="/demo_creator" className={secondaryBtn}>
