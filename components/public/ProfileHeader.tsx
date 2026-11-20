@@ -757,7 +757,8 @@ export function ProfileHeader({
                     // Era ink pulled toward the theme text: deeper on light cards, lighter on dark ones.
                     color: `color-mix(in srgb, ${eraInk(getEraConfig(currentEra.era).color)} 60%, var(--text))`,
                   }}
-                  className="min-w-0 max-w-full"
+                  // Demo pages: a soft light sweep across the era badge.
+                  className={`min-w-0 max-w-full ${compact || splitActions ? "era-shimmer" : ""}`}
                 />
               }
             >
