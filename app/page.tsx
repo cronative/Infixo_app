@@ -320,7 +320,7 @@ export default function LandingHomePage() {
       {/* ── HEADER ── */}
       <header className="fixed inset-x-0 top-0 z-50 border-b border-[#F6E0DC] bg-white/95 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-[1120px] items-center justify-between gap-4 px-4 sm:px-6">
-          <Logo size="lg" showIcon={false} tone="gulaal" />
+          <Logo size="lg" showIcon={false} showTagline={false} tone="gulaal" />
           <nav className="hidden items-center gap-6 md:flex" aria-label="Main Navigation">
             {NAV_LINKS.map((link) => (
               <a key={link.id} href={link.href} className={navClass(link.id)}>
@@ -779,7 +779,7 @@ export default function LandingHomePage() {
         <div className="mx-auto max-w-[1120px] space-y-10 px-4 sm:px-6">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
             <div className="space-y-3">
-              <Logo size="md" showIcon={false} tone="gulaal" />
+              <Logo size="md" showIcon={false} showTagline={false} tone="gulaal" />
               <p className="text-[14px] leading-relaxed text-[#52525B]">Your content. Your identity. Your creator world.</p>
               <p className="text-[12px] font-semibold text-zinc-500">Made in India 🇮🇳</p>
             </div>
