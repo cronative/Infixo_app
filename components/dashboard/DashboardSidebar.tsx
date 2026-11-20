@@ -19,7 +19,6 @@ import {
   Laptop,
   IdCard,
   Users,
-  Eye,
   ShoppingBag,
   Sparkles,
   PanelLeftClose,
@@ -129,15 +128,9 @@ const SIDEBAR_GROUPS: { id: string; title: string; items: NavItemConfig[] }[] = 
       },
       {
         href: "/dashboard/themes",
-        label: "Themes",
-        subtitle: "Customize your profile look",
+        label: "Themes & Preview",
+        subtitle: "Pick a look and preview your profile",
         icon: Palette,
-      },
-      {
-        href: "/dashboard/preview",
-        label: "Live Preview",
-        subtitle: "See how your public profile looks",
-        icon: Eye,
       },
       {
         href: "/dashboard/creator-card",

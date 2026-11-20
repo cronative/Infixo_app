@@ -14,7 +14,6 @@ import {
   Laptop,
   IdCard,
   Users,
-  Eye,
   ShoppingBag,
 } from "lucide-react";
 
@@ -72,8 +71,7 @@ export const NAV_GROUPS: NavGroup[] = [
     title: "PROFILE & APPEARANCE",
     items: [
       { href: "/dashboard/profile", label: "Profile", subtitle: "Edit your creator details", icon: User },
-      { href: "/dashboard/themes", label: "Themes", subtitle: "Customize your profile look", icon: Palette },
-      { href: "/dashboard/preview", label: "Live Preview", subtitle: "See how your public profile looks", icon: Eye },
+      { href: "/dashboard/themes", label: "Themes & Preview", subtitle: "Pick a look and preview your profile", icon: Palette },
       { href: "/dashboard/creator-card", label: "Creator Card", subtitle: "Share your digital creator card", icon: IdCard },
     ],
   },

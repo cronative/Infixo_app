@@ -106,11 +106,11 @@ export const PAGE_COPY = {
     ],
   },
   themes: {
-    title: "Themes",
-    subtitle: "Pick a look for your public profile.",
+    title: "Themes & Preview",
+    subtitle: "Pick a look and see your full public profile live.",
     help: [
-      "Tap a theme to preview it on the right.",
-      "Press \"Apply theme\" to make it live.",
+      "The preview on the right is your live public page.",
+      "Tap a theme to try it there; press \"Apply theme\" to make it live.",
       "Your content stays the same; only the look changes.",
     ],
   },

@@ -5,8 +5,10 @@ import Link from "next/link";
 import {
   ArrowRight,
   Check,
+  ExternalLink,
   Loader2,
   Lock,
+  Settings,
   X,
 } from "lucide-react";
 import { canUseThemeGroup } from "@/config/plans";
@@ -24,6 +26,11 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import { ThemeBackgroundAnim } from "@/components/theme/ThemeBackgroundAnim";
 import { isSetupStepDone, markSetupStep } from "@/lib/setupProgress";
+import { VisibilitySettingsModal } from "@/components/shared/VisibilitySettingsModal";
+import { DEFAULT_VISIBILITY_SETTINGS, type CreatorProduct, type VisibilitySettings } from "@/types";
+import { STORAGE_KEYS, storage } from "@/utils/storage";
+import { ProductService } from "@/services/ProductService";
+import { getPlanQuota } from "@/services/subscriptionLimits";
 
 type GroupFilter = "all" | ThemeGroup;
 
@@ -54,7 +61,28 @@ function useLoadedPlaceImages() {
  * contained in a box instead of the viewport: theme background edge to edge behind the centre card,
  * which sits 20px from the left, right and top. Content scrolls inside the card; the background stays put.
  */
-function ProfilePreview({ themeKey, className = "" }: { themeKey: ThemeKey; className?: string }) {
+/** Every section of the public page (links, shop, packages, reviews, setup, team), loaded once for the preview. */
+interface PreviewData {
+  products: CreatorProduct[];
+  customLinks: any[];
+  mediaKitPackages: any[];
+  reviews: any[];
+  brands: any[];
+  setupItems: any[];
+  team: { members: any[] };
+}
+
+function ProfilePreview({
+  themeKey,
+  data,
+  visibilitySettings,
+  className = "",
+}: {
+  themeKey: ThemeKey;
+  data: PreviewData;
+  visibilitySettings: VisibilitySettings;
+  className?: string;
+}) {
   const { profile, socials, series, totalAudience } = useCreator();
   const t = getPublicTheme(themeKey);
   const { meta } = t;
@@ -81,19 +109,25 @@ function ProfilePreview({ themeKey, className = "" }: { themeKey: ThemeKey; clas
         />
       )}
       {!t.hasPhotoBackdrop && <FocusOverlay overlay={meta.focusOverlay} contained={true} />}
-      <div className="relative z-10 h-full flex flex-col px-5 py-5 min-h-0">
+      <div className="relative z-10 h-full flex flex-col px-4 py-4 min-h-0">
         {/* Inner box scrolls like a phone (padding stays outside, so nothing shows above the pinned nav). */}
         <div className="flex min-h-0 flex-1 flex-col rounded-[5px] overflow-y-auto overflow-x-hidden overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div className="flex min-h-full shrink-0 flex-col">
             <LivePreviewCard
-              profile={profile}
+              profile={{ ...profile, visibilitySettings }}
               socials={socials}
               series={series}
+              products={data.products}
+              customLinks={data.customLinks}
+              mediaKitPackages={data.mediaKitPackages}
+              reviews={data.reviews}
+              brands={data.brands}
+              setupItems={data.setupItems}
+              team={data.team}
               totalAudience={totalAudience}
               themeKey={themeKey}
               variant="full"
               layoutMode="premium"
-              hideFooter={true}
               isInformational={true}
             />
           </div>
@@ -104,7 +138,83 @@ function ProfilePreview({ themeKey, className = "" }: { themeKey: ThemeKey; clas
 }
 
 export default function DashboardThemesPage() {
-  const { theme, setTheme, subscription } = useCreator();
+  const { theme, setTheme, subscription, profile, updateProfile, handleViewProfile, isTrialExpired } = useCreator();
+
+  // Full public page data for the live preview (same as the old Live Preview page).
+  const [previewData, setPreviewData] = useState<PreviewData>({
+    products: [],
+    customLinks: [],
+    mediaKitPackages: [],
+    reviews: [],
+    brands: [],
+    setupItems: [],
+    team: { members: [] },
+  });
+  useEffect(() => {
+    const controller = new AbortController();
+    ProductService.list(controller.signal)
+      .then((items) => {
+        const quota = getPlanQuota(subscription?.planKey || "early_access");
+        const list = Array.isArray(items) ? items : [];
+        setPreviewData((d) => ({ ...d, products: quota.maxProducts === Infinity ? list : list.slice(0, quota.maxProducts) }));
+      })
+      .catch(() => {});
+    return () => controller.abort();
+  }, [subscription?.planKey]);
+  useEffect(() => {
+    if (!profile?.username) return;
+    fetch(`/api/public/profile/${encodeURIComponent(profile.username)}`)
+      .then((r) => (r.ok ? r.json() : {}))
+      .then((all: any) =>
+        setPreviewData((d) => ({
+          ...d,
+          customLinks: all?.links?.data?.links || d.customLinks,
+          mediaKitPackages: all?.mediakit?.data?.packages || d.mediaKitPackages,
+          reviews: all?.reviews?.data?.reviews || d.reviews,
+          brands: all?.brands?.data?.brands || d.brands,
+          setupItems: all?.setup?.data?.items || d.setupItems,
+          team: all?.team?.data?.members ? { members: all.team.data.members } : d.team,
+        }))
+      )
+      .catch(() => {});
+  }, [profile?.username]);
+
+  // Display settings (which sections are visible), moved here from the old Live Preview page.
+  const [isVisibilityModalOpen, setIsVisibilityModalOpen] = useState(false);
+  const [visibilitySettings, setVisibilitySettings] = useState<VisibilitySettings>(() => {
+    if (profile.visibilitySettings) return profile.visibilitySettings;
+    return storage.get<VisibilitySettings>(STORAGE_KEYS.visibilitySettings, DEFAULT_VISIBILITY_SETTINGS);
+  });
+  useEffect(() => {
+    if (profile.visibilitySettings) setVisibilitySettings(profile.visibilitySettings);
+  }, [profile.visibilitySettings]);
+  const handleSaveVisibility = async (newSettings: VisibilitySettings, customToast?: string) => {
+    setVisibilitySettings(newSettings);
+    storage.set(STORAGE_KEYS.visibilitySettings, newSettings);
+    updateProfile({ visibilitySettings: newSettings });
+    try {
+      const { ProfileService } = await import("@/services/ProfileService");
+      ProfileService.saveLocal({ visibilitySettings: newSettings });
+      const targetEmail = profile.email || ProfileService.getProfile().email;
+      if (targetEmail || profile.username) {
+        await Promise.all([
+          fetch("/api/creator/settings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: targetEmail, username: profile.username, visibilitySettings: newSettings }),
+          }),
+          fetch("/api/creator/profile", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: targetEmail || `${profile.username}@inflixo.com`, visibilitySettings: newSettings }),
+          }),
+        ]);
+      }
+      showToast(customToast || "Display preferences updated! ✨");
+    } catch (e) {
+      console.warn("Error saving visibility settings:", e);
+    }
+  };
   // Theme access per plan (config/plans.ts): locked themes can be previewed but not applied.
   const isThemeLocked = (key: ThemeKey) => !canUseThemeGroup(subscription?.planKey, getThemeDefinition(key).listing.group);
   const { showToast } = useToast();
@@ -228,7 +338,34 @@ export default function DashboardThemesPage() {
 
   return (
     <PageContainer>
-      <PageHeader {...PAGE_COPY.themes} />
+      <PageHeader
+        {...PAGE_COPY.themes}
+        meta={
+          isTrialExpired ? (
+            <span className="inline-flex items-center gap-1.5 font-medium text-(--danger)">
+              <span className="h-1.5 w-1.5 rounded-full bg-(--danger)" />
+              Profile is private (trial ended)
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 font-medium text-(--success)">
+              <span className="h-1.5 w-1.5 rounded-full bg-(--success)" />
+              Public profile is live
+            </span>
+          )
+        }
+        actions={
+          <>
+            <button type="button" onClick={() => setIsVisibilityModalOpen(true)} className="dash-btn-secondary">
+              <Settings className="h-3.5 w-3.5" />
+              <span>Display settings</span>
+            </button>
+            <button type="button" onClick={handleViewProfile} className="dash-btn-primary">
+              <span>Open public profile</span>
+              <ExternalLink className="h-3.5 w-3.5" />
+            </button>
+          </>
+        }
+      />
 
       <div className="flex items-start gap-8">
         {/* LEFT: group filter + grouped theme grid */}
@@ -282,10 +419,10 @@ export default function DashboardThemesPage() {
           ref={panelRef}
           aria-label="Profile preview"
           style={{ height: panelHeight ? `${panelHeight}px` : "calc(100dvh - 2rem)" }}
-          className="hidden lg:flex flex-col gap-2 w-[380px] xl:w-[440px] shrink-0 sticky top-6 min-h-[820px] max-h-[1080px]"
+          className="hidden lg:flex flex-col gap-2 w-[400px] xl:w-[512px] shrink-0 sticky top-6 min-h-[820px] max-h-[1080px]"
         >
           <p className="w-full text-xs text-[#6B6B76] text-center line-clamp-2 break-words">{statusLine}</p>
-          <ProfilePreview themeKey={previewThemeKey} className="flex-1 w-full" />
+          <ProfilePreview themeKey={previewThemeKey} data={previewData} visibilitySettings={visibilitySettings} className="flex-1 w-full" />
         </aside>
       </div>
 
@@ -323,6 +460,13 @@ export default function DashboardThemesPage() {
         </div>
       )}
 
+      <VisibilitySettingsModal
+        isOpen={isVisibilityModalOpen}
+        onClose={() => setIsVisibilityModalOpen(false)}
+        settings={visibilitySettings}
+        onSave={handleSaveVisibility}
+      />
+
       {sheetOpen && (
         <div role="dialog" aria-modal="true" aria-label="Theme preview" className="lg:hidden fixed inset-0 z-[1000] flex flex-col bg-[#FAFAFB]">
           <div className="flex items-center justify-between gap-3 border-b border-[#ECECF0] bg-white px-4 py-3">
@@ -337,7 +481,7 @@ export default function DashboardThemesPage() {
             </button>
           </div>
           <div className="flex-1 min-h-0 flex flex-col items-center p-4">
-            <ProfilePreview themeKey={previewThemeKey} className="flex-1 w-full max-w-[440px]" />
+            <ProfilePreview themeKey={previewThemeKey} data={previewData} visibilitySettings={visibilitySettings} className="flex-1 w-full max-w-[512px]" />
           </div>
           {isPreviewDifferent && (
             <div className="border-t border-[#ECECF0] bg-white px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] flex justify-center [&>button]:w-full [&>button]:justify-center">
