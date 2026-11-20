@@ -324,8 +324,8 @@ function getPlatformCardIcon(platform: string) {
   );
 }
 
-/** Compact header: era / total fans each in their own small white card. */
-const COMPACT_STAT = "flex items-center justify-center rounded-[10px] border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] px-1 py-0.5";
+/** Compact header: era and total fans as plain text, no box. */
+const COMPACT_STAT = "flex items-center justify-center";
 
 export function ProfileHeader({
   displayName,
@@ -728,7 +728,7 @@ export function ProfileHeader({
                   borderColor: "color-mix(in srgb, var(--accent) 16%, var(--surface-border))",
                 }
           }
-          className={compact ? "mt-2.5 grid w-full grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-2" : "mt-3 flex w-full items-center justify-evenly gap-1 rounded-[5px] border px-1 py-1"}
+          className={compact ? "mt-2 flex w-full flex-wrap items-center justify-center gap-x-1 gap-y-1" : "mt-3 flex w-full items-center justify-evenly gap-1 rounded-[5px] border px-1 py-1"}
         >
           {/* Creator Era (era colour + tier medal); opens the Era sheet */}
           {currentEra ? (
@@ -828,7 +828,7 @@ export function ProfileHeader({
             </Popover>
           ) : null}
 
-          {!compact && currentEra && effectiveFanbase > 0 && <span aria-hidden style={{ backgroundColor: "color-mix(in srgb, var(--accent) 28%, var(--surface-border))" }} className="mx-1 h-6 w-px shrink-0" />}
+          {currentEra && effectiveFanbase > 0 && <span aria-hidden style={{ backgroundColor: "color-mix(in srgb, var(--accent) 28%, var(--surface-border))" }} className="mx-1 h-6 w-px shrink-0" />}
 
           {/* Total Fans: tap for per-platform counts */}
           <Popover
