@@ -2224,7 +2224,7 @@ export function LivePreviewCard({
               hero={isPremiumLayout || seriesOnlyMode}
               centered={seriesOnlyMode}
               title={isPremiumLayout || seriesOnlyMode ? "My Series" : "Series"}
-              subtitle={landingDemo ? "Start from Episode 1." : isPremiumLayout || seriesOnlyMode ? "Start at Ep 1 & binge in order." : "Watch episodes in the right order."}
+              subtitle={landingDemo ? "Start from Episode 1." : seriesOnlyMode ? "All my shows in one place. Start from Ep 1." : isPremiumLayout ? "Start at Ep 1 & binge in order." : "Watch episodes in the right order."}
               count={isPremiumLayout || seriesOnlyMode ? `${series.length} Series` : `${series.length} series`}
               colors={aboutColors}
               divided={false}

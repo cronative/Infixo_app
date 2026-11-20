@@ -45,7 +45,7 @@ export interface SectionHeaderProps {
   solid?: boolean;
   /** Feature header: light accent tint, accent icon tile, bold title, count pill (My Series). */
   hero?: boolean;
-  /** Feature header stacked and centred: icon, title, subtitle, count (series listing page). */
+  /** Compact centred feature header: icon, title and count on one line, subtitle below (series listing page). */
   centered?: boolean;
 }
 
@@ -63,21 +63,23 @@ export function SectionHeader({ title, subtitle, count, colors, icon: Icon, hero
   };
   if (hero && centered) {
     return (
-      <div className="flex flex-col items-center px-4 pb-4 pt-5 text-center" style={heroStyle}>
-        {Icon && (
-          <span className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-(--accent) text-(--on-accent)">
-            <Icon aria-hidden strokeWidth={2} className="h-6 w-6" />
-          </span>
-        )}
-        <h2 style={{ fontFamily: colors.headingFont }} className="mt-2.5 text-[20px] font-bold leading-6 tracking-tight">
-          {title}
-        </h2>
-        {subtitle && <p className="mt-0.5 text-[13px] leading-5 text-(--text-muted)">{subtitle}</p>}
-        {count != null && (
-          <span className="mt-2.5 whitespace-nowrap rounded-[5px] border border-[color-mix(in_srgb,var(--accent)_22%,transparent)] bg-(--card-bg) px-2.5 py-0.5 text-[13px] font-semibold leading-5 text-(--accent-text)">
-            {count}
-          </span>
-        )}
+      <div className="flex flex-col items-center px-4 py-3 text-center" style={heroStyle}>
+        <div className="flex items-center justify-center gap-2">
+          {Icon && (
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[5px] bg-(--accent) text-(--on-accent)">
+              <Icon aria-hidden strokeWidth={2} className="h-4 w-4" />
+            </span>
+          )}
+          <h2 style={{ fontFamily: colors.headingFont }} className="text-[17px] font-bold leading-6 tracking-tight">
+            {title}
+          </h2>
+          {count != null && (
+            <span className="whitespace-nowrap rounded-[5px] border border-[color-mix(in_srgb,var(--accent)_22%,transparent)] bg-(--card-bg) px-2 py-px text-[12px] font-semibold leading-5 text-(--accent-text)">
+              {count}
+            </span>
+          )}
+        </div>
+        {subtitle && <p className="mt-1 text-[12px] leading-4 text-(--text-muted)">{subtitle}</p>}
       </div>
     );
   }
