@@ -1713,8 +1713,8 @@ export function LivePreviewCard({
         containedScroll ? "min-h-0 h-full max-h-full" : "min-h-full"
       } ${
         isPublicSurface
-          ? "px-(--card-px) pt-5 [--card-px:8px] sm:[--card-px:12px] rounded-[5px] border profile-card-glass"
-          : `${cardPadding ? cardPadding : "px-4 sm:px-5 pt-[20px]"} [--card-px:16px] sm:[--card-px:20px] rounded-[5px] border shadow-none`
+          ? `px-(--card-px) ${hideProfileHeader ? "pt-0" : "pt-5"} [--card-px:8px] sm:[--card-px:12px] rounded-[5px] border profile-card-glass`
+          : `${cardPadding ? cardPadding : `px-4 sm:px-5 ${hideProfileHeader ? "pt-0" : "pt-[20px]"}`} [--card-px:16px] sm:[--card-px:20px] rounded-[5px] border shadow-none`
       } ${
         // Full-width sections: header ends 30px under the era pill and the first section starts flush below it.
         isPremiumLayout || isListingPage ? "[--header-pb:30px] [--header-bb:0px] [--header-mb:0px]" : ""

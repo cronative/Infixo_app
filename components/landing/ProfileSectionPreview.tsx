@@ -147,7 +147,8 @@ function Block({ kind }: { kind: Exclude<ProfileSectionKind, "series" | "links" 
     <FullBleedSectionsProvider enabled>
       <PlainSectionsProvider enabled>
         <div className="contents" data-soft-buttons data-listing-plain data-sections-float>
-          <div className="p-2 [&_.plain-section]:mt-0">{content}</div>
+          {/* Flush with the frame: no gap above the section header. */}
+          <div className="[&_.plain-section]:mt-0! [&_.plain-section]:rounded-none! [&_.plain-section]:border-0!">{content}</div>
         </div>
       </PlainSectionsProvider>
     </FullBleedSectionsProvider>
