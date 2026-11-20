@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import type { Series } from "@/types";
-import { ChevronRight, Layers } from "lucide-react";
+import { ChevronRight, Layers, Play } from "lucide-react";
 import { SeriesCoverLogo } from "@/components/series/SeriesCoverLogo";
 import { getSeriesCoverUrl } from "@/lib/videoUrl";
 import { getSeriesEpisodes } from "@/lib/seriesMetrics";
@@ -32,8 +33,9 @@ export interface SeriesRowProps {
   /** Public series page for this series (all episodes, in order). */
   seriesHref: string;
   onOpenSeries?: (e: React.MouseEvent, series: Series) => void;
-  /** Card look like the episode cards: 5px corners and an outlined arrow button. */
-  variant?: "row" | "card";
+  /** Card look like the episode cards: 5px corners and an outlined arrow button.
+   *  "poster": full-width 16:9 cover with every detail below (series listing page). */
+  variant?: "row" | "card" | "poster";
 }
 
 /**
@@ -41,7 +43,7 @@ export interface SeriesRowProps {
  * + platform, chevron to the series page (episodes live there).
  */
 export function SeriesRow({ series, seriesHref, onOpenSeries, variant = "row" }: SeriesRowProps) {
-  const isCard = variant === "card";
+  const isCard = variant === "card" || variant === "poster";
   const [coverFailed, setCoverFailed] = useState(false);
   const episodes = getSeriesEpisodes(series);
   const cover = getSeriesCoverUrl(series);
@@ -57,6 +59,84 @@ export function SeriesRow({ series, seriesHref, onOpenSeries, variant = "row" }:
         .filter(Boolean)
         .slice(0, 3)
     : [];
+
+  if (variant === "poster") {
+    return (
+      <Link
+        href={seriesHref}
+        onClick={(e) => onOpenSeries?.(e, series)}
+        className="press-card group block overflow-hidden rounded-[5px] border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] text-left transition-[transform,box-shadow,border-color] duration-200 hover:border-[color-mix(in_srgb,var(--accent)_35%,var(--surface-border))] hover:shadow-[0_10px_24px_-12px_color-mix(in_srgb,var(--accent)_40%,transparent)] motion-safe:hover:scale-[1.01] focus-visible:outline-2 focus-visible:outline-(--accent)"
+      >
+        {/* Full-width 16:9 cover */}
+        <span className="relative block aspect-video w-full overflow-hidden bg-(--accent)">
+          {hasCover ? (
+            <Image
+              src={cover!}
+              alt=""
+              fill
+              sizes="(max-width: 520px) 100vw, 480px"
+              quality={80}
+              loading="lazy"
+              placeholder="blur"
+              blurDataURL={BLUR}
+              onError={() => setCoverFailed(true)}
+              style={{ objectPosition: focal }}
+              className="object-cover"
+            />
+          ) : (
+            <span aria-hidden className="absolute inset-0 bg-gradient-to-br from-(--cover-from) to-(--cover-to)">
+              <SeriesCoverLogo />
+            </span>
+          )}
+          <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-[5px] bg-black/60 px-2 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+            <Play aria-hidden className="h-3 w-3 fill-current" />
+            {episodes.length} {episodes.length === 1 ? "Episode" : "Episodes"}
+          </span>
+        </span>
+        {/* Every detail below the cover */}
+        <span className="flex items-start gap-3 p-3">
+          <span className="min-w-0 flex-1">
+            <span className="line-clamp-2 block text-[16px] font-bold leading-5 text-(--text)" title={series.title}>
+              {series.title}
+            </span>
+            <span className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[12px] text-(--text-muted)">
+              <span className="inline-flex items-center gap-1">
+                <Layers aria-hidden className="h-3.5 w-3.5" />
+                {episodes.length} {episodes.length === 1 ? "episode" : "episodes"}
+              </span>
+              {language && (
+                <>
+                  <Sep />
+                  <span>{language}</span>
+                </>
+              )}
+              {pKey && (
+                <>
+                  <Sep />
+                  <span className="inline-flex items-center gap-1">
+                    <BrandPlatformIcon platform={pKey} size={14} />
+                    {PLATFORM_LABEL[pKey]}
+                  </span>
+                </>
+              )}
+            </span>
+            {genres.length > 0 && (
+              <span className="mt-2 flex flex-wrap gap-1">
+                {genres.map((g) => (
+                  <span key={g} className="rounded-[5px] bg-(--accent-soft) px-1.5 py-px text-[11px] font-semibold leading-4 text-(--accent-text)">
+                    {g}
+                  </span>
+                ))}
+              </span>
+            )}
+          </span>
+          <span aria-hidden className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] border border-[color-mix(in_srgb,var(--accent)_45%,transparent)] text-(--accent-text) transition-colors group-hover:bg-(--accent-soft)">
+            <ChevronRight className="h-5 w-5" />
+          </span>
+        </span>
+      </Link>
+    );
+  }
 
   return (
     <ListRow

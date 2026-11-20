@@ -2316,7 +2316,8 @@ export function LivePreviewCard({
                         <SeriesRow
                           key={s.id}
                           series={s}
-                          variant={isDemoSeriesListing || isCardSectionsMode ? "card" : "row"}
+                          // Trial: the demo creator's /series page shows full-width cover cards.
+                          variant={isDemoSeriesListing && cleanHandle === "demo_creator" && !isInformationalMode ? "poster" : isDemoSeriesListing || isCardSectionsMode ? "card" : "row"}
                           seriesHref={`/${cleanHandle || "creator"}/series/${s.id}`}
                           onOpenSeries={(e, selected) => {
                             if (lockedCounts) {
