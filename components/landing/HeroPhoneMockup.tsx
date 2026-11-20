@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, Play } from "lucide-react";
-import { EXPERT_DEMO_SERIES } from "@/data/expertDemoCreator";
+import { ArrowLeft, ChevronRight, Copy, Play, Share2 } from "lucide-react";
+import { EXPERT_DEMO_PROFILE, EXPERT_DEMO_SERIES } from "@/data/expertDemoCreator";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 
 /** "Ep 01: The Bootstrapped Broker — How We Built…" → "The Bootstrapped Broker" */
@@ -36,7 +36,20 @@ const TIMELINE: { phase: Phase; ms: number }[] = [
   { phase: "player", ms: 4200 },
 ];
 
-const SCREEN_H = 470;
+const SCREEN_H = 480;
+
+/** Gulab theme tokens, as used on the public demo profile. */
+const G = {
+  accent: "#A44452",
+  soft: "#F8E1E3",
+  card: "#FFFBF7",
+  surface: "#FBF3EE",
+  border: "#F0E3DC",
+  header: "#FFFFFF",
+  page: "#F6EEE6",
+  text: "#1F1A1B",
+  muted: "#52525B",
+};
 
 export function HeroPhoneMockup() {
   const allSeries = EXPERT_DEMO_SERIES.slice(0, 5);
@@ -91,7 +104,7 @@ export function HeroPhoneMockup() {
   const onPlayer = phase === "player";
   // Scenes sit side by side: list | details | player.
   const sceneX = onList ? "0%" : onPlayer ? "-66.6667%" : "-33.3333%";
-  const listY = phase === "scrolled" ? -300 : 0;
+  const listY = phase === "scrolled" ? -170 : 0;
   const motion = still ? "" : "transition-transform duration-[650ms] ease-[cubic-bezier(.2,.8,.2,1)]";
 
   return (
@@ -102,117 +115,161 @@ export function HeroPhoneMockup() {
 
         <div className="relative overflow-hidden" style={{ height: SCREEN_H }}>
           <div className={`flex h-full w-[300%] ${motion}`} style={{ transform: `translateX(${sceneX})` }}>
-            {/* ── Scene 1: series listing ── */}
-            <div className="relative h-full w-1/3 overflow-hidden bg-[#FFF8F4]">
+            {/* ── Scene 1: public series listing (same design as /[username]/series, Gulab theme) ── */}
+            <div className="relative h-full w-1/3 overflow-hidden" style={{ background: G.page }}>
               <div
                 className={still ? "" : "transition-transform duration-[1600ms] ease-in-out"}
                 style={{ transform: `translateY(${listY}px)` }}
               >
-                <div className="px-3 pb-2 pt-8 text-center">
-                  <p className="text-[15px] font-extrabold text-[#1C1917]">
-                    My Series <span className="ml-1 rounded-[5px] bg-[#FFEDE6] px-1.5 py-0.5 text-[10px] text-[#C21B5C]">{allSeries.length}</span>
-                  </p>
-                  <p className="mt-0.5 text-[10px] text-[#71717A]">Start at Ep 1, binge in order.</p>
-                </div>
-                <div className="space-y-2.5 px-3 pb-4">
-                  {allSeries.map((s, i) => {
-                    const eps = s.seasons?.reduce((n, se) => n + se.episodes.length, 0) ?? 0;
-                    const tapped = i === 0 && phase === "tapSeries";
-                    return (
-                      <div
-                        key={s.id}
-                        className={`relative overflow-hidden rounded-[5px] border bg-white transition-transform duration-200 ${
-                          tapped ? "scale-[0.97] border-[#C21B5C]/40" : "border-[#F6E0DC]"
-                        }`}
-                      >
-                        <div className="relative h-[92px] w-full">
-                          {s.posterDataUrl && (
-                            <Image src={s.posterDataUrl} alt="" fill sizes="280px" priority={i === 0} className="object-cover" />
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                          <span className="absolute bottom-1.5 left-2 inline-flex items-center gap-1 rounded-[5px] bg-white/95 px-1.5 py-0.5 text-[9px] font-bold text-[#1C1917]">
-                            <PlatformGlyph platform={s.platform} className="h-2.5 w-2.5" />
-                            {s.platform}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 px-2.5 py-2">
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-[11.5px] font-bold text-[#1C1917]">{s.title}</p>
-                            <p className="text-[9.5px] text-[#71717A]">
-                              {eps} episodes · {s.language}
-                            </p>
+                <div className="mx-1.5 mt-6 overflow-hidden rounded-[5px]" style={{ background: G.header }}>
+                  {/* top bar */}
+                  <div className="flex items-center justify-between px-2 py-1.5" style={{ borderBottom: `1px solid ${G.border}` }}>
+                    <span className="flex h-5 w-5 items-center justify-center rounded-[5px]" style={{ background: G.surface }}>
+                      <ArrowLeft className="h-3 w-3" style={{ color: G.text }} />
+                    </span>
+                    <span className="flex items-center gap-1 rounded-[5px] px-1.5 py-0.5 text-[8.5px] font-semibold" style={{ background: G.soft, color: G.accent }}>
+                      <Share2 className="h-2.5 w-2.5" /> Share
+                    </span>
+                  </div>
+                  {/* creator header */}
+                  <div className="flex flex-col items-center px-3 pb-2.5 pt-2 text-center">
+                    <span className="relative h-11 w-11 rounded-full p-[2px]" style={{ background: G.accent }}>
+                      {EXPERT_DEMO_PROFILE.photoDataUrl && (
+                        <Image src={EXPERT_DEMO_PROFILE.photoDataUrl} alt="" width={44} height={44} className="h-full w-full rounded-full border-2 border-white object-cover" />
+                      )}
+                    </span>
+                    <p className="mt-1 text-[12px] font-extrabold" style={{ color: G.text }}>{EXPERT_DEMO_PROFILE.displayName}</p>
+                    <p className="text-[8.5px]" style={{ color: G.muted }}>@{EXPERT_DEMO_PROFILE.username}</p>
+                    <span className="mt-1 rounded-[5px] px-1.5 py-[1px] text-[8px] font-semibold" style={{ background: G.soft, color: G.accent }}>
+                      {EXPERT_DEMO_PROFILE.category}
+                    </span>
+                    <div className="mt-1.5 flex gap-1">
+                      {[InstagramIcon, YoutubeIcon, FacebookIcon].map((Icon, k) => (
+                        <span key={k} className="flex h-5 w-5 items-center justify-center rounded-[5px]" style={{ background: G.soft, border: `1px solid ${G.border}` }}>
+                          <Icon className="h-2.5 w-2.5" style={{ color: G.accent }} />
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  {/* My Series */}
+                  <div className="px-2 pb-3 pt-2" style={{ background: G.card }}>
+                    <p className="text-center text-[12px] font-extrabold" style={{ color: G.text }}>
+                      My Series{" "}
+                      <span className="ml-0.5 rounded-full px-1.5 text-[8.5px]" style={{ background: G.soft, color: G.accent }}>{allSeries.length}</span>
+                    </p>
+                    <p className="text-center text-[8px]" style={{ color: G.muted }}>All my shows in one place. Start from Ep 1.</p>
+                    <div className="mt-1.5 flex justify-center gap-1">
+                      <span className="rounded-[5px] px-2 py-1 text-[8.5px] font-semibold text-white" style={{ background: G.accent }}>All</span>
+                      <span className="flex items-center gap-1 rounded-[5px] bg-white px-1.5 py-1 text-[8.5px] font-semibold" style={{ border: `1px solid ${G.border}`, color: G.text }}>
+                        <YoutubeIcon className="h-2.5 w-2.5 text-[#FF0000]" /> YouTube
+                      </span>
+                      <span className="flex items-center gap-1 rounded-[5px] bg-white px-1.5 py-1 text-[8.5px] font-semibold" style={{ border: `1px solid ${G.border}`, color: G.text }}>
+                        <InstagramIcon className="h-2.5 w-2.5 text-[#E1306C]" /> Instagram
+                      </span>
+                    </div>
+                    <div className="mt-2 space-y-1.5">
+                      {allSeries.map((s, i) => {
+                        const eps = s.seasons?.reduce((n, se) => n + se.episodes.length, 0) ?? 0;
+                        const tapped = i === 0 && phase === "tapSeries";
+                        const genres = (s.genre || "").split(",").map((g) => g.trim()).filter(Boolean).slice(0, 2);
+                        return (
+                          <div
+                            key={s.id}
+                            className={`relative flex items-center gap-2 rounded-[5px] bg-white p-1.5 transition-transform duration-200 ${tapped ? "scale-[0.97]" : ""}`}
+                            style={{ border: `1px solid ${tapped ? G.accent : G.border}` }}
+                          >
+                            <span className="relative h-[34px] w-[56px] shrink-0 overflow-hidden rounded-[5px]">
+                              {s.posterDataUrl && (
+                                <Image src={s.posterDataUrl} alt="" fill sizes="60px" priority={i === 0} className="object-cover" />
+                              )}
+                            </span>
+                            <div className="min-w-0 flex-1">
+                              <p className="line-clamp-2 text-[9.5px] font-bold leading-tight" style={{ color: G.text }}>{s.title}</p>
+                              <p className="mt-0.5 flex items-center gap-1 text-[8px]" style={{ color: G.muted }}>
+                                {eps} episodes · {s.language} <PlatformGlyph platform={s.platform} className="h-2.5 w-2.5" />
+                              </p>
+                              <div className="mt-0.5 flex gap-0.5">
+                                {genres.map((g) => (
+                                  <span key={g} className="rounded-[3px] px-1 text-[7px] font-semibold" style={{ background: G.soft, color: G.accent }}>{g}</span>
+                                ))}
+                              </div>
+                            </div>
+                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-white" style={{ border: `1px solid ${G.accent}55` }}>
+                              <ChevronRight className="h-3 w-3" style={{ color: G.accent }} />
+                            </span>
+                            {tapped && <TapDot className="left-1/2 top-1/2" />}
                           </div>
-                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#C21B5C] text-white">
-                            <Play className="h-3 w-3 fill-current" />
-                          </span>
-                        </div>
-                        {tapped && <TapDot className="left-1/2 top-[46px]" />}
-                      </div>
-                    );
-                  })}
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* ── Scene 2: episode page ── */}
-            <div className="relative h-full w-1/3 overflow-hidden bg-white">
-              <div className="relative h-[160px] w-full">
-                {series.posterDataUrl && (
-                  <Image src={series.posterDataUrl} alt="" fill sizes="300px" className="object-cover" />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-                <span className="absolute left-2.5 top-7 flex h-6 w-6 items-center justify-center rounded-full bg-black/40 text-white">
-                  <ChevronLeft className="h-4 w-4" />
-                </span>
-                <div className="absolute inset-x-3 bottom-2.5 text-left">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-white/80">
-                    Season 1 · {total} episodes · {series.language}
+            {/* ── Scene 2: public series page (episodes in order) ── */}
+            <div className="relative h-full w-1/3 overflow-hidden" style={{ background: G.page }}>
+              <div className="mx-1.5 mt-6 overflow-hidden rounded-[5px]" style={{ background: G.card }}>
+                <div className="relative h-[128px] w-full">
+                  {series.posterDataUrl && <Image src={series.posterDataUrl} alt="" fill sizes="280px" className="object-cover" />}
+                  <span className="absolute left-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-[5px] bg-black/45 text-white">
+                    <ArrowLeft className="h-3 w-3" />
+                  </span>
+                  <span className="absolute right-1.5 top-1.5 flex gap-1">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-[5px] bg-black/45 text-white"><Copy className="h-2.5 w-2.5" /></span>
+                    <span className="flex h-5 w-5 items-center justify-center rounded-[5px] bg-black/45 text-white"><Share2 className="h-2.5 w-2.5" /></span>
+                  </span>
+                  <span className="absolute bottom-1.5 left-1.5 flex items-center gap-1 rounded-[5px] bg-black/60 px-1.5 py-0.5 text-[7.5px] font-semibold text-white">
+                    <Play className="h-2 w-2 fill-current" /> {total} Episodes | {(series.genre || "").split(",").map((g) => g.trim()).join(" · ")}
+                  </span>
+                </div>
+                <div className="px-2.5 pb-3 pt-2 text-center">
+                  <p className="text-[12px] font-extrabold leading-tight" style={{ color: G.text }}>{series.title}</p>
+                  <p className="mt-1 flex items-center justify-center gap-1 text-[8.5px]" style={{ color: G.muted }}>
+                    {total} episodes · {series.language} · <PlatformGlyph platform={series.platform} className="h-2.5 w-2.5" /> {series.platform}
                   </p>
-                  <p className="mt-0.5 line-clamp-2 text-[14px] font-extrabold leading-tight text-white">{series.title}</p>
-                </div>
-              </div>
-
-              <div className="px-3 pb-4 pt-3 text-left">
-                <div className="flex h-9 w-full items-center justify-center gap-1.5 rounded-[5px] bg-[#C21B5C] text-[12px] font-bold text-white">
-                  <Play className="h-3.5 w-3.5 fill-current" />
-                  Start from Ep 1
-                </div>
-
-                <p className="mt-3 text-[10px] font-bold uppercase tracking-wider text-[#71717A]">Episodes, in order</p>
-                <ol className="mt-1.5 space-y-1.5">
-                  {episodes.map((ep, i) => {
-                    const tapped = i === 1 && phase === "tapEpisode";
-                    return (
-                      <li
-                        key={ep.id}
-                        className={`relative flex items-center gap-2 rounded-[5px] border px-2 py-1.5 transition-transform duration-200 ${
-                          i === 1 ? "border-[#C21B5C]/30 bg-[#FFEDE6]" : "border-[#ECECF0] bg-white"
-                        } ${tapped ? "scale-[0.97]" : ""}`}
-                      >
-                        <span
-                          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] text-[10px] font-extrabold ${
-                            i === 1 ? "bg-[#C21B5C] text-white" : "bg-zinc-100 text-[#52525B]"
-                          }`}
+                  <div className="mt-1 flex justify-center gap-1">
+                    {(series.genre || "").split(",").map((g) => g.trim()).filter(Boolean).map((g) => (
+                      <span key={g} className="rounded-[3px] px-1 text-[7.5px] font-semibold" style={{ background: G.soft, color: G.accent, border: `1px solid ${G.border}` }}>{g}</span>
+                    ))}
+                  </div>
+                  <div className="mt-2.5 flex items-center justify-between text-left">
+                    <p className="text-[11px] font-extrabold" style={{ color: G.text }}>
+                      Episodes <span className="ml-0.5 rounded-full px-1.5 text-[8px]" style={{ background: G.soft, color: G.accent }}>{total}</span>
+                    </p>
+                    <span className="text-[8px]" style={{ color: G.muted }}>Watch in order</span>
+                  </div>
+                  <ol className="mt-1.5 space-y-1.5 text-left">
+                    {episodes.map((ep, i) => {
+                      const tapped = i === 1 && phase === "tapEpisode";
+                      return (
+                        <li
+                          key={ep.id}
+                          className={`relative flex items-center gap-2 rounded-[5px] bg-white p-1.5 transition-transform duration-200 ${tapped ? "scale-[0.97]" : ""}`}
+                          style={{ border: `1px solid ${tapped ? G.accent : G.border}` }}
                         >
-                          {ep.episodeNumber}
-                        </span>
-                        <span className="min-w-0 flex-1 truncate text-[11px] font-semibold text-[#1C1917]">
-                          {shortEpisodeTitle(ep.title)}
-                        </span>
-                        {i === 0 && <span className="shrink-0 text-[9px] font-bold uppercase text-emerald-600">Watched</span>}
-                        {i === 1 && (
-                          <span className="shrink-0 rounded-[5px] bg-[#C21B5C] px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">Next</span>
-                        )}
-                        {tapped && <TapDot className="left-[60%] top-1/2" />}
-                      </li>
-                    );
-                  })}
-                </ol>
-                {total > episodes.length && (
-                  <p className="mt-2 text-center text-[10px] font-semibold text-[#71717A]">
-                    + {total - episodes.length} more episode{total - episodes.length > 1 ? "s" : ""}
-                  </p>
-                )}
+                          <span
+                            className="flex h-7 w-8 shrink-0 items-center justify-center rounded-[5px] text-[10px] font-extrabold"
+                            style={i === 0 ? { background: G.soft, color: G.accent } : { background: G.surface, color: G.text }}
+                          >
+                            {String(ep.episodeNumber).padStart(2, "0")}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <p className="line-clamp-2 text-[9.5px] font-bold leading-tight" style={{ color: G.text }}>{ep.title}</p>
+                            <p className="text-[7.5px]" style={{ color: G.muted }}>{ep.platform}</p>
+                          </div>
+                          <span
+                            className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px]"
+                            style={i === 0 ? { background: G.accent, color: "#fff" } : { border: `1px solid ${G.accent}66`, color: G.accent, background: "#fff" }}
+                          >
+                            <Play className="h-2.5 w-2.5 fill-current" />
+                          </span>
+                          {tapped && <TapDot className="left-[85%] top-1/2" />}
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </div>
               </div>
             </div>
 
