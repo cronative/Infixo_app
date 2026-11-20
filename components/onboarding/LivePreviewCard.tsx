@@ -149,7 +149,7 @@ import {
 import { CreatorEraBadge } from "@/components/shared/CreatorEraBadge";
 import { CreatorEraBottomSheet } from "@/components/shared/CreatorEraBottomSheet";
 import { AboutMeBlock, FanbaseByPlatform, SocialAccountsBlock } from "@/components/public/about/AboutSections";
-import { BrandPlatformIcon, CardSectionsProvider, FooterCta, FullBleedSectionsProvider, LinkGroupRow, LinkRow, ProductTiles, Section, SeriesRow, SolidSectionsProvider } from "@/components/public/ui";
+import { BrandPlatformIcon, CardSectionsProvider, FooterCta, FullBleedSectionsProvider, PlainSectionsProvider, LinkGroupRow, LinkRow, ProductTiles, Section, SeriesRow, SolidSectionsProvider } from "@/components/public/ui";
 import { WhatBrandsSay, WorkWithMe } from "@/components/public/collab/CollabSections";
 
 
@@ -663,6 +663,18 @@ export function LivePreviewCard({
   const isCardSectionsMode = isPremiumLayout && !landingDemo && profile.username === "demo_creator";
   /** Series listing styled like the series page episodes (heading + count, card rows): demo creator first. */
   const isDemoSeriesListing = Boolean(seriesOnlyMode) && !landingDemo && profile.username === "demo_creator";
+  /** Other demo listing pages (links, shop, reviews, setup, team) in the same look as the series listing. */
+  const isDemoPlainListing = isListingPage && !seriesOnlyMode && !mediaKitOnlyMode && !landingDemo && profile.username === "demo_creator";
+  /** Centred listing heading (title + count pill + subtitle), same as the series listing. */
+  const listingHeading = (title: string, count: number, subtitle: string) => (
+    <div className="px-2.5 pb-1 pt-1 text-center">
+      <h2 className="flex items-center justify-center gap-2 text-[18px] font-bold leading-6 tracking-tight text-(--text)">
+        {title}
+        <span className="rounded-full bg-(--accent-soft) px-2 py-0.5 text-[12px] font-bold leading-4 text-(--accent-text)">{count}</span>
+      </h2>
+      <p className="mt-0.5 text-[12px] leading-4 text-(--text-muted)">{subtitle}</p>
+    </div>
+  );
   const effectiveSeriesPreviewLimit = isPremiumLayout ? 3 : seriesPreviewLimit;
   const displayedSeries = typeof effectiveSeriesPreviewLimit === "number" ? series.slice(0, effectiveSeriesPreviewLimit) : series;
   const { showToast } = useToast();
@@ -1763,7 +1775,7 @@ export function LivePreviewCard({
           creatorEra={creatorEra}
           pageHeader={pageHeader}
           isListingPage={isListingPage}
-          compact={seriesOnlyMode}
+          compact={isListingPage && !mediaKitOnlyMode}
           splitActions={isCardSectionsMode}
           mediaKitHref={
             containedScroll && cleanHandle && cleanHandle !== "demo_creator" && !isDashboardPreview && !pageHeader
@@ -1789,8 +1801,11 @@ export function LivePreviewCard({
           <div className="relative z-20 mt-2.5 sm:mt-3 -mx-(--card-px) select-none bg-(--card-bg)">
             <div style={{ backgroundColor: c.divider }} className="h-px opacity-60" aria-hidden="true" />
 
-            {/* Title & Subtitle for Reviews */}
-            {reviewsOnlyMode && (
+            {/* Title & Subtitle for Reviews (demo: centred listing heading) */}
+            {reviewsOnlyMode && isDemoPlainListing && (
+              <div className="pt-2">{listingHeading("Brand Love", approvedReviews.length, "Kind words from my collabs.")}</div>
+            )}
+            {reviewsOnlyMode && !isDemoPlainListing && (
               <>
                 <div className="px-4 sm:px-5 pt-2.5 pb-2 text-left">
                   <div className="flex items-center justify-between px-0.5">
@@ -1949,6 +1964,7 @@ export function LivePreviewCard({
           if (setupOnlyMode) {
             return (
               <div id="setup-section" className="relative z-10 w-full text-left animate-fade-in order-[5] mt-1 sm:mt-1.5 space-y-4">
+                {isDemoPlainListing && listingHeading("My Setup", activeSetupItems.length, "The gear behind my videos.")}
                 {activeSetupItems.length > 0 ? (
                   <PublicSetupGroups
                     items={activeSetupItems}
@@ -2837,10 +2853,12 @@ export function LivePreviewCard({
       {/* Premium profile + listing pages: every section runs edge to edge of the card. */}
       <FullBleedSectionsProvider enabled={isPremiumLayout || isListingPage}>
         <CardSectionsProvider enabled={isCardSectionsMode}>
-          {/* data-soft-buttons: solid accent buttons become a light accent tint (globals.css). */}
-          <div className="contents" data-soft-buttons={isCardSectionsMode || undefined}>
-            {isPremiumLayout ? <SolidSectionsProvider>{cardContent}</SolidSectionsProvider> : cardContent}
-          </div>
+          <PlainSectionsProvider enabled={isDemoPlainListing}>
+            {/* data-soft-buttons: solid accent buttons become a light accent tint; data-listing-plain: card hover / tap (globals.css). */}
+            <div className="contents" data-soft-buttons={isCardSectionsMode || undefined} data-listing-plain={isDemoPlainListing || undefined}>
+              {isPremiumLayout ? <SolidSectionsProvider>{cardContent}</SolidSectionsProvider> : cardContent}
+            </div>
+          </PlainSectionsProvider>
         </CardSectionsProvider>
       </FullBleedSectionsProvider>
 

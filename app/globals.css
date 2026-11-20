@@ -1544,3 +1544,32 @@ nextjs-portal,
 @media (prefers-reduced-motion: reduce) {
   .era-shimmer::after { animation: none; display: none; }
 }
+
+/* ============================================================
+   DEMO LISTING PAGES: item cards like the series listing
+   (12px corners, hover lift on mouse devices, clear tap feedback)
+   ============================================================ */
+[data-listing-plain] .card-item {
+  border-radius: 12px !important;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+@media (hover: hover) {
+  [data-listing-plain] .card-item:is(a, button):hover,
+  [data-listing-plain] .card-item:has(a):hover {
+    transform: scale(1.02);
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--surface-border));
+    box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+}
+[data-listing-plain] .card-item:is(a, button):active,
+[data-listing-plain] .card-item:has(a):active {
+  transform: scale(0.96);
+  background-color: color-mix(in srgb, var(--accent) 9%, var(--header-bg, var(--card-bg)));
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+  transition-duration: 90ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-listing-plain] .card-item { transform: none !important; }
+}

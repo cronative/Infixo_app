@@ -32,7 +32,7 @@ export const BOXED_FOOTER_CTA =
   "flex h-11 w-full items-center justify-center gap-2 rounded-[5px] border border-[color-mix(in_srgb,var(--accent-text)_30%,transparent)] bg-[color-mix(in_srgb,var(--accent-soft)_40%,var(--card-bg))] text-[14px] font-semibold text-(--accent-text) transition-colors hover:bg-(--accent-soft) cursor-pointer";
 
 /** One content item as its own white card (white on light themes, card colour on dark ones). */
-export const CARD_ITEM = "rounded-[5px] border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))]";
+export const CARD_ITEM = "card-item rounded-[5px] border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))]";
 /** Hover for a linked CARD_ITEM. */
 export const CARD_ITEM_HOVER =
   "transition-colors hover:border-[color-mix(in_srgb,var(--accent-text)_35%,var(--surface-border))] hover:bg-[color-mix(in_srgb,var(--accent)_3%,var(--header-bg,var(--card-bg)))]";

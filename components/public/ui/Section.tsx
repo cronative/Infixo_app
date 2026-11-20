@@ -38,6 +38,15 @@ export function CardSectionsProvider({ enabled = true, children }: { enabled?: b
   return <CardSectionsContext.Provider value={enabled}>{children}</CardSectionsContext.Provider>;
 }
 
+// ── Plain listing mode (demo listing pages) ──────────────────
+
+const PlainSectionsContext = createContext(false);
+
+/** Listing pages: no section frame; a centred heading (title + count pill + subtitle) above the item cards. */
+export function PlainSectionsProvider({ enabled = true, children }: { enabled?: boolean; children: ReactNode }) {
+  return <PlainSectionsContext.Provider value={enabled}>{children}</PlainSectionsContext.Provider>;
+}
+
 /** Cancels the card's side padding (--card-px); `!` beats a caller's w-full / rounded / border. */
 const FULL_BLEED = "-mx-(--card-px) w-auto! rounded-none! border-x-0!";
 
@@ -206,7 +215,30 @@ export function SectionCard({
   const solidCtx = useContext(SolidContext);
   const fullBleed = useContext(FullBleedContext);
   const cardMode = useContext(CardSectionsContext);
+  const plainMode = useContext(PlainSectionsContext);
   const solid = solidProp || solidCtx;
+  if (plainMode) {
+    const countNumber = typeof count === "string" || typeof count === "number" ? String(count).match(/^\d+/)?.[0] ?? String(count) : count;
+    return (
+      <Tag id={id} className={`scroll-mt-2 text-left ${className}`}>
+        {showHeader && (
+          <div className="px-2.5 pb-1 pt-1 text-center">
+            <h2 style={{ fontFamily: colors.headingFont }} className="flex items-center justify-center gap-2 text-[18px] font-bold leading-6 tracking-tight text-(--text)">
+              {title}
+              {countNumber != null && countNumber !== "" && (
+                <span className="rounded-full bg-(--accent-soft) px-2 py-0.5 text-[12px] font-bold leading-4 text-(--accent-text)">{countNumber}</span>
+              )}
+            </h2>
+            {subtitle && <p className="mt-0.5 text-[12px] leading-4 text-(--text-muted)">{subtitle}</p>}
+          </div>
+        )}
+        <div>
+          {children}
+          {lockedCount > 0 && <LockedRow count={lockedCount} />}
+        </div>
+      </Tag>
+    );
+  }
   if (cardMode) {
     return (
       <Tag
