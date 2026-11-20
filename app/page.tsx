@@ -196,7 +196,7 @@ function IconTile({ icon: Icon }: { icon: LucideIcon }) {
 /** "What you get" checklist used in every landing section (creator benefits, 3 points). */
 function Benefits({ items, className = "" }: { items: string[]; className?: string }) {
   return (
-    <ul className={`space-y-2.5 rounded-[5px] border border-[#F6E0DC] bg-white px-4 py-3.5 text-left ${className}`}>
+    <ul className={`space-y-2.5 text-left ${className}`}>
       {items.map((t) => (
         <li key={t} className="flex items-start gap-2.5 text-[14px] leading-snug text-[#1C1917] sm:text-[15px]">
           <CircleCheck aria-hidden className="mt-px h-[18px] w-[18px] shrink-0 text-[#15803D]" />
