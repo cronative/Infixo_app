@@ -343,7 +343,7 @@ export default function DashboardRequestsPage() {
                 <label className="block text-[13px] font-medium text-[#18181B]">
                   Update Request Status:
                 </label>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {(["NEW", "VIEWED", "REPLIED", "CLOSED"] as const).map((st) => (
                     <button
                       key={st}

@@ -129,14 +129,14 @@ export default function DashboardAnalyticsPage() {
       {TILE_GROUPS.map((group) => (
         <div key={group.label} className="mb-4 last:mb-5">
           <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-[#9A9AA3]">{group.label}</p>
-          {/* Always 3 across so each group stays one row (cards tighten on phones). */}
-          <div className="grid grid-cols-3 gap-2 sm:gap-3">
+          {/* One card per row on phones; 3 across from sm up. */}
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3">
             {group.tiles.map((tile) => (
               <StatCard
                 key={tile.key}
-                label={<span className="max-sm:block max-sm:min-h-[30px] max-sm:whitespace-normal max-sm:text-[12px] max-sm:leading-[15px]">{tile.label}</span>}
+                label={tile.label}
                 value={loading || !data ? "…" : fmt(data.totals[tile.key])}
-                className="max-sm:px-3 max-sm:py-3"
+                className="max-sm:min-h-0 max-sm:py-3"
               />
             ))}
           </div>
@@ -287,8 +287,8 @@ function Section<T>({
       {loading ? (
         <p className="px-4 py-3 text-[13px] text-[#6B6B76]">Loading…</p>
       ) : empty ? (
-        <div className="flex items-center justify-between gap-3 px-4 py-2.5">
-          <p className="min-w-0 truncate text-[12px] text-[#6B6B76]" title="No clicks yet — share your link to get started">No clicks yet — share your link to get started</p>
+        <div className="flex flex-col items-start gap-2 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+          <p className="min-w-0 text-[12px] text-[#6B6B76]">No clicks yet — share your link to get started</p>
           <button
             type="button"
             onClick={onCopyLink}

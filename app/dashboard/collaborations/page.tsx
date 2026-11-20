@@ -248,11 +248,11 @@ export default function DashboardCollaborationsPage() {
                 )}
 
                 <div className="min-w-0 flex-1 space-y-0.5">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-col items-start gap-0.5 sm:flex-row sm:items-center sm:gap-2">
                     <h3 className="line-clamp-2 break-words font-semibold text-[14px] text-[#18181B]" title={collab.brandName}>{collab.brandName}</h3>
                     {collab.campaignTitle && (
                       <span className="text-[12px] font-medium text-[#C21B5C] line-clamp-2 break-words">
-                        • {collab.campaignTitle}
+                        <span className="hidden sm:inline">• </span>{collab.campaignTitle}
                       </span>
                     )}
                     {!collab.isActive && (

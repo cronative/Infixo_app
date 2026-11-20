@@ -571,7 +571,7 @@ export default function DashboardTeamPage() {
                           setDraggedMemberId(null);
                           setDragOverMemberId(null);
                         }}
-                        className={`px-4 sm:px-5 py-3 flex items-center justify-between gap-3 hover:bg-[#fafafa] transition-all text-left ${
+                        className={`px-4 sm:px-5 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 hover:bg-[#fafafa] transition-all text-left ${
                           isHidden ? "opacity-50" : ""
                         } ${isDragTarget ? "border-t-2 border-t-[#C21B5C] bg-[#FFF6F2]/30" : ""}`}
                       >
@@ -594,7 +594,7 @@ export default function DashboardTeamPage() {
 
                           <div className="min-w-0 flex-1 space-y-0.5">
                             <div className="flex flex-wrap items-center gap-1.5">
-                              <p className="font-bold text-sm text-[#18181B] truncate">
+                              <p className="font-bold text-sm text-[#18181B] break-words">
                                 {member.name}
                               </p>
                               <span className="inline-flex items-center gap-1 rounded-full bg-[#FFEDE6] text-[#C21B5C] px-2 py-0.5 text-[11px] font-semibold">
@@ -630,6 +630,8 @@ export default function DashboardTeamPage() {
                           </div>
                         </div>
 
+                        {/* Mobile: icons + actions drop under the text, aligned with it */}
+                        <div className="flex items-center justify-between gap-2 pl-[76px] sm:pl-0 sm:justify-end sm:gap-3 shrink-0">
                         {/* Center: Social Icons */}
                         <div className="flex items-center gap-1.5 shrink-0">
                           {member.instagramUrl && (
@@ -699,6 +701,7 @@ export default function DashboardTeamPage() {
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
+                        </div>
                         </div>
                       </div>
                     );

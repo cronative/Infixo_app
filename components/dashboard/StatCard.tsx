@@ -25,13 +25,13 @@ export interface StatCardProps {
 
 const COLS = {
   1: "grid-cols-1",
-  2: "grid-cols-1 min-[380px]:grid-cols-2",
-  3: "grid-cols-1 min-[380px]:grid-cols-2 lg:grid-cols-3",
-  4: "grid-cols-1 min-[380px]:grid-cols-2 lg:grid-cols-4",
-  5: "grid-cols-1 min-[380px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5",
+  2: "grid-cols-1 sm:grid-cols-2",
+  3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+  4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
+  5: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5",
 } as const;
 
-/** Equal-column grid for StatCards: 1–2 per row on mobile, `cols` per row on desktop, 12px gap. */
+/** Equal-column grid for StatCards: 1 per row on mobile, `cols` per row on desktop, 12px gap. */
 export function StatCardGrid({ cols = 4, children, className = "" }: { cols?: keyof typeof COLS; children: ReactNode; className?: string }) {
   return <div className={`grid gap-3 ${COLS[cols]} ${className}`}>{children}</div>;
 }

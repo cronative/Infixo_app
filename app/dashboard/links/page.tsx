@@ -442,7 +442,7 @@ export default function DashboardLinksPage() {
                 onDrop={() => void drop(index)}
                 className={`text-left transition-colors ${dragIndex === index ? "opacity-50" : ""} ${isExpired ? "bg-zinc-50/70" : ""}`}
               >
-                <div className={`flex items-center justify-between gap-3 px-3.5 sm:px-4 py-3 min-h-[58px] hover:bg-[#FAFAFB] ${isExpired ? "opacity-75" : ""}`}>
+                <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 px-3.5 sm:px-4 py-3 min-h-[58px] hover:bg-[#FAFAFB] ${isExpired ? "opacity-75" : ""}`}>
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <span
                       draggable
@@ -490,7 +490,7 @@ export default function DashboardLinksPage() {
                     </button>
                   </div>
 
-                  <div className="relative flex items-center gap-2 shrink-0" data-menu>
+                  <div className="relative flex items-center gap-2 shrink-0 pl-[80px] sm:pl-0" data-menu>
                     <button
                       type="button"
                       onClick={() => openEdit(link)}

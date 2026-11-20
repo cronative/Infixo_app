@@ -235,7 +235,7 @@ function PlanPage() {
               <p className="text-[12px] text-[#6B6B76]">{priceLine}</p>
             </div>
           </div>
-          <div className="grid grid-cols-1 min-[420px]:grid-cols-3 gap-2 lg:w-[420px]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 lg:w-[420px]">
             <InfoBox label={dateLabel} value={endDate || "—"} />
             <InfoBox label="Billing cycle" value={planKey === "trial" ? "—" : cycle === "monthly" ? "Monthly" : "Yearly"} />
             <InfoBox label="Auto-pay" value={planKey !== "trial" && autoPayOn ? "On" : "Off"} />

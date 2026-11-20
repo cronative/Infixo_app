@@ -53,7 +53,7 @@ export function PublicPagesCard({ handle, profileUrl }: { handle: string; profil
                 </span>
                 <span className="min-w-0">
                   <span className="block text-[13px] font-semibold text-[#18181B]">{label}</span>
-                  <span className="block truncate text-[12px] text-[#6B6B76]">inflixo.com/{clean}{path}</span>
+                  <span className="block break-all text-[12px] leading-snug text-[#6B6B76]">inflixo.com/{clean}{path}</span>
                 </span>
               </a>
               <button

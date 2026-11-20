@@ -687,7 +687,7 @@ export default function MySeriesPage() {
               {/* C3: Series Row Header */}
               <div
                 onClick={() => handleToggleExpand(series.id)}
-                className="flex items-center justify-between gap-3 p-3 sm:p-4 cursor-pointer hover:bg-zinc-50/70 transition-colors select-none"
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 p-3 sm:p-4 cursor-pointer hover:bg-zinc-50/70 transition-colors select-none"
               >
                 {/* Left: Drag handle + Cover + Title + Stats */}
                 <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
@@ -757,7 +757,7 @@ export default function MySeriesPage() {
                 </div>
 
                 {/* Right: Only 2 visible actions (Share + ⋮ menu) + Expand Chevron */}
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0 pl-[124px] sm:pl-0">
                   {/* Share Popover Button */}
                   <div className="relative" onClick={(e) => e.stopPropagation()}>
                     <button
@@ -851,7 +851,7 @@ export default function MySeriesPage() {
                                 e.dataTransfer.dropEffect = "move";
                               }}
                               onDrop={() => handleEpisodeDrop(series.id, epIndex)}
-                              className={`group flex items-center justify-between gap-3 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] px-3 py-2 text-[13px] transition-colors hover:border-[#D4D4D8] ${
+                              className={`group flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-3 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] px-3 py-2 text-[13px] transition-colors hover:border-[#D4D4D8] ${
                                 draggedEpisode?.seriesId === series.id && draggedEpisode?.index === epIndex
                                   ? "opacity-40"
                                   : ""
@@ -940,7 +940,7 @@ export default function MySeriesPage() {
                               </div>
 
                               {/* Right: Platform Icon + Actions (far right, no middle empty space) */}
-                              <div className="flex items-center gap-1.5 shrink-0">
+                              <div className="flex items-center gap-1.5 shrink-0 pl-[60px] sm:pl-0">
                                 {/* Platform Icon in 32px / 5px box */}
                                 <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFEDE6] shrink-0" title={ep.platform || "Video"}>
                                   {ep.platform === "YouTube" && (
