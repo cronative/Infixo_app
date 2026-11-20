@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ChevronRight, Copy, Play, Share2 } from "lucide-react";
+import { ArrowLeft, ChevronRight, Clapperboard, Copy, Play, Share2 } from "lucide-react";
 import { EXPERT_DEMO_PROFILE, EXPERT_DEMO_SERIES } from "@/data/expertDemoCreator";
 import { InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/shared/BrandIcons";
 
@@ -36,7 +36,7 @@ const TIMELINE: { phase: Phase; ms: number }[] = [
   { phase: "player", ms: 4200 },
 ];
 
-const SCREEN_H = 480;
+const SCREEN_H = 580;
 
 /** Gulab theme tokens, as used on the public demo profile. */
 const G = {
@@ -104,7 +104,7 @@ export function HeroPhoneMockup() {
   const onPlayer = phase === "player";
   // Scenes sit side by side: list | details | player.
   const sceneX = onList ? "0%" : onPlayer ? "-66.6667%" : "-33.3333%";
-  const listY = phase === "scrolled" ? -170 : 0;
+  const listY = phase === "scrolled" ? -105 : 0;
   const motion = still ? "" : "transition-transform duration-[650ms] ease-[cubic-bezier(.2,.8,.2,1)]";
 
   return (
@@ -152,13 +152,32 @@ export function HeroPhoneMockup() {
                     </div>
                   </div>
                   {/* My Series */}
-                  <div className="px-2 pb-3 pt-2" style={{ background: G.card }}>
-                    <p className="text-center text-[12px] font-extrabold" style={{ color: G.text }}>
-                      My Series{" "}
-                      <span className="ml-0.5 rounded-full px-1.5 text-[8.5px]" style={{ background: G.soft, color: G.accent }}>{allSeries.length}</span>
-                    </p>
-                    <p className="text-center text-[8px]" style={{ color: G.muted }}>All my shows in one place. Start from Ep 1.</p>
-                    <div className="mt-1.5 flex justify-center gap-1">
+                  <div className="pb-3" style={{ background: G.card }}>
+                    {/* Section header, same as the public pages: icon · title + subtitle · count */}
+                    <div
+                      className="flex items-center justify-between gap-2 px-2 py-1.5"
+                      style={{
+                        background: `color-mix(in srgb, ${G.accent} 7%, ${G.card})`,
+                        borderBottom: `1px solid color-mix(in srgb, ${G.accent} 14%, ${G.border})`,
+                      }}
+                    >
+                      <div className="flex min-w-0 items-center gap-1.5">
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] text-white" style={{ background: G.accent }}>
+                          <Clapperboard className="h-3 w-3" />
+                        </span>
+                        <div className="min-w-0 text-left">
+                          <p className="text-[11px] font-extrabold leading-tight" style={{ color: G.text }}>My Series</p>
+                          <p className="text-[7.5px] leading-tight" style={{ color: G.muted }}>Start from Ep 1 &amp; binge in order.</p>
+                        </div>
+                      </div>
+                      <span
+                        className="shrink-0 rounded-[5px] bg-white px-1.5 py-0.5 text-[8px] font-semibold"
+                        style={{ border: `1px solid color-mix(in srgb, ${G.accent} 22%, ${G.border})`, color: G.accent }}
+                      >
+                        {allSeries.length} series
+                      </span>
+                    </div>
+                    <div className="mt-2 flex justify-center gap-1 px-2">
                       <span className="rounded-[5px] px-2 py-1 text-[8.5px] font-semibold text-white" style={{ background: G.accent }}>All</span>
                       <span className="flex items-center gap-1 rounded-[5px] bg-white px-1.5 py-1 text-[8.5px] font-semibold" style={{ border: `1px solid ${G.border}`, color: G.text }}>
                         <YoutubeIcon className="h-2.5 w-2.5 text-[#FF0000]" /> YouTube
@@ -167,7 +186,7 @@ export function HeroPhoneMockup() {
                         <InstagramIcon className="h-2.5 w-2.5 text-[#E1306C]" /> Instagram
                       </span>
                     </div>
-                    <div className="mt-2 space-y-1.5">
+                    <div className="mt-2 space-y-1.5 px-2">
                       {allSeries.map((s, i) => {
                         const eps = s.seasons?.reduce((n, se) => n + se.episodes.length, 0) ?? 0;
                         const tapped = i === 0 && phase === "tapSeries";
