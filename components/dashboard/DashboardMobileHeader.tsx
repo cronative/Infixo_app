@@ -57,7 +57,7 @@ export function DashboardMobileHeader({
             <p className="line-clamp-2 break-words text-[17px] font-semibold tracking-tight text-[#18181B]" title={title}>{title}</p>
           ) : (
             <Image
-              src="/images/inflixo-wordmark-title.png"
+              src="/images/inflixo-wordmark-title-gulaal.png"
               alt="Inflixo"
               width={628}
               height={186}

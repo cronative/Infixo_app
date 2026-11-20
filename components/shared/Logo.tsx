@@ -287,7 +287,7 @@ export function Logo({
                 ? "/images/inflixo-wordmark-title-kesar.png"
                 : tone === "gulaal"
                 ? "/images/inflixo-wordmark-title-gulaal.png"
-                : "/images/inflixo-wordmark-title.png"
+                : "/images/inflixo-wordmark-title-gulaal.png"
             }
             alt="Inflixo - For Creators. By Creators."
             width={628}

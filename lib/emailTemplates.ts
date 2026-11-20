@@ -131,7 +131,7 @@ function renderFooter(senderContext?: string): string {
           <div style="margin-bottom: 8px;">
             <a href="${baseUrl}" target="_blank" style="text-decoration: none; display: inline-block;">
               <img
-                src="${baseUrl}/images/inflixo-wordmark-title.png"
+                src="${baseUrl}/images/inflixo-wordmark-title-gulaal.png"
                 alt="Inflixo"
                 height="22"
                 style="height: 22px; width: auto; max-height: 22px; display: inline-block; border: 0;"

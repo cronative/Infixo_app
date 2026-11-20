@@ -237,7 +237,7 @@ export function DashboardSidebar() {
         >
           {collapsed ? (
             <Image
-              src="/images/inflixo-logo-icon-brand.png"
+              src="/images/inflixo-logo-icon-gulaal.png"
               alt="Inflixo"
               width={56}
               height={56}
