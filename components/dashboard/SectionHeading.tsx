@@ -35,7 +35,7 @@ export function SectionHeading({ icon, title, subtitle, count, action, as = "h2"
   const hasRight = (count !== undefined && count !== null && count !== false) || action;
 
   return (
-    <div className={`flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-[#F6E0DC] bg-white px-4 py-3 ${className}`}>
+    <div className={`flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-[#F6E0DC] bg-[#FFFBF7] px-4 py-3 ${className}`}>
       <div className="flex min-w-0 flex-1 basis-[200px] items-center gap-3">
         {renderedIcon && (
           <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] ${iconBoxClassName ?? "bg-[#C21B5C] text-white [&_svg]:text-white"}`}>
