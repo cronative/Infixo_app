@@ -105,7 +105,7 @@ export function HeroPhoneMockup() {
   const onPlayer = phase === "player";
   // Scenes sit side by side: list | details | player.
   const sceneX = onList ? "0%" : onPlayer ? "-66.6667%" : "-33.3333%";
-  const listY = phase === "scrolled" ? -105 : 0;
+  const listY = phase === "scrolled" ? -260 : 0;
   const motion = still ? "" : "transition-transform duration-[650ms] ease-[cubic-bezier(.2,.8,.2,1)]";
 
   return (
@@ -194,29 +194,35 @@ export function HeroPhoneMockup() {
                         return (
                           <div
                             key={s.id}
-                            className={`relative flex items-center gap-2 rounded-[5px] bg-white p-1.5 transition-transform duration-200 ${tapped ? "scale-[0.97]" : ""}`}
+                            className={`relative overflow-hidden rounded-[5px] bg-white transition-transform duration-200 ${tapped ? "scale-[0.97]" : ""}`}
                             style={{ border: `1px solid ${tapped ? G.accent : G.border}` }}
                           >
-                            <span className="relative h-[34px] w-[56px] shrink-0 overflow-hidden rounded-[5px]">
+                            {/* Same as the public series cards: slim full-width cover, details below */}
+                            <span className="relative block aspect-[4/1] w-full overflow-hidden" style={{ background: G.accent }}>
                               {s.posterDataUrl && (
-                                <Image src={s.posterDataUrl} alt="" fill sizes="60px" priority={i === 0} className="object-cover" />
+                                <Image src={s.posterDataUrl} alt="" fill sizes="260px" priority={i === 0} className="object-cover" />
                               )}
+                              <span className="absolute bottom-1 left-1 inline-flex items-center gap-0.5 rounded-[3px] bg-black/60 px-1 py-px text-[6.5px] font-semibold text-white">
+                                <Play className="h-1.5 w-1.5 fill-current" /> {eps} Episodes
+                              </span>
                             </span>
-                            <div className="min-w-0 flex-1">
-                              <p className="line-clamp-2 text-[9.5px] font-bold leading-tight" style={{ color: G.text }}>{s.title}</p>
-                              <p className="mt-0.5 flex items-center gap-1 text-[8px]" style={{ color: G.muted }}>
-                                {eps} episodes · {s.language} <PlatformGlyph platform={s.platform} className="h-2.5 w-2.5" />
-                              </p>
-                              <div className="mt-0.5 flex gap-0.5">
-                                {genres.map((g) => (
-                                  <span key={g} className="rounded-[3px] px-1 text-[7px] font-semibold" style={{ background: G.soft, color: G.accent }}>{g}</span>
-                                ))}
+                            <div className="flex items-start gap-1.5 p-1.5">
+                              <div className="min-w-0 flex-1">
+                                <p className="line-clamp-1 text-[9.5px] font-bold leading-tight" style={{ color: G.text }}>{s.title}</p>
+                                <p className="mt-0.5 flex items-center gap-1 text-[7.5px]" style={{ color: G.muted }}>
+                                  {eps} episodes · {s.language} <PlatformGlyph platform={s.platform} className="h-2.5 w-2.5" /> {s.platform}
+                                </p>
+                                <div className="mt-0.5 flex gap-0.5">
+                                  {genres.map((g) => (
+                                    <span key={g} className="rounded-[3px] px-1 text-[7px] font-semibold" style={{ background: G.soft, color: G.accent }}>{g}</span>
+                                  ))}
+                                </div>
                               </div>
+                              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-white" style={{ border: `1px solid ${G.accent}55` }}>
+                                <ChevronRight className="h-3 w-3" style={{ color: G.accent }} />
+                              </span>
                             </div>
-                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-white" style={{ border: `1px solid ${G.accent}55` }}>
-                              <ChevronRight className="h-3 w-3" style={{ color: G.accent }} />
-                            </span>
-                            {tapped && <TapDot className="left-1/2 top-1/2" />}
+                            {tapped && <TapDot className="left-1/2 top-1/3" />}
                           </div>
                         );
                       })}
