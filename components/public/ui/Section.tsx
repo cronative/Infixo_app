@@ -43,7 +43,7 @@ export interface SectionHeaderProps {
   icon?: LucideIcon;
   /** Soft accent header with accent text + count pill (premium, listing and detail pages). */
   solid?: boolean;
-  /** Feature header: accent gradient bar, icon tile, bold title, light count pill (My Series). */
+  /** Feature header: light accent tint, accent icon tile, bold title, count pill (My Series). */
   hero?: boolean;
 }
 
@@ -58,26 +58,25 @@ export function SectionHeader({ title, subtitle, count, colors, icon: Icon, hero
       <div
         className="flex items-center gap-2.5 px-3 py-2.5"
         style={{
-          // Theme tokens only: accent fading toward its soft tint.
-          background: "linear-gradient(100deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 72%, var(--accent-soft)) 100%)",
-          color: "var(--on-accent)",
+          // Theme tokens only: a light tint of the accent over the card, with accent text.
+          background: "linear-gradient(100deg, color-mix(in srgb, var(--accent) 16%, var(--card-bg)) 0%, color-mix(in srgb, var(--accent) 7%, var(--card-bg)) 100%)",
+          borderBottom: "1px solid color-mix(in srgb, var(--accent) 18%, var(--card-bg))",
+          color: "var(--accent-text)",
         }}
       >
         {Icon && (
-          <>
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] border border-[color-mix(in_srgb,var(--on-accent)_25%,transparent)] bg-[color-mix(in_srgb,var(--on-accent)_14%,transparent)]">
-              <Icon aria-hidden strokeWidth={2} className="h-5 w-5" />
-            </span>
-          </>
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-(--accent) text-(--on-accent)">
+            <Icon aria-hidden strokeWidth={2} className="h-5 w-5" />
+          </span>
         )}
         <div className="min-w-0 flex-1">
           <h2 style={{ fontFamily: colors.headingFont }} className="text-[16px] font-bold leading-5 tracking-tight">
             {title}
           </h2>
-          {subtitle && <p className="text-[12px] leading-4 opacity-90">{subtitle}</p>}
+          {subtitle && <p className="text-[12px] leading-4 text-(--text-muted)">{subtitle}</p>}
         </div>
         {count != null && (
-          <span className="shrink-0 whitespace-nowrap rounded-[5px] bg-(--card-bg) px-2 py-0.5 text-[13px] font-semibold leading-5 text-(--accent-text)">
+          <span className="shrink-0 whitespace-nowrap rounded-[5px] border border-[color-mix(in_srgb,var(--accent)_22%,transparent)] bg-(--card-bg) px-2 py-0.5 text-[13px] font-semibold leading-5 text-(--accent-text)">
             {count}
           </span>
         )}
