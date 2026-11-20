@@ -40,7 +40,18 @@ import { OnboardingService } from "@/services/OnboardingService";
 import { CreatorProfile, SocialAccounts, type ThemeKey } from "@/types";
 import { formatPlanPrice, usePricingCurrency } from "@/lib/pricing";
 import { PLANS, planFeatureLines, planPrice, yearlySavingsPercent, type PaidPlanKey } from "@/config/plans";
-import { EXPERT_DEMO_PROFILE, EXPERT_DEMO_SERIES, EXPERT_DEMO_THEME } from "@/data/expertDemoCreator";
+import {
+  EXPERT_DEMO_CUSTOM_LINKS,
+  EXPERT_DEMO_GIGS,
+  EXPERT_DEMO_PRODUCTS,
+  EXPERT_DEMO_PROFILE,
+  EXPERT_DEMO_REVIEWS,
+  EXPERT_DEMO_SERIES,
+  EXPERT_DEMO_SETUP_ITEMS,
+  EXPERT_DEMO_SOCIALS,
+  EXPERT_DEMO_TEAM,
+  EXPERT_DEMO_THEME,
+} from "@/data/expertDemoCreator";
 import {
   LANDING_DEMO_SOCIALS,
   LANDING_DEMO_SERIES,
@@ -75,7 +86,7 @@ const NAV_LINKS = [
   { id: "faq", href: "#faq", label: "FAQ" },
 ];
 
-const SECTION_IDS = ["top", "problem", "features", "series", "links", "brands", "identity", "demo", "how", "pricing", "vision", "summit", "faq"];
+const SECTION_IDS = ["top", "problem", "features", "series", "links", "shop", "brands", "identity", "demo", "how", "pricing", "vision", "summit", "faq"];
 
 // ── 01. The problem ──────────────────────────────────────────
 const SCATTERED: { icon: LucideIcon; text: string }[] = [
@@ -123,34 +134,6 @@ const BRAND_CARDS: { icon: LucideIcon; title: string; text: string }[] = [
     icon: Award,
     title: "Your Previous Work",
     text: "Highlight the collaborations and projects that show your experience.",
-  },
-];
-
-// ── 08–10. Identity ─────────────────────────────────────────
-const IDENTITY_CARDS: { icon: LucideIcon; eyebrow: string; title: string; text: string }[] = [
-  {
-    icon: Star,
-    eyebrow: "Reviews",
-    title: "Your work speaks. Reviews add confidence.",
-    text: "Show feedback from collaborations so new visitors and brands learn about others' experiences with you.",
-  },
-  {
-    icon: Camera,
-    eyebrow: "Creator Setup",
-    title: "The tools behind your videos.",
-    text: "Your camera, microphone, lights and editing apps, so followers stop asking and start discovering.",
-  },
-  {
-    icon: Handshake,
-    eyebrow: "Creative Team",
-    title: "The people behind your creativity.",
-    text: "Give your editors, videographers and collaborators a place on your creator profile.",
-  },
-  {
-    icon: Palette,
-    eyebrow: "Your Style",
-    title: "A profile that feels like you.",
-    text: "Pick a theme, add your details and connect your accounts. Mobile-friendly, no website to build.",
   },
 ];
 
@@ -248,41 +231,177 @@ function IconTile({ icon: Icon }: { icon: LucideIcon }) {
   );
 }
 
-/** Series section visual: the demo creator's series, each with its cover and episode count. */
-function SeriesListCard() {
+/** A mini version of a profile section, like the real page: icon, title, subtitle, count, then rows. */
+function MockCard({ icon: Icon, title, subtitle, count, children }: { icon: LucideIcon; title: string; subtitle: string; count?: string; children: ReactNode }) {
   return (
-    <div className="mx-auto w-full max-w-[420px] rounded-3xl border border-[#EFE3EA] bg-white p-4 shadow-xl shadow-[#7A2253]/5" aria-hidden="true">
-      <div className="flex items-center justify-between px-1 pb-3">
-        <p className="flex items-center gap-2 text-[15px] font-bold text-[#18181B]">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#7A2253] text-white">
-            <Clapperboard className="h-4 w-4" />
+    <div className="mx-auto w-full min-w-0 max-w-[440px] rounded-3xl border border-[#EFE3EA] bg-white p-4 shadow-xl shadow-[#7A2253]/5" aria-hidden="true">
+      <div className="flex items-start justify-between gap-3 px-1 pb-3">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#7A2253] text-white">
+            <Icon className="h-[18px] w-[18px]" />
           </span>
-          My Series
-        </p>
-        <span className="rounded-md border border-[#EFE3EA] px-2 py-0.5 text-[12px] font-semibold text-[#7A2253]">{EXPERT_DEMO_SERIES.length} Series</span>
+          <span className="min-w-0">
+            <span className="block text-[15px] font-bold leading-5 text-[#18181B]">{title}</span>
+            <span className="block text-[12px] leading-4 text-[#71717A]">{subtitle}</span>
+          </span>
+        </div>
+        {count && <span className="shrink-0 rounded-md border border-[#EFE3EA] px-2 py-0.5 text-[12px] font-semibold text-[#7A2253]">{count}</span>}
       </div>
-      <ul className="space-y-2">
-        {EXPERT_DEMO_SERIES.map((s) => {
-          const eps = s.seasons?.reduce((n, se) => n + se.episodes.length, 0) ?? 0;
-          return (
-            <li key={s.id} className="flex items-center gap-3 rounded-xl border border-[#F3EAEF] p-2">
-              <span className="relative h-12 w-20 shrink-0 overflow-hidden rounded-lg bg-[#F7EDF2]">
-                {s.posterDataUrl && <Image src={s.posterDataUrl} alt="" fill sizes="80px" className="object-cover" />}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-[13px] font-bold text-[#18181B]">{s.title}</span>
-                <span className="block text-[11px] text-[#71717A]">
-                  {eps} episodes · {s.language}
-                </span>
-              </span>
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#F7EDF2] text-[#7A2253]">
-                <Play className="h-3.5 w-3.5 fill-current" />
-              </span>
-            </li>
-          );
-        })}
-      </ul>
+      <ul className="space-y-2">{children}</ul>
     </div>
+  );
+}
+
+/** One row inside a MockCard: thumbnail (image or icon), title, meta line, trailing element. */
+function MockRow({ image, icon: Icon, title, meta, trailing }: { image?: string; icon?: LucideIcon; title: string; meta?: ReactNode; trailing?: ReactNode }) {
+  return (
+    <li className="flex items-center gap-3 rounded-xl border border-[#F3EAEF] p-2">
+      {image ? (
+        <span className="relative h-12 w-20 shrink-0 overflow-hidden rounded-lg bg-[#F7EDF2]">
+          <Image src={image} alt="" fill sizes="80px" className="object-cover" />
+        </span>
+      ) : Icon ? (
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#F7EDF2] text-[#7A2253]">
+          <Icon className="h-[18px] w-[18px]" />
+        </span>
+      ) : null}
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[13px] font-bold text-[#18181B]">{title}</span>
+        {meta && <span className="block truncate text-[11px] text-[#71717A]">{meta}</span>}
+      </span>
+      {trailing ?? (
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#F7EDF2] text-[#7A2253]">
+          <ArrowRight className="h-3.5 w-3.5" />
+        </span>
+      )}
+    </li>
+  );
+}
+
+const rupees = (paise: number | null | undefined) => (paise == null ? "" : `₹${Math.round(paise / 100).toLocaleString("en-IN")}`);
+const fans = (n: number) => (n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1).replace(/\.0$/, "")}M` : n >= 1000 ? `${Math.round(n / 1000)}K` : String(n));
+const playBtn = (
+  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#F7EDF2] text-[#7A2253]">
+    <Play className="h-3.5 w-3.5 fill-current" />
+  </span>
+);
+
+function SeriesMock() {
+  return (
+    <MockCard icon={Clapperboard} title="My Series" subtitle="Start at Ep 1 & binge in order." count={`${EXPERT_DEMO_SERIES.length} Series`}>
+      {EXPERT_DEMO_SERIES.map((s) => {
+        const eps = s.seasons?.reduce((n, se) => n + se.episodes.length, 0) ?? 0;
+        return <MockRow key={s.id} image={s.posterDataUrl || undefined} title={s.title} meta={`${eps} episodes · ${s.language}`} trailing={playBtn} />;
+      })}
+    </MockCard>
+  );
+}
+
+function LinksMock() {
+  const links = EXPERT_DEMO_CUSTOM_LINKS.slice(0, 5);
+  return (
+    <MockCard icon={Link2} title="My Links" subtitle="Things I want you to see." count={`${EXPERT_DEMO_CUSTOM_LINKS.length} links`}>
+      {links.map((l) => (
+        <MockRow
+          key={l.id}
+          icon={l.kind === "collection" ? Package : Link2}
+          title={l.title.replace(/^\p{Extended_Pictographic}\uFE0F?\s*/u, "")}
+          meta={l.kind === "collection" ? `${l.items?.length ?? 0} links inside` : (l.url || "").replace(/^https?:\/\/(www\.)?/, "").split("/")[0]}
+          trailing={
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#F7EDF2] text-[#7A2253]">
+              <ExternalLink className="h-3.5 w-3.5" />
+            </span>
+          }
+        />
+      ))}
+    </MockCard>
+  );
+}
+
+function ShopMock() {
+  return (
+    <MockCard icon={ShoppingBag} title="My Shop" subtitle="Products I proudly recommend." count={`${EXPERT_DEMO_PRODUCTS.length} products`}>
+      {EXPERT_DEMO_PRODUCTS.slice(0, 4).map((p) => (
+        <MockRow
+          key={p.id}
+          image={p.imageUrl}
+          title={p.name.split(" — ")[0]}
+          meta={p.name.split(" — ")[1] || (p.isAffiliate ? "Affiliate link" : "Creator product")}
+          trailing={<span className="shrink-0 text-[13px] font-extrabold text-[#7A2253]">{rupees(p.pricePaise)}</span>}
+        />
+      ))}
+    </MockCard>
+  );
+}
+
+function PackagesMock() {
+  return (
+    <MockCard icon={Briefcase} title="Work With Me" subtitle="Brands, let's create together." count={`${EXPERT_DEMO_GIGS.length} packages`}>
+      {EXPERT_DEMO_GIGS.slice(0, 4).map((g) => (
+        <MockRow
+          key={g.id}
+          icon={Package}
+          title={g.title}
+          meta={g.platform}
+          trailing={<span className="shrink-0 text-[13px] font-extrabold text-[#7A2253]">₹{g.price}</span>}
+        />
+      ))}
+    </MockCard>
+  );
+}
+
+function FansMock() {
+  const yt = EXPERT_DEMO_SOCIALS.youtube?.subscribers ?? 0;
+  const ig = EXPERT_DEMO_SOCIALS.instagram?.followers ?? 0;
+  const fb = EXPERT_DEMO_SOCIALS.facebook?.followers ?? 0;
+  const rows = [
+    { label: "Instagram", n: ig, unit: "followers" },
+    { label: "YouTube", n: yt, unit: "subscribers" },
+    { label: "Facebook", n: fb, unit: "followers" },
+  ];
+  return (
+    <MockCard icon={Users} title="Total Fans" subtitle="Across Instagram, YouTube & Facebook." count={fans(ig + yt + fb)}>
+      {rows.map((r) => (
+        <MockRow key={r.label} icon={Users} title={r.label} meta={r.unit} trailing={<span className="shrink-0 text-[14px] font-extrabold text-[#18181B]">{fans(r.n)}</span>} />
+      ))}
+    </MockCard>
+  );
+}
+
+function ReviewsMock() {
+  return (
+    <MockCard icon={Star} title="Brand Love" subtitle="Kind words from my collabs." count={`${EXPERT_DEMO_REVIEWS.length} reviews`}>
+      {EXPERT_DEMO_REVIEWS.slice(0, 3).map((r) => (
+        <MockRow
+          key={r.id}
+          icon={Star}
+          title={r.clientName}
+          meta={r.projectTitle}
+          trailing={<span className="shrink-0 text-[12px] font-bold text-[#7A2253]">★ {r.rating}</span>}
+        />
+      ))}
+    </MockCard>
+  );
+}
+
+function SetupMock() {
+  return (
+    <MockCard icon={Camera} title="My Setup" subtitle="The gear behind my videos." count={`${EXPERT_DEMO_SETUP_ITEMS.length} items`}>
+      {EXPERT_DEMO_SETUP_ITEMS.slice(0, 3).map((it) => (
+        <MockRow key={it.id} icon={Laptop} title={it.name} meta={it.category} />
+      ))}
+    </MockCard>
+  );
+}
+
+function TeamMock() {
+  const members = EXPERT_DEMO_TEAM.members || [];
+  return (
+    <MockCard icon={Handshake} title="My Crew" subtitle="The people behind my videos." count={`${members.length} members`}>
+      {members.slice(0, 3).map((m) => (
+        <MockRow key={m.id} icon={Users} title={m.name} meta={m.role} />
+      ))}
+    </MockCard>
   );
 }
 
@@ -561,9 +680,9 @@ export default function LandingHomePage() {
 
       {/* ── 03. SERIES ── */}
       <section id="series" className="scroll-mt-20 border-t border-[#EFE3EA] bg-[#FBF6F9] py-16 sm:py-24">
-        <div className="mx-auto grid max-w-[1120px] items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-[1120px] grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
           <div className="order-2 lg:order-1">
-            <SeriesListCard />
+            <SeriesMock />
           </div>
           <div className="order-1 lg:order-2">
             <SectionHeading
@@ -586,108 +705,116 @@ export default function LandingHomePage() {
         </div>
       </section>
 
-      {/* ── 04 + 05. LINKS & SHOP ── */}
+      {/* ── LINKS ── */}
       <section id="links" className="scroll-mt-20 border-t border-[#EFE3EA] bg-white py-16 sm:py-24">
-        <div className="mx-auto grid max-w-[1120px] gap-6 px-4 sm:px-6 lg:grid-cols-2">
-          <div className="flex flex-col rounded-3xl border border-[#EFE3EA] bg-white p-6 sm:p-8">
-            <Eyebrow>Links</Eyebrow>
-            <h3 className="mt-3 text-[26px] font-extrabold leading-tight tracking-tight text-[#18181B]">One link. Everything your audience needs.</h3>
-            <p className="mt-3 text-[15px] leading-relaxed text-[#52525B]">
-              Instagram, YouTube, Facebook, your website, your latest campaign, your favorite resources. Why make your audience search for each one? Keep them all on one creator profile.
-            </p>
-            <div className="mt-5 flex flex-wrap gap-2">
-              {["Instagram", "YouTube", "Facebook", "Website", "Latest campaign", "Resources"].map((l) => (
-                <span key={l} className="inline-flex items-center gap-1.5 rounded-lg bg-[#F7EDF2] px-3 py-1.5 text-[13px] font-semibold text-[#7A2253]">
-                  <Link2 className="h-3.5 w-3.5" /> {l}
-                </span>
-              ))}
-            </div>
-            <p className="mt-5 text-[14px] font-bold text-[#18181B]">Less searching. Easier access. One Inflixo link.</p>
-            <div className="mt-auto pt-5">{ctaRow("Organize my links", () => handleClaim(username))}</div>
+        <div className="mx-auto grid max-w-[1120px] grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+          <div>
+            <SectionHeading
+              center={false}
+              eyebrow="Links"
+              title="One link. Everything your audience needs."
+              sub="Instagram, YouTube, Facebook, your website, your latest campaign, your favorite resources. Why make your audience search for each one? Keep them all on one creator profile, and group related links into folders."
+            />
+            <p className="mt-5 text-[15px] font-bold text-[#7A2253]">Less searching. Easier access. One Inflixo link.</p>
+            <div className="mt-4">{ctaRow("Organize my links", () => handleClaim(username))}</div>
           </div>
+          <LinksMock />
+        </div>
+      </section>
 
-          <div id="shop" className="flex flex-col rounded-3xl border border-[#EFE3EA] bg-white p-6 sm:p-8">
-            <Eyebrow>Creator Shop</Eyebrow>
-            <h3 className="mt-3 text-[26px] font-extrabold leading-tight tracking-tight text-[#18181B]">Your recommendations deserve their own shop.</h3>
-            <div className="mt-4 space-y-2">
+      {/* ── CREATOR SHOP ── */}
+      <section id="shop" className="scroll-mt-20 border-t border-[#EFE3EA] bg-[#FBF6F9] py-16 sm:py-24">
+        <div className="mx-auto grid max-w-[1120px] grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+          <div className="order-2 lg:order-1">
+            <ShopMock />
+          </div>
+          <div className="order-1 lg:order-2">
+            <SectionHeading center={false} eyebrow="Creator Shop" title="Your recommendations deserve their own shop." />
+            <div className="mt-5 space-y-2">
               {SHOP_DMS.map((q) => (
-                <p key={q} className="flex w-fit items-center gap-2 rounded-xl rounded-bl-sm bg-zinc-100 px-3 py-1.5 text-[13px] text-[#18181B]">
+                <p key={q} className="flex w-fit items-center gap-2 rounded-xl rounded-bl-sm bg-white px-3 py-1.5 text-[13px] text-[#18181B] shadow-sm">
                   <MessageCircle className="h-3.5 w-3.5 text-[#7A2253]/60" /> {q}
                 </p>
               ))}
             </div>
-            <p className="mt-4 text-[15px] leading-relaxed text-[#52525B]">
+            <p className="mt-5 text-[15px] leading-relaxed text-[#52525B]">
               Add product images, names, prices and shopping links. Fans browse your picks and buy from the original store, and Inflixo takes no cut. Fashion, food, tech, beauty or lifestyle: your recommendations become easy to find.
             </p>
-            <div className="mt-auto pt-5">{ctaRow("Build my Creator Shop", () => handleClaim(username))}</div>
+            <div className="mt-4">{ctaRow("Build my Creator Shop", () => handleClaim(username))}</div>
           </div>
         </div>
       </section>
 
-      {/* ── 06. BRANDS ── */}
-      <section id="brands" className="scroll-mt-20 border-t border-[#EFE3EA] bg-[#FBF6F9] py-16 sm:py-24">
-        <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-          <SectionHeading
-            eyebrow="For brand collabs"
-            title="Turn your profile into a professional introduction."
-            sub="When a brand discovers you, it should be easy to understand who you are, what you create and how to work with you."
-          />
-          <div className="mt-12 grid gap-4 md:grid-cols-3">
-            {BRAND_CARDS.map((c) => (
-              <div key={c.title} className="rounded-2xl border border-[#EFE3EA] bg-white p-6">
-                <IconTile icon={c.icon} />
-                <h3 className="mt-4 text-[18px] font-bold text-[#18181B]">{c.title}</h3>
-                <p className="mt-2 text-[14px] leading-relaxed text-[#52525B]">{c.text}</p>
-              </div>
-            ))}
+      {/* ── BRANDS ── */}
+      <section id="brands" className="scroll-mt-20 border-t border-[#EFE3EA] bg-white py-16 sm:py-24">
+        <div className="mx-auto grid max-w-[1120px] grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+          <div>
+            <SectionHeading
+              center={false}
+              eyebrow="For brand collabs"
+              title="Turn your profile into a professional introduction."
+              sub="When a brand discovers you, it should be easy to understand who you are, what you create and how to work with you."
+            />
+            <ul className="mt-6 space-y-4">
+              {BRAND_CARDS.map((c) => (
+                <li key={c.title} className="flex gap-3">
+                  <IconTile icon={c.icon} />
+                  <span>
+                    <span className="block text-[15px] font-bold text-[#18181B]">{c.title}</span>
+                    <span className="block text-[14px] leading-relaxed text-[#52525B]">{c.text}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-6">{ctaRow("Create my media kit", () => handleClaim(username))}</div>
           </div>
-          <div className="mt-10 flex flex-col items-center gap-2 text-center">
-            <p className="text-[16px] font-bold text-[#18181B]">Let your content introduce you. Let your profile represent you.</p>
-            {ctaRow("Create my media kit", () => handleClaim(username))}
-          </div>
+          <PackagesMock />
         </div>
       </section>
 
-      {/* ── 07–10. IDENTITY: fanbase, era, reviews, setup, team, style ── */}
-      <section id="identity" className="scroll-mt-20 border-t border-[#EFE3EA] bg-white py-16 sm:py-24">
+      {/* ── IDENTITY: fanbase, era, reviews, setup, team ── */}
+      <section id="identity" className="scroll-mt-20 border-t border-[#EFE3EA] bg-[#FBF6F9] py-16 sm:py-24">
         <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-          <SectionHeading
-            eyebrow="Your creator identity"
-            title="Your influence is bigger than one platform."
-            sub="Followers on Instagram, subscribers on YouTube, a community on Facebook. Together they are your real reach."
-          />
-          <div className="mt-12 grid gap-4 lg:grid-cols-2">
-            <div className="rounded-2xl border border-[#EFE3EA] bg-[#FBF6F9] p-6">
-              <IconTile icon={Users} />
-              <h3 className="mt-4 text-[18px] font-bold text-[#18181B]">Your total fanbase, one number</h3>
-              <p className="mt-2 text-[14px] leading-relaxed text-[#52525B]">
-                Inflixo shows follower counts from your supported social accounts and adds them up, so fans and brands see your wider presence at a glance.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-[#EFE3EA] bg-[#FBF6F9] p-6">
-              <IconTile icon={Sparkles} />
-              <h3 className="mt-4 text-[18px] font-bold text-[#18181B]">Celebrate your Creator Era</h3>
-              <p className="mt-2 text-[14px] leading-relaxed text-[#52525B]">
-                Some creators are just beginning, others are growing or established. Creator Era celebrates where you are in your journey, because your identity is more than one follower count.
-              </p>
-            </div>
-          </div>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {IDENTITY_CARDS.map((c) => (
-              <div key={c.eyebrow} className="rounded-2xl border border-[#EFE3EA] bg-white p-5">
-                <IconTile icon={c.icon} />
-                <p className="mt-4 text-[11px] font-bold uppercase tracking-wider text-[#7A2253]">{c.eyebrow}</p>
-                <h3 className="mt-1 text-[16px] font-bold leading-snug text-[#18181B]">{c.title}</h3>
-                <p className="mt-1.5 text-[13px] leading-relaxed text-[#52525B]">{c.text}</p>
+          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+            <div>
+              <SectionHeading
+                center={false}
+                eyebrow="Your creator identity"
+                title="Your influence is bigger than one platform."
+                sub="Followers on Instagram, subscribers on YouTube, a community on Facebook. Inflixo adds them up into one total fanbase, so fans and brands see your real reach at a glance."
+              />
+              <div className="mt-6 flex gap-3 rounded-2xl border border-[#EFE3EA] bg-white p-5">
+                <IconTile icon={Sparkles} />
+                <span>
+                  <span className="block text-[15px] font-bold text-[#18181B]">Celebrate your Creator Era</span>
+                  <span className="block text-[14px] leading-relaxed text-[#52525B]">
+                    Just beginning, growing or established: Creator Era celebrates where you are, because your identity is more than one follower count.
+                  </span>
+                </span>
               </div>
-            ))}
+            </div>
+            <FansMock />
           </div>
-          <div className="mt-10 text-center">{ctaRow("Showcase my creator identity", () => handleClaim(username))}</div>
+
+          <div className="mt-16 text-center">
+            <h3 className="text-[24px] font-extrabold leading-tight tracking-tight text-[#18181B] sm:text-[32px]">Show the people, passion and tools behind your work.</h3>
+            <p className="mx-auto mt-2 max-w-2xl text-[15px] text-[#52525B]">Reviews add confidence, your setup answers the &ldquo;which camera?&rdquo; DMs, and your crew gets the credit they deserve.</p>
+          </div>
+          <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <ReviewsMock />
+            <SetupMock />
+            <TeamMock />
+          </div>
+          <p className="mt-8 text-center text-[14px] text-[#52525B]">
+            <Palette className="mr-1.5 inline h-4 w-4 text-[#7A2253]" />
+            Pick a theme that feels like you. Mobile-friendly, no website to build.
+          </p>
+          <div className="mt-4 text-center">{ctaRow("Showcase my creator identity", () => handleClaim(username))}</div>
         </div>
       </section>
 
       {/* ── LIVE DEMO ── */}
-      <section id="demo" className="scroll-mt-20 border-t border-[#EFE3EA] bg-[#FBF6F9] py-16 sm:py-24">
+      <section id="demo" className="scroll-mt-20 border-t border-[#EFE3EA] bg-white py-16 sm:py-24">
         <div className="mx-auto max-w-[1120px] px-4 text-center sm:px-6">
           <SectionHeading
             eyebrow="Live demo"
@@ -732,7 +859,7 @@ export default function LandingHomePage() {
       </section>
 
       {/* ── 11. GETTING STARTED ── */}
-      <section id="how" className="scroll-mt-20 border-t border-[#EFE3EA] bg-white py-16 sm:py-24">
+      <section id="how" className="scroll-mt-20 border-t border-[#EFE3EA] bg-[#FBF6F9] py-16 sm:py-24">
         <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
           <SectionHeading
             eyebrow="Getting started"
@@ -757,7 +884,7 @@ export default function LandingHomePage() {
       </section>
 
       {/* ── 12. PRICING ── */}
-      <section id="pricing" className="scroll-mt-20 border-t border-[#EFE3EA] bg-[#FBF6F9] py-16 sm:py-24">
+      <section id="pricing" className="scroll-mt-20 border-t border-[#EFE3EA] bg-white py-16 sm:py-24">
         <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
           <SectionHeading
             eyebrow="Pricing"
@@ -827,7 +954,7 @@ export default function LandingHomePage() {
       </section>
 
       {/* ── 13. FUTURE VISION: OTT-STYLE DISCOVERY ── */}
-      <section id="vision" className="scroll-mt-20 border-t border-[#EFE3EA] bg-white py-16 sm:py-24">
+      <section id="vision" className="scroll-mt-20 border-t border-[#EFE3EA] bg-[#FBF6F9] py-16 sm:py-24">
         <div className="mx-auto grid max-w-[1120px] items-center gap-10 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F7EDF2] px-3 py-1 text-[12px] font-bold text-[#7A2253]">
