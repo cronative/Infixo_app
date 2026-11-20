@@ -2228,7 +2228,7 @@ export function LivePreviewCard({
                 <>
             {availableSeriesPlatforms.length > 0 && (
               <div className="px-2.5 pt-2.5">
-                  <div className={`flex items-center gap-2 overflow-x-auto overflow-y-hidden no-scrollbar py-1 -my-1 ${seriesOnlyMode && !isDemoSeriesListing ? "justify-center-safe" : ""}`}>
+                  <div className={`flex items-center gap-2 overflow-x-auto overflow-y-hidden no-scrollbar py-1 -my-1 ${seriesOnlyMode ? "justify-center-safe" : ""}`}>
                     {["All", ...availableSeriesPlatforms].map((plat) => {
                       const isActive = seriesFilter.toLowerCase() === plat.toLowerCase();
                       return (
