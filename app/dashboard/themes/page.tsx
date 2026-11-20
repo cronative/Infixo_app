@@ -5,6 +5,8 @@ import Link from "next/link";
 import {
   ArrowRight,
   Check,
+  ChevronLeft,
+  ChevronRight,
   ExternalLink,
   Loader2,
   Lock,
@@ -135,6 +137,111 @@ function ProfilePreview({
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * Horizontal theme row with arrow buttons (shown only when there is more to scroll), mouse-wheel
+ * scrolling and click-and-drag; a drag never triggers the card under the pointer.
+ */
+function ThemeStrip({ children }: { children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [canLeft, setCanLeft] = useState(false);
+  const [canRight, setCanRight] = useState(false);
+  const drag = useRef<{ x: number; left: number; moved: boolean } | null>(null);
+
+  const update = () => {
+    const el = ref.current;
+    if (!el) return;
+    setCanLeft(el.scrollLeft > 4);
+    setCanRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  };
+  useEffect(() => {
+    update();
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    // Mouse wheel: vertical wheel scrolls the row sideways while there is room to move.
+    const onWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      const atStart = el.scrollLeft <= 0 && e.deltaY < 0;
+      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1 && e.deltaY > 0;
+      if (atStart || atEnd) return;
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      ro.disconnect();
+      el.removeEventListener("wheel", onWheel);
+    };
+  }, []);
+
+  const scrollByPage = (dir: 1 | -1) => {
+    const el = ref.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * Math.max(200, el.clientWidth * 0.8), behavior: "smooth" });
+  };
+
+  const arrowCls =
+    "absolute top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#ECECF0] bg-white text-[#18181B] shadow-[0_4px_14px_rgba(0,0,0,.14)] transition hover:border-[#C21B5C] hover:text-[#C21B5C] cursor-pointer";
+
+  return (
+    <div className="relative">
+      {canLeft && (
+        <>
+          <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 z-[5] w-14 bg-gradient-to-r from-white to-transparent" />
+          <button type="button" aria-label="Scroll themes left" onClick={() => scrollByPage(-1)} className={`${arrowCls} -left-2`}>
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+        </>
+      )}
+      <div
+        ref={ref}
+        onScroll={update}
+        onPointerDown={(e) => {
+          if (e.pointerType !== "mouse" || e.button !== 0) return;
+          drag.current = { x: e.clientX, left: ref.current?.scrollLeft ?? 0, moved: false };
+        }}
+        onPointerMove={(e) => {
+          const d = drag.current;
+          const el = ref.current;
+          if (!d || !el) return;
+          const dx = e.clientX - d.x;
+          if (!d.moved && Math.abs(dx) > 5) {
+            d.moved = true;
+            el.setPointerCapture(e.pointerId);
+            el.style.cursor = "grabbing";
+          }
+          if (d.moved) el.scrollLeft = d.left - dx;
+        }}
+        onPointerUp={(e) => {
+          const el = ref.current;
+          if (el) el.style.cursor = "";
+          if (drag.current?.moved) {
+            el?.releasePointerCapture(e.pointerId);
+            // Swallow the click that follows a drag so the card under the pointer isn't selected.
+            const block = (ev: MouseEvent) => { ev.stopPropagation(); ev.preventDefault(); };
+            window.addEventListener("click", block, { capture: true, once: true });
+          }
+          drag.current = null;
+        }}
+        onPointerCancel={() => { drag.current = null; }}
+        className="-mx-1 flex select-none gap-3 overflow-x-auto px-1 pb-2 cursor-grab [scrollbar-width:thin]"
+        aria-label="Themes"
+      >
+        {children}
+      </div>
+      {canRight && (
+        <>
+          <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 z-[5] w-14 bg-gradient-to-l from-white to-transparent" />
+          <button type="button" aria-label="Scroll themes right" onClick={() => scrollByPage(1)} className={`${arrowCls} -right-2`}>
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </>
+      )}
     </div>
   );
 }
@@ -373,9 +480,9 @@ export default function DashboardThemesPage() {
           </div>
           <p className="text-xs text-[#6B6B76] line-clamp-1 break-words">{statusLine}</p>
         </div>
-        <div className="-mx-1 flex snap-x gap-3 overflow-x-auto px-1 pb-2 [scrollbar-width:thin]" aria-label="Themes">
+        <ThemeStrip>
           {groupedThemes.flatMap((group) => group.themes).map((t) => (
-            <div key={t.key} className="w-[180px] shrink-0 snap-start">
+            <div key={t.key} className="w-[180px] shrink-0">
               <ThemeCard
                 theme={t}
                 isSelected={previewThemeKey === t.key}
@@ -385,7 +492,7 @@ export default function DashboardThemesPage() {
               />
             </div>
           ))}
-        </div>
+        </ThemeStrip>
       </div>
 
       {/* 2. Full-width live preview, like the old Live Preview page; follows the theme being tried */}
