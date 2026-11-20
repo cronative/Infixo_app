@@ -79,10 +79,10 @@
   --radius-input: 5px;
 
   /* Shadows */
-  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(194, 27, 92, 0.04);
-  --shadow-elevated: 0 12px 30px rgba(194, 27, 92, 0.09);
-  --shadow-premium: 0 12px 30px rgba(194, 27, 92, 0.09);
-  --shadow-hover: 0 4px 16px rgba(194, 27, 92, 0.09);
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(194,27,92, 0.04);
+  --shadow-elevated: 0 12px 30px rgba(194,27,92, 0.09);
+  --shadow-premium: 0 12px 30px rgba(194,27,92, 0.09);
+  --shadow-hover: 0 4px 16px rgba(194,27,92, 0.09);
 
   --gradient-premium: #C21B5C;
   --gradient-gold: #C21B5C;
@@ -100,14 +100,14 @@
   --border-card: #e2e8f0;
   --border-card-hover: #F9CFC6;
   --accent-color: #C21B5C;
-  --accent-glow: rgba(194, 27, 92, 0.18);
+  --accent-glow: rgba(194,27,92, 0.18);
   --btn-primary-bg: #C21B5C;
   --btn-primary-hover: #A3164E;
   --btn-primary-text: #ffffff;
   --badge-bg: #FFF6F2;
   --badge-text: #C21B5C;
   --badge-border: #F9CFC6;
-  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(194, 27, 92, 0.04);
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(194,27,92, 0.04);
   --radius-sm: 5px;
   --radius-md: 5px;
   --radius-lg: 5px;
@@ -125,7 +125,7 @@
 .btn-brand-gradient {
   background: #C21B5C !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(194, 27, 92, 0.22);
+  box-shadow: 0 4px 14px rgba(194,27,92, 0.22);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -750,7 +750,7 @@ body {
 
 .hover-lift:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 28px -6px rgba(194, 27, 92, 0.14), 0 6px 12px -4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 12px 28px -6px rgba(194,27,92, 0.14), 0 6px 12px -4px rgba(0, 0, 0, 0.04);
 }
 
 /* 44x44 minimum tap area for small controls without changing their visual size. */
@@ -828,7 +828,7 @@ body {
 
 .hover-glow:hover {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(194, 27, 92, 0.18);
+  box-shadow: 0 0 0 3px rgba(194,27,92, 0.18);
 }
 
 @keyframes toastProgress {
@@ -1284,12 +1284,12 @@ body {
 .brand-grad-btn {
   background-color: #C21B5C;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px 0 rgba(194, 27, 92, 0.25);
+  box-shadow: 0 4px 14px 0 rgba(194,27,92, 0.25);
 }
 
 .brand-grad-btn:hover {
   background-color: #A3164E;
-  box-shadow: 0 6px 20px 0 rgba(194, 27, 92, 0.35);
+  box-shadow: 0 6px 20px 0 rgba(194,27,92, 0.35);
 }
 
 .brand-grad-text {

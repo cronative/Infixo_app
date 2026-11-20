@@ -68,7 +68,7 @@ export const CARD_THEME_PRESETS: CardThemePreset[] = [
       headingWeight: "700",
       radius: 24,
       isDark: false,
-      accentGlow: "rgba(194, 27, 92, 0.25)",
+      accentGlow: "rgba(194,27,92, 0.25)",
     },
   },
   {

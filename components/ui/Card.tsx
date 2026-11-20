@@ -37,7 +37,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       default: "bg-white border border-[#E4E4E7] shadow-sm",
       warm: "bg-[#FFFCFB] border border-[#E4E4E7] shadow-sm",
       soft: "bg-[#FFEDE6] border border-[#E4E4E7]",
-      glass: "bg-white/95 backdrop-blur-xl border border-[#E4E4E7] shadow-[0_20px_60px_-15px_rgba(194, 27, 92,0.12)]",
+      glass: "bg-white/95 backdrop-blur-xl border border-[#E4E4E7] shadow-[0_20px_60px_-15px_rgba(194,27,92,0.12)]",
     }[variant];
 
     const interactiveClass = interactive

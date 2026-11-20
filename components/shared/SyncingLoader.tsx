@@ -65,28 +65,22 @@ export function SyncingLoader({
       {/* Same background as login page */}
       {fullScreen && <CreatorGridBackground showWordmark variant="soft" wordmarkPlacement="center-bottom" />}
       <div className="relative z-10 flex flex-col items-center max-w-lg w-full space-y-4">
-        {/* Animated Brand Logo Container */}
-        <div className="relative flex h-16 w-16 items-center justify-center">
-          <div className="absolute inset-0 rounded-[22px] bg-[#C21B5C]/15 blur-xl" />
-          <div className="absolute inset-1 rounded-[18px] bg-[#C21B5C]/15 animate-ping opacity-25" />
-          <div className="relative flex h-14 w-14 items-center justify-center rounded-[5px] overflow-hidden shadow-[0_14px_36px_rgba(194, 27, 92,0.25)] border border-[#C21B5C]/20">
-            <Image
-              src="/images/inflixo-logo-3d.png"
-              alt="Inflixo"
-              width={120}
-              height={120}
-              className="h-full w-full object-cover select-none"
-              priority
-            />
-          </div>
+        {/* Animated brand logo: the gradient Inflixo wordmark with a soft glow */}
+        <div className="relative flex items-center justify-center px-6 py-3">
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#FF6A1A]/20 to-[#E8246F]/20 blur-2xl" />
+          <Image
+            src="/images/inflixo-wordmark-title-gulaal.png"
+            alt="Inflixo"
+            width={628}
+            height={186}
+            className="relative h-12 w-auto select-none animate-pulse motion-reduce:animate-none"
+            priority
+          />
         </div>
 
         {/* Syncing Status Information */}
         <div className="space-y-1 text-center">
           <div className="flex items-center justify-center gap-1.5">
-            <h3 className="font-display text-sm font-black text-[#C21B5C] tracking-tight">
-              Inflixo
-            </h3>
             <span className="rounded-full bg-[#C21B5C]/[0.07] border border-[#C21B5C]/15 px-2 py-0.5 text-[9px] font-black text-[#C21B5C] uppercase tracking-wider">
               Syncing
             </span>
@@ -102,7 +96,7 @@ export function SyncingLoader({
           <div className="w-48 space-y-1">
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 border border-zinc-200">
               <div
-                className="h-full bg-gradient-to-r from-[#C21B5C] to-[#A24B5A] transition-all duration-300 ease-out"
+                className="h-full bg-gradient-to-r from-[#FF6A1A] to-[#E8246F] transition-all duration-300 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>

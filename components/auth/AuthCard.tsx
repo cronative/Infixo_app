@@ -29,7 +29,7 @@ export function AuthCard({
 }: AuthCardProps) {
   return (
     <div
-      className={`relative flex min-h-[500px] w-full ${maxWidth} flex-col justify-between rounded-[5px] border border-[#E4E4E7] bg-white/95 p-6 text-center shadow-[0_20px_60px_-15px_rgba(194, 27, 92,0.1)] backdrop-blur-xl transition-all sm:p-7 ${className}`}
+      className={`relative flex min-h-[500px] w-full ${maxWidth} flex-col justify-between rounded-[5px] border border-[#E4E4E7] bg-white/95 p-6 text-center shadow-[0_20px_60px_-15px_rgba(194,27,92,0.1)] backdrop-blur-xl transition-all sm:p-7 ${className}`}
     >
       {/* TOP HEADER BLOCK */}
       <div>

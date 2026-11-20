@@ -397,7 +397,7 @@ export function DashboardSidebar() {
                 collapsed ? "justify-center px-0" : "px-3 gap-2.5"
               }`}
               style={{
-                backgroundColor: active ? "rgba(194, 27, 92, 0.08)" : undefined,
+                backgroundColor: active ? "rgba(194,27,92, 0.08)" : undefined,
               }}
             >
               {active && (
