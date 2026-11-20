@@ -6,28 +6,15 @@ import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   ArrowUp,
-  Award,
-  Briefcase,
   Check,
   CircleCheck,
-  Clapperboard,
   ExternalLink,
   Globe,
-  Handshake,
-  Laptop,
-  Link2,
   Menu,
-  MessageCircle,
   Minus,
-  Package,
-  Palette,
   Play,
   Plus,
-  ShoppingBag,
   Sparkles,
-  Star,
-  Tv,
-  Users,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -41,70 +28,23 @@ import { PLANS, planFeatureLines, planPrice, yearlySavingsPercent, type PaidPlan
 
 const NAV_LINKS = [
   { id: "series", href: "#series", label: "Series" },
-  { id: "features", href: "#features", label: "Features" },
+  { id: "links", href: "#links", label: "Links" },
+  { id: "shop", href: "#shop", label: "Shop" },
+  { id: "mediakit", href: "#mediakit", label: "Media Kit" },
   { id: "pricing", href: "#pricing", label: "Pricing" },
-  { id: "summit", href: "#summit", label: "Vision 2027" },
   { id: "faq", href: "#faq", label: "FAQ" },
 ];
 
-const SECTION_IDS = ["top", "problem", "features", "series", "links", "shop", "brands", "identity", "demo", "how", "pricing", "vision", "summit", "faq"];
+const SECTION_IDS = ["top", "series", "links", "shop", "mediakit", "why", "pricing", "vision", "faq"];
 
-// ── 01. The problem ──────────────────────────────────────────
-const SCATTERED: { icon: LucideIcon; text: string }[] = [
-  { icon: Clapperboard, text: "A follower who discovers Episode 4 may never find Episode 1." },
-  { icon: Tv, text: "Someone who loves your travel videos may not know you've made an entire food series." },
-  { icon: ShoppingBag, text: "A viewer who wants a product you recommended last month can't find the original link." },
-  { icon: Briefcase, text: "A brand that wants to work with you has to visit several platforms to understand your work." },
-];
-
-// ── 02. Meet Inflixo ─────────────────────────────────────────
-const CAN_DO: { icon: LucideIcon; text: string }[] = [
-  { icon: Clapperboard, text: "Organize multiple video series and their episodes" },
-  { icon: ShoppingBag, text: "Showcase products you use, love or recommend" },
-  { icon: Link2, text: "Keep your important links in one place" },
-  { icon: Briefcase, text: "Present your professional media kit" },
-  { icon: Package, text: "Display your collaboration packages" },
-  { icon: Users, text: "Show your social presence and total fanbase" },
-  { icon: Star, text: "Share reviews and feedback" },
-  { icon: Handshake, text: "Introduce your creative team" },
-  { icon: Laptop, text: "Showcase your creator setup and favorite tools" },
-  { icon: Palette, text: "Personalize your profile to reflect your identity" },
-];
-
-// ── 05. Shop: the DMs every creator gets ────────────────────
-const SHOP_DMS = [
-  "Which camera do you use?",
-  "Where did you buy that outfit?",
-  "Can you share the microphone link?",
-  "Which product was in your last video?",
-];
-
-// ── 06. Brands ───────────────────────────────────────────────
-const BRAND_CARDS: { icon: LucideIcon; title: string; text: string }[] = [
-  {
-    icon: Briefcase,
-    title: "Your Media Kit",
-    text: "Your creator introduction, social presence, total fanbase, previous collaborations and relevant work, without scattered screenshots and documents.",
-  },
-  {
-    icon: Package,
-    title: "Your Collaboration Packages",
-    text: "A sponsored Reel, a product showcase, a dedicated video: present package details, deliverables and pricing.",
-  },
-  {
-    icon: Award,
-    title: "Your Previous Work",
-    text: "Highlight the collaborations and projects that show your experience.",
-  },
-];
-
-// ── 11. Getting started ─────────────────────────────────────
-const STEPS = [
-  { title: "Claim your username", text: "Choose a unique Inflixo username that represents you." },
-  { title: "Create your profile", text: "Add your photo, creator details, categories and social accounts." },
-  { title: "Choose your theme", text: "Personalize how your profile looks." },
-  { title: "Organize your creator world", text: "Series, episodes, products, links, media kit and packages." },
-  { title: "Share your Inflixo", text: "Put your link in your bios and invite your audience to explore." },
+// ── Why Inflixo is different ─────────────────────────────
+const DIFFERENCES: { label: string; other: boolean | string }[] = [
+  { label: "Links to your socials and website", other: true },
+  { label: "Video series with episodes in order", other: false },
+  { label: "One series across Instagram, YouTube & Facebook", other: false },
+  { label: "Shop for affiliate & brand products", other: "Basic" },
+  { label: "Media kit with past collabs, reviews & packages", other: false },
+  { label: "Total fans across all platforms", other: false },
 ];
 
 // ── 16. FAQ ──────────────────────────────────────────────────
@@ -215,6 +155,62 @@ function Benefits({ items, className = "" }: { items: Benefit[]; className?: str
         );
       })}
     </ul>
+  );
+}
+
+/** One feature section in the landing story format: you do this → the problem → how Inflixo helps → advantages. */
+function FeatureSection({
+  id,
+  tint = false,
+  previewFirst = false,
+  eyebrow,
+  title,
+  story,
+  problem,
+  help,
+  benefits,
+  closing,
+  closingAccent,
+  cta,
+  preview,
+}: {
+  id: string;
+  tint?: boolean;
+  previewFirst?: boolean;
+  eyebrow: string;
+  title: string;
+  story: string;
+  problem: string;
+  help: string;
+  benefits: Benefit[];
+  closing: string;
+  closingAccent: string;
+  cta: ReactNode;
+  preview: ReactNode;
+}) {
+  return (
+    <section id={id} className={`scroll-mt-20 border-t border-[#F6E0DC] py-16 sm:py-24 ${tint ? "bg-[#FFF8F4]" : "bg-white"}`}>
+      <div className="mx-auto grid max-w-[1120px] grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+        <div className={`${previewFirst ? "order-2 lg:order-1" : "order-2"} min-w-0 space-y-6`}>{preview}</div>
+        <div className={previewFirst ? "order-1 lg:order-2" : "order-1"}>
+          <SectionHeading center={false} eyebrow={eyebrow} title={title} />
+          <div className="mt-4 space-y-3 text-[16px] leading-relaxed text-[#52525B]">
+            <p>{story}</p>
+            <p>
+              <span className="font-bold text-[#1C1917]">But here&apos;s the problem.</span> {problem}
+            </p>
+            <p>
+              <span className="font-bold text-[#C21B5C]">That&apos;s where Inflixo helps.</span> {help}
+            </p>
+          </div>
+          <Benefits className="mt-6" items={benefits} />
+          <p className="mt-6 text-[17px] font-extrabold leading-snug text-[#1C1917]">
+            {closing} <span className="text-[#C21B5C]">{closingAccent}</span>
+          </p>
+          <div className="mt-4">{cta}</div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -414,56 +410,6 @@ export default function LandingHomePage() {
         </div>
       </section>
 
-      {/* ── 01. THE PROBLEM ── */}
-      <section id="problem" className="scroll-mt-20 border-t border-[#F6E0DC] bg-[#FFF8F4] py-16 sm:py-24">
-        <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-          <SectionHeading
-            eyebrow="Sound familiar?"
-            title="You've created so much. How much have your followers discovered?"
-            sub="You've made series with many episodes, hundreds of videos, product picks and brand collabs. But every new post pushes the older ones further down your feed."
-          />
-          <div className="mx-auto mt-12 grid max-w-4xl gap-4 sm:grid-cols-2">
-            {SCATTERED.map((s) => (
-              <div key={s.text} className="flex items-start gap-4 rounded-2xl border border-[#F6E0DC] bg-white p-5">
-                <IconTile icon={s.icon} />
-                <p className="text-[15px] leading-relaxed text-[#1C1917]">{s.text}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mx-auto mt-10 max-w-2xl text-center">
-            <p className="text-[20px] font-extrabold leading-snug text-[#1C1917] sm:text-[24px]">
-              Your content isn&apos;t missing. <span className="text-[#C21B5C]">It&apos;s simply scattered.</span>
-            </p>
-            <p className="mt-2 text-[15px] text-[#52525B]">What if your audience could discover more of your work without searching through hundreds of posts? That&apos;s why we built Inflixo.</p>
-            <Benefits className="mx-auto mt-6 max-w-md" items={["Older episodes keep getting found instead of getting buried.","Fans see all your series, not just your latest post.","Brands understand your work from one page."]} />
-          </div>
-        </div>
-      </section>
-
-      {/* ── 02. MEET INFLIXO ── */}
-      <section id="features" className="scroll-mt-20 border-t border-[#F6E0DC] bg-white py-16 sm:py-24">
-        <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-          <SectionHeading
-            eyebrow="Meet Inflixo"
-            title="More than a link in bio."
-            sub="Your content. Your identity. Your creator world. Instead of different links for different purposes, give your audience and brand partners one organized destination."
-          />
-          <div className="mx-auto mt-12 grid max-w-4xl gap-3 sm:grid-cols-2">
-            {CAN_DO.map((c) => (
-              <div key={c.text} className="flex items-center gap-3 rounded-xl border border-[#F6E0DC] bg-white px-4 py-3">
-                <c.icon className="h-5 w-5 shrink-0 text-[#C21B5C]" />
-                <span className="text-[14px] font-semibold text-[#1C1917]">{c.text}</span>
-              </div>
-            ))}
-          </div>
-          <Benefits className="mx-auto mt-10 max-w-md" items={["Replace a dozen scattered links with one creator profile.","Fans explore more of your work in a single visit.","Brands get everything they need to say yes."]} />
-          <div className="mt-10 flex flex-col items-center gap-2 text-center">
-            <p className="text-[16px] font-bold text-[#1C1917]">You focus on creating. Inflixo helps people explore what you&apos;ve created.</p>
-            {ctaRow("Create my Inflixo profile", () => handleClaim(username))}
-          </div>
-        </div>
-      </section>
-
       {/* ── 03. SERIES ── */}
       <section id="series" className="scroll-mt-20 border-t border-[#F6E0DC] bg-[#FFF8F4] py-16 sm:py-24">
         <div className="mx-auto grid max-w-[1120px] grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
@@ -501,160 +447,111 @@ export default function LandingHomePage() {
         </div>
       </section>
 
-      {/* ── LINKS ── */}
-      <section id="links" className="scroll-mt-20 border-t border-[#F6E0DC] bg-white py-16 sm:py-24">
-        <div className="mx-auto grid max-w-[1120px] grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
-          <div>
-            <SectionHeading
-              center={false}
-              eyebrow="Links"
-              title="One link. Everything your audience needs."
-              sub="Instagram, YouTube, Facebook, your website, your latest campaign, your favorite resources. Why make your audience search for each one? Keep them all on one creator profile, and group related links into folders."
-            />
-            <Benefits className="mt-5" items={["Fans find every link without DMing you.","Group links into folders and pin the one that matters.","Your links sit right next to your series, shop and media kit."]} />
-            <p className="mt-5 text-[15px] font-bold text-[#C21B5C]">Less searching. Easier access. One Inflixo link.</p>
-            <div className="mt-4">{ctaRow("Organize my links", () => handleClaim(username))}</div>
-          </div>
-          <ProfileSectionPreview kind="links" />
-        </div>
-      </section>
+      {/* ── 02. LINKS ── */}
+      <FeatureSection
+        id="links"
+        eyebrow="02. Links"
+        title="One Link. Everything Your Followers Need."
+        story="You share your Instagram, YouTube, website, latest campaign and favourite tools, each with a different link."
+        problem="Your bio allows only one link. Followers keep asking “link please?” in DMs, and important links get lost under new posts."
+        help="Keep every link on one profile, grouped and easy to find, right next to your series and shop."
+        benefits={[
+          { title: "All Links Together", text: "Socials, website, campaigns and more." },
+          { title: "Folders & Pins", text: "Group related links and pin the important one." },
+          { title: "Next to Your Content", text: "Links sit beside your series, shop and media kit." },
+          { title: "Update Anytime", text: "Change a link once; your profile updates instantly." },
+        ]}
+        closing="One Link in Your Bio."
+        closingAccent="Everything Your Followers Need."
+        cta={ctaRow("Organize my links", () => handleClaim(username))}
+        preview={<ProfileSectionPreview kind="links" />}
+      />
 
-      {/* ── CREATOR SHOP ── */}
-      <section id="shop" className="scroll-mt-20 border-t border-[#F6E0DC] bg-[#FFF8F4] py-16 sm:py-24">
-        <div className="mx-auto grid max-w-[1120px] grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
-          <div className="order-2 lg:order-1">
-            <ProfileSectionPreview kind="shop" />
-          </div>
-          <div className="order-1 lg:order-2">
-            <SectionHeading center={false} eyebrow="Creator Shop" title="Your recommendations deserve their own shop." />
-            <div className="mt-5 space-y-2">
-              {SHOP_DMS.map((q) => (
-                <p key={q} className="flex w-fit items-center gap-2 rounded-xl rounded-bl-sm bg-white px-3 py-1.5 text-[13px] text-[#1C1917] shadow-sm">
-                  <MessageCircle className="h-3.5 w-3.5 text-[#C21B5C]/60" /> {q}
-                </p>
-              ))}
-            </div>
-            <p className="mt-5 text-[15px] leading-relaxed text-[#52525B]">
-              Add product images, names, prices and shopping links. Fans browse your picks and buy from the original store, and Inflixo takes no cut. Fashion, food, tech, beauty or lifestyle: your recommendations become easy to find.
-            </p>
-            <Benefits className="mt-5" items={["Answer “which camera?” once, not in a hundred DMs.","Earn from your affiliate links; Inflixo takes no cut.","Fans buy straight from the original store."]} />
-            <div className="mt-4">{ctaRow("Build my Creator Shop", () => handleClaim(username))}</div>
-          </div>
-        </div>
-      </section>
+      {/* ── 03. CREATOR SHOP ── */}
+      <FeatureSection
+        id="shop"
+        tint
+        previewFirst
+        eyebrow="03. Creator Shop"
+        title="Every Product You Promote. One Shop."
+        story="You promote products all the time: affiliate links, brand collaborations, and things you genuinely use and love."
+        problem="The product from last month's reel gets buried. Followers DM “link please?” and your affiliate clicks drop after the first day."
+        help="Every product you promote stays live in one shop with the right link, so followers can buy anytime and you keep earning."
+        benefits={[
+          { title: "Affiliate Links", text: "Add affiliate links from any store." },
+          { title: "Brand Promotions", text: "Products from your brand collabs, with their link." },
+          { title: "Your Recommendations", text: "Gear, outfits and products you personally use." },
+          { title: "Honest Labels", text: "Mark affiliate links so followers know." },
+          { title: "No Commission Cut", text: "Inflixo takes nothing; your earnings stay yours." },
+        ]}
+        closing="You Promote It. Followers Find It."
+        closingAccent="You Keep Earning."
+        cta={ctaRow("Build my Creator Shop", () => handleClaim(username))}
+        preview={<ProfileSectionPreview kind="shop" />}
+      />
 
-      {/* ── BRANDS ── */}
-      <section id="brands" className="scroll-mt-20 border-t border-[#F6E0DC] bg-white py-16 sm:py-24">
-        <div className="mx-auto grid max-w-[1120px] grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
-          <div>
-            <SectionHeading
-              center={false}
-              eyebrow="For brand collabs"
-              title="Turn your profile into a professional introduction."
-              sub="When a brand discovers you, it should be easy to understand who you are, what you create and how to work with you."
-            />
-            <ul className="mt-6 space-y-4">
-              {BRAND_CARDS.map((c) => (
-                <li key={c.title} className="flex gap-3">
-                  <IconTile icon={c.icon} />
-                  <span>
-                    <span className="block text-[15px] font-bold text-[#1C1917]">{c.title}</span>
-                    <span className="block text-[14px] leading-relaxed text-[#52525B]">{c.text}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <Benefits className="mt-6" items={["Share one link instead of PDFs and screenshots.","Brands see your packages and send you collab requests.","Look professional from the very first message."]} />
-            <div className="mt-6">{ctaRow("Create my media kit", () => handleClaim(username))}</div>
-          </div>
-          <ProfileSectionPreview kind="packages" />
-        </div>
-      </section>
-
-      {/* ── IDENTITY: fanbase, era, reviews, setup, team ── */}
-      <section id="identity" className="scroll-mt-20 border-t border-[#F6E0DC] bg-[#FFF8F4] py-16 sm:py-24">
-        <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-            <div>
-              <SectionHeading
-                center={false}
-                eyebrow="Your creator identity"
-                title="Your influence is bigger than one platform."
-                sub="Followers on Instagram, subscribers on YouTube, a community on Facebook. Inflixo adds them up into one total fanbase, so fans and brands see your real reach at a glance."
-              />
-              <div className="mt-6 flex gap-3 rounded-2xl border border-[#F6E0DC] bg-white p-5">
-                <IconTile icon={Sparkles} />
-                <span>
-                  <span className="block text-[15px] font-bold text-[#1C1917]">Celebrate your Creator Era</span>
-                  <span className="block text-[14px] leading-relaxed text-[#52525B]">
-                    Just beginning, growing or established: Creator Era celebrates where you are, because your identity is more than one follower count.
-                  </span>
-                </span>
-              </div>
-              <Benefits className="mt-5" items={["Show your total reach across every platform.","Reviews and your crew build trust with new brands.","Celebrate your growth with your Creator Era."]} />
-            </div>
-            <ProfileSectionPreview kind="fans" />
-          </div>
-
-          <div className="mt-16 text-center">
-            <h3 className="text-[24px] font-extrabold leading-tight tracking-tight text-[#1C1917] sm:text-[32px]">Show the people, passion and tools behind your work.</h3>
-            <p className="mx-auto mt-2 max-w-2xl text-[15px] text-[#52525B]">Reviews add confidence, your setup answers the &ldquo;which camera?&rdquo; DMs, and your crew gets the credit they deserve.</p>
-          </div>
-          <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+      {/* ── 04. MEDIA KIT ── */}
+      <FeatureSection
+        id="mediakit"
+        eyebrow="04. Media Kit"
+        title="Your Brand Collabs, Ready to Share."
+        story="You work with brands: sponsored reels, product shoots, cafe visits and more."
+        problem="Every new brand asks the same things: your reach, past work, reviews and rates. You send screenshots, PDFs and long DMs, and deals still slip away."
+        help="Your media kit shows a brand everything on one page: past collaborations, brand reviews and your collab packages."
+        benefits={[
+          { title: "Past Collaborations", text: "Show the brands you've already worked with." },
+          { title: "Brand Reviews", text: "Let past brands vouch for your work." },
+          { title: "Collab Packages", text: "Deliverables and pricing, clear upfront." },
+          { title: "Total Reach", text: "Followers across Instagram, YouTube and Facebook in one number." },
+          { title: "Collab Requests", text: "Brands can send you a request directly." },
+        ]}
+        closing="One Link."
+        closingAccent="Every Brand Gets the Full Picture."
+        cta={ctaRow("Create my media kit", () => handleClaim(username))}
+        preview={
+          <>
+            <ProfileSectionPreview kind="packages" />
             <ProfileSectionPreview kind="reviews" />
-            <ProfileSectionPreview kind="setup" />
-            <ProfileSectionPreview kind="crew" />
-          </div>
-          <p className="mt-8 text-center text-[14px] text-[#52525B]">
-            <Palette className="mr-1.5 inline h-4 w-4 text-[#C21B5C]" />
-            Pick a theme that feels like you. Mobile-friendly, no website to build.
-          </p>
-          <div className="mt-4 text-center">{ctaRow("Showcase my creator identity", () => handleClaim(username))}</div>
-        </div>
-      </section>
+          </>
+        }
+      />
 
-      {/* ── LIVE DEMO: invite to open the real demo profile (the sections above already preview it) ── */}
-      <section id="demo" className="scroll-mt-20 border-t border-[#F6E0DC] bg-white py-16 sm:py-24">
-        <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-          <div className="mx-auto flex max-w-[620px] flex-col items-center rounded-[5px] border border-[#F6E0DC] bg-[#FFF8F4] px-5 py-10 text-center sm:px-10">
-            <Eyebrow>Live demo</Eyebrow>
-            <h2 className="mt-3 text-[26px] font-extrabold leading-tight tracking-tight text-[#1C1917] sm:text-[34px]">
-              Do you want to see how your profile will look?
-            </h2>
-            <p className="mt-3 max-w-md text-[15px] leading-relaxed text-[#52525B]">
-              Open a real Inflixo creator profile: series in order, links, shop, media kit and reviews, all on one page.
-            </p>
-            <a href="/demo_creator" target="_blank" rel="noopener noreferrer" className={`${primaryBtn} mt-6`}>
-              See the demo profile <ExternalLink className="h-4 w-4" />
-            </a>
-            <p className="mt-3 text-[12px] text-[#71717A]">Opens in a new tab · inflixo.com/demo_creator</p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 11. GETTING STARTED ── */}
-      <section id="how" className="scroll-mt-20 border-t border-[#F6E0DC] bg-[#FFF8F4] py-16 sm:py-24">
+      {/* ── WHY INFLIXO IS DIFFERENT ── */}
+      <section id="why" className="scroll-mt-20 border-t border-[#F6E0DC] bg-[#FFF8F4] py-16 sm:py-24">
         <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
           <SectionHeading
-            eyebrow="Getting started"
-            title="Your creator profile is a few steps away."
-            sub="No website to build. No complicated setup."
+            eyebrow="Why Inflixo is different"
+            title="Built for video creators. Not just links."
+            sub="A link-in-bio gives followers a list of buttons. Inflixo gives them your series, your shop and your brand work, organised."
           />
-          <ol className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {STEPS.map((s, i) => (
-              <li key={s.title} className="rounded-2xl border border-[#F6E0DC] bg-white p-5">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#C21B5C] text-[13px] font-extrabold text-white">{i + 1}</span>
-                <h3 className="mt-3 text-[16px] font-bold text-[#1C1917]">{s.title}</h3>
-                <p className="mt-1 text-[13px] leading-relaxed text-[#52525B]">{s.text}</p>
-              </li>
+          <div className="mx-auto mt-10 max-w-3xl overflow-hidden rounded-[5px] border border-[#F6E0DC] bg-white">
+            <div className="grid grid-cols-[1fr_60px_60px] items-center gap-2 border-b border-[#F6E0DC] bg-[#FFF8F4] px-4 py-3 text-[12px] font-bold uppercase tracking-wide text-[#71717A] sm:grid-cols-[1fr_140px_140px] sm:text-[13px]">
+              <span>Feature</span>
+              <span className="text-center"><span className="sm:hidden">Others</span><span className="hidden sm:inline">Typical link-in-bio</span></span>
+              <span className="text-center text-[#C21B5C]">Inflixo</span>
+            </div>
+            {DIFFERENCES.map((row) => (
+              <div key={row.label} className="grid grid-cols-[1fr_60px_60px] items-center gap-2 border-b border-[#F6E0DC] px-4 py-3 last:border-b-0 sm:grid-cols-[1fr_140px_140px]">
+                <span className="text-[14px] font-semibold leading-snug text-[#1C1917] sm:text-[15px]">{row.label}</span>
+                <span className="flex justify-center">
+                  {row.other === true ? (
+                    <Check aria-label="Yes" className="h-5 w-5 text-[#15803D]" />
+                  ) : row.other === false ? (
+                    <X aria-label="No" className="h-5 w-5 text-[#A1A1AA]" />
+                  ) : (
+                    <span className="text-[12px] font-semibold text-[#71717A]">{row.other}</span>
+                  )}
+                </span>
+                <span className="flex justify-center">
+                  <Check aria-label="Yes" className="h-5 w-5 text-[#15803D]" />
+                </span>
+              </div>
             ))}
-          </ol>
-          <Benefits className="mx-auto mt-10 max-w-md" items={["Set up in minutes; no website or coding.","Paste your video links; there's nothing to upload.","Update anytime; changes show on your profile instantly."]} />
-          <div className="mt-10 flex justify-center">
-            <button onClick={() => handleClaim(username)} className={primaryBtn}>
-              Get started free <ArrowRight className="h-4 w-4" />
-            </button>
           </div>
+          <p className="mt-8 text-center text-[17px] font-extrabold text-[#1C1917]">
+            Other tools list your links. <span className="text-[#C21B5C]">Inflixo organises your creator world.</span>
+          </p>
+          <div className="mt-4 text-center">{ctaRow("Claim my Inflixo profile", () => handleClaim(username))}</div>
         </div>
       </section>
 
@@ -734,7 +631,7 @@ export default function LandingHomePage() {
         <div className="mx-auto grid max-w-[1120px] items-center gap-10 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FFEDE6] px-3 py-1 text-[12px] font-bold text-[#C21B5C]">
-              <Sparkles className="h-3.5 w-3.5" /> Coming in the future
+              <Sparkles className="h-3.5 w-3.5" /> Our vision · Coming in the future
             </span>
             <h2 className="mt-4 text-[30px] font-extrabold leading-tight tracking-tight text-[#1C1917] sm:text-[42px]">
               We&apos;re building something bigger: OTT-style content discovery.
@@ -768,11 +665,7 @@ export default function LandingHomePage() {
             <p className="col-span-2 text-center text-[11px] text-[#A1A1AA]">Illustration of a future idea</p>
           </div>
         </div>
-      </section>
-
-      {/* ── 14 + 15. VISION 2027 & GLOBAL CREATOR SUMMIT ── */}
-      <section id="summit" className="scroll-mt-20 border-t border-[#F6E0DC] bg-[#FFEDE6] py-16 sm:py-24">
-        <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
+        <div className="mx-auto mt-20 max-w-3xl px-4 text-center sm:px-6">
           <Eyebrow>Vision 2027</Eyebrow>
           <h2 className="mt-3 text-[30px] font-extrabold leading-tight tracking-tight text-[#1C1917] sm:text-[44px]">
             10,000+ paid creators. One global community.
