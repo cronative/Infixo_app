@@ -614,14 +614,14 @@ export function SeriesDetailClient({
           {/* Content below hero */}
           {/* Sections sit 8px from the card edge on phones (same as the profile); the text block keeps 16px. */}
           <div className="flex flex-col px-2 py-4 sm:p-5 space-y-3.5">
-            <div className="flex flex-col space-y-3.5 px-2 sm:px-0">
+            <div className={`flex flex-col space-y-3.5 px-2 sm:px-0 ${isCardDesign ? "items-center text-center" : ""}`}>
             {/* 1. Series Title */}
             <h1 style={pt.headingStyle} className="text-xl sm:text-2xl font-bold tracking-tight leading-snug text-(--text) break-words">
               {series.title}
             </h1>
 
             {/* 2. Meta line: "5 episodes · Hindi · [IG icon] Instagram" */}
-            <div className="flex items-center gap-1.5 text-sm text-(--text-muted) font-medium flex-wrap pt-0.5">
+            <div className={`flex items-center gap-1.5 text-sm text-(--text-muted) font-medium flex-wrap pt-0.5 ${isCardDesign ? "justify-center" : ""}`}>
               {metaLineParts.map((part, idx) => (
                 <span key={idx} className="inline-flex items-center gap-1.5">
                   {idx > 0 && <span className="opacity-40 font-normal">·</span>}
@@ -633,7 +633,7 @@ export function SeriesDetailClient({
 
             {/* Category Tags as small neutral chips below meta line */}
             {genresList.length > 0 && (
-              <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+              <div className={`flex flex-wrap items-center gap-1.5 pt-0.5 ${isCardDesign ? "justify-center" : ""}`}>
                 {genresList.map((g) => (
                   <span
                     key={g}
@@ -682,7 +682,10 @@ export function SeriesDetailClient({
             {isCardDesign ? (
               <div>
                 <div className="flex items-end justify-between gap-3 pb-2.5">
-                  <h2 style={{ color: c.primaryText }} className="text-[18px] font-bold leading-6 tracking-tight">Episodes</h2>
+                  <h2 style={{ color: c.primaryText }} className="flex items-center gap-2 text-[18px] font-bold leading-6 tracking-tight">
+                    Episodes
+                    <span className="rounded-full bg-(--accent-soft) px-2 py-0.5 text-[12px] font-bold leading-4 text-(--accent-text)">{currentEpisodes.length}</span>
+                  </h2>
                   <span className="text-[12px] font-medium text-(--text-muted)">Watch in order</span>
                 </div>
                 {seasonsList.length > 1 && (
