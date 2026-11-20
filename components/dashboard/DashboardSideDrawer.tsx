@@ -245,7 +245,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
             title="Inflixo Dashboard"
           >
             <Image
-              src="/images/inflixo-wordmark-title-gulaal.png"
+              src="/images/inflixo-wordmark-title-gulaal-play.png"
               alt="Inflixo"
               width={628}
               height={186}
