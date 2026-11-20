@@ -2348,9 +2348,9 @@ export function LivePreviewCard({
               if (isDemoSeriesListing) {
                 return (
                   <div>
-                    <div className="flex items-start justify-between gap-3 px-2.5 pb-1 pt-1">
+                    <div className="px-2.5 pb-1 pt-1 text-center">
                       <div className="min-w-0">
-                        <h2 style={{ color: c.primaryText }} className="flex items-center gap-2 text-[18px] font-bold leading-6 tracking-tight">
+                        <h2 style={{ color: c.primaryText }} className="flex items-center justify-center gap-2 text-[18px] font-bold leading-6 tracking-tight">
                           My Series
                           <span className="rounded-full bg-(--accent-soft) px-2 py-0.5 text-[12px] font-bold leading-4 text-(--accent-text)">{series.length}</span>
                         </h2>
