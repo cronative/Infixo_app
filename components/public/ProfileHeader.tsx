@@ -97,6 +97,8 @@ export interface ProfileHeaderProps {
   isListingPage?: boolean;
   /** Compact header: photo left, name / handle / category and socials beside it (series listing page). */
   compact?: boolean;
+  /** Socials and "Work with me" each take half the row (demo profile first). */
+  splitActions?: boolean;
   mediaKitHref?: string;
   usesDarkControls?: boolean;
   onShareClick: (e?: React.MouseEvent) => void;
@@ -341,6 +343,7 @@ export function ProfileHeader({
   pageHeader,
   isListingPage,
   compact = false,
+  splitActions = false,
   mediaKitHref,
   usesDarkControls = false,
   onShareClick,
@@ -636,8 +639,35 @@ export function ProfileHeader({
 
           {/* 4. Social Icons directly under Category */}
           {(allActiveSocials.length > 0 || onWorkWithMe) && (
-            <div className="flex w-full flex-wrap items-center justify-center gap-2 pt-3">
-              {allActiveSocials.map((item) => {
+            <div className={splitActions && onWorkWithMe ? "grid w-full grid-cols-2 items-center gap-2 pt-3" : "flex w-full flex-wrap items-center justify-center gap-2 pt-3"}>
+              {splitActions && onWorkWithMe ? (
+                <div className="flex min-w-0 items-center gap-2">
+                  {allActiveSocials.slice(0, 4).map((item) => {
+                    const hasUrl = Boolean(item.url && item.url !== "#");
+                    const icon = (
+                      <span className="flex h-10 w-full items-center justify-center rounded-[5px] border border-(--surface-border) bg-(--surface) text-(--text) transition-colors hover:border-(--accent-text) hover:text-(--accent-text)">
+                        {getPlatformIcon(item.platform, "h-[18px] w-[18px] text-current")}
+                      </span>
+                    );
+                    return hasUrl ? (
+                      <a
+                        key={item.platform}
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={`Visit ${item.label || item.platform}`}
+                        aria-label={`Visit ${item.label || item.platform}`}
+                        className="tap-scale min-w-0 flex-1 cursor-pointer"
+                      >
+                        {icon}
+                      </a>
+                    ) : (
+                      <span key={item.platform} className="min-w-0 flex-1">{icon}</span>
+                    );
+                  })}
+                </div>
+              ) : null}
+              {!(splitActions && onWorkWithMe) && allActiveSocials.map((item) => {
                 const hasUrl = Boolean(item.url && item.url !== "#");
 
                 const iconContent = (
@@ -670,7 +700,7 @@ export function ProfileHeader({
                     type="button"
                     onClick={onWorkWithMe}
                     style={{ backgroundColor: "var(--accent)", color: "var(--on-accent)" }}
-                    className="tap-scale inline-flex h-10 min-w-[140px] flex-1 items-center justify-center gap-2 rounded-[5px] px-4 text-[14px] font-semibold transition-opacity hover:opacity-95 cursor-pointer whitespace-nowrap focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-2 focus-visible:outline-hidden"
+                    className={`tap-scale inline-flex h-10 items-center justify-center gap-2 rounded-[5px] px-4 text-[14px] font-semibold ${splitActions ? "w-full min-w-0" : "min-w-[140px] flex-1"} transition-opacity hover:opacity-95 cursor-pointer whitespace-nowrap focus-visible:ring-2 focus-visible:ring-(--accent) focus-visible:ring-offset-2 focus-visible:outline-hidden`}
                     title="See collab packages"
                   >
                     <Handshake className="h-4 w-4 shrink-0" />

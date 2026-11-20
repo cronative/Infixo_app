@@ -1764,6 +1764,7 @@ export function LivePreviewCard({
           pageHeader={pageHeader}
           isListingPage={isListingPage}
           compact={seriesOnlyMode}
+          splitActions={isCardSectionsMode}
           mediaKitHref={
             containedScroll && cleanHandle && cleanHandle !== "demo_creator" && !isDashboardPreview && !pageHeader
               ? `/${cleanHandle}/mediakit`
