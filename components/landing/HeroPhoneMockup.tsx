@@ -10,7 +10,7 @@ function shortEpisodeTitle(title: string) {
 /**
  * Static, lightweight phone mockup for the landing page: one demo series shown
  * like an OTT title page (poster, "Start from Ep 1", episodes in order).
- * Pure markup (no client JS). Neutral colours: maroon is kept for the logo only.
+ * Pure markup (no client JS). Light maroon accents to match the landing page.
  */
 export function HeroPhoneMockup() {
   const series = EXPERT_DEMO_SERIES[0];
@@ -40,7 +40,7 @@ export function HeroPhoneMockup() {
         </div>
 
         <div className="px-3 pb-4 pt-3 text-left">
-          <div className="flex h-9 w-full items-center justify-center gap-1.5 rounded-xl bg-[#18181B] text-[12px] font-bold text-white">
+          <div className="flex h-9 w-full items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] text-[12px] font-bold text-white">
             <Play className="h-3.5 w-3.5 fill-current" />
             Start from Ep 1
           </div>
@@ -51,12 +51,12 @@ export function HeroPhoneMockup() {
               <li
                 key={ep.id}
                 className={`flex items-center gap-2 rounded-lg border px-2 py-1.5 ${
-                  i === 1 ? "border-[#18181B]/30 bg-zinc-50" : "border-[#E4E4E7] bg-white"
+                  i === 1 ? "border-[#7A2253]/30 bg-[#F7EDF2]" : "border-[#E4E4E7] bg-white"
                 }`}
               >
                 <span
                   className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[10px] font-extrabold ${
-                    i === 0 ? "bg-zinc-200 text-[#52525B]" : i === 1 ? "bg-[#18181B] text-white" : "bg-zinc-100 text-[#52525B]"
+                    i === 0 ? "bg-zinc-200 text-[#52525B]" : i === 1 ? "bg-[#7A2253] text-white" : "bg-zinc-100 text-[#52525B]"
                   }`}
                 >
                   {ep.episodeNumber}
@@ -65,7 +65,7 @@ export function HeroPhoneMockup() {
                   {shortEpisodeTitle(ep.title)}
                 </span>
                 {i === 0 && <span className="shrink-0 text-[9px] font-bold uppercase text-emerald-600">Watched</span>}
-                {i === 1 && <span className="shrink-0 rounded bg-[#18181B] px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">Next</span>}
+                {i === 1 && <span className="shrink-0 rounded bg-[#7A2253] px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">Next</span>}
               </li>
             ))}
           </ol>

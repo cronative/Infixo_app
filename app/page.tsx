@@ -33,7 +33,7 @@ import { OnboardingService } from "@/services/OnboardingService";
 import { CreatorProfile, SocialAccounts, type ThemeKey } from "@/types";
 import { formatPlanPrice, usePricingCurrency } from "@/lib/pricing";
 import { PLANS, planFeatureLines, yearlySavingsPercent } from "@/config/plans";
-import { EXPERT_DEMO_PROFILE } from "@/data/expertDemoCreator";
+import { EXPERT_DEMO_PROFILE, EXPERT_DEMO_THEME } from "@/data/expertDemoCreator";
 import {
   LANDING_DEMO_SOCIALS,
   LANDING_DEMO_SERIES,
@@ -51,14 +51,14 @@ const LivePreviewCard = dynamic(
     ssr: false,
     loading: () => (
       <div className="flex min-h-[460px] items-center justify-center rounded-2xl bg-zinc-50 text-zinc-400">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#18181B] border-t-transparent" />
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#7A2253] border-t-transparent" />
       </div>
     ),
   }
 );
 
-/** Light, neutral theme for the embedded demo: on the landing page maroon is kept for the logo only. */
-const LANDING_DEMO_THEME: ThemeKey = "kapas";
+/** The embedded demo uses Inflixo's own light maroon theme, matching the landing page. */
+const LANDING_DEMO_THEME: ThemeKey = EXPERT_DEMO_THEME;
 
 const NAV_LINKS = [
   { id: "story", href: "#story", label: "Why Inflixo" },
@@ -183,7 +183,7 @@ function cleanHandle(value: string) {
 function SectionHeading({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) {
   return (
     <div className="mx-auto max-w-2xl space-y-3 text-center">
-      <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#71717A]">{eyebrow}</p>
+      <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#7A2253]">{eyebrow}</p>
       <h2 className="text-[30px] font-extrabold leading-tight tracking-tight text-[#18181B] sm:text-[44px]">{title}</h2>
       {sub && <p className="text-[16px] leading-relaxed text-[#52525B]">{sub}</p>}
     </div>
@@ -194,7 +194,7 @@ function SectionHeading({ eyebrow, title, sub }: { eyebrow: string; title: strin
 function ViewDropCard() {
   return (
     <div className="relative mx-auto w-full max-w-[400px]">
-      <div className="rounded-2xl border border-[#E4E4E7] bg-white p-5 shadow-xl shadow-black/5">
+      <div className="rounded-2xl border border-[#EFE3EA] bg-white p-5 shadow-xl shadow-black/5">
         <div className="flex items-center justify-between">
           <p className="text-[13px] font-bold text-[#18181B]">Your 4-part series</p>
           <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#71717A]">
@@ -207,7 +207,7 @@ function ViewDropCard() {
               <span className="text-[12px] font-semibold text-[#52525B]">{row.part}</span>
               <span className="h-3 rounded-full bg-zinc-100">
                 <span
-                  className={`block h-3 rounded-full ${i === 0 ? "bg-[#18181B]" : "bg-zinc-400"}`}
+                  className={`block h-3 rounded-full ${i === 0 ? "bg-[#7A2253]" : "bg-[#7A2253]/35"}`}
                   style={{ width: `${Math.max(row.pct, 3)}%` }}
                 />
               </span>
@@ -223,8 +223,8 @@ function ViewDropCard() {
 
       <div className="mt-3 space-y-2 pl-6 sm:pl-12">
         {FAN_COMMENTS.map((c) => (
-          <div key={c.name} className="flex items-start gap-2 rounded-xl border border-[#E4E4E7] bg-white px-3 py-2 shadow-md shadow-black/5">
-            <MessageCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#A1A1AA]" />
+          <div key={c.name} className="flex items-start gap-2 rounded-xl border border-[#EFE3EA] bg-white px-3 py-2 shadow-md shadow-black/5">
+            <MessageCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#7A2253]/50" />
             <p className="text-[12px] leading-snug text-[#18181B]">
               <span className="font-bold">{c.name}</span> {c.text}
             </p>
@@ -330,17 +330,17 @@ export default function LandingHomePage() {
     (previewSocials.facebook?.followers || 0);
 
   const navClass = (id: string) =>
-    `text-[14px] font-semibold transition-colors ${activeNav === id ? "text-[#18181B]" : "text-[#71717A] hover:text-[#18181B]"}`;
+    `text-[14px] font-semibold transition-colors ${activeNav === id ? "text-[#7A2253]" : "text-[#71717A] hover:text-[#18181B]"}`;
 
   const primaryBtn =
-    "inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#18181B] px-5 text-[14px] font-bold text-white transition-colors hover:bg-black cursor-pointer";
+    "inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#7A2253] px-5 text-[14px] font-bold text-white transition-colors hover:bg-[#631841] cursor-pointer";
   const outlineBtn =
-    "inline-flex h-11 w-full items-center justify-center rounded-xl border border-[#E4E4E7] bg-white text-[14px] font-bold text-[#18181B] transition-colors hover:border-[#18181B] cursor-pointer";
+    "inline-flex h-11 w-full items-center justify-center rounded-xl border border-[#EFE3EA] bg-white text-[14px] font-bold text-[#18181B] transition-colors hover:border-[#7A2253] cursor-pointer";
 
   if (redirecting) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-white">
-        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#18181B] border-t-transparent" />
+        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#7A2253] border-t-transparent" />
       </div>
     );
   }
@@ -351,7 +351,7 @@ export default function LandingHomePage() {
         e.preventDefault();
         handleClaim(username);
       }}
-      className="flex w-full max-w-md items-center rounded-xl border border-[#E4E4E7] bg-white p-1.5 shadow-sm transition-all focus-within:border-[#18181B] focus-within:ring-2 focus-within:ring-black/10"
+      className="flex w-full max-w-md items-center rounded-xl border border-[#EFE3EA] bg-white p-1.5 shadow-sm transition-all focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/15"
     >
       <span className="shrink-0 pl-3 text-[14px] font-semibold text-[#71717A]">inflixo.com/</span>
       <input
@@ -369,11 +369,11 @@ export default function LandingHomePage() {
   );
 
   return (
-    <div className="landing-scope min-h-dvh overflow-x-hidden bg-white antialiased selection:bg-zinc-200 selection:text-[#18181B]">
+    <div className="landing-scope min-h-dvh overflow-x-hidden bg-white antialiased selection:bg-[#F7EDF2] selection:text-[#7A2253]">
       <div id="top" className="absolute top-0 h-px w-px" />
 
       {/* ── HEADER ── */}
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-[#E4E4E7] bg-white/95 backdrop-blur-md">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-[#EFE3EA] bg-white/95 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-[1120px] items-center justify-between gap-4 px-4 sm:px-6">
           <Logo size="sm" />
           <nav className="hidden items-center gap-6 md:flex" aria-label="Main Navigation">
@@ -398,7 +398,7 @@ export default function LandingHomePage() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#E4E4E7] text-[#18181B] hover:bg-zinc-50"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#EFE3EA] text-[#18181B] hover:bg-zinc-50"
               aria-expanded={mobileMenuOpen}
               aria-label="Toggle navigation menu"
             >
@@ -407,7 +407,7 @@ export default function LandingHomePage() {
           </div>
         </div>
         {mobileMenuOpen && (
-          <div className="border-b border-[#E4E4E7] bg-white px-4 py-6 md:hidden">
+          <div className="border-b border-[#EFE3EA] bg-white px-4 py-6 md:hidden">
             <nav className="flex flex-col gap-4" aria-label="Mobile Navigation">
               {NAV_LINKS.map((link) => (
                 <a key={link.id} href={link.href} onClick={() => setMobileMenuOpen(false)} className="py-1 text-[16px] font-semibold text-[#18181B]">
@@ -426,11 +426,11 @@ export default function LandingHomePage() {
       <section className="pt-28 pb-16 sm:pt-36 sm:pb-24">
         <div className="mx-auto grid max-w-[1120px] items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10">
           <div className="min-w-0 text-center lg:text-left">
-            <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#E4E4E7] bg-white px-3.5 py-1.5 text-[12px] font-semibold text-[#18181B]">
+            <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#EFE3EA] bg-white px-3.5 py-1.5 text-[12px] font-semibold text-[#18181B]">
               🇮🇳 For creators who make series
             </p>
             <h1 className="landing-text-hero font-extrabold tracking-tight text-[#18181B]">
-              Part 1 got the views. <span className="text-[#A1A1AA]">Part 2 got lost.</span>
+              Part 1 got the views. <span className="text-[#B98AA5]">Part 2 got lost.</span>
             </h1>
             <p className="landing-text-18 mx-auto mt-5 max-w-xl text-[#52525B] lg:mx-0">
               Your fans didn&apos;t stop caring. They just couldn&apos;t find Part 2. Inflixo puts every part of your series in order, like a show on an OTT app, in one link in bio.
@@ -447,13 +447,13 @@ export default function LandingHomePage() {
       </section>
 
       {/* ── STORY: why views drop ── */}
-      <section id="story" className="scroll-mt-20 border-t border-[#E4E4E7] bg-[#FAFAFA] py-16 sm:py-24">
+      <section id="story" className="scroll-mt-20 border-t border-[#EFE3EA] bg-[#FBF6F9] py-16 sm:py-24">
         <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
           <SectionHeading eyebrow="Sound familiar?" title="Your content isn't the problem. Your grid is." />
           <div className="mt-12 grid gap-4 md:grid-cols-3">
             {STORY_STEPS.map((s) => (
-              <div key={s.n} className="rounded-2xl border border-[#E4E4E7] bg-white p-6">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#18181B] text-[14px] font-extrabold text-white">
+              <div key={s.n} className="rounded-2xl border border-[#EFE3EA] bg-white p-6">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#7A2253] text-[14px] font-extrabold text-white">
                   {s.n}
                 </span>
                 <h3 className="mt-4 text-[18px] font-bold text-[#18181B]">{s.title}</h3>
@@ -468,13 +468,13 @@ export default function LandingHomePage() {
       </section>
 
       {/* ── SERIES: OTT-style ── */}
-      <section id="series" className="scroll-mt-20 border-t border-[#E4E4E7] bg-white py-16 sm:py-24">
+      <section id="series" className="scroll-mt-20 border-t border-[#EFE3EA] bg-white py-16 sm:py-24">
         <div className="mx-auto grid max-w-[1120px] items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
           <div className="order-2 lg:order-1">
             <HeroPhoneMockup />
           </div>
           <div className="order-1 lg:order-2">
-            <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#71717A]">The fix</p>
+            <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#7A2253]">The fix</p>
             <h2 className="mt-3 text-[30px] font-extrabold leading-tight tracking-tight text-[#18181B] sm:text-[44px]">
               Your series, like an OTT show.
             </h2>
@@ -484,7 +484,7 @@ export default function LandingHomePage() {
             <ul className="mt-8 space-y-5">
               {OTT_POINTS.map((p) => (
                 <li key={p.title} className="flex gap-4">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#E4E4E7] bg-white text-[#18181B]">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F7EDF2] text-[#7A2253]">
                     <p.icon className="h-5 w-5" />
                   </span>
                   <span>
@@ -499,13 +499,13 @@ export default function LandingHomePage() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section className="border-t border-[#E4E4E7] bg-[#FAFAFA] py-16 sm:py-20">
+      <section className="border-t border-[#EFE3EA] bg-[#FBF6F9] py-16 sm:py-20">
         <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
           <SectionHeading eyebrow="2 minutes" title="Set up in 3 steps." />
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             {HOW_STEPS.map((s) => (
-              <div key={s.n} className="rounded-2xl border border-[#E4E4E7] bg-white p-6">
-                <p className="text-[13px] font-extrabold text-[#A1A1AA]">{s.n}</p>
+              <div key={s.n} className="rounded-2xl border border-[#EFE3EA] bg-white p-6">
+                <p className="text-[13px] font-extrabold text-[#7A2253]">{s.n}</p>
                 <h3 className="mt-2 text-[18px] font-bold text-[#18181B]">{s.title}</h3>
                 <p className="mt-1.5 text-[14px] leading-relaxed text-[#52525B]">{s.text}</p>
               </div>
@@ -515,15 +515,15 @@ export default function LandingHomePage() {
       </section>
 
       {/* ── LIVE DEMO ── */}
-      <section id="demo" className="scroll-mt-20 border-t border-[#E4E4E7] bg-white py-16 sm:py-24">
+      <section id="demo" className="scroll-mt-20 border-t border-[#EFE3EA] bg-white py-16 sm:py-24">
         <div className="mx-auto max-w-[1120px] px-4 text-center sm:px-6">
           <SectionHeading
             eyebrow="Live demo"
             title={username.trim() ? `This could be @${previewHandle}.` : "See a real creator page."}
             sub="Tap a series to see the episodes in order."
           />
-          <div className="mx-auto mt-10 max-w-[620px] rounded-3xl border border-[#E4E4E7] bg-zinc-50 p-2 shadow-sm sm:p-3">
-            <div className="mb-3 flex items-center justify-between rounded-xl border border-[#E4E4E7] bg-white px-3.5 py-2">
+          <div className="mx-auto mt-10 max-w-[620px] rounded-3xl border border-[#EFE3EA] bg-zinc-50 p-2 shadow-sm sm:p-3">
+            <div className="mb-3 flex items-center justify-between rounded-xl border border-[#EFE3EA] bg-white px-3.5 py-2">
               <div className="flex items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
                 <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
@@ -560,17 +560,17 @@ export default function LandingHomePage() {
       </section>
 
       {/* ── COMPARE: Inflixo vs other link tools ── */}
-      <section id="compare" className="scroll-mt-20 border-t border-[#E4E4E7] bg-[#FAFAFA] py-16 sm:py-24">
+      <section id="compare" className="scroll-mt-20 border-t border-[#EFE3EA] bg-[#FBF6F9] py-16 sm:py-24">
         <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
           <SectionHeading
             eyebrow="Inflixo vs other link tools"
             title="Other link tools show buttons. Inflixo shows your series."
             sub="Everything a link-in-bio tool does, plus the one thing creators need most."
           />
-          <div className="mx-auto mt-12 max-w-4xl overflow-hidden rounded-2xl border border-[#E4E4E7] bg-white">
-            <div className="grid grid-cols-2 border-b border-[#E4E4E7] text-[12px] font-bold uppercase tracking-wider sm:text-[13px]">
+          <div className="mx-auto mt-12 max-w-4xl overflow-hidden rounded-2xl border border-[#EFE3EA] bg-white">
+            <div className="grid grid-cols-2 border-b border-[#EFE3EA] text-[12px] font-bold uppercase tracking-wider sm:text-[13px]">
               <div className="bg-zinc-50 px-3 py-3 text-[#A1A1AA] sm:px-6">Other link tools</div>
-              <div className="px-3 py-3 text-[#18181B] sm:px-6">Inflixo</div>
+              <div className="bg-[#F7EDF2] px-3 py-3 text-[#7A2253] sm:px-6">Inflixo</div>
             </div>
             {COMPARISON.map((row) => (
               <div key={row.inflixo} className="grid grid-cols-2 border-b border-[#F4F4F5] last:border-b-0">
@@ -579,7 +579,7 @@ export default function LandingHomePage() {
                   <span>{row.other}</span>
                 </div>
                 <div className="flex items-start gap-2 px-3 py-4 text-[13px] font-semibold leading-snug text-[#18181B] sm:px-6 sm:text-[14px]">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#7A2253]" />
                   <span>{row.inflixo}</span>
                 </div>
               </div>
@@ -589,13 +589,13 @@ export default function LandingHomePage() {
       </section>
 
       {/* ── AND MORE ── */}
-      <section id="features" className="scroll-mt-20 border-t border-[#E4E4E7] bg-white py-16 sm:py-20">
+      <section id="features" className="scroll-mt-20 border-t border-[#EFE3EA] bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
           <SectionHeading eyebrow="Aur bhi hai" title="Series first. Everything else, in the same link." />
           <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-4">
             {MORE_FEATURES.map((f) => (
-              <div key={f.label} className="flex items-center gap-2.5 rounded-xl border border-[#E4E4E7] bg-white px-3.5 py-3">
-                <f.icon className="h-4 w-4 shrink-0 text-[#52525B]" />
+              <div key={f.label} className="flex items-center gap-2.5 rounded-xl border border-[#EFE3EA] bg-white px-3.5 py-3">
+                <f.icon className="h-4 w-4 shrink-0 text-[#7A2253]" />
                 <span className="text-[13px] font-semibold text-[#18181B]">{f.label}</span>
               </div>
             ))}
@@ -604,7 +604,7 @@ export default function LandingHomePage() {
       </section>
 
       {/* ── PRICING ── */}
-      <section id="pricing" className="scroll-mt-20 border-t border-[#E4E4E7] bg-[#FAFAFA] py-16 sm:py-24">
+      <section id="pricing" className="scroll-mt-20 border-t border-[#EFE3EA] bg-[#FBF6F9] py-16 sm:py-24">
         <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
           <SectionHeading
             eyebrow="Pricing"
@@ -612,7 +612,7 @@ export default function LandingHomePage() {
             sub={`${PLANS.trial.trialDays}-day free trial · No card needed · Cancel anytime`}
           />
           <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="flex flex-col justify-between rounded-2xl border border-[#E4E4E7] bg-white p-6">
+            <div className="flex flex-col justify-between rounded-2xl border border-[#EFE3EA] bg-white p-6">
               <div>
                 <h3 className="text-[22px] font-bold text-[#18181B]">Free trial</h3>
                 <p className="mt-1 text-[14px] text-[#52525B]">Build your real page and see how fans react.</p>
@@ -620,7 +620,7 @@ export default function LandingHomePage() {
                 <ul className="mt-6 space-y-2.5 text-[14px] text-zinc-700">
                   {TRIAL_FEATURES.map((feat) => (
                     <li key={feat} className="flex items-start gap-2">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#18181B]" />
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#7A2253]" />
                       <span>{feat}</span>
                     </li>
                   ))}
@@ -634,8 +634,8 @@ export default function LandingHomePage() {
               </button>
             </div>
 
-            <div className="relative flex flex-col justify-between rounded-2xl border-2 border-[#18181B] bg-white p-6">
-              <span className="absolute -top-3.5 right-6 rounded-full bg-[#18181B] px-3 py-0.5 text-[12px] font-bold uppercase tracking-wider text-white">
+            <div className="relative flex flex-col justify-between rounded-2xl border-2 border-[#7A2253] bg-white p-6">
+              <span className="absolute -top-3.5 right-6 rounded-full bg-[#7A2253] px-3 py-0.5 text-[12px] font-bold uppercase tracking-wider text-white">
                 Popular
               </span>
               <div>
@@ -651,7 +651,7 @@ export default function LandingHomePage() {
                 <ul className="mt-6 space-y-2.5 text-[14px] text-zinc-700">
                   {PRO_FEATURES.map((feat) => (
                     <li key={feat} className="flex items-start gap-2">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#18181B]" />
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#7A2253]" />
                       <span>{feat}</span>
                     </li>
                   ))}
@@ -662,7 +662,7 @@ export default function LandingHomePage() {
               </button>
             </div>
 
-            <div className="flex flex-col justify-between rounded-2xl border border-[#E4E4E7] bg-white p-6">
+            <div className="flex flex-col justify-between rounded-2xl border border-[#EFE3EA] bg-white p-6">
               <div>
                 <h3 className="text-[22px] font-bold text-[#18181B]">VIP</h3>
                 <p className="mt-1 text-[14px] text-[#52525B]">For top creators, touring artists and teams.</p>
@@ -676,7 +676,7 @@ export default function LandingHomePage() {
                 <ul className="mt-6 space-y-2.5 text-[14px] text-zinc-700">
                   {VIP_FEATURES.map((feat) => (
                     <li key={feat} className="flex items-start gap-2">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#18181B]" />
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#7A2253]" />
                       <span>{feat}</span>
                     </li>
                   ))}
@@ -694,9 +694,9 @@ export default function LandingHomePage() {
       </section>
 
       {/* ── MADE BY A CREATOR + SUMMIT ── */}
-      <section id="summit" className="scroll-mt-20 border-t border-[#E4E4E7] bg-white py-16 sm:py-24">
+      <section id="summit" className="scroll-mt-20 border-t border-[#EFE3EA] bg-white py-16 sm:py-24">
         <div className="mx-auto max-w-2xl px-4 text-center sm:px-6">
-          <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#71717A]">Made in India 🇮🇳</p>
+          <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#7A2253]">Made in India 🇮🇳</p>
           <h2 className="mt-3 text-[30px] font-extrabold leading-tight tracking-tight text-[#18181B] sm:text-[44px]">
             Made by a creator, for creators.
           </h2>
@@ -712,7 +712,7 @@ export default function LandingHomePage() {
               href="https://instagram.com/inflixo_app"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[14px] font-semibold text-[#18181B] underline underline-offset-4 hover:no-underline"
+              className="text-[14px] font-semibold text-[#7A2253] underline underline-offset-4 hover:no-underline"
             >
               Follow @inflixo_app
             </a>
@@ -721,14 +721,14 @@ export default function LandingHomePage() {
       </section>
 
       {/* ── FAQ ── */}
-      <section id="faq" className="scroll-mt-20 border-t border-[#E4E4E7] bg-[#FAFAFA] py-16 sm:py-24">
+      <section id="faq" className="scroll-mt-20 border-t border-[#EFE3EA] bg-[#FBF6F9] py-16 sm:py-24">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <SectionHeading eyebrow="FAQ" title="Questions creators ask." />
           <div className="mt-10 space-y-3">
             {FAQS.map((faq, index) => {
               const isOpen = openFaqIndex === index;
               return (
-                <div key={faq.q} className="overflow-hidden rounded-2xl border border-[#E4E4E7] bg-white">
+                <div key={faq.q} className="overflow-hidden rounded-2xl border border-[#EFE3EA] bg-white">
                   <button
                     type="button"
                     onClick={() => setOpenFaqIndex(isOpen ? -1 : index)}
@@ -736,7 +736,7 @@ export default function LandingHomePage() {
                     aria-expanded={isOpen}
                   >
                     <span className="text-[16px] font-bold text-[#18181B]">{faq.q}</span>
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-[#18181B]">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#F7EDF2] text-[#7A2253]">
                       {isOpen ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
                     </span>
                   </button>
@@ -749,22 +749,22 @@ export default function LandingHomePage() {
       </section>
 
       {/* ── FINAL CTA ── */}
-      <section className="bg-[#18181B] py-16 text-center text-white sm:py-24">
+      <section className="border-t border-[#EFE3EA] bg-[#F7EDF2] py-16 text-center text-[#18181B] sm:py-24">
         <div className="mx-auto max-w-2xl space-y-5 px-4 sm:px-6">
           <h2 className="text-[30px] font-extrabold leading-tight tracking-tight sm:text-[44px]">Let fans find Part 2.</h2>
-          <p className="text-[16px] leading-relaxed text-white/75">Put your series in order and share one link. It takes 2 minutes.</p>
+          <p className="text-[16px] leading-relaxed text-[#52525B]">Put your series in order and share one link. It takes 2 minutes.</p>
           <button
             onClick={() => handleClaim(username)}
-            className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-white px-6 text-[14px] font-bold text-[#18181B] transition-colors hover:bg-zinc-100"
+            className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#7A2253] px-6 text-[14px] font-bold text-white transition-colors hover:bg-[#631841]"
           >
             Claim your link <ArrowRight className="h-4 w-4" />
           </button>
-          <p className="text-[12px] text-white/60">Free for {PLANS.trial.trialDays} days · No card needed</p>
+          <p className="text-[12px] text-[#71717A]">Free for {PLANS.trial.trialDays} days · No card needed</p>
         </div>
       </section>
 
       {/* ── FOOTER ── */}
-      <footer ref={footerRef} className="border-t border-[#E4E4E7] bg-white py-14">
+      <footer ref={footerRef} className="border-t border-[#EFE3EA] bg-white py-14">
         <div className="mx-auto max-w-[1120px] space-y-10 px-4 sm:px-6">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
             <div className="space-y-3">
@@ -804,7 +804,7 @@ export default function LandingHomePage() {
               </ul>
             </div>
           </div>
-          <div className="flex flex-col items-center justify-between gap-3 border-t border-[#E4E4E7] pt-8 text-[12px] text-[#52525B] sm:flex-row">
+          <div className="flex flex-col items-center justify-between gap-3 border-t border-[#EFE3EA] pt-8 text-[12px] text-[#52525B] sm:flex-row">
             <p>© 2026 Inflixo. All rights reserved.</p>
             <Link href="/login" className="font-medium underline hover:text-[#18181B]">
               Log in to Dashboard
@@ -817,7 +817,7 @@ export default function LandingHomePage() {
         <button
           type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 z-40 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-[#E4E4E7] bg-white text-[#18181B] shadow-md hover:bg-zinc-50"
+          className="fixed bottom-6 right-6 z-40 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-[#EFE3EA] bg-white text-[#18181B] shadow-md hover:bg-zinc-50"
           aria-label="Back to top"
         >
           <ArrowUp className="h-5 w-5" />
