@@ -29,6 +29,15 @@ export function useCardLayout() {
   return useContext(FullBleedContext);
 }
 
+// ── Card mode (demo profile preview) ─────────────────────────
+
+const CardSectionsContext = createContext(false);
+
+/** Every Section below renders as its own rounded card with a white header: icon tile, title, subtitle, count. */
+export function CardSectionsProvider({ enabled = true, children }: { enabled?: boolean; children: ReactNode }) {
+  return <CardSectionsContext.Provider value={enabled}>{children}</CardSectionsContext.Provider>;
+}
+
 /** Cancels the card's side padding (--card-px); `!` beats a caller's w-full / rounded / border. */
 const FULL_BLEED = "-mx-(--card-px) w-auto! rounded-none! border-x-0!";
 
@@ -45,6 +54,8 @@ export interface SectionHeaderProps {
   solid?: boolean;
   /** Feature header: light accent tint, accent icon tile, bold title, count pill (My Series). */
   hero?: boolean;
+  /** Card header: no tint, accent icon tile, title + subtitle, outlined count (card mode). */
+  card?: boolean;
   /** Compact centred feature header: icon, title and count on one line, subtitle below (series listing page). */
   centered?: boolean;
 }
@@ -54,7 +65,31 @@ export interface SectionHeaderProps {
  * (beside the title on phones, right-aligned from sm). Plain (tabs layout):
  * accent @ 7% tint, title + subtitle left, muted count right.
  */
-export function SectionHeader({ title, subtitle, count, colors, icon: Icon, hero = false, centered = false }: SectionHeaderProps) {
+export function SectionHeader({ title, subtitle, count, colors, icon: Icon, hero = false, centered = false, card = false }: SectionHeaderProps) {
+  if (card) {
+    return (
+      <div className="flex items-start justify-between gap-3 px-1.5 pb-2 pt-1.5">
+        <div className="flex min-w-0 items-center gap-2.5">
+          {Icon && (
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-(--accent) text-(--on-accent)">
+              <Icon aria-hidden strokeWidth={2} className="h-[18px] w-[18px]" />
+            </span>
+          )}
+          <div className="min-w-0">
+            <h2 style={{ fontFamily: colors.headingFont }} className="text-[16px] font-bold leading-5 tracking-tight text-(--text)">
+              {title}
+            </h2>
+            {subtitle && <p className="text-[12px] leading-4 text-(--text-muted)">{subtitle}</p>}
+          </div>
+        </div>
+        {count != null && (
+          <span className="shrink-0 whitespace-nowrap rounded-[6px] border border-[color-mix(in_srgb,var(--accent)_22%,var(--surface-border))] px-2 py-0.5 text-[12px] font-semibold leading-5 text-(--accent-text)">
+            {count}
+          </span>
+        )}
+      </div>
+    );
+  }
   const heroStyle = {
     // Theme tokens only: a light tint of the accent over the card, with accent text.
     background: "linear-gradient(100deg, color-mix(in srgb, var(--accent) 16%, var(--card-bg)) 0%, color-mix(in srgb, var(--accent) 7%, var(--card-bg)) 100%)",
@@ -170,7 +205,22 @@ export function SectionCard({
 }: SectionCardProps) {
   const solidCtx = useContext(SolidContext);
   const fullBleed = useContext(FullBleedContext);
+  const cardMode = useContext(CardSectionsContext);
   const solid = solidProp || solidCtx;
+  if (cardMode) {
+    return (
+      <Tag
+        id={id}
+        className={`scroll-mt-2 overflow-hidden rounded-[14px] border border-(--surface-border) bg-(--card-bg) p-2 text-left shadow-[0_8px_24px_-12px_color-mix(in_srgb,var(--accent)_25%,transparent)] ${className}`}
+      >
+        {showHeader && <SectionHeader icon={icon} card title={title} subtitle={subtitle} count={count} colors={colors} />}
+        <div>
+          {children}
+          {lockedCount > 0 && <LockedRow count={lockedCount} />}
+        </div>
+      </Tag>
+    );
+  }
   return (
     <Tag
       id={id}
