@@ -1592,6 +1592,11 @@ nextjs-portal,
   border-radius: 5px;
   padding: 10px 2px 4px;
   margin-top: 12px;
+  overflow: hidden;
+}
+/* Section header sits flush with the block: tinted strip, divider edge to edge. */
+[data-sections-float] .plain-section > .section-head {
+  margin: -10px -2px 8px;
 }
 /* Footer ("Powered by Inflixo", legal links) uses the same cream as the section blocks. */
 /* Only the footer itself (from its top divider down); the gap above it stays white. */
