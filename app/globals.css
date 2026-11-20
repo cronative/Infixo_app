@@ -1593,3 +1593,8 @@ nextjs-portal,
   padding: 10px 2px 4px;
   margin-top: 12px;
 }
+/* Footer ("Powered by Inflixo", legal links) uses the same cream as the section blocks. */
+[data-sections-float] [data-profile-footer],
+[data-sections-float] [data-profile-footer] > * {
+  background-color: var(--card-bg) !important;
+}

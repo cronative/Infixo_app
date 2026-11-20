@@ -2850,7 +2850,7 @@ export function LivePreviewCard({
 
         {/* Normal document flow footer at bottom of scrollable area: full width spanning card borders with zero bottom padding */}
         {!hideFooter && (
-          <div ref={footerRef} className="order-[80] mt-auto pt-4 shrink-0 select-none -mx-(--card-px) -mb-6 rounded-none rounded-b-[5px] overflow-hidden print:hidden">
+          <div ref={footerRef} data-profile-footer className="order-[80] mt-auto pt-4 shrink-0 select-none -mx-(--card-px) -mb-6 rounded-none rounded-b-[5px] overflow-hidden print:hidden">
             <MadeWithInflixo
               variant="card-footer"
               disabled={isInformationalMode}
