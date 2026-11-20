@@ -37,7 +37,6 @@ import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import {
   BrandInboxCard,
   EraProgressCard,
-  QuickActions,
   RowCount,
   SmartAlerts,
   TopPerformers,
@@ -279,17 +278,6 @@ export default function DashboardOverviewPage() {
   );
 
   // Quick action: add an episode to the most recently updated series (or create the first series).
-  const latestSeries = useMemo(
-    () =>
-      [...series].sort(
-        (a: any, b: any) => new Date(b.updatedAt || b.createdAt || 0).getTime() - new Date(a.updatedAt || a.createdAt || 0).getTime()
-      )[0],
-    [series]
-  );
-  const addEpisodeHref = latestSeries
-    ? `/dashboard/series?addEpisode=${encodeURIComponent(latestSeries.id)}`
-    : "/dashboard/series?new=true";
-
   const mediaKitUrl = `${profileUrl}/mediakit`;
   async function handleShareMediaKit() {
     if (isTrialExpired) {
@@ -705,7 +693,6 @@ export default function DashboardOverviewPage() {
         </div>
       )}
 
-      <QuickActions addEpisodeHref={addEpisodeHref} />
 
       <EraProgressCard fans={effectiveTotalAudience} onShare={() => setCelebrationOpen(true)} />
       </div>

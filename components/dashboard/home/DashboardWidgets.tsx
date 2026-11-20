@@ -4,9 +4,6 @@ import { ReactNode } from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
-  Clapperboard,
-  IdCard,
-  Briefcase,
   Link2,
   ShoppingBag,
   Film,
@@ -281,41 +278,6 @@ export function TrafficSources({ sources }: { sources: DashboardSummary["sources
         </ul>
       )}
     </DashboardCard>
-  );
-}
-
-// ── 5. Quick actions ──────────────────────────────────────────
-
-export function QuickActions({ addEpisodeHref }: { addEpisodeHref: string }) {
-  const cls =
-    "flex min-w-[112px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-[5px] border border-[#E8E8EC] bg-white px-3 py-3 text-center text-[13px] font-medium text-[#18181B] transition-colors hover:border-[#C21B5C] hover:text-[#C21B5C] cursor-pointer @xl:min-w-0";
-  const icon = "h-4 w-4 text-[#C21B5C]";
-  const actions: { label: string; icon: ReactNode; href?: string; onClick?: () => void }[] = [
-    { label: "Add Episode", icon: <Clapperboard className={icon} />, href: addEpisodeHref },
-    { label: "Add Link", icon: <Link2 className={icon} />, href: "/dashboard/links?new=true" },
-    { label: "Add Product", icon: <ShoppingBag className={icon} />, href: "/dashboard/products?new=true" },
-    { label: "Update Media Kit", icon: <Briefcase className={icon} />, href: "/dashboard/mediakit" },
-    { label: "Share Journey Card", icon: <IdCard className={icon} />, href: "/dashboard/creator-card" },
-  ];
-  return (
-    <section className="space-y-2.5">
-      <h2 className="text-[14px] font-semibold text-[#18181B]">Quick actions</h2>
-      <div className="flex snap-x gap-2 overflow-x-auto pb-1 @xl:grid @xl:grid-cols-5 @xl:overflow-visible">
-        {actions.map((a) =>
-          a.href ? (
-            <Link key={a.label} href={a.href} className={cls}>
-              {a.icon}
-              <span className="leading-tight">{a.label}</span>
-            </Link>
-          ) : (
-            <button key={a.label} type="button" onClick={a.onClick} className={cls}>
-              {a.icon}
-              <span className="leading-tight">{a.label}</span>
-            </button>
-          ),
-        )}
-      </div>
-    </section>
   );
 }
 
