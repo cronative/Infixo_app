@@ -2753,7 +2753,7 @@ export function LivePreviewCard({
                   reviews={reviewsList}
                   brands={brandNames}
                   colors={aboutColors}
-                  limit={isPremiumLayout ? 3 : 4}
+                  limit={isCardSectionsMode ? 1 : isPremiumLayout ? 3 : 4}
                   allHref={isPremiumLayout ? allReviewsHref || `/${cleanHandle || "creator"}/reviews` : undefined}
                   title={isPremiumLayout ? "Brand Love" : undefined}
                 />
