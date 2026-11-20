@@ -34,3 +34,10 @@ The wordmark is only 627 px wide: fine up to ~800 px on screen; ask for a larger
 ## Scripts (`scripts/`)
 - `facebook_cover.py`: regenerates the Facebook cover (Pillow).
   `python facebook_cover.py <white-wordmark.png> <out-dir>`
+
+## Logo reveal videos (`videos/`), 4.6 s, 30 fps, H.264 + AAC
+- `inflixo-logo-reveal-1920x1080.mp4`: YouTube, website, landscape intros/outros
+- `inflixo-logo-reveal-1080x1920.mp4`: Instagram Reels / Stories
+- Animation: play-button circle pops in → spark lines pop → mark flies into the "o" → letters rise → wordmark turns 3D → "For Creators. By Creators."
+- Sound is synthesised in code (pop, sparkle, ticks, logo chord); no ElevenLabs.
+- Rebuild: `python scripts/logo_reveal.py brand-assets <frames-dir> 1920 1080`, then `node scripts/encode_logo.mjs <frames-dir> out.mp4 1920 1080` (needs `puppeteer`; edit the `createRequire` path to a checkout that has it installed).
