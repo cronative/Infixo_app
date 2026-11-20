@@ -192,17 +192,28 @@ function IconTile({ icon: Icon }: { icon: LucideIcon }) {
   );
 }
 
-/** A mini version of a profile section, like the real page: icon, title, subtitle, count, then rows. */
-/** "What you get" checklist used in every landing section (creator benefits, 3 points). */
-function Benefits({ items, className = "" }: { items: string[]; className?: string }) {
+/** A creator-benefit point: plain text, or a bold title with a short line after it. */
+type Benefit = string | { title: string; text: string };
+
+/** "What you get" checklist used in every landing section (green ticks, no box). */
+function Benefits({ items, className = "" }: { items: Benefit[]; className?: string }) {
   return (
     <ul className={`space-y-2.5 text-left ${className}`}>
-      {items.map((t) => (
-        <li key={t} className="flex items-start gap-2.5 text-[14px] leading-snug text-[#1C1917] sm:text-[15px]">
-          <CircleCheck aria-hidden className="mt-px h-[18px] w-[18px] shrink-0 text-[#15803D]" />
-          <span>{t}</span>
-        </li>
-      ))}
+      {items.map((b) => {
+        const key = typeof b === "string" ? b : b.title;
+        return (
+          <li key={key} className="flex items-start gap-2.5 text-[14px] leading-snug text-[#1C1917] sm:text-[15px]">
+            <CircleCheck aria-hidden className="mt-px h-[18px] w-[18px] shrink-0 text-[#15803D]" />
+            {typeof b === "string" ? (
+              <span>{b}</span>
+            ) : (
+              <span>
+                <strong className="font-bold">{b.title}</strong> <span className="text-[#52525B]">— {b.text}</span>
+              </span>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -460,22 +471,31 @@ export default function LandingHomePage() {
             <ProfileSectionPreview kind="series" />
           </div>
           <div className="order-1 lg:order-2">
-            <SectionHeading
-              center={false}
-              eyebrow="Series & episodes"
-              title="Every series has a story. Make every episode easy to find."
-              sub="Food, travel, comedy, tutorials: five series, many episodes each. When a new follower lands on your profile, can they find all five and know where to start? With Inflixo, each series gets a home of its own, with episodes in the right order."
-            />
-            <div className="mt-6 rounded-2xl border border-[#F6E0DC] bg-white p-5">
-              <p className="flex items-center gap-2 text-[15px] font-bold text-[#1C1917]">
-                <Play className="h-4 w-4 fill-[#C21B5C] text-[#C21B5C]" /> Your videos stay on their original platforms.
+            <SectionHeading center={false} eyebrow="01. Series & Episodes" title="Every Series. Every Episode. All in One Place." />
+            <div className="mt-4 space-y-3 text-[16px] leading-relaxed text-[#52525B]">
+              <p>
+                You create food series, travel vlogs, challenges, and more. Each series has many parts. Some are on Instagram, some on YouTube, and others on Facebook. You might share a short Reel on Instagram and the full video on YouTube.
               </p>
-              <p className="mt-1.5 text-[14px] leading-relaxed text-[#52525B]">
-                Tapping an episode opens the original video on Instagram, YouTube or Facebook. Nothing is re-uploaded, so older episodes and other series get more chances to be watched where your content already lives.
+              <p>
+                <span className="font-bold text-[#1C1917]">But here&apos;s the problem.</span> Some of your videos get thousands or even millions of views, while others hardly get noticed. Your followers may watch Part 5 but never find Part 1. And with videos spread across different platforms, finding the full series isn&apos;t always easy.
+              </p>
+              <p>
+                <span className="font-bold text-[#C21B5C]">That&apos;s where Inflixo helps.</span> Bring all your series and episodes together in one place, so your followers can easily find every part and enjoy the full series.
               </p>
             </div>
-            <Benefits className="mt-5" items={["Help followers discover more of your series.","Send viewers to the original video, so views stay yours.","Give older episodes a second chance to be watched."]} />
-            <p className="mt-5 text-[15px] font-bold text-[#C21B5C]">More content discovered. More opportunities to be watched.</p>
+            <Benefits
+              className="mt-6"
+              items={[
+                { title: "All Your Series Together", text: "Food, travel, challenges, and more, in one place." },
+                { title: "No More Missing Parts", text: "Help followers find Part 1, Part 2, Part 3, and so on." },
+                { title: "Instagram, YouTube & Facebook", text: "Connect videos from all three platforms." },
+                { title: "Give Old Videos Another Chance", text: "Help followers discover episodes they may have missed." },
+                { title: "Views Stay on Your Platforms", text: "Followers watch and like your videos on the original platform." },
+              ]}
+            />
+            <p className="mt-6 text-[17px] font-extrabold leading-snug text-[#1C1917]">
+              You Create the Series. <span className="text-[#C21B5C]">Inflixo Helps Your Followers Find Every Part.</span>
+            </p>
             <div className="mt-4">{ctaRow("Organize my video series", () => handleClaim(username))}</div>
           </div>
         </div>
