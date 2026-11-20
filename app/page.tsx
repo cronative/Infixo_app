@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useMemo, type ReactNode } from "react";
-import dynamic from "next/dynamic";
-import Image from "next/image";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -10,7 +8,6 @@ import {
   ArrowUp,
   Award,
   Briefcase,
-  Camera,
   Check,
   Clapperboard,
   ExternalLink,
@@ -35,47 +32,11 @@ import {
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { HeroPhoneMockup } from "@/components/landing/HeroPhoneMockup";
+import { ProfileSectionPreview } from "@/components/landing/ProfileSectionPreview";
 import { AuthService } from "@/services/AuthService";
 import { OnboardingService } from "@/services/OnboardingService";
-import { CreatorProfile, SocialAccounts, type ThemeKey } from "@/types";
 import { formatPlanPrice, usePricingCurrency } from "@/lib/pricing";
 import { PLANS, planFeatureLines, planPrice, yearlySavingsPercent, type PaidPlanKey } from "@/config/plans";
-import {
-  EXPERT_DEMO_CUSTOM_LINKS,
-  EXPERT_DEMO_GIGS,
-  EXPERT_DEMO_PRODUCTS,
-  EXPERT_DEMO_PROFILE,
-  EXPERT_DEMO_REVIEWS,
-  EXPERT_DEMO_SERIES,
-  EXPERT_DEMO_SETUP_ITEMS,
-  EXPERT_DEMO_SOCIALS,
-  EXPERT_DEMO_TEAM,
-} from "@/data/expertDemoCreator";
-import {
-  LANDING_DEMO_SOCIALS,
-  LANDING_DEMO_SERIES,
-  LANDING_DEMO_LINKS,
-  LANDING_DEMO_SETUP,
-  LANDING_DEMO_PRODUCTS,
-  LANDING_DEMO_REVIEWS,
-  LANDING_DEMO_GIGS,
-} from "@/data/landingDemo";
-
-// Lazy-load the heavy LivePreviewCard for fast initial page load
-const LivePreviewCard = dynamic(
-  () => import("@/components/onboarding/LivePreviewCard").then((mod) => mod.LivePreviewCard),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="flex min-h-[460px] items-center justify-center rounded-2xl bg-zinc-50 text-zinc-400">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#C21B5C] border-t-transparent" />
-      </div>
-    ),
-  }
-);
-
-/** The embedded demo uses the Kesar theme, close to the landing page's Kesar Gulaal palette. */
-const LANDING_DEMO_THEME: ThemeKey = "kesar";
 
 const NAV_LINKS = [
   { id: "series", href: "#series", label: "Series" },
@@ -231,179 +192,6 @@ function IconTile({ icon: Icon }: { icon: LucideIcon }) {
 }
 
 /** A mini version of a profile section, like the real page: icon, title, subtitle, count, then rows. */
-function MockCard({ icon: Icon, title, subtitle, count, children }: { icon: LucideIcon; title: string; subtitle: string; count?: string; children: ReactNode }) {
-  return (
-    <div className="mx-auto w-full min-w-0 max-w-[440px] rounded-3xl border border-[#F6E0DC] bg-white p-4 shadow-xl shadow-[#C21B5C]/5" aria-hidden="true">
-      <div className="flex items-start justify-between gap-3 px-1 pb-3">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#C21B5C] text-white">
-            <Icon className="h-[18px] w-[18px]" />
-          </span>
-          <span className="min-w-0">
-            <span className="block text-[15px] font-bold leading-5 text-[#1C1917]">{title}</span>
-            <span className="block text-[12px] leading-4 text-[#71717A]">{subtitle}</span>
-          </span>
-        </div>
-        {count && <span className="shrink-0 rounded-md border border-[#F6E0DC] px-2 py-0.5 text-[12px] font-semibold text-[#C21B5C]">{count}</span>}
-      </div>
-      <ul className="space-y-2">{children}</ul>
-    </div>
-  );
-}
-
-/** One row inside a MockCard: thumbnail (image or icon), title, meta line, trailing element. */
-function MockRow({ image, icon: Icon, title, meta, trailing }: { image?: string; icon?: LucideIcon; title: string; meta?: ReactNode; trailing?: ReactNode }) {
-  return (
-    <li className="flex items-center gap-3 rounded-xl border border-[#F8E6E3] p-2">
-      {image ? (
-        <span className="relative h-12 w-20 shrink-0 overflow-hidden rounded-lg bg-[#FFEDE6]">
-          <Image src={image} alt="" fill sizes="80px" className="object-cover" />
-        </span>
-      ) : Icon ? (
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#FFEDE6] text-[#C21B5C]">
-          <Icon className="h-[18px] w-[18px]" />
-        </span>
-      ) : null}
-      <span className="min-w-0 flex-1">
-        <span className="block truncate text-[13px] font-bold text-[#1C1917]">{title}</span>
-        {meta && <span className="block truncate text-[11px] text-[#71717A]">{meta}</span>}
-      </span>
-      {trailing ?? (
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#FFEDE6] text-[#C21B5C]">
-          <ArrowRight className="h-3.5 w-3.5" />
-        </span>
-      )}
-    </li>
-  );
-}
-
-const rupees = (paise: number | null | undefined) => (paise == null ? "" : `₹${Math.round(paise / 100).toLocaleString("en-IN")}`);
-const fans = (n: number) => (n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1).replace(/\.0$/, "")}M` : n >= 1000 ? `${Math.round(n / 1000)}K` : String(n));
-const playBtn = (
-  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#FFEDE6] text-[#C21B5C]">
-    <Play className="h-3.5 w-3.5 fill-current" />
-  </span>
-);
-
-function SeriesMock() {
-  return (
-    <MockCard icon={Clapperboard} title="My Series" subtitle="Start at Ep 1 & binge in order." count={`${EXPERT_DEMO_SERIES.length} Series`}>
-      {EXPERT_DEMO_SERIES.map((s) => {
-        const eps = s.seasons?.reduce((n, se) => n + se.episodes.length, 0) ?? 0;
-        return <MockRow key={s.id} image={s.posterDataUrl || undefined} title={s.title} meta={`${eps} episodes · ${s.language}`} trailing={playBtn} />;
-      })}
-    </MockCard>
-  );
-}
-
-function LinksMock() {
-  const links = EXPERT_DEMO_CUSTOM_LINKS.slice(0, 5);
-  return (
-    <MockCard icon={Link2} title="My Links" subtitle="Things I want you to see." count={`${EXPERT_DEMO_CUSTOM_LINKS.length} links`}>
-      {links.map((l) => (
-        <MockRow
-          key={l.id}
-          icon={l.kind === "collection" ? Package : Link2}
-          title={l.title.replace(/^\p{Extended_Pictographic}\uFE0F?\s*/u, "")}
-          meta={l.kind === "collection" ? `${l.items?.length ?? 0} links inside` : (l.url || "").replace(/^https?:\/\/(www\.)?/, "").split("/")[0]}
-          trailing={
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#FFEDE6] text-[#C21B5C]">
-              <ExternalLink className="h-3.5 w-3.5" />
-            </span>
-          }
-        />
-      ))}
-    </MockCard>
-  );
-}
-
-function ShopMock() {
-  return (
-    <MockCard icon={ShoppingBag} title="My Shop" subtitle="Products I proudly recommend." count={`${EXPERT_DEMO_PRODUCTS.length} products`}>
-      {EXPERT_DEMO_PRODUCTS.slice(0, 4).map((p) => (
-        <MockRow
-          key={p.id}
-          image={p.imageUrl}
-          title={p.name.split(" — ")[0]}
-          meta={p.name.split(" — ")[1] || (p.isAffiliate ? "Affiliate link" : "Creator product")}
-          trailing={<span className="shrink-0 text-[13px] font-extrabold text-[#C21B5C]">{rupees(p.pricePaise)}</span>}
-        />
-      ))}
-    </MockCard>
-  );
-}
-
-function PackagesMock() {
-  return (
-    <MockCard icon={Briefcase} title="Work With Me" subtitle="Brands, let's create together." count={`${EXPERT_DEMO_GIGS.length} packages`}>
-      {EXPERT_DEMO_GIGS.slice(0, 4).map((g) => (
-        <MockRow
-          key={g.id}
-          icon={Package}
-          title={g.title}
-          meta={g.platform}
-          trailing={<span className="shrink-0 text-[13px] font-extrabold text-[#C21B5C]">₹{g.price}</span>}
-        />
-      ))}
-    </MockCard>
-  );
-}
-
-function FansMock() {
-  const yt = EXPERT_DEMO_SOCIALS.youtube?.subscribers ?? 0;
-  const ig = EXPERT_DEMO_SOCIALS.instagram?.followers ?? 0;
-  const fb = EXPERT_DEMO_SOCIALS.facebook?.followers ?? 0;
-  const rows = [
-    { label: "Instagram", n: ig, unit: "followers" },
-    { label: "YouTube", n: yt, unit: "subscribers" },
-    { label: "Facebook", n: fb, unit: "followers" },
-  ];
-  return (
-    <MockCard icon={Users} title="Total Fans" subtitle="Across Instagram, YouTube & Facebook." count={fans(ig + yt + fb)}>
-      {rows.map((r) => (
-        <MockRow key={r.label} icon={Users} title={r.label} meta={r.unit} trailing={<span className="shrink-0 text-[14px] font-extrabold text-[#1C1917]">{fans(r.n)}</span>} />
-      ))}
-    </MockCard>
-  );
-}
-
-function ReviewsMock() {
-  return (
-    <MockCard icon={Star} title="Brand Love" subtitle="Kind words from my collabs." count={`${EXPERT_DEMO_REVIEWS.length} reviews`}>
-      {EXPERT_DEMO_REVIEWS.slice(0, 3).map((r) => (
-        <MockRow
-          key={r.id}
-          icon={Star}
-          title={r.clientName}
-          meta={r.projectTitle}
-          trailing={<span className="shrink-0 text-[12px] font-bold text-[#C21B5C]">★ {r.rating}</span>}
-        />
-      ))}
-    </MockCard>
-  );
-}
-
-function SetupMock() {
-  return (
-    <MockCard icon={Camera} title="My Setup" subtitle="The gear behind my videos." count={`${EXPERT_DEMO_SETUP_ITEMS.length} items`}>
-      {EXPERT_DEMO_SETUP_ITEMS.slice(0, 3).map((it) => (
-        <MockRow key={it.id} icon={Laptop} title={it.name} meta={it.category} />
-      ))}
-    </MockCard>
-  );
-}
-
-function TeamMock() {
-  const members = EXPERT_DEMO_TEAM.members || [];
-  return (
-    <MockCard icon={Handshake} title="My Crew" subtitle="The people behind my videos." count={`${members.length} members`}>
-      {members.slice(0, 3).map((m) => (
-        <MockRow key={m.id} icon={Users} title={m.name} meta={m.role} />
-      ))}
-    </MockCard>
-  );
-}
-
 export default function LandingHomePage() {
   const router = useRouter();
   const pricingCurrency = usePricingCurrency();
@@ -462,36 +250,6 @@ export default function LandingHomePage() {
     const handle = cleanHandle(raw);
     router.push(handle ? `/login?claim=${handle}` : "/login");
   }
-
-  const previewHandle = cleanHandle(username) || EXPERT_DEMO_PROFILE.username || "demo_creator";
-  const previewProfile: CreatorProfile = useMemo(() => {
-    return username.trim()
-      ? {
-          displayName: username.trim().charAt(0).toUpperCase() + username.trim().slice(1),
-          username: previewHandle,
-          category: "Digital Creator",
-          bio: `Videos, playlists, fan links and creator profile for @${previewHandle}.`,
-          photoDataUrl: "/images/demo/avatar.webp",
-          updatedAt: new Date().toISOString(),
-        }
-      : EXPERT_DEMO_PROFILE;
-  }, [previewHandle, username]);
-
-  const previewSocials = useMemo<SocialAccounts>(() => {
-    return username.trim()
-      ? {
-          instagram: { url: `https://instagram.com/${previewHandle}`, followers: 100000, posts: 180, username: previewHandle },
-          youtube: { url: `https://youtube.com/@${previewHandle}`, subscribers: 28000, videos: 72, totalViews: 5400000, username: previewHandle },
-          facebook: { url: `https://facebook.com/${previewHandle}`, followers: 48400, posts: 112, username: previewHandle },
-          updatedAt: new Date().toISOString(),
-        }
-      : LANDING_DEMO_SOCIALS;
-  }, [previewHandle, username]);
-
-  const previewTotalFans =
-    (previewSocials.instagram?.followers || 0) +
-    (previewSocials.youtube?.subscribers || 0) +
-    (previewSocials.facebook?.followers || 0);
 
   // "Starting at ₹99/month … ₹3.30 per day", from config/plans.ts.
   const starterMonthly = formatPlanPrice("starter", "monthly", pricingCurrency);
@@ -681,7 +439,7 @@ export default function LandingHomePage() {
       <section id="series" className="scroll-mt-20 border-t border-[#F6E0DC] bg-[#FFF8F4] py-16 sm:py-24">
         <div className="mx-auto grid max-w-[1120px] grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
           <div className="order-2 lg:order-1">
-            <SeriesMock />
+            <ProfileSectionPreview kind="series" />
           </div>
           <div className="order-1 lg:order-2">
             <SectionHeading
@@ -717,7 +475,7 @@ export default function LandingHomePage() {
             <p className="mt-5 text-[15px] font-bold text-[#C21B5C]">Less searching. Easier access. One Inflixo link.</p>
             <div className="mt-4">{ctaRow("Organize my links", () => handleClaim(username))}</div>
           </div>
-          <LinksMock />
+          <ProfileSectionPreview kind="links" />
         </div>
       </section>
 
@@ -725,7 +483,7 @@ export default function LandingHomePage() {
       <section id="shop" className="scroll-mt-20 border-t border-[#F6E0DC] bg-[#FFF8F4] py-16 sm:py-24">
         <div className="mx-auto grid max-w-[1120px] grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
           <div className="order-2 lg:order-1">
-            <ShopMock />
+            <ProfileSectionPreview kind="shop" />
           </div>
           <div className="order-1 lg:order-2">
             <SectionHeading center={false} eyebrow="Creator Shop" title="Your recommendations deserve their own shop." />
@@ -767,7 +525,7 @@ export default function LandingHomePage() {
             </ul>
             <div className="mt-6">{ctaRow("Create my media kit", () => handleClaim(username))}</div>
           </div>
-          <PackagesMock />
+          <ProfileSectionPreview kind="packages" />
         </div>
       </section>
 
@@ -792,7 +550,7 @@ export default function LandingHomePage() {
                 </span>
               </div>
             </div>
-            <FansMock />
+            <ProfileSectionPreview kind="fans" />
           </div>
 
           <div className="mt-16 text-center">
@@ -800,9 +558,9 @@ export default function LandingHomePage() {
             <p className="mx-auto mt-2 max-w-2xl text-[15px] text-[#52525B]">Reviews add confidence, your setup answers the &ldquo;which camera?&rdquo; DMs, and your crew gets the credit they deserve.</p>
           </div>
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <ReviewsMock />
-            <SetupMock />
-            <TeamMock />
+            <ProfileSectionPreview kind="reviews" />
+            <ProfileSectionPreview kind="setup" />
+            <ProfileSectionPreview kind="crew" />
           </div>
           <p className="mt-8 text-center text-[14px] text-[#52525B]">
             <Palette className="mr-1.5 inline h-4 w-4 text-[#C21B5C]" />
@@ -812,47 +570,21 @@ export default function LandingHomePage() {
         </div>
       </section>
 
-      {/* ── LIVE DEMO ── */}
+      {/* ── LIVE DEMO: invite to open the real demo profile (the sections above already preview it) ── */}
       <section id="demo" className="scroll-mt-20 border-t border-[#F6E0DC] bg-white py-16 sm:py-24">
-        <div className="mx-auto max-w-[1120px] px-4 text-center sm:px-6">
-          <SectionHeading
-            eyebrow="Live demo"
-            title={username.trim() ? `This could be @${previewHandle}.` : "Make your first impression count."}
-            sub="This is a real Inflixo profile. Tap a series to see its episodes in order."
-          />
-          <div className="mx-auto mt-10 max-w-[620px] rounded-3xl border border-[#F6E0DC] bg-white p-2 shadow-sm sm:p-3">
-            <div className="mb-3 flex items-center justify-between rounded-xl border border-[#F6E0DC] bg-white px-3.5 py-2">
-              <div className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
-                <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
-                <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
-              </div>
-              <span className="text-[12px] font-semibold text-[#52525B]">inflixo.com/{previewHandle}</span>
-              <span className="w-8" />
-            </div>
-            <div className="rounded-2xl bg-white p-2">
-              <LivePreviewCard
-                profile={previewProfile}
-                socials={previewSocials}
-                series={LANDING_DEMO_SERIES}
-                customLinks={LANDING_DEMO_LINKS}
-                mediaKitPackages={LANDING_DEMO_GIGS}
-                reviews={LANDING_DEMO_REVIEWS}
-                products={LANDING_DEMO_PRODUCTS}
-                setupItems={LANDING_DEMO_SETUP}
-                totalAudience={previewTotalFans}
-                themeKey={LANDING_DEMO_THEME}
-                variant="full"
-                layoutMode="premium"
-                seriesOpenMode="internal"
-                landingDemo
-              />
-            </div>
-          </div>
-          <div className="mt-8 flex justify-center">
-            <Link href="/demo_creator" className={primaryBtn}>
-              Explore the full demo profile <ArrowRight className="h-4 w-4" />
-            </Link>
+        <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
+          <div className="mx-auto flex max-w-[620px] flex-col items-center rounded-[5px] border border-[#F6E0DC] bg-[#FFF8F4] px-5 py-10 text-center sm:px-10">
+            <Eyebrow>Live demo</Eyebrow>
+            <h2 className="mt-3 text-[26px] font-extrabold leading-tight tracking-tight text-[#1C1917] sm:text-[34px]">
+              Do you want to see how your profile will look?
+            </h2>
+            <p className="mt-3 max-w-md text-[15px] leading-relaxed text-[#52525B]">
+              Open a real Inflixo creator profile: series in order, links, shop, media kit and reviews, all on one page.
+            </p>
+            <a href="/demo_creator" target="_blank" rel="noopener noreferrer" className={`${primaryBtn} mt-6`}>
+              See the demo profile <ExternalLink className="h-4 w-4" />
+            </a>
+            <p className="mt-3 text-[12px] text-[#71717A]">Opens in a new tab · inflixo.com/demo_creator</p>
           </div>
         </div>
       </section>
