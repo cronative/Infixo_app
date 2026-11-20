@@ -110,6 +110,8 @@ export function Logo({
   showTagline = true,
   showIcon = false,
   tone = "gulaal",
+  threeD = false,
+  wordmarkClassName,
 }: {
   size?: "sm" | "md" | "lg" | "xl";
   href?: string;
@@ -125,6 +127,10 @@ export function Logo({
   showIcon?: boolean;
   /** Wordmark + tagline colour: the Kesar→Gulaal brand gradient (default), legacy maroon, or Kesar saffron. */
   tone?: "maroon" | "kesar" | "gulaal";
+  /** Extruded 3D look on the wordmark (darker side down-right + soft shadow). */
+  threeD?: boolean;
+  /** Overrides the wordmark's size classes (e.g. a bigger logo on the landing page). */
+  wordmarkClassName?: string;
 }) {
   const router = useRouter();
 
@@ -279,34 +285,59 @@ export function Logo({
             min-w-0
           `}
         >
-          <Image
-            src={
-              light
-                ? "/images/inflixo-wordmark-title-white-play.png"
-                : tone === "kesar"
-                ? "/images/inflixo-wordmark-title-kesar.png"
-                : tone === "gulaal"
-                ? "/images/inflixo-wordmark-title-gulaal-play.png"
-                : "/images/inflixo-wordmark-title-gulaal-play.png"
-            }
-            alt="Inflixo - For Creators. By Creators."
-            width={628}
-            height={186}
-            className={`
-              ${
-                size === "sm"
-                  ? "h-[18px] w-auto max-w-[65px]"
-                  : size === "md"
-                  ? "h-[22px] w-auto max-w-[80px]"
-                  : size === "lg"
-                  ? "h-[28px] w-auto max-w-[100px]"
-                  : "h-[50px] w-auto max-w-[180px]"
-              }
-              object-contain
-              select-none
-            `}
-            priority
-          />
+          {(() => {
+            const src = light
+              ? "/images/inflixo-wordmark-title-white-play.png"
+              : tone === "kesar"
+              ? "/images/inflixo-wordmark-title-kesar.png"
+              : "/images/inflixo-wordmark-title-gulaal-play.png";
+            const sizeClass = wordmarkClassName
+              ? wordmarkClassName
+              : size === "sm"
+              ? "h-[18px] w-auto max-w-[65px]"
+              : size === "md"
+              ? "h-[22px] w-auto max-w-[80px]"
+              : size === "lg"
+              ? "h-[28px] w-auto max-w-[100px]"
+              : "h-[50px] w-auto max-w-[180px]";
+            const face = (
+              <Image
+                src={src}
+                alt="Inflixo - For Creators. By Creators."
+                width={628}
+                height={186}
+                className={`${sizeClass} relative object-contain select-none`}
+                priority
+              />
+            );
+            if (!threeD) return face;
+            // 3D: darker copies of the same wordmark stacked down-right form the side,
+            // so the side follows the letter colours (orange under orange, pink under pink).
+            const depth = [3, 2, 1];
+            return (
+              <span className="relative inline-flex">
+                {depth.map((i) => (
+                  <Image
+                    key={i}
+                    src={src}
+                    alt=""
+                    aria-hidden
+                    width={628}
+                    height={186}
+                    className={`${sizeClass} absolute left-0 top-0 object-contain select-none`}
+                    style={{
+                      transform: `translate(${i}px, ${i}px)`,
+                      filter: `brightness(${light ? 0.55 + (3 - i) * 0.06 : 0.62 + (3 - i) * 0.06})${
+                        i === 3 ? " drop-shadow(1px 3px 4px rgba(120,20,60,0.3))" : ""
+                      }`,
+                    }}
+                    priority
+                  />
+                ))}
+                {face}
+              </span>
+            );
+          })()}
           {showTagline && (
             <span
               className={`
