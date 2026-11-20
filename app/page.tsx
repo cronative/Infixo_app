@@ -49,51 +49,51 @@ const DIFFERENCES: { label: string; other: boolean | string }[] = [
 const FAQS = [
   {
     q: "What is Inflixo?",
-    a: "Inflixo is a creator profile platform that helps you organize and showcase your video series, episodes, products, links, media kit, collaborations, social presence, reviews, team and creator setup in one place.",
+    a: "Inflixo turns your videos into series fans can watch in order. You get one profile for your series, links, creator shop and media kit, all behind one link.",
   },
   {
-    q: "Is Inflixo just another link-in-bio platform?",
-    a: "Inflixo includes link-in-bio features, but it goes beyond a list of links. It organizes your content into series and episodes and shows a more complete creator identity.",
+    q: "How is Inflixo different from a link-in-bio?",
+    a: "A link-in-bio shows a list of buttons. Inflixo organises your videos into series with episodes in order, and adds a creator shop and a media kit for brands, on the same profile.",
   },
   {
     q: "Do I need to upload my videos to Inflixo?",
-    a: "No. Your videos stay on their original platforms. You add episode links to Inflixo, and viewers follow those links to watch your content.",
+    a: "No. Your videos stay on Instagram, YouTube or Facebook. You paste the episode links, and fans tap them to watch the original video.",
   },
   {
-    q: "Will Inflixo increase my video views?",
-    a: "Inflixo makes your existing content easier to discover and can create more opportunities for views and engagement. It does not guarantee more views, reach or revenue.",
+    q: "Will my views and likes still count on my channel?",
+    a: "Yes. Every episode opens the original video, so views, likes and comments go to your Instagram, YouTube or Facebook account.",
   },
   {
-    q: "Can I organize multiple series?",
-    a: "Yes. Create multiple series, add episodes to each one and arrange them so viewers can explore easily. The number of series depends on your plan.",
+    q: "Will Inflixo increase my views?",
+    a: "Inflixo makes your older episodes and other series easier to find, which gives them more chances to be watched. It does not guarantee more views, reach or revenue.",
   },
   {
-    q: "Can I showcase products?",
-    a: "Yes. Inflixo Creator Shop shows product details and links to external shopping destinations, so buyers pay on the original store and Inflixo takes no cut.",
+    q: "Can one series have Instagram, YouTube and Facebook videos?",
+    a: "Yes. Pick a single platform for a series, or choose a Mix series to add episodes from all three.",
   },
   {
-    q: "Can I use Inflixo for brand collaborations?",
-    a: "Yes. Show your media kit, previous work and collaboration packages so brands understand what you offer.",
+    q: "What can I add to my Creator Shop?",
+    a: "Any product you promote: affiliate links, products from your brand collabs and things you personally recommend. You can mark affiliate links, buyers pay on the original store, and Inflixo takes no cut.",
   },
   {
-    q: "What is Inflixo Creator Era?",
-    a: "Creator Era is a profile feature that celebrates the different stages of a creator's journey, from just starting out to an established presence.",
-  },
-  {
-    q: "What is the upcoming Inflixo OTT-style platform?",
-    a: "It's our future vision for a discovery destination where viewers explore series from many creators and follow episode links to the original platforms. It is not available yet.",
+    q: "What do brands see in my media kit?",
+    a: "Your past collaborations, reviews from brands you've worked with, your collab packages with deliverables and pricing, and your total reach. Brands can send you a collab request from your profile.",
   },
   {
     q: "Is Inflixo free?",
     a: `Inflixo offers a ${PLANS.trial.trialDays}-day free trial with no card needed. Paid plans start at ₹${PLANS.starter.price.monthly!.INR}/month, and a paid plan keeps your profile public after the trial. Your data stays saved either way.`,
   },
   {
+    q: "Can I cancel anytime?",
+    a: "Yes. There's no lock-in, and nothing you add is deleted if you cancel or switch plans.",
+  },
+  {
     q: "Is Inflixo only for Indian creators?",
     a: "No. Inflixo is made in India and built for creators around the world.",
   },
   {
-    q: "What is Inflixo Vision 2027?",
-    a: "Our goal is to build a community of more than 10,000 paid creators by 2027 and work toward a future Global Creator Summit that brings creators together.",
+    q: "What's coming next?",
+    a: "We're working toward OTT-style discovery, where viewers browse series from many creators by category, and a community of 10,000+ paid creators by 2027. Both are future plans and are not available yet.",
   },
 ];
 
