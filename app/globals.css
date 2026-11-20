@@ -1594,7 +1594,7 @@ nextjs-portal,
   margin-top: 12px;
 }
 /* Footer ("Powered by Inflixo", legal links) uses the same cream as the section blocks. */
-[data-sections-float] [data-profile-footer],
+/* Only the footer itself (from its top divider down); the gap above it stays white. */
 [data-sections-float] [data-profile-footer] > * {
   background-color: var(--card-bg) !important;
 }
