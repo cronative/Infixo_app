@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import type { Series } from "@/types";
-import { ChevronRight, Layers } from "lucide-react";
+import { ArrowUpRight, ChevronRight, Layers } from "lucide-react";
 import { SeriesCoverLogo } from "@/components/series/SeriesCoverLogo";
 import { getSeriesCoverUrl } from "@/lib/videoUrl";
 import { getSeriesEpisodes } from "@/lib/seriesMetrics";
@@ -32,13 +32,16 @@ export interface SeriesRowProps {
   /** Public series page for this series (all episodes, in order). */
   seriesHref: string;
   onOpenSeries?: (e: React.MouseEvent, series: Series) => void;
+  /** Card look like the episode cards: 12px corners and an outlined "View" button. */
+  variant?: "row" | "card";
 }
 
 /**
  * Series row: 16:9 cover on the left, 2-line title, episode count + language
  * + platform, chevron to the series page (episodes live there).
  */
-export function SeriesRow({ series, seriesHref, onOpenSeries }: SeriesRowProps) {
+export function SeriesRow({ series, seriesHref, onOpenSeries, variant = "row" }: SeriesRowProps) {
+  const isCard = variant === "card";
   const [coverFailed, setCoverFailed] = useState(false);
   const episodes = getSeriesEpisodes(series);
   const cover = getSeriesCoverUrl(series);
@@ -52,9 +55,9 @@ export function SeriesRow({ series, seriesHref, onOpenSeries }: SeriesRowProps) 
       href={seriesHref}
       onClick={(e) => onOpenSeries?.(e, series)}
       // Separate white card (white on light themes, card colour on dark ones).
-      className={`gap-3 p-2 ${CARD_ITEM} ${CARD_ITEM_HOVER}`}
+      className={isCard ? `gap-3 rounded-[12px]! border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] p-2.5 transition-colors hover:border-[color-mix(in_srgb,var(--accent)_35%,var(--surface-border))]` : `gap-3 p-2 ${CARD_ITEM} ${CARD_ITEM_HOVER}`}
       leading={
-        <span className="relative h-[52px] w-[92px] shrink-0 overflow-hidden rounded-[5px] bg-(--accent) min-[400px]:h-[63px] min-[400px]:w-28">
+        <span className={`relative h-[52px] w-[92px] shrink-0 overflow-hidden bg-(--accent) min-[400px]:h-[63px] min-[400px]:w-28 ${isCard ? "rounded-[10px]" : "rounded-[5px]"}`}>
           {hasCover ? (
             <Image
               src={cover!}
@@ -79,7 +82,7 @@ export function SeriesRow({ series, seriesHref, onOpenSeries }: SeriesRowProps) 
       title={series.title}
       titleClassName="text-[15px] font-bold leading-[19px] text-(--text)"
       subtitle={
-        <span className="mt-1 flex min-w-0 items-center gap-1.5 whitespace-nowrap min-[400px]:gap-2 text-[12px] text-(--text-muted)" title={[`${episodes.length} episodes`, language, pKey && PLATFORM_LABEL[pKey]].filter(Boolean).join(" · ")}>
+        <span className={`mt-1 flex min-w-0 items-center gap-1.5 min-[400px]:gap-2 text-[12px] text-(--text-muted) ${isCard ? "flex-wrap gap-y-0.5" : "whitespace-nowrap"}`} title={[`${episodes.length} episodes`, language, pKey && PLATFORM_LABEL[pKey]].filter(Boolean).join(" · ")}>
           <span className="inline-flex shrink-0 items-center gap-1">
             <Layers aria-hidden className="h-3.5 w-3.5" />
             {episodes.length} {episodes.length === 1 ? "episode" : "episodes"}
@@ -103,9 +106,15 @@ export function SeriesRow({ series, seriesHref, onOpenSeries }: SeriesRowProps) 
         </span>
       }
       arrow={
+        isCard ? (
+          <span aria-hidden className="inline-flex h-8 shrink-0 items-center gap-1 rounded-[8px] border border-[color-mix(in_srgb,var(--accent)_45%,transparent)] px-3 text-[12px] font-bold text-(--accent-text) transition-colors group-hover:bg-(--accent-soft)">
+            View <ArrowUpRight className="h-3.5 w-3.5" />
+          </span>
+        ) : (
         <span aria-hidden className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-(--accent-soft) text-(--accent-text) transition-colors group-hover:bg-[color-mix(in_srgb,var(--accent-text)_18%,var(--accent-soft))]">
           <ChevronRight className="h-4 w-4" />
         </span>
+        )
       }
     />
   );

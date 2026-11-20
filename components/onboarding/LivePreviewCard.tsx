@@ -661,6 +661,8 @@ export function LivePreviewCard({
   const isPremiumLayout = !isListingPage && (layoutMode === "premium" || layoutMode === "stacked");
   /** Card-style sections with soft buttons: trying it on the demo creator's public profile first. */
   const isCardSectionsMode = isPremiumLayout && !landingDemo && profile.username === "demo_creator";
+  /** Series listing styled like the series page episodes (heading + count, card rows): demo creator first. */
+  const isDemoSeriesListing = Boolean(seriesOnlyMode) && !landingDemo && profile.username === "demo_creator";
   const effectiveSeriesPreviewLimit = isPremiumLayout ? 3 : seriesPreviewLimit;
   const displayedSeries = typeof effectiveSeriesPreviewLimit === "number" ? series.slice(0, effectiveSeriesPreviewLimit) : series;
   const { showToast } = useToast();
@@ -2220,21 +2222,12 @@ export function LivePreviewCard({
         {/* 1. Series Section */}
         {(seriesOnlyMode || (!isListingPage && isPremiumLayout)) && effectiveVisibilitySettings.showSeries !== false && (series.length > 0 || seriesOnlyMode || isDashboardPreview) && (
           <div id="series-section" className={`relative z-10 w-full text-left ${isPremiumLayout ? "order-[1] mt-2 space-y-2.5 scroll-mt-14" : seriesOnlyMode ? "order-[10] mt-1.5 sm:mt-2 pb-4" : `order-[10] mt-6 sm:mt-7 space-y-2.5 ${isDashboardPreview ? "pb-2" : "pb-12"}`}`}>
-            <Section
-              icon={Clapperboard}
-              lockedCount={locked("series")}
-              solid={seriesOnlyMode}
-              hero={isPremiumLayout || seriesOnlyMode}
-              centered={seriesOnlyMode}
-              title={isPremiumLayout || seriesOnlyMode ? "My Series" : "Series"}
-              subtitle={landingDemo ? "Start from Episode 1." : seriesOnlyMode ? "All my shows in one place. Start from Ep 1." : isPremiumLayout ? "Start at Ep 1 & binge in order." : "Watch episodes in the right order."}
-              count={isPremiumLayout || seriesOnlyMode ? `${series.length} Series` : `${series.length} series`}
-              colors={aboutColors}
-              divided={false}
-            >
+            {(() => {
+              const seriesBody = (
+                <>
             {availableSeriesPlatforms.length > 0 && (
               <div className="px-2.5 pt-2.5">
-                  <div className={`flex items-center gap-2 overflow-x-auto overflow-y-hidden no-scrollbar py-1 -my-1 ${seriesOnlyMode ? "justify-center-safe" : ""}`}>
+                  <div className={`flex items-center gap-2 overflow-x-auto overflow-y-hidden no-scrollbar py-1 -my-1 ${seriesOnlyMode && !isDemoSeriesListing ? "justify-center-safe" : ""}`}>
                     {["All", ...availableSeriesPlatforms].map((plat) => {
                       const isActive = seriesFilter.toLowerCase() === plat.toLowerCase();
                       return (
@@ -2281,7 +2274,7 @@ export function LivePreviewCard({
                 </p>
               </div>
             ) : (
-              <div className="space-y-2 p-2.5">
+              <div className={isDemoSeriesListing ? "space-y-2.5 px-2.5 pb-2.5 pt-3" : "space-y-2 p-2.5"}>
                 {(() => {
                   const filtered = displayedSeries.filter((s) => {
                     if (seriesFilter.toLowerCase() === "all") return true;
@@ -2301,6 +2294,7 @@ export function LivePreviewCard({
                         <SeriesRow
                           key={s.id}
                           series={s}
+                          variant={isDemoSeriesListing ? "card" : "row"}
                           seriesHref={`/${cleanHandle || "creator"}/series/${s.id}`}
                           onOpenSeries={(e, selected) => {
                             if (lockedCounts) {
@@ -2348,7 +2342,39 @@ export function LivePreviewCard({
                 </FooterCta>
               </div>
             )}
-            </Section>
+                </>
+              );
+              if (isDemoSeriesListing) {
+                return (
+                  <div>
+                    <div className="flex items-end justify-between gap-3 px-2.5 pb-1 pt-1">
+                      <h2 style={{ color: c.primaryText }} className="flex items-center gap-2 text-[18px] font-bold leading-6 tracking-tight">
+                        My Series
+                        <span className="rounded-full bg-(--accent-soft) px-2 py-0.5 text-[12px] font-bold leading-4 text-(--accent-text)">{series.length}</span>
+                      </h2>
+                      <span className="text-[12px] font-medium text-(--text-muted)">Start from Ep 1</span>
+                    </div>
+                    {seriesBody}
+                  </div>
+                );
+              }
+              return (
+            <Section
+              icon={Clapperboard}
+              lockedCount={locked("series")}
+              solid={seriesOnlyMode}
+              hero={isPremiumLayout || seriesOnlyMode}
+              centered={seriesOnlyMode}
+              title={isPremiumLayout || seriesOnlyMode ? "My Series" : "Series"}
+              subtitle={landingDemo ? "Start from Episode 1." : seriesOnlyMode ? "All my shows in one place. Start from Ep 1." : isPremiumLayout ? "Start at Ep 1 & binge in order." : "Watch episodes in the right order."}
+              count={isPremiumLayout || seriesOnlyMode ? `${series.length} Series` : `${series.length} series`}
+              colors={aboutColors}
+              divided={false}
+            >
+                  {seriesBody}
+                </Section>
+              );
+            })()}
           </div>
         )}
 
