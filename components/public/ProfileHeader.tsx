@@ -322,6 +322,9 @@ function getPlatformCardIcon(platform: string) {
   );
 }
 
+/** Compact header: era / total fans each in their own small white card. */
+const COMPACT_STAT = "flex items-center justify-center rounded-[10px] border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] px-1 py-0.5";
+
 export function ProfileHeader({
   displayName,
   username,
@@ -688,11 +691,16 @@ export function ProfileHeader({
       {/* ============================================================== */}
       {(currentEra || effectiveFanbase > 0) && (
         <div
-          style={{
-            backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--card-bg))",
-            borderColor: "color-mix(in srgb, var(--accent) 16%, var(--surface-border))",
-          }}
-          className={`${compact ? "mt-2.5" : "mt-3"} flex w-full items-center justify-evenly gap-1 rounded-[5px] border px-1 py-1`}
+          // Compact: two separate white cards (era, fans) so the era colour sits on a neutral background.
+          style={
+            compact
+              ? undefined
+              : {
+                  backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--card-bg))",
+                  borderColor: "color-mix(in srgb, var(--accent) 16%, var(--surface-border))",
+                }
+          }
+          className={compact ? "mt-2.5 grid w-full grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-2" : "mt-3 flex w-full items-center justify-evenly gap-1 rounded-[5px] border px-1 py-1"}
         >
           {/* Creator Era (era colour + tier medal); opens the Era sheet */}
           {currentEra ? (
@@ -702,7 +710,7 @@ export function ProfileHeader({
               label="Creator Era"
               align="left"
               widthClassName="w-[260px]"
-              className="flex min-w-0 shrink justify-center"
+              className={compact ? `${COMPACT_STAT} min-w-0` : "flex min-w-0 shrink justify-center"}
               panelClassName="overflow-hidden"
               trigger={
                 <EraBadge
@@ -791,7 +799,7 @@ export function ProfileHeader({
             </Popover>
           ) : null}
 
-          {currentEra && effectiveFanbase > 0 && <span aria-hidden style={{ backgroundColor: "color-mix(in srgb, var(--accent) 28%, var(--surface-border))" }} className="mx-1 h-6 w-px shrink-0" />}
+          {!compact && currentEra && effectiveFanbase > 0 && <span aria-hidden style={{ backgroundColor: "color-mix(in srgb, var(--accent) 28%, var(--surface-border))" }} className="mx-1 h-6 w-px shrink-0" />}
 
           {/* Total Fans: tap for per-platform counts */}
           <Popover
@@ -800,7 +808,7 @@ export function ProfileHeader({
             label="Fans by platform"
             align="right"
             widthClassName="w-[248px]"
-            className="flex shrink-0 justify-center"
+            className={compact ? COMPACT_STAT : "flex shrink-0 justify-center"}
             trigger={
               <button
                 type="button"
