@@ -2178,6 +2178,36 @@ export function LivePreviewCard({
                   {(() => {
                     let groupIndex = 0;
                     return displayedRemainingItems.map((item) => {
+                      // Demo links listing: a folder's links are listed as separate link cards under a small label.
+                      if (item.kind === "collection" && linksOnlyMode && isDemoPlainListing) {
+                        const groupItems = (item.items || []).filter((it) => it.isEnabled !== false && it.title && it.url);
+                        if (groupItems.length === 0) return null;
+                        return (
+                          <Fragment key={item.id}>
+                            <p className="flex items-center gap-1.5 px-1 pt-2 text-[12px] font-semibold text-(--text-muted)">
+                              <Folder className="h-3.5 w-3.5 text-(--accent-text)" aria-hidden />
+                              <span className="min-w-0 truncate">{item.title}</span>
+                              <span className="shrink-0 rounded-full bg-(--accent-soft) px-1.5 text-[11px] font-bold leading-4 text-(--accent-text)">{groupItems.length}</span>
+                            </p>
+                            {groupItems.map((inner) => (
+                              <LinkRow
+                                card
+                                key={inner.id}
+                                link={inner}
+                                onClick={(e) => {
+                                  if (isInformationalMode) {
+                                    e.preventDefault();
+                                    showToast(`Opens ${inner.title} ✨`);
+                                    return;
+                                  }
+                                  const childIndex = (item.items || []).indexOf(inner);
+                                  trackPublicEvent("link_click", `${item.id}:${childIndex}`);
+                                }}
+                              />
+                            ))}
+                          </Fragment>
+                        );
+                      }
                       if (item.kind === "collection") {
                         const curGroupIndex = groupIndex++;
                         const isExpandedByParam = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("expandGroup") === "1" && curGroupIndex === 0;
