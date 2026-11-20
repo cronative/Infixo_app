@@ -1581,8 +1581,13 @@ nextjs-portal,
    section is its own softly tinted rounded block, so the white card
    shows in the gaps between sections.
    ============================================================ */
+/* The profile card behind the sections is plain white. */
+[data-sections-float] > div {
+  background-color: #ffffff !important;
+}
+/* Section blocks use the same background as the series pages (the theme's card colour). */
 [data-sections-float] .plain-section {
-  background-color: color-mix(in srgb, var(--accent) 4%, var(--surface));
+  background-color: var(--card-bg);
   border: 1px solid var(--surface-border);
   border-radius: 5px;
   padding: 10px 2px 4px;
