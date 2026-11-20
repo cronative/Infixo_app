@@ -67,8 +67,8 @@ export function SeriesRow({ series, seriesHref, onOpenSeries, variant = "row" }:
         onClick={(e) => onOpenSeries?.(e, series)}
         className="press-card group block overflow-hidden rounded-[5px] border border-(--surface-border) bg-[var(--header-bg,var(--card-bg))] text-left transition-[transform,box-shadow,border-color] duration-200 hover:border-[color-mix(in_srgb,var(--accent)_35%,var(--surface-border))] hover:shadow-[0_10px_24px_-12px_color-mix(in_srgb,var(--accent)_40%,transparent)] motion-safe:hover:scale-[1.01] focus-visible:outline-2 focus-visible:outline-(--accent)"
       >
-        {/* Full-width cover (3:1, a short banner) */}
-        <span className="relative block aspect-[3/1] w-full overflow-hidden bg-(--accent)">
+        {/* Full-width cover (4:1, a slim banner) */}
+        <span className="relative block aspect-[4/1] w-full overflow-hidden bg-(--accent)">
           {hasCover ? (
             <Image
               src={cover!}
