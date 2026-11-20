@@ -537,12 +537,10 @@ export function ProfileHeader({
             <h1 ref={nameRef} className="truncate text-[18px] font-bold leading-6 tracking-tight text-(--text)">
               {displayName || "Creator"}
             </h1>
-            <p className="flex min-w-0 items-center gap-1.5 text-[12px] leading-5 text-(--text-muted)">
-              <span className="truncate">@{cleanHandle}</span>
-              {formattedTagline?.[0] && (
-                <span className="shrink-0 rounded-full bg-(--accent-soft) px-2 text-[11px] font-medium leading-[18px] text-(--accent-text)">{formattedTagline[0]}</span>
-              )}
-            </p>
+            <p className="truncate text-[12px] leading-5 text-(--text-muted)">@{cleanHandle}</p>
+            {formattedTagline?.[0] && (
+              <span className="mt-0.5 inline-block rounded-full bg-(--accent-soft) px-2 text-[11px] font-medium leading-[18px] text-(--accent-text)">{formattedTagline[0]}</span>
+            )}
             {allActiveSocials.length > 0 && (
               <div className="mt-1.5 flex items-center gap-1.5">
                 {allActiveSocials.slice(0, 4).map((item) => {
