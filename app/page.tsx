@@ -1,43 +1,39 @@
 "use client";
 
-import { useEffect, useRef, useState, useMemo, type ReactNode } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
+  ArrowDownRight,
   ArrowRight,
   ArrowUp,
-  Award,
   BarChart3,
   Briefcase,
-  Camera,
   Check,
   Film,
   Laptop,
   Link2,
   Menu,
-  MessageSquare,
-  Play,
-  ShoppingBag,
-  Sparkles,
-  Star,
-  Ticket,
-  Users,
-  Video,
-  X,
-  Plus,
+  MessageCircle,
   Minus,
+  Palette,
+  Play,
+  Plus,
+  ShoppingBag,
+  SkipForward,
+  Star,
+  Users,
+  X,
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { HeroPhoneMockup } from "@/components/landing/HeroPhoneMockup";
 import { AuthService } from "@/services/AuthService";
 import { OnboardingService } from "@/services/OnboardingService";
-import { ProfileService } from "@/services/ProfileService";
-import { CreatorProfile, SocialAccounts } from "@/types";
+import { CreatorProfile, SocialAccounts, type ThemeKey } from "@/types";
 import { formatPlanPrice, usePricingCurrency } from "@/lib/pricing";
 import { PLANS, planFeatureLines, yearlySavingsPercent } from "@/config/plans";
-import { EXPERT_DEMO_PROFILE, EXPERT_DEMO_THEME } from "@/data/expertDemoCreator";
+import { EXPERT_DEMO_PROFILE } from "@/data/expertDemoCreator";
 import {
   LANDING_DEMO_SOCIALS,
   LANDING_DEMO_SERIES,
@@ -55,184 +51,89 @@ const LivePreviewCard = dynamic(
     ssr: false,
     loading: () => (
       <div className="flex min-h-[460px] items-center justify-center rounded-2xl bg-zinc-50 text-zinc-400">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#7A2253] border-t-transparent" />
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#18181B] border-t-transparent" />
       </div>
     ),
   }
 );
 
+/** Light, neutral theme for the embedded demo: on the landing page maroon is kept for the logo only. */
+const LANDING_DEMO_THEME: ThemeKey = "kapas";
+
 const NAV_LINKS = [
-  { id: "top", href: "#top", label: "Home" },
-  { id: "demo", href: "#demo", label: "View Demo" },
-  { id: "features", href: "#features", label: "Creator Tools" },
+  { id: "story", href: "#story", label: "Why Inflixo" },
+  { id: "series", href: "#series", label: "Series" },
+  { id: "compare", href: "#compare", label: "Compare" },
   { id: "pricing", href: "#pricing", label: "Pricing" },
   { id: "faq", href: "#faq", label: "FAQ" },
 ];
 
-const SECTION_IDS = [
-  "top",
-  "problem",
-  "demo",
-  "how-it-works",
-  "why-inflixo",
-  "features",
-  "for-creators",
-  "our-story",
-  "founding",
-  "testimonials",
-  "pricing",
-  "summit",
-  "faq",
+const SECTION_IDS = ["top", "story", "series", "demo", "compare", "features", "pricing", "summit", "faq"];
+
+/** Illustrative only (labelled "Example" on the page): how views fall part by part when fans can't find the next one. */
+const VIEW_DROP = [
+  { part: "Part 1", views: "1.2M", pct: 100 },
+  { part: "Part 2", views: "310K", pct: 26 },
+  { part: "Part 3", views: "96K", pct: 8 },
+  { part: "Part 4", views: "41K", pct: 4 },
 ];
 
-const HERO_CHECKS = [
-  "Series & episodes, in order",
-  "Your total fans across IG, YT & FB",
-  "Tour, tickets & show links",
-  "Brand reviews & your gear setup",
+const FAN_COMMENTS = [
+  { name: "rohit_22", text: "Bhai Part 2 kahan hai? 😭" },
+  { name: "sneha.vlogs", text: "Profile pe dhoondha, mila hi nahi" },
+  { name: "foodie_ankit", text: "Part 1 ka link do please" },
 ];
 
-const PROBLEMS: { icon: typeof Film; title: string; text: ReactNode }[] = [
+const STORY_STEPS = [
   {
-    icon: Film,
-    title: "Part 1 kahan hai?",
-    text: "New fans find Part 6 of your series and never find where the story started.",
+    n: "1",
+    title: "You make a series.",
+    text: "Part 1, Part 2, Part 3… One story told across many videos.",
   },
   {
-    icon: Camera,
-    title: "Which camera do you use, bhai?",
-    text: "The same DM, every single day. You can't reply to everyone.",
+    n: "2",
+    title: "Part 1 blows up. Part 2 doesn't.",
+    text: "Fans love Part 1, but the next parts get a fraction of the views.",
   },
   {
-    icon: BarChart3,
-    title: "What's your total reach?",
-    text: "Brands ask. Your followers are split across Instagram, YouTube and Facebook.",
-  },
-  {
-    icon: Ticket,
-    title: "Tour dates lost in stories.",
-    text: "Show tickets, event links and schedules disappear after 24 hours.",
-  },
-  {
-    icon: Star,
-    title: "Brand work with no proof.",
-    text: "You've done great collabs, but new brands can't see what past brands said about you.",
-  },
-  {
-    icon: Link2,
-    title: "A boring list of links.",
-    text: (
-      <>
-        Regular link-in-bio tools show buttons. Your work deserves a home that looks like <em>you</em>.
-      </>
-    ),
+    n: "3",
+    title: "\"Part 2 kahan hai?\"",
+    text: "Fans search your profile, scroll through 200 reels, give up, and comment instead.",
   },
 ];
 
-const SERIES_STEPS = [
-  {
-    step: "01",
-    title: "Paste your video links",
-    text: "Add links from YouTube, Instagram or Facebook. Your videos stay where they are; nothing is re-uploaded.",
-  },
-  {
-    step: "02",
-    title: "Arrange them as series",
-    text: "Put Part 1, 2, 3 in order and give your series a name, a cover and a language. Fans always know what to watch next.",
-  },
-  {
-    step: "03",
-    title: "Add your creator world",
-    text: "Tour schedule, show tickets, other accounts, your gear setup and brand reviews. Your total fanbase is counted from your public profiles.",
-  },
-  {
-    step: "04",
-    title: "Put one link in bio",
-    text: "Share inflixo.com/yourname everywhere. One link for your fans, and one for brands.",
-  },
+const OTT_POINTS = [
+  { icon: Film, title: "Every part, in order", text: "Season, episodes, cover and language, like a show on an OTT app." },
+  { icon: Play, title: "Start from Ep 1", text: "New fans always begin at the start of the story, not the middle." },
+  { icon: SkipForward, title: "Next episode, one tap", text: "Finished Part 1? Part 2 is right there. No searching." },
+  { icon: BarChart3, title: "Views stay on your platform", text: "Videos open on YouTube, Instagram or Facebook, so every view counts there." },
+];
+
+const HOW_STEPS = [
+  { n: "01", title: "Paste your video links", text: "From YouTube, Instagram or Facebook. Nothing is re-uploaded." },
+  { n: "02", title: "Arrange them as a series", text: "Put the parts in order and add a name and cover." },
+  { n: "03", title: "Put one link in bio", text: "Share inflixo.com/yourname. Fans binge from Part 1." },
 ];
 
 const COMPARISON = [
-  { regular: "A list of buttons", inflixo: "A profile that feels like your own channel" },
-  { regular: "Videos scattered across apps", inflixo: "Series with seasons & episodes, in order" },
-  { regular: "Follower counts on separate apps", inflixo: "One combined fanbase number (IG + YT + FB)" },
-  { regular: "Collab proof hidden in DMs", inflixo: "Brand reviews & collab packages on your page" },
-  { regular: "\"Which camera?\" answered 100 times", inflixo: "A \"My Setup\" list fans can browse" },
-  { regular: "Built for everyone", inflixo: "Built for Indian video creators" },
+  { other: "A list of buttons", inflixo: "Your series, shown like an OTT show" },
+  { other: "Part 2 is just one more link", inflixo: "Episodes in order, with \"Start from Ep 1\"" },
+  { other: "Fans leave after one video", inflixo: "Next episode is one tap away" },
+  { other: "Same template for everyone", inflixo: "Desi themes made for Indian creators" },
+  { other: "Followers split across apps", inflixo: "One total fanbase: IG + YT + FB" },
+  { other: "Brand deals lost in DMs", inflixo: "Media kit, packages and brand reviews" },
+  { other: "No idea which video fans want", inflixo: "Opens and clicks for every episode" },
 ];
 
-const FOUNDING_BENEFITS = [
-  {
-    icon: Award,
-    title: "Founding Creator badge",
-    text: "A permanent badge on your profile.",
-  },
-  {
-    icon: MessageSquare,
-    title: "Shape what we build",
-    text: "Direct line to the founder for feature requests.",
-  },
-  {
-    icon: Ticket,
-    title: "First in line for Summit 2027",
-    text: "Priority invite to the Inflixo Creator Summit.",
-  },
-];
-
-interface CreatorTestimonial {
-  name: string;
-  handle: string;
-  niche: string;
-  avatar?: string;
-  followers?: string;
-  quote: string;
-  disclosure: string;
-}
-
-/** Testimonials list. If empty, the entire testimonials section is hidden. */
-const CREATOR_TESTIMONIALS: CreatorTestimonial[] = [];
-
-const PILLARS = [
-  {
-    icon: Film,
-    title: "Video Series & Episodes",
-    text: "Organise your videos into seasons and episodes, so a new fan can start at Part 1 and binge the whole story, like a show.",
-  },
-  {
-    icon: Users,
-    title: "Your Total Fanbase, One Number",
-    text: "Inflixo reads your publicly available follower counts from Instagram, YouTube and Facebook and adds them up. Fans see how big your family is, and brands can see your full reach at a glance.",
-  },
-  {
-    icon: Link2,
-    title: "Tour, Tickets & Every Link",
-    text: "Tour dates, show tickets, your second account, podcast or WhatsApp channel: every link stays on your page long after your story disappears.",
-  },
-  {
-    icon: BarChart3,
-    title: "See What Fans Click",
-    text: "Your dashboard shows how many times each series was opened and how many clicks every episode, link and product got, so you know what your fans really want.",
-  },
-  {
-    icon: Star,
-    title: "Brand Reviews",
-    text: "Every collab you finish can become proof for the next one. Show what brands said about working with you, so new brands can trust you faster.",
-  },
-  {
-    icon: Briefcase,
-    title: "Collab Packages & Rate Cards",
-    text: "Show your sponsorship packages and deliverables, publicly or privately, so brands can understand how to work with you and reach out directly.",
-  },
-  {
-    icon: Laptop,
-    title: "My Setup: Gear & Software",
-    text: "Stop answering the same DM. List your camera, mic, lights and editing apps, and add affiliate links if you like. Shop items link to your own store, so buyers pay you directly and Inflixo takes no cut.",
-  },
-  {
-    icon: Play,
-    title: "Views Stay on Your Platforms",
-    text: "Videos open on your original YouTube, Instagram or Facebook post, so watch time, likes and comments count where they matter.",
-  },
+const MORE_FEATURES = [
+  { icon: Link2, label: "Links & folders" },
+  { icon: ShoppingBag, label: "Shop, 0% cut" },
+  { icon: Briefcase, label: "Media kit & packages" },
+  { icon: Star, label: "Brand reviews" },
+  { icon: Laptop, label: "My Setup (gear)" },
+  { icon: BarChart3, label: "Click analytics" },
+  { icon: Palette, label: "Desi themes" },
+  { icon: Users, label: "Total fanbase" },
 ];
 
 const FAQS = [
@@ -241,27 +142,7 @@ const FAQS = [
     a: `Yes, the ${PLANS.trial.trialDays}-day trial is free and needs no card or UPI. Set up your real page first and decide later.`,
   },
   {
-    q: "What happens when my trial ends?",
-    a: "Your public page goes private, but nothing is deleted. Your series, links and settings stay saved, and your page goes live again as soon as you pick a plan.",
-  },
-  {
-    q: "I already use another link in bio. How do I switch?",
-    a: "Sign up, add your videos and links (paste the same links you already use), then replace the link in your Instagram and YouTube bio with inflixo.com/yourname. Most creators finish in a few minutes.",
-  },
-  {
-    q: "Can I see how many people use my page?",
-    a: "Yes. Your dashboard shows series opens and clicks on every episode, link, product and gear item, plus views and requests on your collab packages.",
-  },
-  {
-    q: "Does Inflixo take a cut from my shop?",
-    a: "No. Shop and gear items link to your own store or affiliate link, so buyers pay you directly. Inflixo only charges the plan price.",
-  },
-  {
-    q: "Do my fans need an app or account to watch?",
-    a: "No. Anyone can open your Inflixo link in any mobile or desktop browser, with no signup or app.",
-  },
-  {
-    q: "Does Inflixo host or re-upload my videos?",
+    q: "Does Inflixo re-upload my videos?",
     a: "No. You paste links to your existing YouTube, Instagram or Facebook videos. Inflixo organises them; your videos stay on your channels.",
   },
   {
@@ -269,32 +150,24 @@ const FAQS = [
     a: "Videos open on your original post, so views, likes and comments are counted on your platform, not on Inflixo.",
   },
   {
-    q: "How is my total fanbase calculated?",
-    a: "Inflixo reads the publicly visible follower or subscriber counts on the Instagram, YouTube and Facebook profiles you add, and shows them together as one number. You can see the per-platform breakdown, and refresh it anytime from your dashboard.",
+    q: "I already use another link in bio. How do I switch?",
+    a: "Sign up, add your videos and links (paste the same links you already use), then replace the link in your Instagram and YouTube bio with inflixo.com/yourname. Most creators finish in a few minutes.",
   },
   {
-    q: "Can I add tour dates, show tickets or event links?",
-    a: "Yes. Add any link (ticket pages, tour schedules, event pages, other accounts) and arrange them in the order you want.",
+    q: "Do my fans need an app or account?",
+    a: "No. Anyone can open your Inflixo link in any mobile or desktop browser, with no signup or app.",
   },
   {
-    q: "Can I create multiple series with seasons & episodes?",
-    a: "Yes. Create multiple series, split them into seasons, and arrange episodes in the exact order fans should watch them.",
+    q: "Can I see which episodes fans open?",
+    a: "Yes. Your dashboard shows series opens and clicks on every episode, link, product and gear item, plus views and requests on your collab packages.",
   },
   {
-    q: "How do brand reviews work?",
-    a: "After a collab, you can add a review from the brand to your page. Reviews show on your Collab tab so new brands can see your past work.",
+    q: "What happens when my trial ends?",
+    a: "Your public page goes private, but nothing is deleted. Your series, links and settings stay saved, and your page goes live again as soon as you pick a plan.",
   },
   {
-    q: "Can I keep my collab packages private?",
-    a: "Yes. You can show packages publicly, or keep them private and share them only with brands that reach out.",
-  },
-  {
-    q: "What is \"My Setup\"?",
-    a: "It's a list of the camera, mic, lights, apps and software you use, so fans stop asking in DMs. You can add affiliate links or digital products like presets and guides.",
-  },
-  {
-    q: "Can my manager or editor help run my page?",
-    a: `Yes. The ${PLANS.vip.name} plan includes ${PLANS.vip.limits.teamSeats} team seats, so your team can update series, links and collabs for you.`,
+    q: "Does Inflixo take a cut from my shop?",
+    a: "No. Shop and gear items link to your own store or affiliate link, so buyers pay you directly. Inflixo only charges the plan price.",
   },
 ];
 
@@ -303,48 +176,61 @@ const TRIAL_FEATURES = planFeatureLines("trial");
 const PRO_FEATURES = [...planFeatureLines("pro"), "Cancel anytime, no lock-in"];
 const VIP_FEATURES = [...planFeatureLines("vip"), "Cancel anytime, no lock-in"];
 
-const GROWING_BULLETS = [
-  "Turn new viewers into bingers with ordered series",
-  "Show your combined fanbase across every platform",
-  "Start collecting brand reviews from your very first collab",
-  "Answer \"which camera?\" once, with your setup page",
-];
-
-const ESTABLISHED_BULLETS = [
-  "Promote tours, live shows and ticket links in one place",
-  "Show brand reviews and collab packages to new brands",
-  "Share your total reach across Instagram, YouTube and Facebook",
-  "Add your manager or editor with team seats (VIP)",
-];
-
 function cleanHandle(value: string) {
   return value.trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
 }
 
-function SectionHeading({
-  eyebrow,
-  title,
-  sub,
-  light = false,
-}: {
-  eyebrow: string;
-  title: string;
-  sub?: string;
-  light?: boolean;
-}) {
+function SectionHeading({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) {
   return (
-    <div className="mx-auto max-w-2xl space-y-2 text-center">
-      <p className={`text-[12px] font-bold uppercase tracking-wider ${light ? "text-white/70" : "text-[#7A2253]"}`}>
-        {eyebrow}
-      </p>
-      <h2
-        className={`text-[32px] sm:text-[48px] font-extrabold leading-tight tracking-tight ${
-          light ? "text-white" : "text-[#18181B]"
-        }`}
-      >
-        {title}
-      </h2>
-      {sub && <p className={`text-[16px] ${light ? "text-white/90" : "text-[#52525B]"}`}>{sub}</p>}
+    <div className="mx-auto max-w-2xl space-y-3 text-center">
+      <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#71717A]">{eyebrow}</p>
+      <h2 className="text-[30px] font-extrabold leading-tight tracking-tight text-[#18181B] sm:text-[44px]">{title}</h2>
+      {sub && <p className="text-[16px] leading-relaxed text-[#52525B]">{sub}</p>}
+    </div>
+  );
+}
+
+/** Hero visual: the creator's real problem, views falling part by part, and the comments that follow. */
+function ViewDropCard() {
+  return (
+    <div className="relative mx-auto w-full max-w-[400px]">
+      <div className="rounded-2xl border border-[#E4E4E7] bg-white p-5 shadow-xl shadow-black/5">
+        <div className="flex items-center justify-between">
+          <p className="text-[13px] font-bold text-[#18181B]">Your 4-part series</p>
+          <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#71717A]">
+            Example
+          </span>
+        </div>
+        <ul className="mt-4 space-y-3">
+          {VIEW_DROP.map((row, i) => (
+            <li key={row.part} className="grid grid-cols-[52px_1fr_44px] items-center gap-3">
+              <span className="text-[12px] font-semibold text-[#52525B]">{row.part}</span>
+              <span className="h-3 rounded-full bg-zinc-100">
+                <span
+                  className={`block h-3 rounded-full ${i === 0 ? "bg-[#18181B]" : "bg-zinc-400"}`}
+                  style={{ width: `${Math.max(row.pct, 3)}%` }}
+                />
+              </span>
+              <span className="text-right text-[12px] font-bold text-[#18181B]">{row.views}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-4 flex items-center gap-1.5 text-[12px] font-semibold text-rose-600">
+          <ArrowDownRight className="h-4 w-4" />
+          Part 2 lost most of the audience
+        </p>
+      </div>
+
+      <div className="mt-3 space-y-2 pl-6 sm:pl-12">
+        {FAN_COMMENTS.map((c) => (
+          <div key={c.name} className="flex items-start gap-2 rounded-xl border border-[#E4E4E7] bg-white px-3 py-2 shadow-md shadow-black/5">
+            <MessageCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#A1A1AA]" />
+            <p className="text-[12px] leading-snug text-[#18181B]">
+              <span className="font-bold">{c.name}</span> {c.text}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -363,73 +249,46 @@ export default function LandingHomePage() {
 
   const footerRef = useRef<HTMLElement | null>(null);
 
-  // Auth redirect check
   useEffect(() => {
     if (AuthService.isLoggedIn()) {
       setRedirecting(true);
-      const step = OnboardingService.getStep();
-      if (step === "finish") {
-        router.replace("/dashboard");
-      } else {
-        router.replace("/onboarding");
-      }
+      router.replace(OnboardingService.getStep() === "finish" ? "/dashboard" : "/onboarding");
     }
   }, [router]);
 
-  // Scroll position & Back to Top listener
   useEffect(() => {
     const handleScroll = () => {
       setShowScrollTop(window.scrollY > 400);
+      // Active nav: the last section whose top has passed 35% of the viewport.
+      const line = window.innerHeight * 0.35;
+      let current = "top";
+      for (const id of SECTION_IDS) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= line) current = id;
+      }
+      setActiveNav(current);
     };
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // IntersectionObserver for active section highlight & footer hide for Back to Top
+  // Hide Back to Top over the footer
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
-
-    SECTION_IDS.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const obs = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              setActiveNav(id);
-            }
-          });
-        },
-        { rootMargin: "-20% 0px -60% 0px", threshold: 0.1 }
-      );
-      obs.observe(el);
-      observers.push(obs);
-    });
-
     if (footerRef.current) {
-      const footerObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            setFooterInView(entry.isIntersecting);
-          });
-        },
-        { threshold: 0.1 }
-      );
+      const footerObserver = new IntersectionObserver((entries) => entries.forEach((e) => setFooterInView(e.isIntersecting)), {
+        threshold: 0.1,
+      });
       footerObserver.observe(footerRef.current);
       observers.push(footerObserver);
     }
-
-    return () => {
-      observers.forEach((obs) => obs.disconnect());
-    };
+    return () => observers.forEach((obs) => obs.disconnect());
   }, []);
 
-  // Close mobile drawer on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && mobileMenuOpen) {
-        setMobileMenuOpen(false);
-      }
+      if (e.key === "Escape" && mobileMenuOpen) setMobileMenuOpen(false);
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
@@ -465,68 +324,75 @@ export default function LandingHomePage() {
       : LANDING_DEMO_SOCIALS;
   }, [previewHandle, username]);
 
-  // Combined fanbase shown in the demo header (IG + YT + FB)
   const previewTotalFans =
     (previewSocials.instagram?.followers || 0) +
     (previewSocials.youtube?.subscribers || 0) +
     (previewSocials.facebook?.followers || 0);
 
   const navClass = (id: string) =>
-    `text-[14px] font-semibold transition-colors ${
-      activeNav === id ? "text-[#7A2253]" : "text-[#52525B] hover:text-[#18181B]"
-    }`;
+    `text-[14px] font-semibold transition-colors ${activeNav === id ? "text-[#18181B]" : "text-[#71717A] hover:text-[#18181B]"}`;
 
   const primaryBtn =
-    "inline-flex h-11 items-center justify-center rounded-xl bg-[#7A2253] hover:bg-[#631841] px-5 text-[14px] font-bold text-white shadow-md shadow-[#7A2253]/25 transition-all";
+    "inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#18181B] px-5 text-[14px] font-bold text-white transition-colors hover:bg-black cursor-pointer";
   const outlineBtn =
-    "inline-flex h-11 w-full items-center justify-center rounded-xl border border-[#E4E4E7] bg-white text-[14px] font-bold text-[#18181B] hover:bg-[#fdf2f8] hover:border-[#7A2253] transition-colors cursor-pointer";
+    "inline-flex h-11 w-full items-center justify-center rounded-xl border border-[#E4E4E7] bg-white text-[14px] font-bold text-[#18181B] transition-colors hover:border-[#18181B] cursor-pointer";
 
   if (redirecting) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-[#FFFCFB]">
-        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#7A2253] border-t-transparent" />
+      <div className="flex min-h-dvh items-center justify-center bg-white">
+        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#18181B] border-t-transparent" />
       </div>
     );
   }
 
+  const claimForm = (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleClaim(username);
+      }}
+      className="flex w-full max-w-md items-center rounded-xl border border-[#E4E4E7] bg-white p-1.5 shadow-sm transition-all focus-within:border-[#18181B] focus-within:ring-2 focus-within:ring-black/10"
+    >
+      <span className="shrink-0 pl-3 text-[14px] font-semibold text-[#71717A]">inflixo.com/</span>
+      <input
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        placeholder="yourname"
+        aria-label="Your desired handle"
+        className="min-w-0 flex-1 bg-transparent px-2 text-[14px] font-semibold text-[#18181B] outline-none placeholder:text-zinc-400"
+      />
+      <button type="submit" className={`${primaryBtn} shrink-0`}>
+        <span>Claim</span>
+        <ArrowRight className="h-4 w-4" />
+      </button>
+    </form>
+  );
+
   return (
-    <div className="landing-scope min-h-dvh overflow-x-hidden antialiased selection:bg-[#F7EDEF] selection:text-[#7A2253]">
-      {/* Target for Top scroll */}
+    <div className="landing-scope min-h-dvh overflow-x-hidden bg-white antialiased selection:bg-zinc-200 selection:text-[#18181B]">
       <div id="top" className="absolute top-0 h-px w-px" />
 
-      {/* ── HEADER / NAVIGATION ── */}
+      {/* ── HEADER ── */}
       <header className="fixed inset-x-0 top-0 z-50 border-b border-[#E4E4E7] bg-white/95 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-[1120px] items-center justify-between gap-4 px-4 sm:px-6">
           <Logo size="sm" />
-
-          {/* Desktop Navigation Links */}
-          <nav className="hidden items-center gap-5 lg:gap-6 md:flex" aria-label="Main Navigation">
+          <nav className="hidden items-center gap-6 md:flex" aria-label="Main Navigation">
             {NAV_LINKS.map((link) => (
               <a key={link.id} href={link.href} className={navClass(link.id)}>
                 {link.label}
               </a>
             ))}
           </nav>
-
-          {/* Right Action Buttons */}
           <div className="hidden items-center gap-4 md:flex">
-            <Link
-              href="/login"
-              className="text-[14px] font-semibold text-[#52525B] hover:text-[#18181B] transition-colors"
-            >
+            <Link href="/login" className="text-[14px] font-semibold text-[#52525B] transition-colors hover:text-[#18181B]">
               Log in
             </Link>
             <Link href="/login" className={primaryBtn}>
-              <span>Claim your link</span>
+              Claim your link
             </Link>
           </div>
-
-          {/* Mobile Hamburger Button */}
           <div className="flex items-center gap-2 md:hidden">
-            <Link
-              href="/login"
-              className="text-[14px] font-semibold text-[#52525B] px-2 py-1"
-            >
+            <Link href="/login" className="px-2 py-1 text-[14px] font-semibold text-[#52525B]">
               Log in
             </Link>
             <button
@@ -540,172 +406,132 @@ export default function LandingHomePage() {
             </button>
           </div>
         </div>
-
-        {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="border-b border-[#E4E4E7] bg-white px-4 py-6 md:hidden animate-in slide-in-from-top-2 duration-150">
-            <nav className="flex flex-col gap-4 text-left" aria-label="Mobile Navigation">
+          <div className="border-b border-[#E4E4E7] bg-white px-4 py-6 md:hidden">
+            <nav className="flex flex-col gap-4" aria-label="Mobile Navigation">
               {NAV_LINKS.map((link) => (
-                <a
-                  key={link.id}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-[16px] font-semibold text-[#18181B] py-1"
-                >
+                <a key={link.id} href={link.href} onClick={() => setMobileMenuOpen(false)} className="py-1 text-[16px] font-semibold text-[#18181B]">
                   {link.label}
                 </a>
               ))}
-              <div className="pt-2 border-t border-[#E4E4E7] flex flex-col gap-3">
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center text-[14px] font-semibold text-[#52525B] py-2"
-                >
-                  Log in
-                </Link>
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`${primaryBtn} w-full`}
-                >
-                  Claim your link
-                </Link>
-              </div>
+              <Link href="/login" onClick={() => setMobileMenuOpen(false)} className={`${primaryBtn} mt-2 w-full`}>
+                Claim your link
+              </Link>
             </nav>
           </div>
         )}
       </header>
 
-      {/* ── HERO SECTION ── */}
-      <section className="relative overflow-hidden pt-32 pb-16 sm:pt-40 sm:pb-24">
-        {/* Subtle Ambient Floating Icons (Max 3, CSS transform only, prefers-reduced-motion safe) */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[480px] overflow-hidden" aria-hidden="true">
-          <div className="landing-float absolute left-[6%] top-36 hidden sm:flex lg:hidden h-12 w-12 items-center justify-center rounded-2xl border border-[#E4E4E7] bg-white text-[#7A2253] shadow-xs">
-            <Camera className="h-6 w-6" />
-          </div>
-          <div className="landing-float absolute right-[8%] top-40 hidden sm:flex lg:hidden h-12 w-12 items-center justify-center rounded-2xl border border-[#E4E4E7] bg-white text-[#7A2253] shadow-xs">
-            <Video className="h-6 w-6" />
-          </div>
-          <div className="landing-float absolute left-[14%] bottom-12 hidden sm:flex lg:hidden h-12 w-12 items-center justify-center rounded-2xl border border-[#E4E4E7] bg-white text-[#7A2253] shadow-xs">
-            <ShoppingBag className="h-6 w-6" />
-          </div>
-        </div>
-
-        <div className="relative mx-auto grid max-w-[1120px] items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
+      {/* ── HERO: the creator's problem ── */}
+      <section className="pt-28 pb-16 sm:pt-36 sm:pb-24">
+        <div className="mx-auto grid max-w-[1120px] items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10">
           <div className="min-w-0 text-center lg:text-left">
-            {/* Made in India Badge */}
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#E4E4E7] bg-white px-3.5 py-1.5 text-[12px] font-semibold text-[#18181B] shadow-xs">
-              <span role="img" aria-label="Indian Flag">🇮🇳</span>
-              <span>Made in India, by a creator, for creators</span>
-            </div>
-
-            {/* Static Hero Headline (Single H1 on the page) */}
-            <div className="mx-auto max-w-3xl space-y-4 lg:mx-0">
-              <h1 className="landing-text-hero font-extrabold tracking-tight text-[#18181B]">
-                Your videos, in order. <span className="text-[#7A2253]">Like a show.</span>
-              </h1>
-              <p className="landing-text-18 font-normal text-[#52525B] max-w-xl mx-auto lg:mx-0">
-                Your Part 1 is buried under 200 reels. Inflixo turns your YouTube, Instagram &amp; Facebook videos into bingeable series, in one link in bio.
-              </p>
-            </div>
-
-            {/* Username Claim Form */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleClaim(username);
-              }}
-              className="mx-auto lg:mx-0 mt-8 flex max-w-md items-center rounded-xl border border-[#E4E4E7] bg-white p-1.5 shadow-sm transition-all focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/20"
-            >
-              <span className="shrink-0 pl-3 text-[14px] font-semibold text-[#52525B]">inflixo.com/</span>
-              <input
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="yourname"
-                aria-label="Your desired handle"
-                className="min-w-0 flex-1 bg-transparent px-2 text-[14px] font-semibold text-[#18181B] outline-none placeholder:text-zinc-400"
-              />
-              <button
-                type="submit"
-                className="inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] hover:bg-[#631841] px-5 text-[14px] font-bold text-white shadow-md shadow-[#7A2253]/25 transition-all cursor-pointer"
-              >
-                <span>Claim</span>
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </form>
-            <p className="mt-2.5 text-[12px] text-[#71717A]">
-              Takes 2 minutes. Free for {PLANS.trial.trialDays} days, no card needed. Your fans don&apos;t need any app.
+            <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#E4E4E7] bg-white px-3.5 py-1.5 text-[12px] font-semibold text-[#18181B]">
+              🇮🇳 For creators who make series
             </p>
-
-            {/* Trust Highlights Row */}
-            <div className="mt-4 flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 text-[12px] font-semibold text-[#52525B]">
-              {HERO_CHECKS.map((item) => (
-                <span key={item}>✓ {item}</span>
-              ))}
-            </div>
+            <h1 className="landing-text-hero font-extrabold tracking-tight text-[#18181B]">
+              Part 1 got the views. <span className="text-[#A1A1AA]">Part 2 got lost.</span>
+            </h1>
+            <p className="landing-text-18 mx-auto mt-5 max-w-xl text-[#52525B] lg:mx-0">
+              Your fans didn&apos;t stop caring. They just couldn&apos;t find Part 2. Inflixo puts every part of your series in order, like a show on an OTT app, in one link in bio.
+            </p>
+            <div className="mt-8 flex justify-center lg:justify-start">{claimForm}</div>
+            <p className="mt-3 text-[12px] text-[#71717A]">
+              Free for {PLANS.trial.trialDays} days · No card needed · Fans don&apos;t need any app
+            </p>
           </div>
-
-          {/* Phone mockup: what a fan sees */}
-          <div className="flex justify-center lg:justify-end">
-            <HeroPhoneMockup />
+          <div>
+            <ViewDropCard />
           </div>
         </div>
       </section>
 
-      {/* ── PROBLEM SECTION (`#problem`) ── */}
-      <section id="problem" className="scroll-mt-24 border-t border-[#E4E4E7] bg-[#FFFCFB] py-16 sm:py-24">
+      {/* ── STORY: why views drop ── */}
+      <section id="story" className="scroll-mt-20 border-t border-[#E4E4E7] bg-[#FAFAFA] py-16 sm:py-24">
         <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-          <SectionHeading
-            eyebrow="Creator Problems"
-            title="Your content is great. Finding it shouldn't be hard."
-            sub="Every creator we spoke to has at least three of these problems."
-          />
-
-          <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {PROBLEMS.map((problem) => (
-              <div
-                key={problem.title}
-                className="rounded-2xl border border-[#E4E4E7] bg-white p-6 shadow-xs hover:border-[#7A2253] transition-colors"
-              >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F7EDEF] text-[#7A2253]">
-                  <problem.icon className="h-5 w-5" />
-                </div>
-                <h3 className="mt-4 text-[18px] font-bold text-[#18181B]">{problem.title}</h3>
-                <p className="mt-2 text-[14px] text-[#52525B] leading-relaxed">{problem.text}</p>
+          <SectionHeading eyebrow="Sound familiar?" title="Your content isn't the problem. Your grid is." />
+          <div className="mt-12 grid gap-4 md:grid-cols-3">
+            {STORY_STEPS.map((s) => (
+              <div key={s.n} className="rounded-2xl border border-[#E4E4E7] bg-white p-6">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#18181B] text-[14px] font-extrabold text-white">
+                  {s.n}
+                </span>
+                <h3 className="mt-4 text-[18px] font-bold text-[#18181B]">{s.title}</h3>
+                <p className="mt-2 text-[14px] leading-relaxed text-[#52525B]">{s.text}</p>
               </div>
             ))}
           </div>
-
-          <p className="mt-10 text-center text-[18px] sm:text-[20px] font-bold text-[#7A2253]">
-            Inflixo is built to solve all six, in one link.
+          <p className="mx-auto mt-10 max-w-2xl text-center text-[18px] font-bold leading-snug text-[#18181B] sm:text-[20px]">
+            Every fan who can&apos;t find the next part is a view you made but never got. We built Inflixo to fix exactly this.
           </p>
         </div>
       </section>
 
-      {/* ── DEMO PREVIEW SECTION (`#demo`) ── */}
-      <section id="demo" className="scroll-mt-24 border-t border-[#E4E4E7] bg-white py-16 sm:py-24">
-        <div className="mx-auto max-w-[1120px] px-4 text-center sm:px-6">
-          <p className="text-[12px] font-bold uppercase tracking-wider text-[#7A2253]">Live Preview</p>
-          <h2 className="mt-2 text-[32px] sm:text-[48px] font-extrabold tracking-tight text-[#18181B]">
-            {username.trim() ? `See @${previewHandle}'s Live Profile` : "This is what your fans will see."}
-          </h2>
-          <p className="mt-2 text-[16px] text-[#52525B] max-w-xl mx-auto">
-            Ordered series, your total fanbase, tour &amp; ticket links, your gear setup and brand reviews, all on one page that feels like your own channel.
-          </p>
+      {/* ── SERIES: OTT-style ── */}
+      <section id="series" className="scroll-mt-20 border-t border-[#E4E4E7] bg-white py-16 sm:py-24">
+        <div className="mx-auto grid max-w-[1120px] items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+          <div className="order-2 lg:order-1">
+            <HeroPhoneMockup />
+          </div>
+          <div className="order-1 lg:order-2">
+            <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#71717A]">The fix</p>
+            <h2 className="mt-3 text-[30px] font-extrabold leading-tight tracking-tight text-[#18181B] sm:text-[44px]">
+              Your series, like an OTT show.
+            </h2>
+            <p className="mt-3 text-[16px] leading-relaxed text-[#52525B]">
+              Fans open your link and see your series the way they see a show: a cover, a season, and every episode in order.
+            </p>
+            <ul className="mt-8 space-y-5">
+              {OTT_POINTS.map((p) => (
+                <li key={p.title} className="flex gap-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#E4E4E7] bg-white text-[#18181B]">
+                    <p.icon className="h-5 w-5" />
+                  </span>
+                  <span>
+                    <span className="block text-[16px] font-bold text-[#18181B]">{p.title}</span>
+                    <span className="block text-[14px] leading-relaxed text-[#52525B]">{p.text}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
 
-          <div className="mx-auto mt-10 max-w-[620px] rounded-3xl border border-[#E4E4E7] bg-zinc-50/70 p-2 sm:p-3 shadow-md">
-            <div className="mb-3 flex items-center justify-between rounded-xl bg-white border border-[#E4E4E7] px-3.5 py-2">
+      {/* ── HOW IT WORKS ── */}
+      <section className="border-t border-[#E4E4E7] bg-[#FAFAFA] py-16 sm:py-20">
+        <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
+          <SectionHeading eyebrow="2 minutes" title="Set up in 3 steps." />
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {HOW_STEPS.map((s) => (
+              <div key={s.n} className="rounded-2xl border border-[#E4E4E7] bg-white p-6">
+                <p className="text-[13px] font-extrabold text-[#A1A1AA]">{s.n}</p>
+                <h3 className="mt-2 text-[18px] font-bold text-[#18181B]">{s.title}</h3>
+                <p className="mt-1.5 text-[14px] leading-relaxed text-[#52525B]">{s.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── LIVE DEMO ── */}
+      <section id="demo" className="scroll-mt-20 border-t border-[#E4E4E7] bg-white py-16 sm:py-24">
+        <div className="mx-auto max-w-[1120px] px-4 text-center sm:px-6">
+          <SectionHeading
+            eyebrow="Live demo"
+            title={username.trim() ? `This could be @${previewHandle}.` : "See a real creator page."}
+            sub="Tap a series to see the episodes in order."
+          />
+          <div className="mx-auto mt-10 max-w-[620px] rounded-3xl border border-[#E4E4E7] bg-zinc-50 p-2 shadow-sm sm:p-3">
+            <div className="mb-3 flex items-center justify-between rounded-xl border border-[#E4E4E7] bg-white px-3.5 py-2">
               <div className="flex items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
                 <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
                 <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
               </div>
-              <span className="text-[12px] font-semibold text-[#7A2253]">
-                inflixo.com/{previewHandle}
-              </span>
+              <span className="text-[12px] font-semibold text-[#52525B]">inflixo.com/{previewHandle}</span>
               <span className="w-8" />
             </div>
-
             <div className="rounded-2xl bg-white p-2">
               <LivePreviewCard
                 profile={previewProfile}
@@ -717,7 +543,7 @@ export default function LandingHomePage() {
                 products={LANDING_DEMO_PRODUCTS}
                 setupItems={LANDING_DEMO_SETUP}
                 totalAudience={previewTotalFans}
-                themeKey={EXPERT_DEMO_THEME}
+                themeKey={LANDING_DEMO_THEME}
                 variant="full"
                 layoutMode="premium"
                 seriesOpenMode="internal"
@@ -725,393 +551,132 @@ export default function LandingHomePage() {
               />
             </div>
           </div>
-
           <div className="mt-8 flex justify-center">
             <Link href="/demo_creator" className={primaryBtn}>
-              View full demo profile →
+              Open the full demo <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── HOW IT WORKS SECTION (`#how-it-works`) ── */}
-      <section id="how-it-works" className="scroll-mt-24 border-t border-[#E4E4E7] bg-[#FFFCFB] py-16 sm:py-24">
-        <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-            <div>
-              <p className="text-[12px] font-bold uppercase tracking-wider text-[#7A2253]">Simple Process</p>
-              <h2 className="mt-2 text-[32px] sm:text-[48px] font-extrabold leading-tight tracking-tight text-[#18181B]">
-                Set up your creator home in 4 simple steps.
-              </h2>
-              <p className="mt-3 text-[16px] text-[#52525B]">
-                No re-uploading. No tech skills. Paste, arrange, share.
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {SERIES_STEPS.map((step) => (
-                <div
-                  key={step.step}
-                  className="rounded-2xl border border-[#E4E4E7] bg-white p-5 shadow-xs flex items-start gap-4"
-                >
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#F7EDEF] text-[16px] font-black text-[#7A2253]">
-                    {step.step}
-                  </div>
-                  <div className="min-w-0 space-y-1">
-                    <h3 className="text-[18px] font-bold text-[#18181B]">{step.title}</h3>
-                    <p className="text-[14px] text-[#52525B] leading-relaxed">{step.text}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── WHY INFLIXO (`#why-inflixo`) ── */}
-      <section id="why-inflixo" className="scroll-mt-24 border-t border-[#E4E4E7] bg-white py-16 sm:py-24">
+      {/* ── COMPARE: Inflixo vs other link tools ── */}
+      <section id="compare" className="scroll-mt-20 border-t border-[#E4E4E7] bg-[#FAFAFA] py-16 sm:py-24">
         <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
           <SectionHeading
-            eyebrow="Why Inflixo"
-            title="Other bio links show buttons. Inflixo shows your story."
+            eyebrow="Inflixo vs other link tools"
+            title="Other link tools show buttons. Inflixo shows your series."
+            sub="Everything a link-in-bio tool does, plus the one thing creators need most."
           />
-
-          <div className="mx-auto mt-12 max-w-4xl overflow-hidden rounded-2xl border border-[#E4E4E7] shadow-xs">
-            <div className="grid grid-cols-2">
-              <div className="bg-zinc-100 px-3 py-3 text-[12px] font-bold uppercase tracking-wider text-zinc-500 sm:px-6 sm:text-[13px]">
-                A regular link in bio
-              </div>
-              <div className="bg-[#7A2253] px-3 py-3 text-[12px] font-bold uppercase tracking-wider text-white sm:px-6 sm:text-[13px]">
-                Inflixo
-              </div>
+          <div className="mx-auto mt-12 max-w-4xl overflow-hidden rounded-2xl border border-[#E4E4E7] bg-white">
+            <div className="grid grid-cols-2 border-b border-[#E4E4E7] text-[12px] font-bold uppercase tracking-wider sm:text-[13px]">
+              <div className="bg-zinc-50 px-3 py-3 text-[#A1A1AA] sm:px-6">Other link tools</div>
+              <div className="px-3 py-3 text-[#18181B] sm:px-6">Inflixo</div>
             </div>
             {COMPARISON.map((row) => (
-              <div key={row.inflixo} className="grid grid-cols-2">
-                <div className="flex items-start gap-2 border-t border-[#E4E4E7] bg-zinc-50 px-3 py-4 text-[13px] leading-snug text-zinc-500 sm:px-6 sm:text-[14px]">
-                  <X className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
-                  <span>{row.regular}</span>
+              <div key={row.inflixo} className="grid grid-cols-2 border-b border-[#F4F4F5] last:border-b-0">
+                <div className="flex items-start gap-2 bg-zinc-50 px-3 py-4 text-[13px] leading-snug text-[#A1A1AA] sm:px-6 sm:text-[14px]">
+                  <X className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span>{row.other}</span>
                 </div>
-                <div className="flex items-start gap-2 border-t border-white/15 bg-[#7A2253] px-3 py-4 text-[13px] font-semibold leading-snug text-white sm:px-6 sm:text-[14px]">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-white" />
+                <div className="flex items-start gap-2 px-3 py-4 text-[13px] font-semibold leading-snug text-[#18181B] sm:px-6 sm:text-[14px]">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
                   <span>{row.inflixo}</span>
                 </div>
               </div>
             ))}
           </div>
-
-          <p className="mt-8 text-center text-[16px] sm:text-[18px] font-bold text-[#18181B]">
-            Your fans don&apos;t just want your links. They want your journey.
-          </p>
         </div>
       </section>
 
-      {/* ── CREATOR TOOLS / PILLARS (`#features`) ── */}
-      <section id="features" className="scroll-mt-24 border-t border-[#E4E4E7] bg-[#FFFCFB] py-16 sm:py-24">
+      {/* ── AND MORE ── */}
+      <section id="features" className="scroll-mt-20 border-t border-[#E4E4E7] bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-          <SectionHeading
-            eyebrow="Creator Tools"
-            title="Everything your fans and brands look for, in one place."
-            sub="Built around how Indian creators actually work: series, shows, collabs and a lot of DMs."
-          />
-
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {PILLARS.map((pillar) => (
-              <div
-                key={pillar.title}
-                className="rounded-2xl border border-[#E4E4E7] bg-white p-6 shadow-xs flex flex-col justify-between hover:border-[#7A2253] transition-colors"
-              >
-                <div>
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F7EDEF] text-[#7A2253]">
-                    <pillar.icon className="h-5 w-5" />
-                  </div>
-                  <h3 className="mt-4 text-[18px] font-bold text-[#18181B]">{pillar.title}</h3>
-                  <p className="mt-2 text-[14px] text-[#52525B] leading-relaxed">{pillar.text}</p>
-                </div>
+          <SectionHeading eyebrow="Aur bhi hai" title="Series first. Everything else, in the same link." />
+          <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-4">
+            {MORE_FEATURES.map((f) => (
+              <div key={f.label} className="flex items-center gap-2.5 rounded-xl border border-[#E4E4E7] bg-white px-3.5 py-3">
+                <f.icon className="h-4 w-4 shrink-0 text-[#52525B]" />
+                <span className="text-[13px] font-semibold text-[#18181B]">{f.label}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── FOR EVERY CREATOR (`#for-creators`) ── */}
-      <section id="for-creators" className="scroll-mt-24 border-t border-[#E4E4E7] bg-white py-16 sm:py-24">
-        <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-          <SectionHeading eyebrow="For Every Creator" title="Whether you have 1K fans or 1M." />
-
-          <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {/* Card A: Growing creators */}
-            <div className="rounded-2xl border border-[#E4E4E7] bg-white p-6 shadow-xs flex flex-col justify-between sm:p-8">
-              <div>
-                <span className="inline-flex rounded-full bg-[#F7EDEF] px-3 py-1 text-[12px] font-bold text-[#7A2253]">
-                  Growing creators (1K–50K)
-                </span>
-                <h3 className="mt-4 text-[24px] font-bold text-[#18181B]">Look like a pro before you&apos;re big.</h3>
-                <ul className="mt-6 space-y-2.5 text-[14px] text-zinc-700">
-                  {GROWING_BULLETS.map((item) => (
-                    <li key={item} className="flex items-start gap-2">
-                      <Check className="h-4 w-4 shrink-0 text-[#7A2253] mt-0.5" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <button
-                onClick={() => handleClaim(username)}
-                className={`${primaryBtn} mt-8 w-full cursor-pointer`}
-              >
-                Claim your link
-              </button>
-            </div>
-
-            {/* Card B: Established creators */}
-            <div className="rounded-2xl border border-[#E4E4E7] bg-white p-6 shadow-xs flex flex-col justify-between sm:p-8">
-              <div>
-                <span className="inline-flex rounded-full bg-[#F7EDEF] px-3 py-1 text-[12px] font-bold text-[#7A2253]">
-                  Established creators (100K+)
-                </span>
-                <h3 className="mt-4 text-[24px] font-bold text-[#18181B]">Run your creator business from one link.</h3>
-                <ul className="mt-6 space-y-2.5 text-[14px] text-zinc-700">
-                  {ESTABLISHED_BULLETS.map((item) => (
-                    <li key={item} className="flex items-start gap-2">
-                      <Check className="h-4 w-4 shrink-0 text-[#7A2253] mt-0.5" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <a href="#pricing" className={`${outlineBtn} mt-8`}>
-                See VIP plan
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── OUR STORY SECTION (`#our-story`) ── */}
-      <section id="our-story" className="scroll-mt-24 border-t border-[#E4E4E7] bg-[#FFFCFB] py-16 sm:py-24">
-        <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-          <div className="mx-auto max-w-[640px] text-left">
-            <p className="text-[12px] font-bold uppercase tracking-wider text-[#7A2253]">Our Story</p>
-            <h2 className="mt-2 text-[32px] sm:text-[44px] font-extrabold leading-tight tracking-tight text-[#18181B]">
-              Your fans want Part 2. They just can&apos;t find it.
-            </h2>
-
-            <p className="mt-6 text-[16px] leading-relaxed text-[#52525B]">
-              We spoke to creators across India: food vloggers, comedians, educators, travellers. Almost all of them said the same thing: a fan finds Part 3 in their feed, opens the profile to find Part 1… and can&apos;t. Five minutes later they&apos;re gone.
-            </p>
-
-            {/* Pull Quote */}
-            <div className="my-8 border-l-4 border-[#7A2253] bg-[#F7EDEF]/50 py-4 pl-5 pr-4 rounded-r-xl">
-              <p className="text-[20px] sm:text-[24px] font-extrabold text-[#7A2253] leading-snug tracking-tight">
-                &ldquo;Great content shouldn&apos;t get lost in the feed.&rdquo;
-              </p>
-            </div>
-
-            <p className="text-[16px] leading-relaxed text-[#52525B]">
-              So we built Inflixo: one link where your series play in order, like a show. When fans can easily binge your work, viewers become fans — and fans become your biggest supporters.
-            </p>
-
-            {/* Founder Avatar & Name */}
-            <div className="mt-8 pt-6 border-t border-[#E4E4E7] flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#7A2253] text-white font-bold text-sm shadow-xs select-none">
-                D
-              </div>
-              <div>
-                <p className="text-[15px] font-bold text-[#18181B] leading-tight">Devom</p>
-                <p className="text-[12px] font-medium text-[#71717A]">Founder, Inflixo</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FOUNDING CREATORS SECTION (`#founding`) ── */}
-      <section id="founding" className="scroll-mt-24 border-t border-[#E4E4E7] bg-white py-16 sm:py-24">
+      {/* ── PRICING ── */}
+      <section id="pricing" className="scroll-mt-20 border-t border-[#E4E4E7] bg-[#FAFAFA] py-16 sm:py-24">
         <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
           <SectionHeading
-            eyebrow="Founding Creators"
-            title="Be one of the first 1,000."
-            sub="Inflixo is new — and that's your advantage. Founding creators help shape the product and get recognised for it."
+            eyebrow="Pricing"
+            title="Less than a cup of chai a day."
+            sub={`${PLANS.trial.trialDays}-day free trial · No card needed · Cancel anytime`}
           />
-
           <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {FOUNDING_BENEFITS.map((benefit) => (
-              <div
-                key={benefit.title}
-                className="rounded-2xl border border-[#E4E4E7] bg-white p-6 shadow-xs flex flex-col justify-between hover:border-[#7A2253] transition-colors"
-              >
-                <div>
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F7EDEF] text-[#7A2253]">
-                    <benefit.icon className="h-5 w-5" />
-                  </div>
-                  <h3 className="mt-4 text-[18px] font-bold text-[#18181B]">{benefit.title}</h3>
-                  <p className="mt-2 text-[14px] text-[#52525B] leading-relaxed">{benefit.text}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-10 flex justify-center">
-            <button
-              onClick={() => handleClaim(username)}
-              className={`${primaryBtn} cursor-pointer`}
-            >
-              Become a Founding Creator
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ── WHAT CREATORS SAY (`#testimonials`) ── */}
-      {CREATOR_TESTIMONIALS.length > 0 && (
-        <section id="testimonials" className="scroll-mt-24 border-t border-[#E4E4E7] bg-white py-16 sm:py-24">
-          <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-            <SectionHeading
-              eyebrow="What Creators Say"
-              title="Loved by creators who build series."
-              sub="Here's what early creators have to say about Inflixo."
-            />
-
-            <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {CREATOR_TESTIMONIALS.map((t) => (
-                <div
-                  key={t.handle}
-                  className="rounded-2xl border border-[#E4E4E7] bg-white p-6 shadow-xs flex flex-col justify-between hover:border-[#7A2253] transition-colors"
-                >
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      {t.avatar ? (
-                        <Image
-                          src={t.avatar}
-                          alt={t.name}
-                          width={44}
-                          height={44}
-                          className="h-11 w-11 rounded-full object-cover border border-[#E4E4E7]"
-                        />
-                      ) : (
-                        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#7A2253] text-white font-bold text-sm select-none">
-                          {t.name.charAt(0)}
-                        </div>
-                      )}
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-[15px] font-bold text-[#18181B]">{t.name}</p>
-                        <p className="truncate text-[12px] text-[#71717A]">
-                          @{t.handle.replace(/^@/, "")} {t.niche ? `· ${t.niche}` : ""}
-                        </p>
-                      </div>
-                      {t.followers && (
-                        <span className="shrink-0 rounded-full bg-[#F7EDEF] px-2 py-0.5 text-[11px] font-bold text-[#7A2253]">
-                          {t.followers}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-[14px] leading-relaxed text-[#52525B] italic">
-                      &ldquo;{t.quote}&rdquo;
-                    </p>
-                  </div>
-                  {t.disclosure && (
-                    <p className="mt-4 pt-3 border-t border-[#E4E4E7] text-[11px] text-[#A1A1AA]">
-                      {t.disclosure}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── PRICING SECTION (`#pricing`) ── */}
-      <section id="pricing" className="scroll-mt-24 border-t border-[#E4E4E7] bg-[#FFFCFB] py-16 sm:py-24">
-        <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-          <div className="text-center max-w-xl mx-auto space-y-2">
-            <p className="text-[12px] font-bold uppercase tracking-wider text-[#7A2253]">Simple Pricing</p>
-            <h2 className="text-[32px] sm:text-[48px] font-extrabold leading-tight tracking-tight text-[#18181B]">
-              Pick a plan that grows with you.
-            </h2>
-            <p className="text-[16px] text-[#52525B]">
-              Plans designed for Indian creators, priced less than a cup of chai a day.
-            </p>
-            <div className="mx-auto mt-6 max-w-full rounded-full bg-[#7A2253]/10 border border-[#7A2253]/20 px-4 py-1.5 text-center text-[12px] font-bold text-[#7A2253]">
-              💡 {PLANS.trial.trialDays}-day free trial · No card needed · Cancel anytime
-            </div>
-          </div>
-
-          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {/* Plan 1: 7-Day Trial */}
-            <div className="rounded-2xl border border-[#E4E4E7] bg-white p-6 shadow-xs flex flex-col justify-between">
+            <div className="flex flex-col justify-between rounded-2xl border border-[#E4E4E7] bg-white p-6">
               <div>
-                <h3 className="text-[24px] font-bold text-[#18181B]">7-Day Trial</h3>
-                <p className="mt-1 text-[14px] text-[#52525B]">Set up your page and see how fans react before choosing a plan.</p>
-                <div className="mt-6 flex items-baseline gap-1">
-                  <span className="text-[48px] font-extrabold text-[#18181B]">{PLANS.trial.trialDays} days</span>
-                </div>
-                <p className="text-[12px] font-semibold text-[#7A2253]">Try Inflixo with your real profile</p>
+                <h3 className="text-[22px] font-bold text-[#18181B]">Free trial</h3>
+                <p className="mt-1 text-[14px] text-[#52525B]">Build your real page and see how fans react.</p>
+                <p className="mt-6 text-[44px] font-extrabold leading-none text-[#18181B]">{PLANS.trial.trialDays} days</p>
                 <ul className="mt-6 space-y-2.5 text-[14px] text-zinc-700">
                   {TRIAL_FEATURES.map((feat) => (
                     <li key={feat} className="flex items-start gap-2">
-                      <Check className="h-4 w-4 shrink-0 text-[#7A2253] mt-0.5" />
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#18181B]" />
                       <span>{feat}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-              <p className="mt-6 rounded-[5px] bg-[#FAF5F8] px-3 py-2 text-[12px] leading-[18px] text-[#52525B]">
-                No card needed. When the trial ends your page goes private, but nothing is deleted. Pick a plan anytime to go live again.
+              <p className="mt-6 rounded-lg bg-zinc-50 px-3 py-2 text-[12px] leading-[18px] text-[#52525B]">
+                When the trial ends your page goes private, but nothing is deleted. Pick a plan anytime to go live again.
               </p>
               <button onClick={() => handleClaim(username)} className={`${outlineBtn} mt-4`}>
-                Start {PLANS.trial.trialDays}-day trial
+                Start free trial
               </button>
             </div>
 
-            {/* Plan 2: Pro (Recommended) */}
-            <div className="relative rounded-2xl border-2 border-[#7A2253] bg-white p-6 shadow-sm flex flex-col justify-between">
-              <span className="absolute -top-3.5 right-6 rounded-full bg-[#7A2253] px-3 py-0.5 text-[12px] font-bold text-white uppercase tracking-wider">
+            <div className="relative flex flex-col justify-between rounded-2xl border-2 border-[#18181B] bg-white p-6">
+              <span className="absolute -top-3.5 right-6 rounded-full bg-[#18181B] px-3 py-0.5 text-[12px] font-bold uppercase tracking-wider text-white">
                 Popular
               </span>
               <div>
-                <h3 className="text-[24px] font-bold text-[#18181B]">Pro</h3>
-                <p className="mt-1 text-[14px] text-[#52525B]">For active creators publishing series and working with brands.</p>
+                <h3 className="text-[22px] font-bold text-[#18181B]">Pro</h3>
+                <p className="mt-1 text-[14px] text-[#52525B]">For creators publishing series and working with brands.</p>
                 <div className="mt-6 flex items-baseline gap-2">
-                  <span className="text-[48px] font-extrabold text-[#18181B]">
-                    {formatPlanPrice("pro", "monthly", pricingCurrency)}
-                  </span>
+                  <span className="text-[44px] font-extrabold leading-none text-[#18181B]">{formatPlanPrice("pro", "monthly", pricingCurrency)}</span>
                   <span className="text-[14px] text-[#52525B]">/ month</span>
                 </div>
-                <p className="text-[12px] font-semibold text-[#7A2253]">Or {formatPlanPrice("pro", "yearly", pricingCurrency)}/year (Save {yearlySavingsPercent("pro", pricingCurrency)}%)</p>
+                <p className="mt-1 text-[12px] font-semibold text-[#52525B]">
+                  Or {formatPlanPrice("pro", "yearly", pricingCurrency)}/year (save {yearlySavingsPercent("pro", pricingCurrency)}%)
+                </p>
                 <ul className="mt-6 space-y-2.5 text-[14px] text-zinc-700">
                   {PRO_FEATURES.map((feat) => (
                     <li key={feat} className="flex items-start gap-2">
-                      <Check className="h-4 w-4 shrink-0 text-[#7A2253] mt-0.5" />
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#18181B]" />
                       <span>{feat}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-              <button
-                onClick={() => handleClaim(username)}
-                className={`${primaryBtn} mt-8 w-full cursor-pointer`}
-              >
+              <button onClick={() => handleClaim(username)} className={`${primaryBtn} mt-8 w-full`}>
                 Claim your link
               </button>
             </div>
 
-            {/* Plan 3: VIP */}
-            <div className="rounded-2xl border border-[#E4E4E7] bg-white p-6 shadow-xs flex flex-col justify-between">
+            <div className="flex flex-col justify-between rounded-2xl border border-[#E4E4E7] bg-white p-6">
               <div>
-                <h3 className="text-[24px] font-bold text-[#18181B]">VIP</h3>
-                <p className="mt-1 text-[14px] text-[#52525B]">For top creators, touring artists and creator teams.</p>
+                <h3 className="text-[22px] font-bold text-[#18181B]">VIP</h3>
+                <p className="mt-1 text-[14px] text-[#52525B]">For top creators, touring artists and teams.</p>
                 <div className="mt-6 flex items-baseline gap-2">
-                  <span className="text-[48px] font-extrabold text-[#18181B]">
-                    {formatPlanPrice("vip", "monthly", pricingCurrency)}
-                  </span>
+                  <span className="text-[44px] font-extrabold leading-none text-[#18181B]">{formatPlanPrice("vip", "monthly", pricingCurrency)}</span>
                   <span className="text-[14px] text-[#52525B]">/ month</span>
                 </div>
-                <p className="text-[12px] font-semibold text-[#7A2253]">Or {formatPlanPrice("vip", "yearly", pricingCurrency)}/year (Save {yearlySavingsPercent("vip", pricingCurrency)}%)</p>
+                <p className="mt-1 text-[12px] font-semibold text-[#52525B]">
+                  Or {formatPlanPrice("vip", "yearly", pricingCurrency)}/year (save {yearlySavingsPercent("vip", pricingCurrency)}%)
+                </p>
                 <ul className="mt-6 space-y-2.5 text-[14px] text-zinc-700">
                   {VIP_FEATURES.map((feat) => (
                     <li key={feat} className="flex items-start gap-2">
-                      <Check className="h-4 w-4 shrink-0 text-[#7A2253] mt-0.5" />
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#18181B]" />
                       <span>{feat}</span>
                     </li>
                   ))}
@@ -1128,98 +693,54 @@ export default function LandingHomePage() {
         </div>
       </section>
 
-      {/* ── CREATOR SUMMIT 2027 VISION (`#summit`) ── */}
-      <section id="summit" className="scroll-mt-24 border-t border-[#E4E4E7] bg-[#7A2253] py-16 sm:py-24 text-white">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
-          <p className="text-[12px] font-bold uppercase tracking-wider text-white/70">Our Vision</p>
-          <h2 className="mt-2 text-[32px] sm:text-[48px] font-extrabold leading-tight tracking-tight text-white">
+      {/* ── MADE BY A CREATOR + SUMMIT ── */}
+      <section id="summit" className="scroll-mt-20 border-t border-[#E4E4E7] bg-white py-16 sm:py-24">
+        <div className="mx-auto max-w-2xl px-4 text-center sm:px-6">
+          <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#71717A]">Made in India 🇮🇳</p>
+          <h2 className="mt-3 text-[30px] font-extrabold leading-tight tracking-tight text-[#18181B] sm:text-[44px]">
             Made by a creator, for creators.
           </h2>
-          <p className="mt-4 text-[16px] leading-relaxed text-white/90">
-            Inflixo wasn&apos;t built in a boardroom. It was built by a creator who faced the same problems you do: scattered series, endless DMs, and no single place to show the work. It&apos;s our way of supporting the Indian creator industry, one creator at a time.
+          <p className="mt-4 text-[16px] leading-relaxed text-[#52525B]">
+            Inflixo was built by a creator who faced the same thing: great series, lost in the feed. Our goal is to help Indian creators grow, and to bring{" "}
+            <strong className="font-bold text-[#18181B]">10,000 creators together at the Inflixo Creator Summit 2027</strong>.
           </p>
-
-          <div className="mt-10 rounded-2xl border border-white/20 bg-white/10 p-6 text-left sm:p-8">
-            <h3 className="text-[24px] sm:text-[32px] font-extrabold tracking-tight text-white">
-              Inflixo Creator Summit 2027
-            </h3>
-            <p className="mt-3 text-[16px] leading-relaxed text-white/90">
-              Our dream: bring <strong className="font-bold text-white">10,000 Indian creators</strong> together in one place in 2027 to learn, collaborate and grow together. Every creator who builds their home on Inflixo is part of that journey.
-            </p>
-
-            {/* Road to 10,000 creators: static illustration, no live count */}
-            <div className="mt-6" role="img" aria-label="Road to 10,000 creators">
-              <div className="flex items-center justify-between text-[12px] font-bold uppercase tracking-wider text-white/70">
-                <span>Road to 10,000 creators</span>
-                <span>10,000</span>
-              </div>
-              <div className="mt-3 flex items-center gap-2">
-                <span className="h-3 w-3 shrink-0 rounded-full bg-white" />
-                <span className="h-0 flex-1 border-t-2 border-dashed border-white/40" />
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[#7A2253]">
-                  <Users className="h-4 w-4" />
-                </span>
-              </div>
-              <div className="mt-2 flex items-center justify-between text-[12px] text-white/70">
-                <span>Your first step</span>
-                <span>The vision</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <button
-              onClick={() => handleClaim(username)}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white px-6 text-[14px] font-bold text-[#7A2253] shadow-md hover:bg-zinc-50 transition-colors cursor-pointer"
-            >
-              Be part of the journey →
+          <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-5">
+            <button onClick={() => handleClaim(username)} className={primaryBtn}>
+              Join the journey <ArrowRight className="h-4 w-4" />
             </button>
             <a
               href="https://instagram.com/inflixo_app"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[14px] font-semibold text-white underline underline-offset-4 hover:no-underline"
+              className="text-[14px] font-semibold text-[#18181B] underline underline-offset-4 hover:no-underline"
             >
-              Follow updates on Instagram @inflixo_app
+              Follow @inflixo_app
             </a>
           </div>
         </div>
       </section>
 
-      {/* ── FAQ SECTION (`#faq`) ── */}
-      <section id="faq" className="scroll-mt-24 border-t border-[#E4E4E7] bg-white py-16 sm:py-24">
+      {/* ── FAQ ── */}
+      <section id="faq" className="scroll-mt-20 border-t border-[#E4E4E7] bg-[#FAFAFA] py-16 sm:py-24">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
-          <div className="text-center space-y-2">
-            <p className="text-[12px] font-bold uppercase tracking-wider text-[#7A2253]">FAQ</p>
-            <h2 className="text-[32px] sm:text-[48px] font-extrabold tracking-tight text-[#18181B]">
-              Frequently Asked Questions
-            </h2>
-          </div>
-
+          <SectionHeading eyebrow="FAQ" title="Questions creators ask." />
           <div className="mt-10 space-y-3">
             {FAQS.map((faq, index) => {
               const isOpen = openFaqIndex === index;
               return (
-                <div
-                  key={faq.q}
-                  className="rounded-2xl border border-[#E4E4E7] bg-white overflow-hidden transition-colors"
-                >
+                <div key={faq.q} className="overflow-hidden rounded-2xl border border-[#E4E4E7] bg-white">
                   <button
                     type="button"
                     onClick={() => setOpenFaqIndex(isOpen ? -1 : index)}
-                    className="flex w-full items-center justify-between gap-4 p-5 text-left cursor-pointer"
+                    className="flex w-full cursor-pointer items-center justify-between gap-4 p-5 text-left"
                     aria-expanded={isOpen}
                   >
                     <span className="text-[16px] font-bold text-[#18181B]">{faq.q}</span>
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#F7EDEF] text-[#7A2253]">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-[#18181B]">
                       {isOpen ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
                     </span>
                   </button>
-                  {isOpen && (
-                    <div className="px-5 pb-5 pt-0">
-                      <p className="text-[16px] leading-[1.6] text-[#52525B]">{faq.a}</p>
-                    </div>
-                  )}
+                  {isOpen && <p className="px-5 pb-5 text-[15px] leading-[1.6] text-[#52525B]">{faq.a}</p>}
                 </div>
               );
             })}
@@ -1227,111 +748,80 @@ export default function LandingHomePage() {
         </div>
       </section>
 
-      {/* ── FINAL CTA BANNER ── */}
-      <section className="bg-[#7A2253] py-16 sm:py-24 text-center text-white">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 space-y-6">
-          <h2 className="text-[32px] sm:text-[48px] font-extrabold tracking-tight text-white leading-tight">
-            Your journey deserves one home.
-          </h2>
-          <p className="text-[16px] text-white/90 max-w-xl mx-auto leading-relaxed">
-            Organise your series, show your total fanbase, share your tour &amp; collab links, and let fans see the creator behind the content. Claim your link in 2 minutes.
-          </p>
-          <div className="pt-2">
-            <button
-              onClick={() => handleClaim(username)}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white px-6 text-[14px] font-bold text-[#7A2253] shadow-md hover:bg-zinc-50 transition-colors cursor-pointer"
-            >
-              <span>Claim your link</span>
-              <ArrowRight className="h-4 w-4" />
-            </button>
-            <p className="mt-3 text-[12px] text-white/80">
-              Join the road to the Inflixo Creator Summit 2027 🇮🇳
-            </p>
-          </div>
+      {/* ── FINAL CTA ── */}
+      <section className="bg-[#18181B] py-16 text-center text-white sm:py-24">
+        <div className="mx-auto max-w-2xl space-y-5 px-4 sm:px-6">
+          <h2 className="text-[30px] font-extrabold leading-tight tracking-tight sm:text-[44px]">Let fans find Part 2.</h2>
+          <p className="text-[16px] leading-relaxed text-white/75">Put your series in order and share one link. It takes 2 minutes.</p>
+          <button
+            onClick={() => handleClaim(username)}
+            className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-white px-6 text-[14px] font-bold text-[#18181B] transition-colors hover:bg-zinc-100"
+          >
+            Claim your link <ArrowRight className="h-4 w-4" />
+          </button>
+          <p className="text-[12px] text-white/60">Free for {PLANS.trial.trialDays} days · No card needed</p>
         </div>
       </section>
 
       {/* ── FOOTER ── */}
       <footer ref={footerRef} className="border-t border-[#E4E4E7] bg-white py-14">
-        <div className="mx-auto max-w-[1120px] px-4 sm:px-6 space-y-10">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Left Column: Brand */}
-            <div className="md:col-span-1 space-y-3">
+        <div className="mx-auto max-w-[1120px] space-y-10 px-4 sm:px-6">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+            <div className="space-y-3">
               <Logo size="sm" />
-              <p className="text-[14px] text-[#52525B] leading-relaxed">
-                Made by a creator, for creators. Supporting India&apos;s creator industry.
-              </p>
-              <p className="text-[12px] font-semibold text-zinc-500">
-                Made in India 🇮🇳
-              </p>
+              <p className="text-[14px] leading-relaxed text-[#52525B]">Your series, like a show. One link in bio.</p>
+              <p className="text-[12px] font-semibold text-zinc-500">Made in India 🇮🇳</p>
             </div>
-
-            {/* Column 1: Product */}
             <div className="space-y-3">
               <p className="text-[12px] font-bold uppercase tracking-wider text-[#18181B]">Product</p>
               <ul className="space-y-2 text-[14px] text-[#52525B]">
-                <li><a href="#demo" className="hover:text-[#7A2253] transition-colors">View Demo</a></li>
-                <li><a href="#features" className="hover:text-[#7A2253] transition-colors">Creator Tools</a></li>
-                <li><a href="#pricing" className="hover:text-[#7A2253] transition-colors">Pricing</a></li>
-                <li><a href="#summit" className="hover:text-[#7A2253] transition-colors">Summit 2027</a></li>
-                <li><a href="#faq" className="hover:text-[#7A2253] transition-colors">FAQ</a></li>
+                <li><a href="#series" className="hover:text-[#18181B]">Series</a></li>
+                <li><a href="#demo" className="hover:text-[#18181B]">Live demo</a></li>
+                <li><a href="#compare" className="hover:text-[#18181B]">Compare</a></li>
+                <li><a href="#pricing" className="hover:text-[#18181B]">Pricing</a></li>
+                <li><a href="#summit" className="hover:text-[#18181B]">Summit 2027</a></li>
+                <li><a href="#faq" className="hover:text-[#18181B]">FAQ</a></li>
               </ul>
             </div>
-
-            {/* Column 2: Company */}
             <div className="space-y-3">
               <p className="text-[12px] font-bold uppercase tracking-wider text-[#18181B]">Company</p>
               <ul className="space-y-2 text-[14px] text-[#52525B]">
-                <li><a href="mailto:support@inflixo.com?subject=Inflixo%20Support" className="hover:text-[#7A2253] transition-colors">Contact Support</a></li>
+                <li><a href="mailto:support@inflixo.com?subject=Inflixo%20Support" className="hover:text-[#18181B]">Contact Support</a></li>
                 <li>
-                  <a
-                    href="https://instagram.com/inflixo_app"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-[#7A2253] transition-colors"
-                  >
+                  <a href="https://instagram.com/inflixo_app" target="_blank" rel="noopener noreferrer" className="hover:text-[#18181B]">
                     Instagram (@inflixo_app)
                   </a>
                 </li>
               </ul>
             </div>
-
-            {/* Column 3: Legal */}
             <div className="space-y-3">
               <p className="text-[12px] font-bold uppercase tracking-wider text-[#18181B]">Legal</p>
               <ul className="space-y-2 text-[14px] text-[#52525B]">
-                <li><Link href="/privacy" className="hover:text-[#7A2253] transition-colors">Privacy Policy</Link></li>
-                <li><Link href="/terms" className="hover:text-[#7A2253] transition-colors">Terms of Service</Link></li>
-                <li><Link href="/creator-terms" className="hover:text-[#7A2253] transition-colors">Creator Terms &amp; Conditions</Link></li>
-                <li><Link href="/cookies" className="hover:text-[#7A2253] transition-colors">Cookie Policy</Link></li>
+                <li><Link href="/privacy" className="hover:text-[#18181B]">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="hover:text-[#18181B]">Terms of Service</Link></li>
+                <li><Link href="/creator-terms" className="hover:text-[#18181B]">Creator Terms &amp; Conditions</Link></li>
+                <li><Link href="/cookies" className="hover:text-[#18181B]">Cookie Policy</Link></li>
               </ul>
             </div>
           </div>
-
-          {/* Bottom Row */}
-          <div className="pt-8 border-t border-[#E4E4E7] flex flex-col sm:flex-row items-center justify-between gap-3 text-[12px] text-[#52525B]">
+          <div className="flex flex-col items-center justify-between gap-3 border-t border-[#E4E4E7] pt-8 text-[12px] text-[#52525B] sm:flex-row">
             <p>© 2026 Inflixo. All rights reserved.</p>
-            <div>
-              <Link href="/login" className="hover:text-[#7A2253] underline font-medium">
-                Log in to Dashboard
-              </Link>
-            </div>
+            <Link href="/login" className="font-medium underline hover:text-[#18181B]">
+              Log in to Dashboard
+            </Link>
           </div>
         </div>
       </footer>
 
-      {/* ── FLOATING BACK TO TOP BUTTON ── */}
       {showScrollTop && !footerInView && (
-        <div className="fixed bottom-6 right-6 z-40 transition-all duration-300">
-          <button
-            type="button"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E4E4E7] bg-white text-[#7A2253] shadow-md hover:bg-zinc-50 cursor-pointer"
-            aria-label="Back to top"
-          >
-            <ArrowUp className="h-5 w-5" />
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="fixed bottom-6 right-6 z-40 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-[#E4E4E7] bg-white text-[#18181B] shadow-md hover:bg-zinc-50"
+          aria-label="Back to top"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </button>
       )}
     </div>
   );
