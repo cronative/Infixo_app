@@ -91,7 +91,7 @@ export function LanguageSelect({
 
       {/* Searchable Dropdown Popover */}
       {isOpen && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-1.5 max-h-72 w-full overflow-hidden rounded-[5px] border border-[#ECECF0] bg-white p-2 shadow-xl ring-1 ring-black/5 animate-in fade-in-50 slide-in-from-top-2">
+        <div className="absolute left-0 right-0 top-full z-50 mt-1.5 max-h-72 w-full overflow-hidden rounded-[5px] border border-[#ECECF0] bg-white p-2 shadow-lg ring-1 ring-black/5 animate-in fade-in-50 slide-in-from-top-2">
           {/* Search Box */}
           <div className="mb-2 px-1">
             <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">

@@ -292,7 +292,7 @@ function Section<T>({
           <button
             type="button"
             onClick={onCopyLink}
-            className="inline-flex h-7 shrink-0 items-center gap-1 rounded-[5px] border border-[#E4E4E7] bg-white px-2 text-[12px] font-medium text-[#18181B] hover:border-[#C21B5C] hover:text-[#C21B5C] cursor-pointer"
+            className="inline-flex h-7 shrink-0 items-center gap-1 rounded-[5px] border border-[#ECECF0] bg-white px-2 text-[12px] font-medium text-[#18181B] hover:border-[#C21B5C] hover:text-[#C21B5C] cursor-pointer"
           >
             <Copy className="h-3 w-3" />
             Copy link

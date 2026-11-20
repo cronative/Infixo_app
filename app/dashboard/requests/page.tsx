@@ -10,6 +10,7 @@ import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 import { getInitials } from "@/lib/avatar";
 
 const STATUS_CONFIG: Record<CollaborationStatus, { label: string; bg: string; text: string; border: string }> = {
@@ -161,8 +162,7 @@ export default function DashboardRequestsPage() {
   return (
     <PageContainer>
       <PageHeader
-        title="Collaboration Inquiries"
-        subtitle='Incoming brand enquiries, partnership briefs, and messages received via your "Work With Me" profile form.'
+        {...PAGE_COPY.requests}
         meta={unreadCount > 0 ? `${unreadCount} new` : undefined}
       />
 
@@ -374,7 +374,7 @@ export default function DashboardRequestsPage() {
               <div className="flex items-center gap-2">
                 <a
                   href={`mailto:${selectedRequest.email}?subject=Collaboration with ${encodeURIComponent(profile.displayName || "Inflixo Creator")}`}
-                  className="tap-scale bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs h-9 px-3.5 rounded-[5px] transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#C21B5C]/20 inline-flex items-center gap-1.5"
+                  className="tap-scale bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs h-9 px-3.5 rounded-[5px] transition-all hover:-translate-y-0.5 cursor-pointer inline-flex items-center gap-1.5"
                 >
                   <Mail className="h-3.5 w-3.5" />
                   <span>Reply via Email</span>

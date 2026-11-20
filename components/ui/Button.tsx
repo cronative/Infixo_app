@@ -16,13 +16,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-[#C21B5C] hover:bg-[#A3164E] text-white shadow-md shadow-[#C21B5C]/25 transition-all active:scale-[0.99] disabled:translate-y-0 disabled:opacity-40 disabled:bg-[#C21B5C] disabled:text-white disabled:cursor-not-allowed disabled:shadow-none",
+    "bg-[#C21B5C] hover:bg-[#A3164E] text-white transition-all active:scale-[0.99] disabled:opacity-40 disabled:bg-[#C21B5C] disabled:text-white disabled:cursor-not-allowed",
   secondary:
-    "bg-white text-[#18181B] border border-[#E4E4E7] shadow-xs hover:bg-[#FFF6F2] hover:border-[#C21B5C] hover:text-[#C21B5C] hover:shadow-sm disabled:opacity-40 disabled:bg-[#C21B5C] disabled:text-white disabled:cursor-not-allowed disabled:shadow-none",
+    "bg-white text-[#18181B] border border-[#ECECF0] hover:bg-[#FFF6F2] hover:border-[#C21B5C] hover:text-[#C21B5C] disabled:opacity-40 disabled:cursor-not-allowed",
   outline:
-    "bg-transparent text-[#C21B5C] border border-[#E4E4E7] hover:bg-[#FFF6F2] hover:border-[#C21B5C] disabled:opacity-40 disabled:cursor-not-allowed",
-  ghost: "bg-transparent text-[#52525B] hover:text-[#C21B5C] hover:bg-[#FFF6F2] disabled:opacity-40 disabled:cursor-not-allowed",
-  danger: "bg-rose-50 text-[#ef4444] border border-rose-200 hover:-translate-y-0.5 hover:bg-rose-100 disabled:opacity-40 disabled:cursor-not-allowed",
+    "bg-transparent text-[#C21B5C] border border-[#ECECF0] hover:bg-[#FFF6F2] hover:border-[#C21B5C] disabled:opacity-40 disabled:cursor-not-allowed",
+  ghost: "bg-transparent text-[#6B6B76] hover:text-[#C21B5C] hover:bg-[#FFF6F2] disabled:opacity-40 disabled:cursor-not-allowed",
+  danger: "bg-white text-[#DC2626] border border-[#FECACA] hover:bg-[#FEF2F2] disabled:opacity-40 disabled:cursor-not-allowed",
 };
 
 const sizeClasses: Record<Size, string> = {

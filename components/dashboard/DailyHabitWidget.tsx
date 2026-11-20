@@ -182,7 +182,7 @@ export function DailyHabitWidget({ profile }: DailyHabitWidgetProps) {
 
         {/* Streak Counter */}
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-[5px] bg-[#C21B5C] text-white shadow-md animate-pulse shrink-0">
+          <div className="flex h-12 w-12 items-center justify-center rounded-[5px] bg-[#C21B5C] text-white animate-pulse shrink-0">
             <Flame className="h-6 w-6 fill-white" />
           </div>
           <div>

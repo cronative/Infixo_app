@@ -649,7 +649,7 @@ export default function MySeriesPage() {
             <button
               type="button"
               onClick={handleOpenCreateSeries}
-              className="inline-flex h-10 items-center gap-2 rounded-[5px] bg-[#C21B5C] px-5 text-xs font-semibold text-white shadow-md shadow-[#C21B5C]/20 hover:bg-[#A3164E] transition-colors cursor-pointer"
+              className="inline-flex h-10 items-center gap-2 rounded-[5px] bg-[#C21B5C] px-5 text-xs font-semibold text-white hover:bg-[#A3164E] transition-colors cursor-pointer"
             >
               <Plus className="h-4 w-4" />
               <span>Create Series</span>

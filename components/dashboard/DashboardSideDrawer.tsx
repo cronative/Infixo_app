@@ -235,7 +235,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
       />
 
       {/* Drawer Canvas: Compact 240px style */}
-      <aside className="relative flex h-full w-[260px] max-w-[85vw] flex-col bg-white shadow-2xl z-10 p-3 select-none">
+      <aside className="relative flex h-full w-[260px] max-w-[85vw] flex-col bg-white shadow-lg z-10 p-3 select-none">
         {/* Header: Logo wordmark (h-28px) & Close Button */}
         <div className="flex items-center justify-between px-2 pb-2.5 pt-[calc(env(safe-area-inset-top)+0.5rem)]">
           <Link
@@ -274,7 +274,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
               <CreatorAvatar
                 src={profile.photoDataUrl}
                 name={displayName}
-                className="h-8 w-8 rounded-full border border-[#E4E4E7] object-cover"
+                className="h-8 w-8 rounded-full border border-[#ECECF0] object-cover"
               />
             ) : (
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#C21B5C] text-white font-bold text-xs shrink-0 select-none">
@@ -360,7 +360,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
         </nav>
 
         {/* Bottom Area: Sticky */}
-        <div className="shrink-0 pt-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] border-t border-[#E4E4E7] space-y-1 mt-1">
+        <div className="shrink-0 pt-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] border-t border-[#ECECF0] space-y-1 mt-1">
           {BOTTOM_NAV_ITEMS.map((item) => {
             const active = isNavActive(pathname, item.href);
             const Icon = item.icon;

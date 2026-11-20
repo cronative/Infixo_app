@@ -31,7 +31,7 @@ export function QRCodeWidget({ username, className = "" }: QRCodeWidgetProps) {
 
   return (
     <div
-      className={`rounded-3xl border border-white/20 bg-zinc-950/80 backdrop-blur-xl p-5 text-white shadow-2xl transition-all hover:border-brand-border ${className}`}
+      className={`rounded-[5px] border border-white/20 bg-zinc-950/80 backdrop-blur-xl p-5 text-white shadow-2xl transition-all hover:border-brand-border ${className}`}
     >
       <div className="flex flex-col items-center text-center space-y-3.5">
         {/* Header Badge */}
@@ -41,12 +41,12 @@ export function QRCodeWidget({ username, className = "" }: QRCodeWidgetProps) {
         </div>
 
         {/* Working Scannable QR Code Image */}
-        <div className="relative p-2.5 bg-white rounded-2xl shadow-lg ring-4 ring-white/10 group transition-all hover:scale-105">
+        <div className="relative p-2.5 bg-white rounded-[5px] shadow-lg ring-4 ring-white/10 group transition-all hover:scale-105">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={qrImageUrl}
             alt={`QR Code for ${cleanUsername}`}
-            className="h-36 w-36 object-contain rounded-lg"
+            className="h-36 w-36 object-contain rounded-[5px]"
           />
         </div>
 
@@ -65,7 +65,7 @@ export function QRCodeWidget({ username, className = "" }: QRCodeWidgetProps) {
           <button
             type="button"
             onClick={handleCopy}
-            className="tap-scale flex w-full items-center justify-center gap-1.5 rounded-2xl bg-white/15 hover:bg-[#F4F4F5] py-2.5 text-xs font-extrabold text-white border border-white/20 transition-all shadow-xs"
+            className="tap-scale flex w-full items-center justify-center gap-1.5 rounded-[5px] bg-white/15 hover:bg-[#F4F4F5] py-2.5 text-xs font-extrabold text-white border border-white/20 transition-all shadow-xs"
           >
             {copied ? (
               <>

@@ -36,8 +36,8 @@ export function PhotoUpload({
         className={`group relative flex shrink-0 items-center justify-center overflow-hidden border border-[#ECECF0] bg-[#FAFAFB] shadow-xs transition-colors hover:border-[#C21B5C] ${shape === "circle"
           ? "rounded-full aspect-square overflow-hidden shrink-0"
           : shape === "landscape"
-            ? "aspect-video w-44 rounded-xl"
-            : "rounded-2xl overflow-hidden"
+            ? "aspect-video w-44 rounded-[5px]"
+            : "rounded-[5px] overflow-hidden"
           } ${className}`}
         style={!isLandscape ? { width: size, height: size } : undefined}
       >
@@ -49,8 +49,8 @@ export function PhotoUpload({
             className={`w-full h-full object-cover overflow-hidden ${shape === "circle"
               ? "aspect-square rounded-full"
               : shape === "landscape"
-                ? "aspect-video rounded-xl"
-                : "rounded-2xl"
+                ? "aspect-video rounded-[5px]"
+                : "rounded-[5px]"
               }`}
           />
         ) : (

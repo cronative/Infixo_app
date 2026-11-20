@@ -74,10 +74,10 @@ export function ConfirmModal({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className={`h-10 font-semibold text-xs px-5 rounded-[5px] transition-all cursor-pointer shadow-md inline-flex items-center gap-1.5 disabled:opacity-50 text-white ${
+          className={`h-10 font-semibold text-xs px-5 rounded-[5px] transition-all cursor-pointer inline-flex items-center gap-1.5 disabled:opacity-50 text-white ${
             isDestructive
-              ? "bg-rose-600 hover:bg-rose-700 shadow-rose-600/20"
-              : "bg-[#C21B5C] hover:opacity-95 shadow-[#C21B5C]/20"
+              ? "bg-[#DC2626] hover:bg-[#B91C1C]"
+              : "bg-[#C21B5C] hover:bg-[#A3164E]"
           }`}
         >
           {loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}

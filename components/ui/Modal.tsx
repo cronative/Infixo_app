@@ -26,6 +26,20 @@ export interface ModalProps {
   wrapHeader?: boolean;
 }
 
+// Last element focused outside any open dialog, so focus can return to the
+// opener on close (autoFocus inside the dialog runs before our effect does).
+let lastFocusOutsideDialog: HTMLElement | null = null;
+if (typeof document !== "undefined") {
+  document.addEventListener(
+    "focusin",
+    (e) => {
+      const t = e.target as HTMLElement | null;
+      if (t && !t.closest?.('[aria-modal="true"]')) lastFocusOutsideDialog = t;
+    },
+    true
+  );
+}
+
 const SIZE_CLASSES: Record<ModalSize, string> = {
   sm: "max-w-md", // ~448px (Confirmations, Alerts)
   md: "max-w-xl", // ~576px (Standard Forms, Settings)
@@ -52,6 +66,10 @@ export function Modal({
   wrapHeader = false,
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   // Background Scroll Lock & Escape Key Handler
   useEffect(() => {
@@ -61,21 +79,55 @@ export function Modal({
     const scrollY = window.scrollY;
     document.body.style.overflow = "hidden";
 
+    // Move focus into the dialog (unless a child already took it via autoFocus)
+    // and give it back to whatever opened the dialog when it closes.
+    const opener = lastFocusOutsideDialog;
+    const focusTimer = window.setTimeout(() => {
+      const box = modalRef.current;
+      if (box && !box.contains(document.activeElement)) box.focus({ preventScroll: true });
+    }, 0);
+
+    const FOCUSABLE =
+      'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (closeOnEscape && e.key === "Escape") {
         e.stopPropagation();
-        onClose();
+        onCloseRef.current();
+        return;
+      }
+      // Keep Tab / Shift+Tab inside the dialog.
+      if (e.key === "Tab" && modalRef.current) {
+        const items = Array.from(modalRef.current.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+          (el) => el.offsetParent !== null
+        );
+        if (items.length === 0) {
+          e.preventDefault();
+          return;
+        }
+        const first = items[0];
+        const last = items[items.length - 1];
+        const active = document.activeElement;
+        if (e.shiftKey && (active === first || active === modalRef.current)) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
+      window.clearTimeout(focusTimer);
       document.body.style.overflow = originalOverflow;
       window.removeEventListener("keydown", handleKeyDown);
       window.scrollTo(0, scrollY);
+      if (opener && document.contains(opener)) opener.focus({ preventScroll: true });
     };
-  }, [isOpen, closeOnEscape, onClose]);
+  }, [isOpen, closeOnEscape]);
 
   if (!isOpen || typeof document === "undefined") return null;
 
@@ -95,8 +147,9 @@ export function Modal({
     >
       <div
         ref={modalRef}
+        tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-full ${SIZE_CLASSES[size]} max-h-[92dvh] sm:max-h-[calc(100dvh-48px)] bg-white rounded-[5px] border border-[#ECECF0] shadow-2xl flex flex-col overflow-hidden text-left pb-[env(safe-area-inset-bottom)] sm:pb-0 animate-sheet-in ${className}`}
+        className={`relative outline-none w-full ${SIZE_CLASSES[size]} max-h-[92dvh] sm:max-h-[calc(100dvh-48px)] bg-white rounded-[5px] border border-[#ECECF0] shadow-lg flex flex-col overflow-hidden text-left pb-[env(safe-area-inset-bottom)] sm:pb-0 animate-sheet-in ${className}`}
       >
         {/* Grab handle — mobile bottom-sheet affordance */}
         <div className="flex justify-center pt-2 sm:hidden" aria-hidden="true">

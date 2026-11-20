@@ -271,7 +271,7 @@ export default function DashboardSettingsPage() {
       {/* ── Edit Email Modal ── */}
       {showEditEmailModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md rounded-[5px] border border-[#ECECF0] bg-white p-5 sm:p-6 shadow-xl space-y-4 text-left">
+          <div className="relative w-full max-w-md rounded-[5px] border border-[#ECECF0] bg-white p-5 sm:p-6 shadow-lg space-y-4 text-left">
             <div className="flex items-center justify-between">
               <h3 className="text-[16px] font-semibold text-[#18181B]">
                 Update Email Address
@@ -329,7 +329,7 @@ export default function DashboardSettingsPage() {
       {/* ── Confirm Delete Account Modal ── */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md rounded-[5px] border border-[#ECECF0] bg-white p-5 sm:p-6 shadow-xl space-y-4 text-left">
+          <div className="relative w-full max-w-md rounded-[5px] border border-[#ECECF0] bg-white p-5 sm:p-6 shadow-lg space-y-4 text-left">
             {/* Header */}
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-2.5">

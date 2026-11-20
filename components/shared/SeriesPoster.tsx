@@ -17,7 +17,7 @@ interface SeriesPosterProps {
 export function SeriesPoster({
   src,
   title = "Series",
-  className = "h-32 w-full rounded-2xl",
+  className = "h-32 w-full rounded-[5px]",
   textClassName = "text-xs font-bold text-white",
   fallbackBgClass = "bg-gradient-to-br from-(--cover-from) to-(--cover-to) border border-(--accent)/40",
   iconSize = 20,

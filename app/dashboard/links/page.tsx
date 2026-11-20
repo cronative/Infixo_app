@@ -596,7 +596,7 @@ export default function DashboardLinksPage() {
         onClose={() => { if (!saving) setOpen(false); }}
         size="lg"
         showCloseButton={false}
-        className="rounded-[5px] border border-zinc-200 shadow-2xl overflow-hidden max-w-2xl"
+        className="rounded-[5px] border border-zinc-200 shadow-lg overflow-hidden max-w-2xl"
       >
         <div className="relative border-b border-zinc-100 bg-white px-5 sm:px-6 pt-5 pb-4">
           <div className="flex items-start justify-between gap-3">

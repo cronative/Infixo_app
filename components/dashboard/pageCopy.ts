@@ -1,4 +1,7 @@
-/** Static header copy for every /dashboard page: title, one-line subtitle and "How it works" bullets. */
+/**
+ * Static header copy for every /dashboard page: title, one-line subtitle and
+ * "How it works" bullets. Copy only — route names and DB fields stay as they are.
+ */
 export interface PageCopy {
   title: string;
   subtitle: string;
@@ -7,8 +10,8 @@ export interface PageCopy {
 
 export const PAGE_COPY = {
   dashboard: {
-    title: "Dashboard",
-    subtitle: "Your creator world at a glance.",
+    title: "Your Creator Space",
+    subtitle: "Your series, links and shop — all in one place.",
     help: [
       "See this week's profile opens and clicks.",
       "Your top series, products and links show here.",
@@ -16,8 +19,8 @@ export const PAGE_COPY = {
     ],
   },
   series: {
-    title: "Series",
-    subtitle: "Turn your videos into shows fans can binge in order.",
+    title: "My Series",
+    subtitle: "Keep your videos together in one place.",
     help: [
       "Pick a platform and paste your video links as episodes.",
       "Fans watch Part 1, 2, 3 in the right order on your profile.",
@@ -25,7 +28,7 @@ export const PAGE_COPY = {
     ],
   },
   shop: {
-    title: "Shop",
+    title: "My Shop",
     subtitle: "Products you use, love or promote.",
     help: [
       "Paste a product or affiliate link; we fill in the details.",
@@ -34,8 +37,8 @@ export const PAGE_COPY = {
     ],
   },
   links: {
-    title: "Links",
-    subtitle: "Everything your fans should find — tickets, accounts, websites.",
+    title: "My Links",
+    subtitle: "Everything fans should find — websites, tickets, accounts.",
     help: [
       "Add a single link or group related links together.",
       "Pin one link to keep it at the top.",
@@ -43,8 +46,8 @@ export const PAGE_COPY = {
     ],
   },
   socials: {
-    title: "Your Fans",
-    subtitle: "Every follower is someone who chose your content. Let's count them all ❤️",
+    title: "My Socials",
+    subtitle: "Add your accounts so fans can follow you everywhere.",
     help: [
       "Add your Instagram, YouTube and Facebook usernames.",
       "We read only public follower counts — no login, no password.",
@@ -52,8 +55,8 @@ export const PAGE_COPY = {
     ],
   },
   reviews: {
-    title: "Brand Reviews",
-    subtitle: "Show brands what it's like to work with you.",
+    title: "My Reviews",
+    subtitle: "What brands say about working with you.",
     help: [
       "Send a review request link to a brand you've worked with.",
       "You approve each review before it shows on your profile.",
@@ -61,7 +64,7 @@ export const PAGE_COPY = {
     ],
   },
   analytics: {
-    title: "Analytics",
+    title: "My Analytics",
     subtitle: "What fans open and click on your profile.",
     help: [
       "Counts for the last 7 or 30 days.",
@@ -70,7 +73,7 @@ export const PAGE_COPY = {
     ],
   },
   mediakit: {
-    title: "Media Kit",
+    title: "My Media Kit",
     subtitle: "Your collab packages and rates for brands.",
     help: [
       "Create packages like a Brand Reel or a Cafe Visit.",
@@ -79,7 +82,7 @@ export const PAGE_COPY = {
     ],
   },
   team: {
-    title: "Team",
+    title: "My Team",
     subtitle: "The people who help you create.",
     help: [
       "Add your editor, shooter or manager with their role.",
@@ -97,8 +100,8 @@ export const PAGE_COPY = {
     ],
   },
   profile: {
-    title: "Profile",
-    subtitle: "Your name, link and story — how fans and brands know you.",
+    title: "My Profile",
+    subtitle: "Your name, photo and story — how fans and brands know you.",
     help: [
       "Pick up to 3 niches so the right people find you.",
       "Write a short bio in your own voice.",
@@ -106,10 +109,10 @@ export const PAGE_COPY = {
     ],
   },
   themes: {
-    title: "Themes & Preview",
-    subtitle: "Pick a look and see your full public profile live.",
+    title: "My Theme",
+    subtitle: "Pick a look and see your public page live.",
     help: [
-      "The preview on the right is your live public page.",
+      "The preview is your live public page.",
       "Tap a theme to try it there; press \"Apply theme\" to make it live.",
       "Your content stays the same; only the look changes.",
     ],
@@ -124,8 +127,8 @@ export const PAGE_COPY = {
     ],
   },
   creatorCard: {
-    title: "Creator Card",
-    subtitle: "Share your Creator Journey on Stories, Status and posts.",
+    title: "My Creator Card",
+    subtitle: "Share your creator journey on Stories, Status and posts.",
     help: [
       "Choose a layout, colours and a tagline.",
       "Download or share it to your story.",
@@ -133,8 +136,8 @@ export const PAGE_COPY = {
     ],
   },
   plan: {
-    title: "Plan",
-    subtitle: "Your plan, billing and usage.",
+    title: "My Plan",
+    subtitle: "What's included, what you've used and billing.",
     help: [
       "See what's included and what you've used.",
       "Upgrade any time; nothing is deleted if you switch.",
@@ -143,10 +146,25 @@ export const PAGE_COPY = {
   },
   settings: {
     title: "Settings",
-    subtitle: "Your account and privacy.",
+    subtitle: "Your account, privacy and login.",
     help: [
       "Manage your email and search visibility.",
       "Deleting your account can't be undone.",
     ],
+  },
+  brands: {
+    title: "My Brands",
+    subtitle: "The businesses, products and channels you're building.",
+    help: [],
+  },
+  collaborations: {
+    title: "Brand Collaborations",
+    subtitle: "Brands you've worked with, shown on your profile.",
+    help: [],
+  },
+  requests: {
+    title: "Brand Requests",
+    subtitle: "Messages brands sent you from your profile.",
+    help: [],
   },
 } satisfies Record<string, PageCopy>;

@@ -46,12 +46,12 @@ export const Chip = forwardRef<HTMLDivElement, ChipProps>(
         break;
       case "pill":
         variantClass =
-          "bg-zinc-100 text-[#52525B] text-xs font-semibold border border-[#E4E4E7]";
+          "bg-zinc-100 text-[#52525B] text-xs font-semibold border border-[#ECECF0]";
         break;
       case "filter":
         variantClass = selected
           ? "bg-[#C21B5C] text-white border-[#C21B5C] shadow-xs cursor-pointer"
-          : "bg-white text-[#52525B] border-[#E4E4E7] hover:border-[#C21B5C] hover:text-[#C21B5C] cursor-pointer";
+          : "bg-white text-[#52525B] border-[#ECECF0] hover:border-[#C21B5C] hover:text-[#C21B5C] cursor-pointer";
         break;
       case "brand":
         variantClass = "bg-[#C21B5C] text-white shadow-xs";
@@ -61,11 +61,11 @@ export const Chip = forwardRef<HTMLDivElement, ChipProps>(
         break;
       case "outline":
         variantClass =
-          "bg-transparent text-[#52525B] border border-[#E4E4E7] hover:border-[#C21B5C] hover:text-[#C21B5C]";
+          "bg-transparent text-[#52525B] border border-[#ECECF0] hover:border-[#C21B5C] hover:text-[#C21B5C]";
         break;
       case "neutral":
       default:
-        variantClass = "bg-zinc-100 text-[#52525B] border border-[#E4E4E7]";
+        variantClass = "bg-zinc-100 text-[#52525B] border border-[#ECECF0]";
         break;
     }
 

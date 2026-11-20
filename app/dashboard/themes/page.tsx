@@ -94,7 +94,7 @@ function ProfilePreview({
   return (
     <div
       style={{ ...themeTokenStyle(themeKey), background: "var(--page-bg)", transform: "translateZ(0)" }}
-      className={`relative min-h-0 overflow-hidden rounded-[5px] border border-[#E4E4E7] transition-colors duration-300 ${className}`}
+      className={`relative min-h-0 overflow-hidden rounded-[5px] border border-[#ECECF0] transition-colors duration-300 ${className}`}
     >
       {/* translateZ(0) makes this box the containing block, so the profile's fixed elements stay inside it. */}
       <div

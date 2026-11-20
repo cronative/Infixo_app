@@ -140,7 +140,7 @@ export function GenreMultiSelect({
 
       {/* Main Container with Sticky Search Bar and Scrollable Groups */}
       <div
-        className={`rounded-[6px] border ${
+        className={`rounded-[5px] border ${
           error ? "border-rose-400 bg-rose-50/10" : "border-[#ECECF0]"
         } bg-white overflow-hidden shadow-2xs`}
       >

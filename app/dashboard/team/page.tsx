@@ -443,7 +443,7 @@ export default function DashboardTeamPage() {
             <button
               type="button"
               onClick={handleOpenTeamModal}
-              className="inline-flex items-center gap-2 rounded-[5px] bg-[#C21B5C] h-9 px-4 text-xs font-semibold text-white shadow-md shadow-[#C21B5C]/20 transition-all hover:bg-[#A3164E] cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-[5px] bg-[#C21B5C] h-9 px-4 text-xs font-semibold text-white transition-all hover:bg-[#A3164E] cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Create Your Team</span>
@@ -840,7 +840,7 @@ export default function DashboardTeamPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="h-10 px-5 rounded-[5px] bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#C21B5C]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="h-10 px-5 rounded-[5px] bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <span>{isSubmitting ? "Saving..." : team ? "Save changes" : "+ Create team"}</span>
             </button>
@@ -1091,7 +1091,7 @@ export default function DashboardTeamPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="h-10 px-5 rounded-[5px] bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#C21B5C]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="h-10 px-5 rounded-[5px] bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <UserPlus className="h-4 w-4" />
               <span>{isSubmitting ? "Saving..." : editingMember ? "Save changes" : "Add member"}</span>

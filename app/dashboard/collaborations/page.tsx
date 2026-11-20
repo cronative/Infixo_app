@@ -14,6 +14,7 @@ import { collaborationsRepository } from "@/repositories/localRepository";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 
 export default function DashboardCollaborationsPage() {
   const { profile } = useCreator();
@@ -186,8 +187,7 @@ export default function DashboardCollaborationsPage() {
   return (
     <PageContainer>
       <PageHeader
-        title="Selected Collaborations"
-        subtitle="Showcase the brands, sponsor campaigns, and commercial partnerships you have worked with."
+        {...PAGE_COPY.collaborations}
         actions={
           collaborations.length > 0 ? (
             <button

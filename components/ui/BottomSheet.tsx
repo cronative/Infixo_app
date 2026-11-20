@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { X } from "lucide-react";
 
 interface BottomSheetProps {
@@ -11,6 +11,21 @@ interface BottomSheetProps {
 }
 
 export function BottomSheet({ isOpen, onClose, title, children }: BottomSheetProps) {
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  // Close on Escape while open.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCloseRef.current();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isOpen]);
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -25,7 +40,7 @@ export function BottomSheet({ isOpen, onClose, title, children }: BottomSheetPro
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+    <div role="dialog" aria-modal="true" aria-label={title || undefined} className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
       {/* Dimmed Overlay */}
       <div
         onClick={onClose}
@@ -33,17 +48,17 @@ export function BottomSheet({ isOpen, onClose, title, children }: BottomSheetPro
       />
 
       {/* Sheet Container */}
-      <div className="relative w-full max-w-lg rounded-t-[28px] sm:rounded-3xl bg-white p-6 shadow-2xl transition-transform animate-slide-up z-10 safe-bottom max-h-[85dvh] flex flex-col">
+      <div className="relative w-full max-w-lg rounded-t-[5px] sm:rounded-[5px] bg-white p-6 shadow-lg transition-transform animate-slide-up z-10 safe-bottom max-h-[85dvh] flex flex-col">
         {/* Drag Handle for Mobile */}
         <div className="w-12 h-1 bg-zinc-200 rounded-full mx-auto mb-4 shrink-0 sm:hidden" />
 
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 mb-2 border-b border-zinc-100 shrink-0">
-          <h3 className="text-base font-black text-[#C21B5C]">{title || ""}</h3>
+        <div className="flex items-center justify-between pb-3 mb-2 border-b border-[#ECECF0] shrink-0">
+          <h3 className="text-base font-semibold text-[#18181B]">{title || ""}</h3>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 text-zinc-500 hover:bg-[#F4F4F5] transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors"
             aria-label="Close"
           >
             <X className="h-4 w-4" />

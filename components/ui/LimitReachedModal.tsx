@@ -162,7 +162,7 @@ export function LimitReachedModal({
                 <span className="absolute -top-1 -right-1 h-3 w-1 bg-amber-400 rotate-45 rounded-full opacity-80" />
                 <span className="absolute top-1 -right-2 h-1 w-3 bg-rose-400 rotate-12 rounded-full opacity-80" />
                 <span className="absolute -top-2 right-4 h-3 w-1 bg-[#C21B5C] rotate-12 rounded-full opacity-60" />
-                <div className="w-12 h-10 rounded-[6px] bg-gradient-to-br from-[#FFEDE6] to-[#F9CFC6] border border-[#F472B6]/40 shadow-xs rotate-[-10deg] flex items-center justify-center text-[#C21B5C]">
+                <div className="w-12 h-10 rounded-[5px] bg-gradient-to-br from-[#FFEDE6] to-[#F9CFC6] border border-[#F472B6]/40 shadow-xs rotate-[-10deg] flex items-center justify-center text-[#C21B5C]">
                   <span className="text-base font-bold">⭐</span>
                 </div>
               </div>

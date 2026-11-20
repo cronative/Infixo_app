@@ -14,9 +14,8 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
 
 /**
  * Standard Design System Card
- * - size="md": 16px corner radius (rounded-2xl)
- * - size="lg": 24px corner radius (rounded-[24px])
- * - border: #E4E4E7
+ * - 5px corner radius on every size
+ * - thin #ECECF0 border, no shadow
  * - text: zinc / #18181B
  */
 export const Card = forwardRef<HTMLDivElement, CardProps>(
@@ -34,14 +33,14 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     const radiusClass = "rounded-[5px]";
 
     const variantClass = {
-      default: "bg-white border border-[#E4E4E7] shadow-sm",
-      warm: "bg-[#FFFCFB] border border-[#E4E4E7] shadow-sm",
-      soft: "bg-[#FFEDE6] border border-[#E4E4E7]",
-      glass: "bg-white/95 backdrop-blur-xl border border-[#E4E4E7] shadow-[0_20px_60px_-15px_rgba(194,27,92,0.12)]",
+      default: "bg-white border border-[#ECECF0]",
+      warm: "bg-[#FFFCFB] border border-[#ECECF0]",
+      soft: "bg-[#FFF6F2] border border-[#F6E0DC]",
+      glass: "bg-white/95 backdrop-blur-xl border border-[#ECECF0]",
     }[variant];
 
     const interactiveClass = interactive
-      ? "transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-[#C21B5C]/35"
+      ? "transition-all duration-200 hover:border-[#C21B5C]/35"
       : "";
 
     return (

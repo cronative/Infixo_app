@@ -178,7 +178,7 @@ export function CustomDomainCard() {
           </div>
           <Link
             href="/dashboard/subscription"
-            className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#C21B5C] hover:opacity-95 text-white text-xs font-bold py-2.5 px-4 transition-all shrink-0 cursor-pointer shadow-md shadow-[#C21B5C]/20"
+            className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#C21B5C] hover:opacity-95 text-white text-xs font-bold py-2.5 px-4 transition-all shrink-0 cursor-pointer"
           >
             <Sparkles className="h-3.5 w-3.5" />
             <span>Upgrade to Pro</span>

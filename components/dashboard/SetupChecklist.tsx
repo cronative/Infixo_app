@@ -190,14 +190,14 @@ export function SetupChecklist({
               Next: <span className="font-medium text-[#18181B]">{nextItem.title}</span>
             </span>
           )}
-          <span className="shrink-0 text-[#8E8E93]">
+          <span className="shrink-0 text-[#6B6B76]">
             {listOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </span>
         </button>
         <button
           type="button"
           onClick={handleDismiss}
-          className="h-7 w-7 rounded-[5px] flex items-center justify-center text-[#8E8E93] hover:text-[#18181B] hover:bg-[#F4F4F5] transition-colors shrink-0 cursor-pointer"
+          className="h-7 w-7 rounded-[5px] flex items-center justify-center text-[#6B6B76] hover:text-[#18181B] hover:bg-[#F4F4F5] transition-colors shrink-0 cursor-pointer"
           title="Dismiss checklist"
           aria-label="Dismiss checklist"
         >
@@ -239,7 +239,7 @@ export function SetupChecklist({
                   <span
                     className={`text-[14px] font-semibold transition-colors ${
                       item.isDone
-                        ? "text-[#8E8E93] line-through"
+                        ? "text-[#6B6B76] line-through"
                         : "text-[#18181B] group-hover:text-[#C21B5C]"
                     }`}
                   >
@@ -247,7 +247,7 @@ export function SetupChecklist({
                   </span>
                 </div>
 
-                <div className="shrink-0 text-[#8E8E93] group-hover:text-[#18181B] transition-colors">
+                <div className="shrink-0 text-[#6B6B76] group-hover:text-[#18181B] transition-colors">
                   {isExpanded ? (
                     <ChevronUp className="h-4 w-4" />
                   ) : (

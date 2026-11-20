@@ -74,7 +74,7 @@ export function TrialExpiredEmotionalModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="trial-modal-title"
-        className="relative w-full max-w-[620px] rounded-[5px] border border-pink-100 bg-white p-5 sm:p-7 shadow-2xl shadow-pink-950/20 overflow-hidden text-left z-10 transition-all transform animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-[620px] rounded-[5px] border border-pink-100 bg-white p-5 sm:p-7 shadow-lg shadow-pink-950/20 overflow-hidden text-left z-10 transition-all transform animate-in zoom-in-95 duration-200"
       >
         {/* Soft pastel pink ambient background glow/waves */}
         <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-gradient-to-br from-pink-200/50 via-rose-100/40 to-transparent blur-3xl" />
@@ -227,7 +227,7 @@ export function TrialExpiredEmotionalModal({
         {/* 3 Feature Preview Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 my-4 sm:my-5">
           {/* Card 1: All Your Links */}
-          <div className="rounded-[5px] border border-pink-100 bg-[#FFF6F2] p-3 sm:p-3.5 text-center transition-all hover:bg-white hover:shadow-md hover:border-pink-200">
+          <div className="rounded-[5px] border border-pink-100 bg-[#FFF6F2] p-3 sm:p-3.5 text-center transition-all hover:bg-white hover:border-pink-200">
             <div className="relative inline-block mb-1.5">
               <div className="h-10 w-10 rounded-[5px] bg-[#FFE4EC] text-[#E11D48] flex items-center justify-center mx-auto">
                 <Link2 className="h-5 w-5" strokeWidth={2.5} />
@@ -250,7 +250,7 @@ export function TrialExpiredEmotionalModal({
           </div>
 
           {/* Card 2: Your Series */}
-          <div className="rounded-[5px] border border-pink-100 bg-[#FFF6F2] p-3 sm:p-3.5 text-center transition-all hover:bg-white hover:shadow-md hover:border-pink-200">
+          <div className="rounded-[5px] border border-pink-100 bg-[#FFF6F2] p-3 sm:p-3.5 text-center transition-all hover:bg-white hover:border-pink-200">
             <div className="relative inline-block mb-1.5">
               <div className="h-10 w-10 rounded-[5px] bg-[#FFE4EC] text-[#E11D48] flex items-center justify-center mx-auto">
                 <Play className="h-5 w-5 fill-current" />
@@ -273,7 +273,7 @@ export function TrialExpiredEmotionalModal({
           </div>
 
           {/* Card 3: Your Creator Brand */}
-          <div className="rounded-[5px] border border-purple-100 bg-[#FCF8FF] p-3 sm:p-3.5 text-center transition-all hover:bg-white hover:shadow-md hover:border-purple-200">
+          <div className="rounded-[5px] border border-purple-100 bg-[#FCF8FF] p-3 sm:p-3.5 text-center transition-all hover:bg-white hover:border-purple-200">
             <div className="relative inline-block mb-1.5">
               <div className="h-10 w-10 rounded-[5px] bg-[#F3E8FF] text-[#7E22CE] flex items-center justify-center mx-auto">
                 <BarChart3 className="h-5 w-5" strokeWidth={2.5} />
@@ -301,7 +301,7 @@ export function TrialExpiredEmotionalModal({
           <button
             type="button"
             onClick={handleUpgrade}
-            className="w-full inline-flex items-center justify-center gap-2.5 rounded-[5px] bg-gradient-to-r from-[#C21B5C] via-[#E8246F] to-[#E8246F] hover:opacity-95 text-white py-3.5 px-6 text-sm sm:text-base font-bold shadow-xl shadow-[#C21B5C]/25 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+            className="w-full inline-flex items-center justify-center gap-2.5 rounded-[5px] bg-gradient-to-r from-[#C21B5C] via-[#E8246F] to-[#E8246F] hover:opacity-95 text-white py-3.5 px-6 text-sm sm:text-base font-bold shadow-lg shadow-[#C21B5C]/25 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
           >
             <Rocket className="h-5 w-5 shrink-0" />
             <span>Reactivate My Profile</span>

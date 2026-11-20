@@ -182,10 +182,10 @@ export function PlatformThumbnailBox({
 
   const badgeSizeClass =
     size === "sm"
-      ? "w-9 h-9 rounded-xl"
+      ? "w-9 h-9 rounded-[5px]"
       : size === "lg"
-      ? "w-16 h-16 sm:w-18 sm:h-18 rounded-3xl"
-      : "w-12 h-12 sm:w-14 sm:h-14 rounded-2xl";
+      ? "w-16 h-16 sm:w-18 sm:h-18 rounded-[5px]"
+      : "w-12 h-12 sm:w-14 sm:h-14 rounded-[5px]";
 
   return (
     <div

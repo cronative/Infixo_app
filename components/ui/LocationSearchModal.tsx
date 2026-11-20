@@ -237,7 +237,7 @@ export function LocationSearchModal({
                 type="button"
                 onClick={handleSaveCustom}
                 disabled={!customCity.trim() || !customCountry.trim()}
-                className="bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs py-2 px-4.5 rounded-[5px] transition-all cursor-pointer shadow-md shadow-[#C21B5C]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
+                className="bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs py-2 px-4.5 rounded-[5px] transition-all cursor-pointer inline-flex items-center gap-1.5 disabled:opacity-50"
               >
                 Save Location
               </button>

@@ -208,7 +208,7 @@ function PerformerRow({ icon, label, title, count, unit, sub }: { icon: ReactNod
     <li className="flex items-center gap-3 py-2.5">
       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C]">{icon}</span>
       <div className="min-w-0 flex-1">
-        <p className="text-[12px] uppercase tracking-wide text-[#8E8E93]">{label}</p>
+        <p className="text-[12px] uppercase tracking-wide text-[#6B6B76]">{label}</p>
         <p className="truncate text-[14px] font-medium text-[#18181B]" title={title}>{title ?? "—"}</p>
         {sub && <p className="truncate text-[12px] text-[#6B6B76]" title={sub}>{sub}</p>}
       </div>

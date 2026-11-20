@@ -76,7 +76,7 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
     >
       <ModalBody className="p-5 space-y-4 text-left">
         {/* Series Title Badge */}
-        <div className="rounded-lg border border-[#ECECF0] bg-[#FAFAFB] p-3 flex items-center gap-3">
+        <div className="rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] p-3 flex items-center gap-3">
           <span className="text-base">🎬</span>
           <div className="min-w-0 text-left">
             <p className="text-xs font-bold text-[#C21B5C] truncate">{series.title}</p>
@@ -111,23 +111,23 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
         </div>
 
         {/* Caption Box */}
-        <div className="space-y-2 rounded-lg border border-[#ECECF0] bg-[#FAFAFB] p-3 text-left">
+        <div className="space-y-2 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] p-3 text-left">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-[#C21B5C] font-bold text-xs">
               <Sparkles className="h-3.5 w-3.5" />
               <span>Ready-to-Paste Reel Caption</span>
             </div>
-            <span className="text-[10px] bg-[#C21B5C]/10 text-[#C21B5C] px-2 py-0.5 rounded-md font-bold">Recommended</span>
+            <span className="text-[10px] bg-[#C21B5C]/10 text-[#C21B5C] px-2 py-0.5 rounded-[5px] font-bold">Recommended</span>
           </div>
 
-          <div className="rounded-lg border border-[#ECECF0] bg-white p-2.5 text-xs font-mono text-[#C21B5C] leading-relaxed whitespace-pre-wrap select-all">
+          <div className="rounded-[5px] border border-[#ECECF0] bg-white p-2.5 text-xs font-mono text-[#C21B5C] leading-relaxed whitespace-pre-wrap select-all">
             {reelCaption}
           </div>
 
           <button
             type="button"
             onClick={handleCopyCaption}
-            className="w-full h-9 inline-flex items-center justify-center gap-2 rounded-lg bg-[#C21B5C] hover:bg-brand-hover px-4 text-xs font-semibold text-white shadow-2xs transition-all hover:shadow-xs cursor-pointer"
+            className="w-full h-9 inline-flex items-center justify-center gap-2 rounded-[5px] bg-[#C21B5C] hover:bg-brand-hover px-4 text-xs font-semibold text-white shadow-2xs transition-all hover:shadow-xs cursor-pointer"
           >
             {copiedCaption ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
             <span>{copiedCaption ? "Caption Copied ✓" : "Copy Reel Caption"}</span>
@@ -141,7 +141,7 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
             <button
               type="button"
               onClick={handleWhatsAppShare}
-              className="h-9 flex items-center justify-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 px-3 text-xs font-semibold transition-colors cursor-pointer"
+              className="h-9 flex items-center justify-center gap-1.5 rounded-[5px] border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 px-3 text-xs font-semibold transition-colors cursor-pointer"
             >
               <MessageSquare className="h-3.5 w-3.5" />
               <span>WhatsApp</span>
@@ -149,7 +149,7 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
             <button
               type="button"
               onClick={handleFacebookShare}
-              className="h-9 flex items-center justify-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 hover:bg-[#F4F4F5] text-blue-800 px-3 text-xs font-semibold transition-colors cursor-pointer"
+              className="h-9 flex items-center justify-center gap-1.5 rounded-[5px] border border-blue-200 bg-blue-50 hover:bg-[#F4F4F5] text-blue-800 px-3 text-xs font-semibold transition-colors cursor-pointer"
             >
               <FacebookIcon className="h-3.5 w-3.5 text-blue-600 shrink-0" />
               <span>Facebook</span>
@@ -157,7 +157,7 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
             <button
               type="button"
               onClick={handleTwitterShare}
-              className="h-9 flex items-center justify-center gap-1.5 rounded-lg border border-[#ECECF0] bg-white hover:bg-[#F4F4F5] text-[#C21B5C] px-3 text-xs font-semibold transition-colors cursor-pointer"
+              className="h-9 flex items-center justify-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#F4F4F5] text-[#C21B5C] px-3 text-xs font-semibold transition-colors cursor-pointer"
             >
               <XTwitterIcon className="h-3.5 w-3.5 text-[#C21B5C] shrink-0" />
               <span>X (Twitter)</span>
@@ -170,7 +170,7 @@ export function ShareSeriesModal({ isOpen, onClose, series, username }: ShareSer
         <button
           type="button"
           onClick={onClose}
-          className="h-9 px-4 rounded-lg border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#C21B5C] transition-colors cursor-pointer"
+          className="h-9 px-4 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#C21B5C] transition-colors cursor-pointer"
         >
           Done
         </button>

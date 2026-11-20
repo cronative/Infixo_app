@@ -401,7 +401,7 @@ export default function DashboardOverviewPage() {
           <button
             type="button"
             onClick={() => setShareOpen(true)}
-            className="inline-flex h-8 items-center justify-center gap-1.5 px-3.5 rounded-[5px] bg-[#C21B5C] text-white hover:opacity-95 text-[13px] font-medium transition-opacity cursor-pointer"
+            className="inline-flex h-8 items-center justify-center gap-1.5 px-3.5 rounded-[5px] bg-[#C21B5C] text-white hover:bg-[#A3164E] text-[13px] font-medium transition-colors cursor-pointer"
           >
             <Share2 className="h-3.5 w-3.5" />
             <span>Share</span>
@@ -433,14 +433,14 @@ export default function DashboardOverviewPage() {
           <div className="rounded-[5px] border border-[#ECECF0] bg-white flex flex-col overflow-hidden">
             <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-[#ECECF0] bg-[#FAFAFB]">
               <h3 className="text-[14px] font-semibold text-[#18181B]">
-                Series ({series.length})
+                My Series ({series.length})
               </h3>
               <Link
                 href="/dashboard/series?new=true"
                 className="inline-flex items-center gap-1 px-2 py-1 rounded-[5px] bg-[#C21B5C] text-white text-[12px] font-semibold hover:bg-[#A3164E] transition-colors cursor-pointer"
               >
                 <Plus className="h-3 w-3" />
-                <span>Add</span>
+                <span>Add<span className="sr-only"> series</span></span>
               </Link>
             </div>
 
@@ -500,7 +500,7 @@ export default function DashboardOverviewPage() {
                 href="/dashboard/series"
                 className="inline-flex items-center justify-center gap-1 text-[12px] font-semibold text-[#C21B5C] hover:text-[#A3164E] transition-colors"
               >
-                <span>Manage →</span>
+                <span>Open My Series →</span>
               </Link>
             </div>
           </div>
@@ -509,14 +509,14 @@ export default function DashboardOverviewPage() {
           <div className="rounded-[5px] border border-[#ECECF0] bg-white flex flex-col overflow-hidden">
             <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-[#ECECF0] bg-[#FAFAFB]">
               <h3 className="text-[14px] font-semibold text-[#18181B]">
-                Shop ({products.length})
+                My Shop ({products.length})
               </h3>
               <Link
                 href="/dashboard/products?new=true"
                 className="inline-flex items-center gap-1 px-2 py-1 rounded-[5px] bg-[#C21B5C] text-white text-[12px] font-semibold hover:bg-[#A3164E] transition-colors cursor-pointer"
               >
                 <Plus className="h-3 w-3" />
-                <span>Add</span>
+                <span>Add<span className="sr-only"> product</span></span>
               </Link>
             </div>
 
@@ -576,7 +576,7 @@ export default function DashboardOverviewPage() {
                 href="/dashboard/products"
                 className="inline-flex items-center justify-center gap-1 text-[12px] font-semibold text-[#C21B5C] hover:text-[#A3164E] transition-colors"
               >
-                <span>Manage →</span>
+                <span>Open My Shop →</span>
               </Link>
             </div>
           </div>
@@ -585,14 +585,14 @@ export default function DashboardOverviewPage() {
           <div className="rounded-[5px] border border-[#ECECF0] bg-white flex flex-col overflow-hidden">
             <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-[#ECECF0] bg-[#FAFAFB]">
               <h3 className="text-[14px] font-semibold text-[#18181B]">
-                Links ({customLinks.length})
+                My Links ({customLinks.length})
               </h3>
               <Link
                 href="/dashboard/links?new=true"
                 className="inline-flex items-center gap-1 px-2 py-1 rounded-[5px] bg-[#C21B5C] text-white text-[12px] font-semibold hover:bg-[#A3164E] transition-colors cursor-pointer"
               >
                 <Plus className="h-3 w-3" />
-                <span>Add</span>
+                <span>Add<span className="sr-only"> link</span></span>
               </Link>
             </div>
 
@@ -666,7 +666,7 @@ export default function DashboardOverviewPage() {
                 href="/dashboard/links"
                 className="inline-flex items-center justify-center gap-1 text-[12px] font-semibold text-[#C21B5C] hover:text-[#A3164E] transition-colors"
               >
-                <span>Manage →</span>
+                <span>Open My Links →</span>
               </Link>
             </div>
           </div>
@@ -737,7 +737,7 @@ export default function DashboardOverviewPage() {
               href={`https://wa.me/?text=${encodeURIComponent(`Check out my official creator series and links on Inflixo: ${profileUrl}`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 p-2.5 rounded-[5px] border border-[#E4E4E7] hover:bg-[#F4F4F5] text-xs font-semibold text-[#18181B] transition-colors"
+              className="flex items-center justify-center gap-2 p-2.5 rounded-[5px] border border-[#ECECF0] hover:bg-[#F4F4F5] text-xs font-semibold text-[#18181B] transition-colors"
             >
               <MessageCircle className="h-4 w-4 text-emerald-600" />
               <span>WhatsApp</span>
@@ -747,7 +747,7 @@ export default function DashboardOverviewPage() {
               href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(profileUrl)}&text=${encodeURIComponent(`Watch my latest series and check out my bio on @inflixo`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 p-2.5 rounded-[5px] border border-[#E4E4E7] hover:bg-[#F4F4F5] text-xs font-semibold text-[#18181B] transition-colors"
+              className="flex items-center justify-center gap-2 p-2.5 rounded-[5px] border border-[#ECECF0] hover:bg-[#F4F4F5] text-xs font-semibold text-[#18181B] transition-colors"
             >
               <XTwitterIcon className="h-4 w-4 text-[#18181B]" />
               <span>X (Twitter)</span>
@@ -757,7 +757,7 @@ export default function DashboardOverviewPage() {
               href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(profileUrl)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 p-2.5 rounded-[5px] border border-[#E4E4E7] hover:bg-[#F4F4F5] text-xs font-semibold text-[#18181B] transition-colors"
+              className="flex items-center justify-center gap-2 p-2.5 rounded-[5px] border border-[#ECECF0] hover:bg-[#F4F4F5] text-xs font-semibold text-[#18181B] transition-colors"
             >
               <LinkedinIcon className="h-4 w-4 text-[#0A66C2]" />
               <span>LinkedIn</span>
@@ -769,7 +769,7 @@ export default function DashboardOverviewPage() {
                 setShareOpen(false);
                 setQrOpen(true);
               }}
-              className="flex items-center justify-center gap-2 p-2.5 rounded-[5px] border border-[#E4E4E7] hover:bg-[#F4F4F5] text-xs font-semibold text-[#18181B] transition-colors cursor-pointer"
+              className="flex items-center justify-center gap-2 p-2.5 rounded-[5px] border border-[#ECECF0] hover:bg-[#F4F4F5] text-xs font-semibold text-[#18181B] transition-colors cursor-pointer"
             >
               <ExternalLink className="h-4 w-4 text-[#C21B5C]" />
               <span>View QR Code</span>

@@ -15,6 +15,7 @@ import { getInitials } from "@/lib/avatar";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageContainer } from "@/components/dashboard/PageContainer";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { PAGE_COPY } from "@/components/dashboard/pageCopy";
 
 export default function DashboardBrandsPage() {
   const { profile } = useCreator();
@@ -217,8 +218,7 @@ export default function DashboardBrandsPage() {
   return (
     <PageContainer>
       <PageHeader
-        title="My Brands & Ventures"
-        subtitle="Showcase the product lines, businesses, apparel, or channels you are building."
+        {...PAGE_COPY.brands}
         actions={
           brands.length > 0 ? (
             <button

@@ -320,7 +320,7 @@ export default function DashboardReviewsPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center gap-2 rounded-[5px] bg-[#C21B5C] px-4 py-2 text-xs font-semibold text-white shadow-md shadow-[#C21B5C]/20 transition-all hover:opacity-95 cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-[5px] bg-[#C21B5C] px-4 py-2 text-xs font-semibold text-white transition-all hover:opacity-95 cursor-pointer"
             >
               <Plus className="h-4 w-4" />
               <span>Request review</span>
@@ -432,12 +432,12 @@ export default function DashboardReviewsPage() {
         onClose={() => setIsModalOpen(false)}
         size="md"
         showCloseButton={false}
-        className="rounded-[5px] border border-zinc-200/80 shadow-2xl overflow-hidden"
+        className="rounded-[5px] border border-zinc-200/80 shadow-lg overflow-hidden"
       >
         <div className="relative border-b border-zinc-100 bg-gradient-to-b from-[#FFF6F2]/80 to-white px-5 sm:px-6 pt-5 pb-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-gradient-to-tr from-[#C21B5C] via-[#E8246F] to-[#C2414B] text-white shadow-md shadow-[#C21B5C]/25">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-gradient-to-tr from-[#C21B5C] via-[#E8246F] to-[#C2414B] text-white">
                 <Star className="h-5 w-5 fill-white/20 stroke-[2.2]" />
               </div>
               <div>
@@ -600,7 +600,7 @@ export default function DashboardReviewsPage() {
             <button
               type="submit"
               disabled={isSubmitting || !clientName.trim() || !clientEmail.trim()}
-              className="h-10 px-5 rounded-[5px] bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs shadow-md shadow-[#C21B5C]/20 transition-all cursor-pointer inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="h-10 px-5 rounded-[5px] bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send className="h-3.5 w-3.5" />
               <span>{isSubmitting ? "Sending..." : "Send Invitation"}</span>

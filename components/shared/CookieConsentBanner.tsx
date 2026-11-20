@@ -159,7 +159,7 @@ export function CookieConsentBanner() {
           aria-label="Cookie consent banner"
           className="print:hidden fixed bottom-3 left-3 right-3 sm:left-auto sm:right-6 sm:bottom-6 z-50 max-w-lg animate-in fade-in slide-in-from-bottom-5 duration-300 pointer-events-auto"
         >
-          <div className="rounded-2xl border border-[#DDD8CF] bg-white p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/[0.03]">
+          <div className="rounded-[5px] border border-[#DDD8CF] bg-white p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/[0.03]">
             <div className="space-y-4">
               {/* Header with Title & Cookie Icon */}
               <div className="flex items-start justify-between gap-3">
@@ -179,7 +179,7 @@ export function CookieConsentBanner() {
                 <button
                   type="button"
                   onClick={handleAcceptAll}
-                  className="inline-flex items-center justify-center rounded-[8px] bg-[#C21B5C] hover:bg-brand-hover px-4 py-2 text-xs sm:text-sm font-semibold text-[#FAFAFB] transition-colors cursor-pointer"
+                  className="inline-flex items-center justify-center rounded-[5px] bg-[#C21B5C] hover:bg-brand-hover px-4 py-2 text-xs sm:text-sm font-semibold text-[#FAFAFB] transition-colors cursor-pointer"
                 >
                   Accept All
                 </button>
@@ -188,7 +188,7 @@ export function CookieConsentBanner() {
                 <button
                   type="button"
                   onClick={handleRejectOptional}
-                  className="inline-flex items-center justify-center rounded-[8px] bg-[#FFFFFF] hover:bg-[#F4F4F5] border border-[#ECECF0] px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#C21B5C] transition-colors cursor-pointer"
+                  className="inline-flex items-center justify-center rounded-[5px] bg-[#FFFFFF] hover:bg-[#F4F4F5] border border-[#ECECF0] px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#C21B5C] transition-colors cursor-pointer"
                 >
                   Reject Optional
                 </button>
@@ -200,7 +200,7 @@ export function CookieConsentBanner() {
                     setShowBanner(false);
                     setShowPreferences(true);
                   }}
-                  className="inline-flex items-center justify-center rounded-[8px] bg-transparent hover:bg-[#F4F4F5] px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#6B6B76] hover:text-[#C21B5C] transition-colors cursor-pointer"
+                  className="inline-flex items-center justify-center rounded-[5px] bg-transparent hover:bg-[#F4F4F5] px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#6B6B76] hover:text-[#C21B5C] transition-colors cursor-pointer"
                 >
                   <Sliders className="mr-1.5 h-3.5 w-3.5" />
                   Manage Preferences
@@ -251,7 +251,7 @@ export function CookieConsentBanner() {
             {/* Modal Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-[#ECECF0] bg-[#FAFAFB] shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#FFFFFF] border border-[#ECECF0] text-[#C21B5C]">
+                <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFFFFF] border border-[#ECECF0] text-[#C21B5C]">
                   <Sliders className="h-4 w-4" />
                 </div>
                 <div>
@@ -285,7 +285,7 @@ export function CookieConsentBanner() {
 
               <div className="space-y-3">
                 {/* Category 1: Essential Cookies (Locked ON) */}
-                <div className="p-4 rounded-[12px] border border-[#ECECF0] bg-[#FAFAFB]/70 space-y-2">
+                <div className="p-4 rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB]/70 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Lock className="h-4 w-4 text-[#C21B5C]" />
@@ -303,7 +303,7 @@ export function CookieConsentBanner() {
                 </div>
 
                 {/* Category 2: Analytics Cookies (Toggle) */}
-                <div className="p-4 rounded-[12px] border border-[#ECECF0] bg-[#FFFFFF] space-y-2">
+                <div className="p-4 rounded-[5px] border border-[#ECECF0] bg-[#FFFFFF] space-y-2">
                   <div className="flex items-center justify-between">
                     <h3 className="font-display text-sm font-bold text-[#C21B5C]">
                       Analytics Cookies
@@ -329,7 +329,7 @@ export function CookieConsentBanner() {
                 </div>
 
                 {/* Category 3: Marketing Cookies (Toggle) */}
-                <div className="p-4 rounded-[12px] border border-[#ECECF0] bg-[#FFFFFF] space-y-2">
+                <div className="p-4 rounded-[5px] border border-[#ECECF0] bg-[#FFFFFF] space-y-2">
                   <div className="flex items-center justify-between">
                     <h3 className="font-display text-sm font-bold text-[#C21B5C]">
                       Marketing Cookies
@@ -355,7 +355,7 @@ export function CookieConsentBanner() {
                 </div>
 
                 {/* Category 4: Functional Cookies (Toggle) */}
-                <div className="p-4 rounded-[12px] border border-[#ECECF0] bg-[#FFFFFF] space-y-2">
+                <div className="p-4 rounded-[5px] border border-[#ECECF0] bg-[#FFFFFF] space-y-2">
                   <div className="flex items-center justify-between">
                     <h3 className="font-display text-sm font-bold text-[#C21B5C]">
                       Functional Cookies
@@ -409,14 +409,14 @@ export function CookieConsentBanner() {
                 <button
                   type="button"
                   onClick={handleRejectOptional}
-                  className="w-full sm:w-auto inline-flex items-center justify-center rounded-[8px] bg-[#FFFFFF] hover:bg-[#F4F4F5] border border-[#ECECF0] px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#C21B5C] transition-colors cursor-pointer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center rounded-[5px] bg-[#FFFFFF] hover:bg-[#F4F4F5] border border-[#ECECF0] px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#C21B5C] transition-colors cursor-pointer"
                 >
                   Reject Optional
                 </button>
                 <button
                   type="button"
                   onClick={handleAcceptAll}
-                  className="w-full sm:w-auto inline-flex items-center justify-center rounded-[8px] bg-[#FFFFFF] hover:bg-[#F4F4F5] border border-[#ECECF0] px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#C21B5C] transition-colors cursor-pointer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center rounded-[5px] bg-[#FFFFFF] hover:bg-[#F4F4F5] border border-[#ECECF0] px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#C21B5C] transition-colors cursor-pointer"
                 >
                   Accept All
                 </button>
@@ -426,7 +426,7 @@ export function CookieConsentBanner() {
               <button
                 type="button"
                 onClick={handleSavePreferences}
-                className="order-1 sm:order-2 inline-flex items-center justify-center rounded-[8px] bg-[#C21B5C] hover:bg-brand-hover px-5 py-2 text-xs sm:text-sm font-semibold text-[#FAFAFB] transition-colors cursor-pointer"
+                className="order-1 sm:order-2 inline-flex items-center justify-center rounded-[5px] bg-[#C21B5C] hover:bg-brand-hover px-5 py-2 text-xs sm:text-sm font-semibold text-[#FAFAFB] transition-colors cursor-pointer"
               >
                 Save Preferences
               </button>

@@ -152,9 +152,9 @@ export function CreatorEraCelebrationModal({
         </div>
 
         {/* Card Preview Banner */}
-        <div className="p-3 bg-[#FFF5F7] rounded-[10px] border border-[#FFEDE6] flex items-center justify-between gap-3 text-left">
+        <div className="p-3 bg-[#FFF5F7] rounded-[5px] border border-[#FFEDE6] flex items-center justify-between gap-3 text-left">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#C21B5C] text-white font-extrabold text-xs">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-[#C21B5C] text-white font-extrabold text-xs">
               {era.stage}
             </div>
             <div className="min-w-0">
@@ -171,7 +171,7 @@ export function CreatorEraCelebrationModal({
             type="button"
             onClick={handleShare}
             disabled={sharing}
-            className="tap-scale w-full flex items-center justify-center gap-2 py-3 px-5 rounded-[8px] bg-[#C21B5C] hover:bg-[#A3164E] text-white text-xs sm:text-sm font-bold shadow-md shadow-[#C21B5C]/20 transition-all cursor-pointer disabled:opacity-60"
+            className="tap-scale w-full flex items-center justify-center gap-2 py-3 px-5 rounded-[5px] bg-[#C21B5C] hover:bg-[#A3164E] text-white text-xs sm:text-sm font-bold shadow-md shadow-[#C21B5C]/20 transition-all cursor-pointer disabled:opacity-60"
           >
             <Share2 className="h-4 w-4" />
             <span>{sharing ? "Preparing Card..." : "Share Era Card"}</span>
@@ -180,7 +180,7 @@ export function CreatorEraCelebrationModal({
           <button
             type="button"
             onClick={onClose}
-            className="w-full sm:w-auto py-2.5 px-4 rounded-[8px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-xs font-semibold text-[#6B6B76] hover:text-[#18181B] transition-colors cursor-pointer"
+            className="w-full sm:w-auto py-2.5 px-4 rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] text-xs font-semibold text-[#6B6B76] hover:text-[#18181B] transition-colors cursor-pointer"
           >
             Later
           </button>

@@ -201,7 +201,7 @@ export function PhonePreview({
       {/* Top Header Bar: Page title badge, copy link button & open in new tab */}
       <div className="w-full flex items-center justify-between gap-2 px-1 shrink-0">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-[5px] bg-[#F4F4F5] border border-[#E4E4E7]">
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-[5px] bg-[#F4F4F5] border border-[#ECECF0]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#10B981] animate-pulse" />
             <span className="text-[12px] font-semibold text-[#18181B] truncate">
               {pageTitle}
@@ -217,7 +217,7 @@ export function PhonePreview({
             type="button"
             onClick={handleCopyLink}
             title="Copy public page link"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[5px] border border-[#E4E4E7] bg-white text-[12px] font-medium text-[#18181B] hover:bg-[#F4F4F5] hover:border-[#D4D4D8] active:scale-[0.98] transition-all cursor-pointer shadow-none"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[5px] border border-[#ECECF0] bg-white text-[12px] font-medium text-[#18181B] hover:bg-[#F4F4F5] hover:border-[#D4D4D8] active:scale-[0.98] transition-all cursor-pointer shadow-none"
           >
             {copied ? (
               <>
@@ -237,7 +237,7 @@ export function PhonePreview({
             target="_blank"
             rel="noopener noreferrer"
             title="Open public page in new tab"
-            className="p-1.5 rounded-[5px] border border-[#E4E4E7] bg-white text-[#71717A] hover:text-[#18181B] hover:bg-[#F4F4F5] hover:border-[#D4D4D8] active:scale-[0.98] transition-all cursor-pointer"
+            className="p-1.5 rounded-[5px] border border-[#ECECF0] bg-white text-[#71717A] hover:text-[#18181B] hover:bg-[#F4F4F5] hover:border-[#D4D4D8] active:scale-[0.98] transition-all cursor-pointer"
           >
             <ExternalLink className="h-3 w-3" />
           </a>
@@ -251,7 +251,7 @@ export function PhonePreview({
           background: "var(--page-bg)",
           transform: "translateZ(0)",
         }}
-        className="relative flex-1 h-full min-h-0 w-full overflow-hidden rounded-[5px] border border-[#E4E4E7] transition-colors duration-300"
+        className="relative flex-1 h-full min-h-0 w-full overflow-hidden rounded-[5px] border border-[#ECECF0] transition-colors duration-300"
       >
         <div
           aria-hidden="true"

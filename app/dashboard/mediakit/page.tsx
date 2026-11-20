@@ -917,7 +917,7 @@ export default function DashboardMediaKitPage() {
                 <button
                   type="button"
                   onClick={() => handleApplyTemplate(example)}
-                  className="px-3 py-1 rounded-[5px] bg-[#C21B5C] text-white text-xs font-semibold hover:opacity-95 shadow-sm shadow-[#C21B5C]/20 transition-all cursor-pointer"
+                  className="px-3 py-1 rounded-[5px] bg-[#C21B5C] text-white text-xs font-semibold hover:opacity-95 transition-all cursor-pointer"
                 >
                   Use Template
                 </button>

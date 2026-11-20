@@ -782,7 +782,7 @@ export default function ProductsPage() {
             <button
               type="submit"
               disabled={busy || imageBusy}
-              className="h-10 px-5 rounded-[5px] bg-[#C21B5C] text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#C21B5C]/20 hover:opacity-95 disabled:opacity-50 inline-flex items-center gap-1.5"
+              className="h-10 px-5 rounded-[5px] bg-[#C21B5C] text-white font-semibold text-xs transition-all cursor-pointer hover:opacity-95 disabled:opacity-50 inline-flex items-center gap-1.5"
             >
               {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
               <span>{editing ? (busy ? "Saving…" : "Save changes") : (busy ? "Adding…" : "Add product")}</span>

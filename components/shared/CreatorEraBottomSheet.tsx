@@ -169,7 +169,7 @@ export function CreatorEraBottomSheet({ isOpen, onClose, era, creatorName }: Cre
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[6px] text-[#A1A1AA] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] text-[#A1A1AA] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer"
             aria-label="Close"
           >
             <X className="h-4 w-4" />
@@ -178,7 +178,7 @@ export function CreatorEraBottomSheet({ isOpen, onClose, era, creatorName }: Cre
 
         {/* Scrolling body */}
         <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3">
-          <div className="rounded-[8px] border px-3 py-2.5" style={{ background: eraSoftBg(cfg), borderColor: eraAlpha(cfg.color, 0.25) }}>
+          <div className="rounded-[5px] border px-3 py-2.5" style={{ background: eraSoftBg(cfg), borderColor: eraAlpha(cfg.color, 0.25) }}>
             <p className={`text-[13px] leading-[1.5] text-[#3F3F46] ${storyOpen ? "" : "line-clamp-5 sm:line-clamp-none"}`}>{STORY}</p>
             {!storyOpen && (
               <button type="button" onClick={() => setStoryOpen(true)} className="mt-1 text-[12px] font-semibold sm:hidden cursor-pointer" style={{ color: ink }}>
@@ -187,7 +187,7 @@ export function CreatorEraBottomSheet({ isOpen, onClose, era, creatorName }: Cre
             )}
           </div>
 
-          <div className="divide-y divide-[#ECECF0] overflow-hidden rounded-[8px] border border-[#ECECF0]">
+          <div className="divide-y divide-[#ECECF0] overflow-hidden rounded-[5px] border border-[#ECECF0]">
             {panel("why", "Why we built Creator Era", <Bullets items={WHY} />)}
             {panel("how", "How Creator Era works", <Bullets items={HOW} />)}
             {panel("eras", "Our Creator Eras", erasList)}
@@ -212,7 +212,7 @@ export function CreatorEraBottomSheet({ isOpen, onClose, era, creatorName }: Cre
           <Link
             href="/signup"
             onClick={onClose}
-            className="tap-scale block w-full rounded-[8px] bg-[#C21B5C] px-4 py-2.5 text-center text-white hover:bg-[#A3164E] transition-colors"
+            className="tap-scale block w-full rounded-[5px] bg-[#C21B5C] px-4 py-2.5 text-center text-white hover:bg-[#A3164E] transition-colors"
           >
             <span className="block text-[13px] font-bold">Are you a creator? Your Era is waiting. ✨</span>
             <span className="mt-0.5 block text-[12px] font-medium text-white/85">

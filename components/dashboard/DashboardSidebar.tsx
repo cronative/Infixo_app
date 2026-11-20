@@ -217,7 +217,7 @@ export function DashboardSidebar() {
 
   return (
     <aside
-      className={`hidden lg:flex flex-col shrink-0 border-r border-[#E4E4E7] bg-white h-dvh transition-all duration-200 select-none ${
+      className={`hidden lg:flex flex-col shrink-0 border-r border-[#ECECF0] bg-white h-dvh transition-all duration-200 select-none ${
         collapsed ? "w-[64px]" : "w-[248px]"
       }`}
     >
@@ -249,7 +249,7 @@ export function DashboardSidebar() {
           )}
         </Link>
         {!collapsed && (
-          <span className="mt-0.5 text-[11px] leading-none text-[#8E8E93] select-none whitespace-nowrap">{TAGLINE}</span>
+          <span className="mt-0.5 text-[11px] leading-none text-[#6B6B76] select-none whitespace-nowrap">{TAGLINE}</span>
         )}
       </div>
 
@@ -269,7 +269,7 @@ export function DashboardSidebar() {
             <CreatorAvatar
               src={profile.photoDataUrl}
               name={displayName}
-              className="h-9 w-9 rounded-full border border-[#E4E4E7] object-cover"
+              className="h-9 w-9 rounded-full border border-[#ECECF0] object-cover"
             />
           ) : (
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#C21B5C] text-white font-bold text-xs shrink-0 select-none">
@@ -374,7 +374,7 @@ export function DashboardSidebar() {
       </nav>
 
       {/* 5. BOTTOM AREA: Fixed (sticky) */}
-      <div className={`shrink-0 border-t border-[#E4E4E7] space-y-1 ${collapsed ? "p-2" : "p-3"}`}>
+      <div className={`shrink-0 border-t border-[#ECECF0] space-y-1 ${collapsed ? "p-2" : "p-3"}`}>
         {/* Plain items: My Plan, Settings (same item style) */}
         {BOTTOM_NAV_ITEMS.map((item) => {
           const active = isNavActive(pathname, item.href);

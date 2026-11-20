@@ -47,7 +47,7 @@ export function CreatorCollage() {
           </div>
 
           {/* Total Fanbase Badge Pill */}
-          <div className="flex items-center justify-between rounded-xl bg-[#C21B5C14] px-3.5 py-2 border border-[#C21B5C]/20">
+          <div className="flex items-center justify-between rounded-[5px] bg-[#C21B5C14] px-3.5 py-2 border border-[#C21B5C]/20">
             <div className="flex items-center gap-1.5">
               <Users className="h-3.5 w-3.5 text-[#C21B5C]" />
               <span className="text-xs font-extrabold text-[#C21B5C]">126K total fanbase</span>
@@ -57,23 +57,23 @@ export function CreatorCollage() {
 
           {/* Crisp 1px Border Platform Follower Pills */}
           <div className="grid grid-cols-3 gap-2">
-            <div className="flex flex-col items-center justify-center rounded-xl bg-[#FAFAFB] border border-[#ECECF0] p-2 text-center">
+            <div className="flex flex-col items-center justify-center rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0] p-2 text-center">
               <InstagramIcon className="h-4 w-4 text-pink-500 mb-0.5" />
               <span className="text-xs font-black text-[#C21B5C]">48.7K</span>
             </div>
-            <div className="flex flex-col items-center justify-center rounded-xl bg-[#FAFAFB] border border-[#ECECF0] p-2 text-center">
+            <div className="flex flex-col items-center justify-center rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0] p-2 text-center">
               <YoutubeIcon className="h-4 w-4 text-red-500 mb-0.5" />
               <span className="text-xs font-black text-[#C21B5C]">62.3K</span>
             </div>
-            <div className="flex flex-col items-center justify-center rounded-xl bg-[#FAFAFB] border border-[#ECECF0] p-2 text-center">
+            <div className="flex flex-col items-center justify-center rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0] p-2 text-center">
               <FacebookIcon className="h-4 w-4 text-blue-600 mb-0.5" />
               <span className="text-xs font-black text-[#C21B5C]">15K</span>
             </div>
           </div>
 
           {/* Creator Series Preview Card (Solid Dark Surface #C21B5C) */}
-          <div className="flex items-center gap-3 rounded-2xl bg-[#C21B5C] text-white p-3 border border-white/10">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#C21B5C]">
+          <div className="flex items-center gap-3 rounded-[5px] bg-[#C21B5C] text-white p-3 border border-white/10">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-[#C21B5C]">
               <Play className="h-4 w-4 fill-white text-white" />
             </div>
             <div className="min-w-0">
