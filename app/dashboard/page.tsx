@@ -54,6 +54,7 @@ import { CreatorEraCelebrationModal } from "@/components/shared/CreatorEraCelebr
 import { SetupChecklist } from "@/components/dashboard/SetupChecklist";
 import { PublicPagesCard } from "@/components/dashboard/PublicPagesCard";
 import { SectionHeading } from "@/components/dashboard/SectionHeading";
+import { QuickLinksCard } from "@/components/dashboard/QuickLinksCard";
 import { markSetupStep, useSetupStep } from "@/lib/setupProgress";
 import { ThemeService } from "@/services/ThemeService";
 import { DEFAULT_THEME_KEY } from "@/lib/themeKeys";
@@ -426,6 +427,9 @@ export default function DashboardOverviewPage() {
 
       {/* Alerts right under setup: one line for plan limits */}
       <SmartAlerts alerts={alerts} />
+
+      {/* Quick links: common actions in one tap */}
+      <QuickLinksCard />
 
       {/* 3. SECTION: CONTENT & STOREFRONT */}
       <section className="space-y-3">
