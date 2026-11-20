@@ -2184,7 +2184,7 @@ export function LivePreviewCard({
                         return (
                           <LinkGroupRow
                             card={isPremiumLayout || linksOnlyMode}
-                            separateItems={linksOnlyMode && isDemoPlainListing}
+                            separateItems={(linksOnlyMode && isDemoPlainListing) || isCardSectionsMode}
                             key={item.id}
                             group={item}
                             initiallyOpen={isExpandedByParam}
@@ -2312,7 +2312,7 @@ export function LivePreviewCard({
                         <SeriesRow
                           key={s.id}
                           series={s}
-                          variant={isDemoSeriesListing ? "card" : "row"}
+                          variant={isDemoSeriesListing || isCardSectionsMode ? "card" : "row"}
                           seriesHref={`/${cleanHandle || "creator"}/series/${s.id}`}
                           onOpenSeries={(e, selected) => {
                             if (lockedCounts) {
@@ -2882,10 +2882,10 @@ export function LivePreviewCard({
     <div className={`relative w-full mx-auto flex-1 min-h-0 h-full max-h-full flex flex-col transition-all ${isPublicSurface ? "max-w-[480px]" : isFull ? "max-w-[580px]" : "max-w-[560px]"}`}>
       {/* Premium profile + listing pages: every section runs edge to edge of the card. */}
       <FullBleedSectionsProvider enabled={isPremiumLayout || isListingPage}>
-        <CardSectionsProvider enabled={isCardSectionsMode}>
-          <PlainSectionsProvider enabled={isDemoPlainListing}>
+        <CardSectionsProvider enabled={false}>
+          <PlainSectionsProvider enabled={isDemoPlainListing || isCardSectionsMode}>
             {/* data-soft-buttons: solid accent buttons become a light accent tint; data-listing-plain: card hover / tap (globals.css). */}
-            <div className="contents" data-soft-buttons={isCardSectionsMode || undefined} data-listing-plain={isDemoPlainListing || undefined}>
+            <div className="contents" data-soft-buttons={isCardSectionsMode || undefined} data-listing-plain={isDemoPlainListing || isCardSectionsMode || undefined}>
               {isPremiumLayout ? <SolidSectionsProvider>{cardContent}</SolidSectionsProvider> : cardContent}
             </div>
           </PlainSectionsProvider>

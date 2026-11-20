@@ -721,14 +721,14 @@ export function ProfileHeader({
         <div
           // Compact: two separate white cards (era, fans) so the era colour sits on a neutral background.
           style={
-            compact
+            compact || splitActions
               ? undefined
               : {
                   backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--card-bg))",
                   borderColor: "color-mix(in srgb, var(--accent) 16%, var(--surface-border))",
                 }
           }
-          className={compact ? "mt-2 flex w-full flex-wrap items-center justify-center gap-x-1 gap-y-1" : "mt-3 flex w-full items-center justify-evenly gap-1 rounded-[5px] border px-1 py-1"}
+          className={compact || splitActions ? "mt-2 flex w-full flex-wrap items-center justify-center gap-x-1 gap-y-1" : "mt-3 flex w-full items-center justify-evenly gap-1 rounded-[5px] border px-1 py-1"}
         >
           {/* Creator Era (era colour + tier medal); opens the Era sheet */}
           {currentEra ? (
