@@ -502,7 +502,7 @@ export default function LandingHomePage() {
     `text-[14px] font-semibold transition-colors ${activeNav === id ? "text-[#7A2253]" : "text-[#71717A] hover:text-[#18181B]"}`;
 
   const primaryBtn =
-    "inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#7A2253] px-5 text-[14px] font-bold text-white transition-colors hover:bg-[#631841] cursor-pointer";
+    "inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#A8467A] px-5 text-[14px] font-bold text-white transition-colors hover:bg-[#94386A] cursor-pointer";
   const secondaryBtn =
     "inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-[#E6D3DE] bg-white px-5 text-[14px] font-bold text-[#7A2253] transition-colors hover:bg-[#F7EDF2] cursor-pointer";
   const textLink = "inline-flex items-center gap-1.5 text-[14px] font-bold text-[#7A2253] hover:underline underline-offset-4 cursor-pointer";
