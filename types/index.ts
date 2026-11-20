@@ -352,7 +352,7 @@ export type ThemeAnimationType =
 
 /** Registered themes (themes/config.ts). Unknown/removed ids resolve to the default via lib/themeKeys.ts. */
 export type ThemeKey =
-  | "inflixo-maroon" | "kapas" | "kajal"
+  | "inflixo-maroon" | "kapas" | "kajal" | "gulab"
   | "kurinji" | "neel" | "samundar" | "neem" | "haldi" | "kesar" | "gulmohar"
   | "taj-mahal" | "india-gate" | "gateway-of-india" | "marine-drive" | "goa-beach" | "ladakh"
   | "kerala-backwaters" | "hawa-mahal" | "varanasi-ghats" | "rann-of-kutch" | "cricket-stadium"

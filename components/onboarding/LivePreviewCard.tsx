@@ -659,6 +659,8 @@ export function LivePreviewCard({
   const series: Series[] = incomingSeries || [];
   const isListingPage = Boolean(seriesOnlyMode || productsOnlyMode || reviewsOnlyMode || linksOnlyMode || mediaKitOnlyMode || teamOnlyMode || setupOnlyMode);
   const isPremiumLayout = !isListingPage && (layoutMode === "premium" || layoutMode === "stacked");
+  /** Card-style sections with soft buttons: trying it on the demo creator's public profile first. */
+  const isCardSectionsMode = isPremiumLayout && !landingDemo && profile.username === "demo_creator";
   const effectiveSeriesPreviewLimit = isPremiumLayout ? 3 : seriesPreviewLimit;
   const displayedSeries = typeof effectiveSeriesPreviewLimit === "number" ? series.slice(0, effectiveSeriesPreviewLimit) : series;
   const { showToast } = useToast();
@@ -2792,6 +2794,7 @@ export function LivePreviewCard({
           className="tap-scale fixed bottom-[calc(10px+env(safe-area-inset-bottom))] right-[max(10px,calc((100vw-480px)/2+10px))] z-40 inline-flex h-11 w-11 items-center justify-center rounded-[5px] opacity-90 transition-opacity hover:opacity-100 cursor-pointer"
           aria-label="Scroll to top"
           title="Scroll to top"
+          data-soft-button={isCardSectionsMode || undefined}
         >
           <ChevronUp className="h-5 w-5 sm:h-6 sm:w-6 stroke-[2.5]" />
         </button>,
@@ -2804,9 +2807,11 @@ export function LivePreviewCard({
     <div className={`relative w-full mx-auto flex-1 min-h-0 h-full max-h-full flex flex-col transition-all ${isPublicSurface ? "max-w-[480px]" : isFull ? "max-w-[580px]" : "max-w-[560px]"}`}>
       {/* Premium profile + listing pages: every section runs edge to edge of the card. */}
       <FullBleedSectionsProvider enabled={isPremiumLayout || isListingPage}>
-        {/* Card-style sections: trying it on the demo creator's public profile first. */}
-        <CardSectionsProvider enabled={isPremiumLayout && !landingDemo && profile.username === "demo_creator"}>
-          {isPremiumLayout ? <SolidSectionsProvider>{cardContent}</SolidSectionsProvider> : cardContent}
+        <CardSectionsProvider enabled={isCardSectionsMode}>
+          {/* data-soft-buttons: solid accent buttons become a light accent tint (globals.css). */}
+          <div className="contents" data-soft-buttons={isCardSectionsMode || undefined}>
+            {isPremiumLayout ? <SolidSectionsProvider>{cardContent}</SolidSectionsProvider> : cardContent}
+          </div>
         </CardSectionsProvider>
       </FullBleedSectionsProvider>
 

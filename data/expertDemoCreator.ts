@@ -172,7 +172,7 @@ export const EXPERT_DEMO_OTHER_SOCIALS: OtherSocialAccount[] = [
   },
 ];
 
-export const EXPERT_DEMO_THEME: ThemeKey = "inflixo-maroon";
+export const EXPERT_DEMO_THEME: ThemeKey = "gulab";
 
 export const EXPERT_DEMO_SERIES: Series[] = [
   {

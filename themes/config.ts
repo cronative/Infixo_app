@@ -211,6 +211,57 @@ export const KAPAS: ThemeDefinition = {
   },
 };
 
+/** Gulab: dusty rose on warm cream, soft enough for big buttons and headers. */
+export const GULAB: ThemeDefinition = {
+  id: "gulab",
+  name: "Gulab",
+  tokens: {
+    "--page-bg": "#F6EEE6",
+    "--page-overlay": "none",
+    "--on-page-text": "#1F1A1B",
+    "--card-bg": "#FFFBF7",
+    "--card-border": "#EFE2DA",
+    "--card-shadow": "0 12px 40px rgba(120,60,60,.10)",
+    "--card-radius": "24px",
+    "--surface": "#FBF3EE",
+    "--surface-border": "#F0E3DC",
+    "--text": "#1F1A1B",
+    "--text-muted": "#6E6266",
+    "--accent": "#A44452",
+    "--accent-hover": "#8E3A47",
+    "--on-accent": "#FFFFFF",
+    "--accent-soft": "#F8E1E3",
+    "--divider": "rgba(164,68,82,.14)",
+    "--tab-active": "#A44452",
+    "--tab-inactive": "#6E6266",
+    "--tab-indicator": "#A44452",
+    "--font-heading": DASHBOARD_FONT,
+    "--font-body": DASHBOARD_FONT,
+    "--logo-variant": "dark",
+    "--logo-bg": "#A44452",
+    "--logo-fg": "#FFFFFF",
+    "--wordmark": "#A44452",
+    "--icon": "#6E6266",
+    "--icon-active": "#A44452",
+    "--avatar-bg": "#A44452",
+    "--avatar-text": "#FFFFFF",
+    "--avatar-ring": "linear-gradient(135deg,#F4C7CC,#A44452)",
+    "--nav-shadow": "0 2px 8px rgba(0,0,0,.05)",
+    "--nav-shadow-scrolled": "0 4px 12px rgba(0,0,0,.08)",
+    "--cover-from": "#C8646F",
+    "--cover-to": "#A2434F",
+    "--page-anim": "none",
+    "--card-blur": "0px",
+    "--accent-text": "var(--accent)",
+  },
+  listing: {
+    group: "basics",
+    subtitle: "Dusty rose & cream",
+    swatches: ["#A44452", "#FFFBF7", "#F8E1E3"],
+    thumbnail: "#F6EEE6",
+  },
+};
+
 export const KAJAL: ThemeDefinition = {
   id: "kajal",
   name: "Kajal",
@@ -574,6 +625,7 @@ export function registerTheme(input: ThemeInput): ThemeDefinition {
 registerTheme(INFLIXO_MAROON);
 registerTheme(KAPAS);
 registerTheme(KAJAL);
+registerTheme(GULAB);
 RAINBOW_THEMES.forEach(registerTheme);
 PLACE_THEMES.forEach(registerTheme);
 ANIMATED_THEMES.forEach(registerTheme);

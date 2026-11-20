@@ -1479,3 +1479,21 @@ nextjs-portal,
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ============================================================
+   SOFT BUTTONS (card-style profile sections, demo profile first)
+   Solid accent buttons become a light accent tint with accent text
+   (selected filter chips stay solid so the active state is clear).
+   ============================================================ */
+[data-soft-buttons] button[style*="background-color:var(--accent)"],
+[data-soft-buttons] a[style*="background-color:var(--accent)"],
+[data-soft-button] {
+  background-color: color-mix(in srgb, var(--accent) 10%, var(--card-bg)) !important;
+  color: var(--accent-text) !important;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent) !important;
+}
+[data-soft-buttons] button[style*="background-color:var(--accent)"]:hover,
+[data-soft-buttons] a[style*="background-color:var(--accent)"]:hover,
+[data-soft-button]:hover {
+  background-color: color-mix(in srgb, var(--accent) 16%, var(--card-bg)) !important;
+}
