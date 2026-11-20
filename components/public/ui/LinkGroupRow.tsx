@@ -102,7 +102,7 @@ export function LinkGroupRow({
     <div
       className={`${
         card
-          ? `rounded-[5px] border bg-[var(--header-bg,var(--card-bg))] ${isOpen ? "border-[color-mix(in_srgb,var(--accent-text)_40%,var(--surface-border))]" : "border-(--surface-border)"}`
+          ? `card-item rounded-[5px] border bg-[var(--header-bg,var(--card-bg))] ${isOpen ? "border-[color-mix(in_srgb,var(--accent-text)_40%,var(--surface-border))]" : "border-(--surface-border)"}`
           : isOpen
             ? "border-l-[3px] border-l-[color-mix(in_srgb,var(--accent)_55%,transparent)]"
             : ""

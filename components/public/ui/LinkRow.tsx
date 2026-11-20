@@ -73,7 +73,7 @@ export function LinkRow({ link, isPinned = false, compact = false, card = false,
         : platform.bgClass;
   const s = compact ? SIZES.compact : SIZES.regular;
   const rowCls = card
-    ? `gap-3 min-h-[56px] px-3 py-2.5 rounded-[5px] border ${
+    ? `card-item gap-3 min-h-[56px] px-3 py-2.5 rounded-[5px] border ${
         isFeatured ? "border-[color-mix(in_srgb,var(--accent-text)_40%,var(--surface-border))]" : "border-(--surface-border)"
       } bg-[var(--header-bg,var(--card-bg))] text-left transition-colors hover:border-[color-mix(in_srgb,var(--accent-text)_35%,var(--surface-border))] hover:bg-[color-mix(in_srgb,var(--accent)_3%,var(--header-bg,var(--card-bg)))] active:scale-[0.99]`
     : s.row;

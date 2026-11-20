@@ -1556,14 +1556,16 @@ nextjs-portal,
 }
 @media (hover: hover) {
   [data-listing-plain] .card-item:is(a, button):hover,
-  [data-listing-plain] .card-item:has(a):hover {
+  [data-listing-plain] .card-item:has(a):hover,
+  [data-listing-plain] .card-item:has(> button):hover {
     transform: scale(1.02);
     border-color: color-mix(in srgb, var(--accent) 35%, var(--surface-border));
     box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--accent) 40%, transparent);
   }
 }
 [data-listing-plain] .card-item:is(a, button):active,
-[data-listing-plain] .card-item:has(a):active {
+[data-listing-plain] .card-item:has(a):active,
+[data-listing-plain] .card-item:has(> button):active {
   transform: scale(0.96);
   background-color: color-mix(in srgb, var(--accent) 9%, var(--header-bg, var(--card-bg)));
   border-color: color-mix(in srgb, var(--accent) 55%, transparent);
