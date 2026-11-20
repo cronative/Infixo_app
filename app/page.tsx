@@ -100,9 +100,9 @@ const FAQS = [
 ];
 
 const PAID: { key: PaidPlanKey; blurb: string }[] = [
-  { key: "starter", blurb: "For creators beginning to organize and showcase their content." },
-  { key: "pro", blurb: "For growing creators who need more space for series, products, links and tools." },
-  { key: "vip", blurb: "For creators who want the most extensive profile and room to grow." },
+  { key: "starter", blurb: "Start organising your series, links and shop." },
+  { key: "pro", blurb: "More series, products and links as you grow." },
+  { key: "vip", blurb: "Unlimited series, shop and links, plus team seats." },
 ];
 const TRIAL_FEATURES = planFeatureLines("trial");
 
@@ -562,13 +562,25 @@ export default function LandingHomePage() {
       {/* ── 12. PRICING ── */}
       <section id="pricing" className="scroll-mt-20 border-t border-[#F6E0DC] bg-white py-16 sm:py-24">
         <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-          <SectionHeading
-            eyebrow="Pricing"
-            title="A professional creator profile for less than your daily cup of chai."
-            sub={`Big dreams don't need an expensive beginning. Plans start at ${starterMonthly}/month, about ${starterPerDay} a day.`}
+          <SectionHeading eyebrow="Pricing" title="Start Free. Grow When You're Ready." />
+          <div className="mx-auto mt-4 max-w-2xl space-y-3 text-center text-[16px] leading-relaxed text-[#52525B]">
+            <p>You want a professional creator profile, but you&apos;re not sure it&apos;s worth paying for yet.</p>
+            <p>
+              <span className="font-bold text-[#1C1917]">But here&apos;s the problem.</span> A website or a designer costs time and money you&apos;d rather spend on your content.
+            </p>
+            <p>
+              <span className="font-bold text-[#C21B5C]">That&apos;s where Inflixo helps.</span> Try it free for {PLANS.trial.trialDays} days, then pick a plan from {starterMonthly}/month, about {starterPerDay} a day.
+            </p>
+          </div>
+          <Benefits
+            className="mx-auto mt-6 max-w-md"
+            items={[
+              { title: `Free for ${PLANS.trial.trialDays} Days`, text: "Build your real profile, no card needed." },
+              { title: "Less Than a Cup of Chai", text: `Plans from ${starterMonthly}/month.` },
+              { title: "Pay Your Way", text: "UPI, cards or netbanking." },
+              { title: "Cancel Anytime", text: "Nothing you add is deleted." },
+            ]}
           />
-
-          <Benefits className="mx-auto mt-8 max-w-md" items={["Every plan includes series, shop, links and a media kit.","Pay with UPI, cards or netbanking.","Switch or cancel anytime; nothing you add is deleted."]} />
           <div className="mx-auto mt-10 flex max-w-3xl flex-col items-center justify-between gap-4 rounded-2xl border border-[#F0CFCB] bg-white p-5 text-center sm:flex-row sm:text-left">
             <div>
               <p className="text-[18px] font-extrabold text-[#1C1917]">Try Inflixo free for {PLANS.trial.trialDays} days</p>
@@ -624,9 +636,10 @@ export default function LandingHomePage() {
               );
             })}
           </div>
-          <p className="mt-8 text-center text-[13px] text-[#52525B]">
-            Pay securely with UPI, cards or netbanking via Razorpay. Plan features and usage limits vary.
+          <p className="mt-10 text-center text-[17px] font-extrabold text-[#1C1917]">
+            Big Dreams Don&apos;t Need <span className="text-[#C21B5C]">an Expensive Start.</span>
           </p>
+          <p className="mt-2 text-center text-[13px] text-[#52525B]">Secure payments via Razorpay. Plan features and usage limits vary.</p>
         </div>
       </section>
 
