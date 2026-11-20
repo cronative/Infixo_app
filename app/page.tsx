@@ -375,7 +375,7 @@ export default function LandingHomePage() {
       {/* ── HEADER ── */}
       <header className="fixed inset-x-0 top-0 z-50 border-b border-[#EFE3EA] bg-white/95 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-[1120px] items-center justify-between gap-4 px-4 sm:px-6">
-          <Logo size="sm" />
+          <Logo size="lg" showIcon={false} />
           <nav className="hidden items-center gap-6 md:flex" aria-label="Main Navigation">
             {NAV_LINKS.map((link) => (
               <a key={link.id} href={link.href} className={navClass(link.id)}>

@@ -108,6 +108,7 @@ export function Logo({
   className = "",
   casing = "title",
   showTagline = true,
+  showIcon = true,
 }: {
   size?: "sm" | "md" | "lg" | "xl";
   href?: string;
@@ -119,6 +120,8 @@ export function Logo({
   className?: string;
   casing?: "uppercase" | "title";
   showTagline?: boolean;
+  /** false shows only the wordmark and tagline, without the square icon. */
+  showIcon?: boolean;
 }) {
   const router = useRouter();
 
@@ -242,6 +245,7 @@ export function Logo({
       {/* =====================================================
           ICON BADGE (3D EMBOSSED)
          ===================================================== */}
+      {showIcon && (
       <div
         className={`
           ${badgeSize}
@@ -258,6 +262,7 @@ export function Logo({
           priority
         />
       </div>
+      )}
 
       {/* =====================================================
           BRAND NAME & TAGLINE
