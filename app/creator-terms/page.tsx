@@ -33,7 +33,7 @@ export default function CreatorTermsPage() {
       relatedNotice={
         <>
           These Creator Terms supplement the{" "}
-          <Link href="/terms" className="font-medium text-[#7A2253] underline underline-offset-2">
+          <Link href="/terms" className="font-medium text-[#C21B5C] underline underline-offset-2">
             Terms of Service
           </Link>
           , which also apply to you.

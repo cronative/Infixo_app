@@ -9,7 +9,7 @@ interface CookiePreferencesButtonProps {
 }
 
 export function CookiePreferencesButton({
-  className = "hover:text-[#7A2253] transition-colors cursor-pointer",
+  className = "hover:text-[#C21B5C] transition-colors cursor-pointer",
   children = "Cookie Preferences",
 }: CookiePreferencesButtonProps) {
   return (

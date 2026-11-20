@@ -61,8 +61,8 @@ interface ThemeOption {
 }
 
 const THEME_OPTIONS: ThemeOption[] = [
-  { id: "profile", name: "My Theme", swatch: ["#D4A373", "#10B981", "#7A2253"] },
-  { id: "royal", name: "Inflixo", swatch: ["#7A2253", "#2563EB", "#93C5FD"] },
+  { id: "profile", name: "My Theme", swatch: ["#D4A373", "#10B981", "#C21B5C"] },
+  { id: "royal", name: "Inflixo", swatch: ["#C21B5C", "#2563EB", "#93C5FD"] },
   { id: "obsidian", name: "Midnight", swatch: ["#18181B", "#2563EB", "#6B6B76"] },
   { id: "emerald", name: "Emerald", swatch: ["#03281E", "#D97706", "#D4A373"] },
   { id: "sunset", name: "Sunset", swatch: ["#881337", "#FB923C", "#FED7AA"] },
@@ -267,7 +267,7 @@ export default function CreatorCardPage() {
             <button
               type="button"
               onClick={openTrialExpiredModal}
-              className="shrink-0 inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#5d193f] px-3.5 py-2 text-xs font-bold text-white shadow-xs transition-colors cursor-pointer"
+              className="shrink-0 inline-flex items-center gap-1.5 rounded-[5px] bg-[#C21B5C] hover:bg-[#A3164E] px-3.5 py-2 text-xs font-bold text-white shadow-xs transition-colors cursor-pointer"
             >
               <Sparkles className="h-3.5 w-3.5" />
               <span>Keep Profile Live</span>
@@ -280,7 +280,7 @@ export default function CreatorCardPage() {
       {!username ? (
         <div className="rounded-[5px] border border-(--border) bg-white p-5 text-sm text-[#52525B] shadow-2xs">
           Set your username first so your card can link to your public profile.{" "}
-          <Link href="/dashboard/profile" className="font-semibold text-[#7A2253] underline underline-offset-2">
+          <Link href="/dashboard/profile" className="font-semibold text-[#C21B5C] underline underline-offset-2">
             Go to Profile
           </Link>
         </div>
@@ -325,7 +325,7 @@ export default function CreatorCardPage() {
                 </div>
                 {!assetsReady && (
                   <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-[1px]">
-                    <Loader2 className="h-6 w-6 animate-spin text-[#7A2253]" />
+                    <Loader2 className="h-6 w-6 animate-spin text-[#C21B5C]" />
                   </div>
                 )}
               </div>
@@ -338,7 +338,7 @@ export default function CreatorCardPage() {
                 onClick={() => setAspectRatio("portrait")}
                 className={`inline-flex items-center gap-1.5 h-7 px-3 rounded-[5px] text-[13px] font-medium transition-all cursor-pointer ${
                   aspectRatio === "portrait"
-                    ? "bg-[#7A2253] text-white"
+                    ? "bg-[#C21B5C] text-white"
                     : "text-[#6B6B76] hover:text-[#18181B]"
                 }`}
               >
@@ -350,7 +350,7 @@ export default function CreatorCardPage() {
                 onClick={() => setAspectRatio("square")}
                 className={`inline-flex items-center gap-1.5 h-7 px-3 rounded-[5px] text-[13px] font-medium transition-all cursor-pointer ${
                   aspectRatio === "square"
-                    ? "bg-[#7A2253] text-white"
+                    ? "bg-[#C21B5C] text-white"
                     : "text-[#6B6B76] hover:text-[#18181B]"
                 }`}
               >
@@ -366,7 +366,7 @@ export default function CreatorCardPage() {
             <div className="rounded-[5px] border border-[#ECECF0] bg-white p-4 sm:p-5">
               <div className="flex items-center justify-between pb-3.5">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] shrink-0">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C] shrink-0">
                     <Wand2 className="h-4 w-4" />
                   </div>
                   <h2 className="text-[16px] font-semibold text-[#18181B]">1. Card Layout Style</h2>
@@ -384,12 +384,12 @@ export default function CreatorCardPage() {
                       onClick={() => setSelectedLayout(layout.id)}
                       className={`group relative flex flex-col items-center rounded-[5px] border p-2 text-center transition-all cursor-pointer ${
                         active
-                          ? "border-2 border-[#7A2253] bg-white shadow-none"
+                          ? "border-2 border-[#C21B5C] bg-white shadow-none"
                           : "border-[#ECECF0] bg-[#FAFAFB] hover:border-[#D4D4D8] hover:bg-white"
                       }`}
                     >
                       {active && (
-                        <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-[#7A2253] text-white flex items-center justify-center z-10">
+                        <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-[#C21B5C] text-white flex items-center justify-center z-10">
                           <Check className="h-2.5 w-2.5 stroke-[3]" />
                         </span>
                       )}
@@ -451,10 +451,10 @@ export default function CreatorCardPage() {
                             <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-[#EADBCC]" />
                             <div className="absolute -bottom-3 -left-3 w-8 h-8 rounded-full bg-[#EADBCC]" />
                             <div className="relative z-10 h-5 w-5 rounded-full bg-white border border-[#D4A373] shadow-2xs flex items-center justify-center">
-                              <div className="h-3 w-3 rounded-full bg-[#7A2253]" />
+                              <div className="h-3 w-3 rounded-full bg-[#C21B5C]" />
                             </div>
                             <div className="relative z-10 w-8 h-1 bg-[#18181B] rounded-full mt-1.5" />
-                            <div className="relative z-10 w-5 h-1 bg-[#7A2253] rounded-full mt-1" />
+                            <div className="relative z-10 w-5 h-1 bg-[#C21B5C] rounded-full mt-1" />
                             <div className="relative z-10 w-6 h-6 bg-white border border-[#ECECF0] rounded-[2px] mt-1.5 flex items-center justify-center shadow-2xs">
                               <div className="w-3.5 h-3.5 bg-[#18181B] rounded-[1px]" />
                             </div>
@@ -464,7 +464,7 @@ export default function CreatorCardPage() {
 
                       <span
                         className={`text-xs font-bold line-clamp-2 break-words max-w-full ${
-                          active ? "text-[#7A2253]" : "text-[#18181B]"
+                          active ? "text-[#C21B5C]" : "text-[#18181B]"
                         }`}
                       >
                         {layout.name}
@@ -482,7 +482,7 @@ export default function CreatorCardPage() {
             <div className="rounded-[5px] border border-[#ECECF0] bg-white p-4 sm:p-5">
               <div className="flex items-center justify-between pb-3.5">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] shrink-0">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C] shrink-0">
                     <Palette className="h-4 w-4" />
                   </div>
                   <h2 className="text-[16px] font-semibold text-[#18181B]">2. Color Theme</h2>
@@ -490,7 +490,7 @@ export default function CreatorCardPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedThemeId("profile")}
-                  className="text-[12px] font-medium text-[#7A2253] hover:underline cursor-pointer"
+                  className="text-[12px] font-medium text-[#C21B5C] hover:underline cursor-pointer"
                 >
                   Profile Theme
                 </button>
@@ -501,7 +501,7 @@ export default function CreatorCardPage() {
                   const active = selectedThemeId === t.id;
                   const dots =
                     t.id === "profile"
-                      ? [themeMeta.swatch[0] || "#D4A373", themeMeta.swatch[1] || "#10B981", "#7A2253"]
+                      ? [themeMeta.swatch[0] || "#D4A373", themeMeta.swatch[1] || "#10B981", "#C21B5C"]
                       : t.swatch;
 
                   return (
@@ -511,7 +511,7 @@ export default function CreatorCardPage() {
                       onClick={() => setSelectedThemeId(t.id)}
                       className={`flex flex-col items-center justify-center gap-2 rounded-[5px] border p-2.5 text-center transition-all cursor-pointer ${
                         active
-                          ? "border-2 border-[#7A2253] bg-white shadow-none"
+                          ? "border-2 border-[#C21B5C] bg-white shadow-none"
                           : "border-[#ECECF0] bg-[#FAFAFB] hover:border-[#D4D4D8] hover:bg-white"
                       }`}
                     >
@@ -526,7 +526,7 @@ export default function CreatorCardPage() {
                       </div>
                       <span
                         className={`text-[12px] font-medium break-words max-w-full ${
-                          active ? "text-[#7A2253]" : "text-[#18181B]"
+                          active ? "text-[#C21B5C]" : "text-[#18181B]"
                         }`}
                       >
                         {t.name}
@@ -541,12 +541,12 @@ export default function CreatorCardPage() {
             <div className="rounded-[5px] border border-[#ECECF0] bg-white p-4 sm:p-5">
               <div className="flex items-center justify-between pb-3.5">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] shrink-0">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C] shrink-0">
                     <Heart className="h-4 w-4" />
                   </div>
                   <h2 className="text-[16px] font-semibold text-[#18181B]">3. Message &amp; Tagline</h2>
                 </div>
-                <span className="text-[12px] font-medium text-[#7A2253]">Use quick tags</span>
+                <span className="text-[12px] font-medium text-[#C21B5C]">Use quick tags</span>
               </div>
 
               {/* 6 Quick Tag Pills */}
@@ -563,7 +563,7 @@ export default function CreatorCardPage() {
                       }}
                       className={`inline-flex items-center justify-center gap-1.5 rounded-[5px] border px-2.5 py-2 text-[12px] font-medium transition-all cursor-pointer ${
                         active
-                          ? "border-[#7A2253] bg-[#F7EEF2] text-[#7A2253]"
+                          ? "border-[#C21B5C] bg-[#FFEDE6] text-[#C21B5C]"
                           : "border-[#ECECF0] bg-[#FAFAFB] text-[#3F3F46] hover:border-[#D4D4D8] hover:bg-white"
                       }`}
                     >
@@ -593,7 +593,7 @@ export default function CreatorCardPage() {
                     onChange={(e) => setCustomTagline(e.target.value)}
                     placeholder={activePreset.tagline}
                     maxLength={60}
-                    className="w-full rounded-[5px] border border-[#ECECF0] bg-white px-3.5 py-2 text-[13px] text-[#18181B] placeholder-[#A1A1AA] transition-colors focus:border-[#7A2253] focus:outline-none"
+                    className="w-full rounded-[5px] border border-[#ECECF0] bg-white px-3.5 py-2 text-[13px] text-[#18181B] placeholder-[#A1A1AA] transition-colors focus:border-[#C21B5C] focus:outline-none"
                   />
                   {customTagline && (
                     <button
@@ -617,7 +617,7 @@ export default function CreatorCardPage() {
               type="button"
               onClick={handleDownload}
               disabled={disabled}
-              className="w-full h-9 rounded-[5px] bg-[#7A2253] hover:bg-[#661842] text-white font-medium text-[13px] shadow-none flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full h-9 rounded-[5px] bg-[#C21B5C] hover:bg-[#A3164E] text-white font-medium text-[13px] shadow-none flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
             >
               {busy === "download" ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

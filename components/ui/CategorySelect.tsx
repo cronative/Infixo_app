@@ -15,25 +15,25 @@ interface CategorySelectProps {
 
 const POPULAR_NICHES_CONFIG = [
   { name: "Food & Cooking", emoji: "🍕", bg: "bg-[#FFF5F0] border-[#FFEDD5] text-[#9A3412]" },
-  { name: "Comedy & Entertainment", emoji: "😀", bg: "bg-[#FFF0F5] border-[#FCE7F3] text-[#831843]" },
+  { name: "Comedy & Entertainment", emoji: "😀", bg: "bg-[#FFF6F2] border-[#FFEDE6] text-[#831843]" },
   { name: "Travel & Adventure", emoji: "✈️", bg: "bg-[#F0F9FF] border-[#E0F2FE] text-[#0369A1]" },
   { name: "Technology & AI", emoji: "💻", bg: "bg-[#F5F3FF] border-[#EDE9FE] text-[#6D28D9]" },
-  { name: "Fashion & Beauty", emoji: "👗", bg: "bg-[#FFF0F5] border-[#FCE7F3] text-[#9D174D]" },
-  { name: "Fitness & Wellness", emoji: "🏋️", bg: "bg-[#FDF2F8] border-[#FCE7F3] text-[#831843]" },
+  { name: "Fashion & Beauty", emoji: "👗", bg: "bg-[#FFF6F2] border-[#FFEDE6] text-[#9D174D]" },
+  { name: "Fitness & Wellness", emoji: "🏋️", bg: "bg-[#FFF6F2] border-[#FFEDE6] text-[#831843]" },
   { name: "Gaming & Esports", emoji: "🎮", bg: "bg-[#FAF5FF] border-[#F3E8FF] text-[#7E22CE]" },
   { name: "Daily Vlogger", emoji: "📹", bg: "bg-[#FFF1F2] border-[#FFE4E6] text-[#BE123C]" },
 ];
 
 const CATEGORY_THEMES: Record<string, { headerBg: string; textColor: string; borderColor: string }> = {
   "Comedy & Entertainment": {
-    headerBg: "bg-[#FFF0F5]",
-    textColor: "text-[#7A2253]",
-    borderColor: "border-[#FCE7F3]",
+    headerBg: "bg-[#FFF6F2]",
+    textColor: "text-[#C21B5C]",
+    borderColor: "border-[#FFEDE6]",
   },
   "Food & Cooking": {
-    headerBg: "bg-[#FFF0F5]",
-    textColor: "text-[#7A2253]",
-    borderColor: "border-[#FCE7F3]",
+    headerBg: "bg-[#FFF6F2]",
+    textColor: "text-[#C21B5C]",
+    borderColor: "border-[#FFEDE6]",
   },
   "Travel & Adventure": {
     headerBg: "bg-[#F0F9FF]",
@@ -46,9 +46,9 @@ const CATEGORY_THEMES: Record<string, { headerBg: string; textColor: string; bor
     borderColor: "border-[#EDE9FE]",
   },
   "Fashion & Beauty": {
-    headerBg: "bg-[#FFF0F5]",
+    headerBg: "bg-[#FFF6F2]",
     textColor: "text-[#831843]",
-    borderColor: "border-[#FCE7F3]",
+    borderColor: "border-[#FFEDE6]",
   },
   "Fitness & Wellness": {
     headerBg: "bg-[#F0FDF4]",
@@ -68,9 +68,9 @@ const CATEGORY_THEMES: Record<string, { headerBg: string; textColor: string; bor
 };
 
 const DEFAULT_THEME = {
-  headerBg: "bg-[#FFF0F5]",
-  textColor: "text-[#7A2253]",
-  borderColor: "border-[#FCE7F3]",
+  headerBg: "bg-[#FFF6F2]",
+  textColor: "text-[#C21B5C]",
+  borderColor: "border-[#FFEDE6]",
 };
 
 export function CategorySelect({
@@ -150,7 +150,7 @@ export function CategorySelect({
       {/* Field Label & Count Badge Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] shrink-0">
+          <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C] shrink-0">
             <Tag className="h-4 w-4" />
           </div>
           <div>
@@ -162,7 +162,7 @@ export function CategorySelect({
             </p>
           </div>
         </div>
-        <span className="h-6 inline-flex items-center bg-[#F7EEF2] text-[#7A2253] text-[12px] font-medium px-2 rounded-[5px] shrink-0">
+        <span className="h-6 inline-flex items-center bg-[#FFEDE6] text-[#C21B5C] text-[12px] font-medium px-2 rounded-[5px] shrink-0">
           {selectedCategories.length} / {max} selected
         </span>
       </div>
@@ -182,10 +182,10 @@ export function CategorySelect({
         }}
         className={`flex min-h-[46px] w-full items-center justify-between gap-2.5 rounded-[5px] border bg-white px-3 py-2 text-left shadow-none transition-all cursor-pointer ${
           isOpen
-            ? "border-[#7A2253] ring-1 ring-[#7A2253]/20"
+            ? "border-[#C21B5C] ring-1 ring-[#C21B5C]/20"
             : error
               ? "border-rose-400"
-              : "border-[#ECECF0] hover:border-[#7A2253]"
+              : "border-[#ECECF0] hover:border-[#C21B5C]"
         }`}
         aria-expanded={isOpen}
       >
@@ -198,7 +198,7 @@ export function CategorySelect({
             selectedCategories.map((category) => (
               <span
                 key={category}
-                className="h-6 inline-flex items-center gap-1.5 rounded-[5px] bg-[#F7EEF2] px-2 text-[12px] font-medium text-[#7A2253]"
+                className="h-6 inline-flex items-center gap-1.5 rounded-[5px] bg-[#FFEDE6] px-2 text-[12px] font-medium text-[#C21B5C]"
               >
                 <span>{getCategoryEmoji(category)}</span>
                 <span>{category === "Other" && customValue ? customValue : category}</span>
@@ -223,7 +223,7 @@ export function CategorySelect({
       {/* Popular Niches Quick Row */}
       <div className="space-y-2 pt-0.5">
         <div className="flex items-center gap-1.5 text-[12px] font-semibold text-[#18181B]">
-          <TrendingUp className="h-3.5 w-3.5 text-[#7A2253]" />
+          <TrendingUp className="h-3.5 w-3.5 text-[#C21B5C]" />
           <span>Popular niches</span>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -236,7 +236,7 @@ export function CategorySelect({
                 onClick={() => toggleCategory(niche.name)}
                 className={`h-8 rounded-[5px] border px-3 text-[12px] font-medium transition-all cursor-pointer ${
                   isSelected
-                    ? "bg-[#7A2253] text-white border-[#7A2253] shadow-none"
+                    ? "bg-[#C21B5C] text-white border-[#C21B5C] shadow-none"
                     : "bg-[#FAFAFB] hover:bg-white border-[#ECECF0] text-[#3F3F46]"
                 }`}
               >
@@ -258,7 +258,7 @@ export function CategorySelect({
           {/* Header */}
           <div className="flex items-center justify-between border-b border-[#F4F4F5] bg-white px-5 sm:px-6 py-4 shrink-0">
             <div className="flex items-center gap-3.5 min-w-0 pr-2">
-              <div className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] text-[#7A2253] shrink-0">
+              <div className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-[#FFF6F2] border border-[#FFEDE6] text-[#C21B5C] shrink-0">
                 <Tag className="h-5 w-5 stroke-[2.2]" />
               </div>
               <div className="min-w-0">
@@ -284,7 +284,7 @@ export function CategorySelect({
           {/* Modal Body - Scrollable */}
           <div className="flex-1 min-h-0 overflow-y-auto px-5 sm:px-6 py-4 space-y-5">
             {/* Search Input */}
-            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                 <Search className="h-4 w-4" />
               </span>
@@ -318,8 +318,8 @@ export function CategorySelect({
                         onClick={() => toggleCategory(niche.name)}
                         className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-[5px] border text-xs font-medium transition-all cursor-pointer ${
                           isSelected
-                            ? "bg-[#7A2253] text-white border-[#7A2253] shadow-xs"
-                            : `${niche.bg} hover:border-[#7A2253]/30`
+                            ? "bg-[#C21B5C] text-white border-[#C21B5C] shadow-xs"
+                            : `${niche.bg} hover:border-[#C21B5C]/30`
                         }`}
                       >
                         <span className="text-sm">{niche.emoji}</span>
@@ -336,10 +336,10 @@ export function CategorySelect({
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Layers className="h-4 w-4 text-[#7A2253]" />
+                    <Layers className="h-4 w-4 text-[#C21B5C]" />
                     <span className="text-sm font-bold text-[#18181B]">Selected Creator Types</span>
                   </div>
-                  <span className="rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F3] px-2.5 py-0.5 text-xs font-semibold text-[#7A2253]">
+                  <span className="rounded-[5px] bg-[#FFF6F2] border border-[#FFEDE6] px-2.5 py-0.5 text-xs font-semibold text-[#C21B5C]">
                     {selectedCategories.length} / {max} selected
                   </span>
                 </div>
@@ -348,7 +348,7 @@ export function CategorySelect({
                   {selectedCategories.map((cat) => (
                     <div
                       key={cat}
-                      className="inline-flex items-center gap-2 rounded-[5px] border border-[#FCE7F3] bg-[#FFF0F5] px-3 py-1 text-xs font-semibold text-[#7A2253]"
+                      className="inline-flex items-center gap-2 rounded-[5px] border border-[#FFEDE6] bg-[#FFF6F2] px-3 py-1 text-xs font-semibold text-[#C21B5C]"
                     >
                       <span className="text-sm">{getCategoryEmoji(cat)}</span>
                       <span>{cat === "Other" && customValue ? customValue : cat}</span>
@@ -417,7 +417,7 @@ export function CategorySelect({
                                   onClick={() => toggleCategory(type)}
                                   className={`flex items-center gap-2.5 px-3 py-2.5 rounded-[5px] text-left transition-all cursor-pointer border ${
                                     isSelected
-                                      ? "bg-[#7A2253] border-[#7A2253] text-white shadow-xs"
+                                      ? "bg-[#C21B5C] border-[#C21B5C] text-white shadow-xs"
                                       : isMaxReached
                                         ? "bg-white border-[#ECECF0] opacity-40 cursor-not-allowed text-[#A1A1AA]"
                                         : "bg-white border-[#ECECF0] hover:border-[#D4D4D8] text-[#27272A]"
@@ -426,7 +426,7 @@ export function CategorySelect({
                                   <div
                                     className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-[3px] border transition-colors ${
                                       isSelected
-                                        ? "border-white bg-[#7A2253] text-white"
+                                        ? "border-white bg-[#C21B5C] text-white"
                                         : "border-[#D4D4D8] bg-white"
                                     }`}
                                   >
@@ -450,13 +450,13 @@ export function CategorySelect({
 
           {/* Sticky Footer */}
           <div className="flex items-center justify-between border-t border-[#F4F4F5] bg-white px-5 sm:px-6 py-3.5 shrink-0">
-            <span className="text-sm font-bold text-[#7A2253]">
+            <span className="text-sm font-bold text-[#C21B5C]">
               {selectedCategories.length} / {max} selected
             </span>
             <button
               type="button"
               onClick={closePicker}
-              className="rounded-[5px] bg-[#7A2253] hover:bg-[#681B46] px-6 py-2 text-xs sm:text-sm font-semibold text-white shadow-xs transition-colors cursor-pointer"
+              className="rounded-[5px] bg-[#C21B5C] hover:bg-[#A3164E] px-6 py-2 text-xs sm:text-sm font-semibold text-white shadow-xs transition-colors cursor-pointer"
             >
               Done
             </button>

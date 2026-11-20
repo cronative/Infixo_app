@@ -443,7 +443,7 @@ export default function DashboardTeamPage() {
             <button
               type="button"
               onClick={handleOpenTeamModal}
-              className="inline-flex items-center gap-2 rounded-[5px] bg-[#7A2253] h-9 px-4 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:bg-[#631841] cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-[5px] bg-[#C21B5C] h-9 px-4 text-xs font-semibold text-white shadow-md shadow-[#C21B5C]/20 transition-all hover:bg-[#A3164E] cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Create Your Team</span>
@@ -465,7 +465,7 @@ export default function DashboardTeamPage() {
                   className="h-11 w-11 rounded-[5px] object-cover border border-[#ECECF0] shrink-0"
                 />
               ) : (
-                <div className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] font-semibold text-sm shrink-0 select-none">
+                <div className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C] font-semibold text-sm shrink-0 select-none">
                   {getInitials(team.teamName || "The Crew")}
                 </div>
               )}
@@ -526,14 +526,14 @@ export default function DashboardTeamPage() {
 
               {!team.members || team.members.length === 0 ? (
                 <div className="p-6 text-center space-y-2 bg-white">
-                  <p className="text-xs font-bold text-[#7A2253]">No team members added yet</p>
+                  <p className="text-xs font-bold text-[#C21B5C]">No team members added yet</p>
                   <p className="text-xs text-[#6B6B76] max-w-sm mx-auto">
                     Add members to highlight on-camera talent, directors, editors, writers, and collaborators on your public profile.
                   </p>
                   <button
                     type="button"
                     onClick={() => handleOpenMemberModal()}
-                    className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#631841] h-8 px-3 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs mt-2"
+                    className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#C21B5C] hover:bg-[#A3164E] h-8 px-3 text-xs font-semibold text-white transition-colors cursor-pointer shadow-2xs mt-2"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     <span>Add First Member</span>
@@ -573,7 +573,7 @@ export default function DashboardTeamPage() {
                         }}
                         className={`px-4 sm:px-5 py-3 flex items-center justify-between gap-3 hover:bg-[#fafafa] transition-all text-left ${
                           isHidden ? "opacity-50" : ""
-                        } ${isDragTarget ? "border-t-2 border-t-[#7A2253] bg-[#FFF0F5]/30" : ""}`}
+                        } ${isDragTarget ? "border-t-2 border-t-[#C21B5C] bg-[#FFF6F2]/30" : ""}`}
                       >
                         {/* Left: Drag Handle + Round Photo + Name, Role Chip, Group, One-Liner */}
                         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
@@ -589,7 +589,7 @@ export default function DashboardTeamPage() {
                             name={member.name}
                             className="h-10 w-10 rounded-full object-cover shrink-0 border border-[#ECECF0]"
                             fallbackBgClass="bg-[#FFF5F7]"
-                            textClassName="text-xs font-bold text-[#7A2253]"
+                            textClassName="text-xs font-bold text-[#C21B5C]"
                           />
 
                           <div className="min-w-0 flex-1 space-y-0.5">
@@ -597,7 +597,7 @@ export default function DashboardTeamPage() {
                               <p className="font-bold text-sm text-[#18181B] truncate">
                                 {member.name}
                               </p>
-                              <span className="inline-flex items-center gap-1 rounded-full bg-[#F7EEF2] text-[#7A2253] px-2 py-0.5 text-[11px] font-semibold">
+                              <span className="inline-flex items-center gap-1 rounded-full bg-[#FFEDE6] text-[#C21B5C] px-2 py-0.5 text-[11px] font-semibold">
                                 {member.role}
                               </span>
                               <span className="inline-flex items-center rounded-[5px] bg-[#F4F4F5] text-[#52525B] px-1.5 py-0.5 text-[10px] font-semibold">
@@ -621,7 +621,7 @@ export default function DashboardTeamPage() {
                                 href={`/${cleanInflixo}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-0.5 text-[11px] font-semibold text-[#7A2253] hover:underline"
+                                className="inline-flex items-center gap-0.5 text-[11px] font-semibold text-[#C21B5C] hover:underline"
                               >
                                 <span>@{cleanInflixo}</span>
                                 <ArrowUpRight className="h-3 w-3" />
@@ -637,7 +637,7 @@ export default function DashboardTeamPage() {
                               href={member.instagramUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F7EEF2] text-[#E1306C] hover:scale-105 transition-transform"
+                              className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FFEDE6] text-[#E1306C] hover:scale-105 transition-transform"
                               title="Instagram"
                             >
                               <InstagramIcon className="h-4 w-4" />
@@ -648,7 +648,7 @@ export default function DashboardTeamPage() {
                               href={member.youtubeUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F7EEF2] text-[#FF0000] hover:scale-105 transition-transform"
+                              className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FFEDE6] text-[#FF0000] hover:scale-105 transition-transform"
                               title="YouTube"
                             >
                               <YoutubeIcon className="h-4 w-4" />
@@ -659,7 +659,7 @@ export default function DashboardTeamPage() {
                               href={member.facebookUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F7EEF2] text-[#1877F2] hover:scale-105 transition-transform"
+                              className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FFEDE6] text-[#1877F2] hover:scale-105 transition-transform"
                               title="Facebook"
                             >
                               <FacebookIcon className="h-4 w-4" />
@@ -722,12 +722,12 @@ export default function DashboardTeamPage() {
         <form onSubmit={handleSaveTeam} className="flex flex-col flex-1 min-h-0">
           <ModalBody className="p-4 sm:p-5 space-y-4 text-left">
             {/* Info Banner */}
-            <div className="flex items-center gap-3 p-3.5 rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1]">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-white border border-[#FCE7F1] text-[#7A2253]">
+            <div className="flex items-center gap-3 p-3.5 rounded-[5px] bg-[#FFF6F2] border border-[#FFEDE6]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-white border border-[#FFEDE6] text-[#C21B5C]">
                 <Users className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-bold text-[#7A2253]">What is a Creator Team?</p>
+                <p className="text-xs font-bold text-[#C21B5C]">What is a Creator Team?</p>
                 <p className="text-[11px] text-[#6B6B76] mt-0.5">Highlight your on-camera talent, directors, editors, writers, and collaborators on your Inflixo profile.</p>
               </div>
             </div>
@@ -740,7 +740,7 @@ export default function DashboardTeamPage() {
                 </label>
                 <span className="text-[11px] text-[#6B6B76]">Default: The Crew</span>
               </div>
-              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Users className="h-4 w-4" />
                 </div>
@@ -780,7 +780,7 @@ export default function DashboardTeamPage() {
                     />
                     <div className="min-w-0 flex-1">
                       <span className="block text-xs font-semibold text-[#18181B]">Logo uploaded</span>
-                      <span className="block text-[11px] text-[#7A2253] font-medium">Click to change logo</span>
+                      <span className="block text-[11px] text-[#C21B5C] font-medium">Click to change logo</span>
                     </div>
                     <button
                       type="button"
@@ -796,7 +796,7 @@ export default function DashboardTeamPage() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center text-center">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#6B6B76] group-hover:text-[#7A2253] mb-1">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#6B6B76] group-hover:text-[#C21B5C] mb-1">
                       <ImageIcon className="h-5 w-5" />
                     </div>
                     <span className="text-xs font-semibold text-[#18181B]">Upload Team Logo</span>
@@ -814,7 +814,7 @@ export default function DashboardTeamPage() {
                 </label>
                 <span className="text-[11px] text-[#6B6B76]">Shown on your public team section</span>
               </div>
-              <div className="flex rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <div className="flex rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                 <div className="flex w-10 shrink-0 items-start justify-center pt-2.5 border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <FileText className="h-4 w-4" />
                 </div>
@@ -840,7 +840,7 @@ export default function DashboardTeamPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="h-10 px-5 rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="h-10 px-5 rounded-[5px] bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#C21B5C]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <span>{isSubmitting ? "Saving..." : team ? "Save changes" : "+ Create team"}</span>
             </button>
@@ -885,7 +885,7 @@ export default function DashboardTeamPage() {
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <Camera className="h-5 w-5 text-[#6B6B76] group-hover:text-[#7A2253]" />
+                    <Camera className="h-5 w-5 text-[#6B6B76] group-hover:text-[#C21B5C]" />
                   )}
                 </label>
                 <div className="min-w-0 flex-1 space-y-1">
@@ -918,7 +918,7 @@ export default function DashboardTeamPage() {
                 <label className="block text-[13px] font-medium text-[#18181B]">
                   Name <span className="text-[#C2414B]">*</span>
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <User className="h-4 w-4" />
                   </div>
@@ -937,7 +937,7 @@ export default function DashboardTeamPage() {
                 <label className="block text-[13px] font-medium text-[#18181B]">
                   Role <span className="text-[#C2414B]">*</span>
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Briefcase className="h-4 w-4" />
                   </div>
@@ -966,7 +966,7 @@ export default function DashboardTeamPage() {
                       onClick={() => setMemberGroup(grp)}
                       className={`h-10 rounded-[5px] border text-xs font-semibold transition-all cursor-pointer ${
                         selected
-                          ? "border-[#7A2253] bg-[#FFF0F5] text-[#7A2253] ring-1 ring-[#7A2253]"
+                          ? "border-[#C21B5C] bg-[#FFF6F2] text-[#C21B5C] ring-1 ring-[#C21B5C]"
                           : "border-[#ECECF0] bg-white text-[#52525B] hover:bg-[#FAFAFB]"
                       }`}
                     >
@@ -991,7 +991,7 @@ export default function DashboardTeamPage() {
                 value={memberOneLiner}
                 onChange={(e) => setMemberOneLiner(e.target.value.slice(0, 80))}
                 placeholder="e.g. The one who always says 'one more take'"
-                className="w-full h-10 rounded-[5px] border border-[#ECECF0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 focus:border-[#7A2253] outline-none"
+                className="w-full h-10 rounded-[5px] border border-[#ECECF0] bg-white px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 focus:border-[#C21B5C] outline-none"
               />
             </div>
 
@@ -1000,7 +1000,7 @@ export default function DashboardTeamPage() {
               <label className="block text-[13px] font-medium text-[#18181B]">
                 Inflixo Username <span className="font-normal text-[#A1A1AA]">(Optional)</span>
               </label>
-              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                 <div className="flex h-10 px-3 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-xs font-semibold text-[#6B6B76]">
                   inflixo.com/
                 </div>
@@ -1017,13 +1017,13 @@ export default function DashboardTeamPage() {
             {/* Social Profiles (Optional) */}
             <div className="space-y-3 pt-1">
               <div>
-                <p className="text-xs font-bold text-[#7A2253]">Social Profiles (Optional)</p>
+                <p className="text-xs font-bold text-[#C21B5C]">Social Profiles (Optional)</p>
                 <p className="text-[11px] text-[#6B6B76] mt-0.5">Enter username only — we&apos;ll generate the full profile links automatically.</p>
               </div>
 
               {/* Instagram */}
               <div className="space-y-1">
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB]">
                     <InstagramIcon className="h-4.5 w-4.5 text-[#E1306C]" />
                   </div>
@@ -1042,7 +1042,7 @@ export default function DashboardTeamPage() {
 
               {/* YouTube */}
               <div className="space-y-1">
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB]">
                     <YoutubeIcon className="h-4.5 w-4.5 text-[#FF0000]" />
                   </div>
@@ -1061,7 +1061,7 @@ export default function DashboardTeamPage() {
 
               {/* Facebook */}
               <div className="space-y-1">
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB]">
                     <FacebookIcon className="h-4.5 w-4.5 text-[#1877F2]" />
                   </div>
@@ -1091,7 +1091,7 @@ export default function DashboardTeamPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="h-10 px-5 rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="h-10 px-5 rounded-[5px] bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#C21B5C]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <UserPlus className="h-4 w-4" />
               <span>{isSubmitting ? "Saving..." : editingMember ? "Save changes" : "Add member"}</span>

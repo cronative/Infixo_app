@@ -64,7 +64,7 @@ function DesktopTopHeader() {
         <button
           type="button"
           onClick={handleCopy}
-          className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-[13px] font-medium text-[#3F3F46] transition-colors hover:bg-[#FAFAFB] hover:text-[#7A2253]"
+          className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-[13px] font-medium text-[#3F3F46] transition-colors hover:bg-[#FAFAFB] hover:text-[#C21B5C]"
         >
           <Copy className="h-3.5 w-3.5" />
           <span>Copy link</span>
@@ -72,7 +72,7 @@ function DesktopTopHeader() {
         <button
           type="button"
           onClick={handleViewProfile}
-          className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-[13px] font-medium text-[#18181B] transition-colors hover:border-[#fbcfe8] hover:bg-[#fdf2f8] hover:text-[#7A2253]"
+          className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-[13px] font-medium text-[#18181B] transition-colors hover:border-[#F9CFC6] hover:bg-[#FFF6F2] hover:text-[#C21B5C]"
         >
           <span>View profile</span>
           <ExternalLink className="h-3.5 w-3.5 text-[#6B6B76]" />

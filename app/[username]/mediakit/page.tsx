@@ -226,14 +226,14 @@ export default function PublicMediaKitPage() {
         <div className="max-w-md space-y-6">
           <Logo />
           <div className="rounded-[5px] border border-[#ECE8EB] bg-white p-8 space-y-4 shadow-2xs">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-[5px] bg-[#F7EDF3] text-[#7A2253]">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C]">
               <UserX className="h-7 w-7" />
             </div>
             <h1 className="font-display text-xl font-bold text-[#17131A]">Media Kit Not Found</h1>
             <p className="text-xs text-[#6F6872]">No creator media kit registered for @{handle}.</p>
             <button
               onClick={() => router.push("/")}
-              className="w-full py-2.5 rounded-[5px] bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 shadow-md shadow-[#7A2253]/20 transition-all"
+              className="w-full py-2.5 rounded-[5px] bg-[#C21B5C] text-white text-xs font-semibold hover:opacity-95 shadow-md shadow-[#C21B5C]/20 transition-all"
             >
               Back to Home
             </button>

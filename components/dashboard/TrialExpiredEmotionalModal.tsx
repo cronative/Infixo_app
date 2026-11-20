@@ -78,7 +78,7 @@ export function TrialExpiredEmotionalModal({
       >
         {/* Soft pastel pink ambient background glow/waves */}
         <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-gradient-to-br from-pink-200/50 via-rose-100/40 to-transparent blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-gradient-to-tr from-[#7A2253]/15 via-pink-100/40 to-transparent blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-gradient-to-tr from-[#C21B5C]/15 via-pink-100/40 to-transparent blur-3xl" />
 
         {/* Ambient floating doodle stars */}
         <div className="pointer-events-none absolute top-12 right-28 opacity-40">
@@ -118,7 +118,7 @@ export function TrialExpiredEmotionalModal({
               <path d="M14 18L18 6" />
             </svg>
 
-            <div className="h-14 w-14 rounded-[5px] bg-gradient-to-br from-[#7A2253] via-[#8E2660] to-[#581838] flex items-center justify-center text-white font-extrabold text-xl shadow-md border-2 border-white ring-2 ring-pink-100 overflow-hidden">
+            <div className="h-14 w-14 rounded-[5px] bg-gradient-to-br from-[#C21B5C] via-[#E8246F] to-[#A3164E] flex items-center justify-center text-white font-extrabold text-xl shadow-md border-2 border-white ring-2 ring-pink-100 overflow-hidden">
               {profile?.photoDataUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -155,7 +155,7 @@ export function TrialExpiredEmotionalModal({
             {/* "Hey Nikunj, ♥" */}
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="text-xl sm:text-2xl font-bold text-zinc-900">Hey</span>
-              <span className="relative inline-block text-xl sm:text-2xl font-extrabold text-[#7A2253]">
+              <span className="relative inline-block text-xl sm:text-2xl font-extrabold text-[#C21B5C]">
                 {firstName},
                 {/* Hand-drawn brush underline */}
                 <svg
@@ -227,7 +227,7 @@ export function TrialExpiredEmotionalModal({
         {/* 3 Feature Preview Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 my-4 sm:my-5">
           {/* Card 1: All Your Links */}
-          <div className="rounded-[5px] border border-pink-100 bg-[#FFF8FA] p-3 sm:p-3.5 text-center transition-all hover:bg-white hover:shadow-md hover:border-pink-200">
+          <div className="rounded-[5px] border border-pink-100 bg-[#FFF6F2] p-3 sm:p-3.5 text-center transition-all hover:bg-white hover:shadow-md hover:border-pink-200">
             <div className="relative inline-block mb-1.5">
               <div className="h-10 w-10 rounded-[5px] bg-[#FFE4EC] text-[#E11D48] flex items-center justify-center mx-auto">
                 <Link2 className="h-5 w-5" strokeWidth={2.5} />
@@ -250,7 +250,7 @@ export function TrialExpiredEmotionalModal({
           </div>
 
           {/* Card 2: Your Series */}
-          <div className="rounded-[5px] border border-pink-100 bg-[#FFF8FA] p-3 sm:p-3.5 text-center transition-all hover:bg-white hover:shadow-md hover:border-pink-200">
+          <div className="rounded-[5px] border border-pink-100 bg-[#FFF6F2] p-3 sm:p-3.5 text-center transition-all hover:bg-white hover:shadow-md hover:border-pink-200">
             <div className="relative inline-block mb-1.5">
               <div className="h-10 w-10 rounded-[5px] bg-[#FFE4EC] text-[#E11D48] flex items-center justify-center mx-auto">
                 <Play className="h-5 w-5 fill-current" />
@@ -301,7 +301,7 @@ export function TrialExpiredEmotionalModal({
           <button
             type="button"
             onClick={handleUpgrade}
-            className="w-full inline-flex items-center justify-center gap-2.5 rounded-[5px] bg-gradient-to-r from-[#7A2253] via-[#8C1D5E] to-[#A82570] hover:opacity-95 text-white py-3.5 px-6 text-sm sm:text-base font-bold shadow-xl shadow-[#7A2253]/25 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+            className="w-full inline-flex items-center justify-center gap-2.5 rounded-[5px] bg-gradient-to-r from-[#C21B5C] via-[#E8246F] to-[#E8246F] hover:opacity-95 text-white py-3.5 px-6 text-sm sm:text-base font-bold shadow-xl shadow-[#C21B5C]/25 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
           >
             <Rocket className="h-5 w-5 shrink-0" />
             <span>Reactivate My Profile</span>

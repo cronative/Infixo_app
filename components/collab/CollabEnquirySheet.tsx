@@ -76,7 +76,7 @@ export function CollabEnquirySheet({
   packages = [],
   preselectedPackage = null,
   settings,
-  brandPrimary = "#7A2253",
+  brandPrimary = "#C21B5C",
 }: CollabEnquirySheetProps) {
   // Form State
   const [brandName, setBrandName] = useState("");

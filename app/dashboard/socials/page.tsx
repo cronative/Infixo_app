@@ -509,7 +509,7 @@ export default function DashboardSocialsPage() {
         size="sm"
       >
         <ModalBody className="p-5 text-left">
-          <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] overflow-hidden">
+          <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] overflow-hidden">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-xs text-[#6B6B76]">@</span>
             <input
               type="text"
@@ -536,7 +536,7 @@ export default function DashboardSocialsPage() {
         <button
           type="button"
           onClick={() => setIsInfoModalOpen(true)}
-          className="text-xs text-[#6B6B76] hover:text-[#7A2253] hover:underline cursor-pointer transition-colors"
+          className="text-xs text-[#6B6B76] hover:text-[#C21B5C] hover:underline cursor-pointer transition-colors"
         >
           How we count fans &amp; creator eras
         </button>
@@ -567,7 +567,7 @@ export default function DashboardSocialsPage() {
                     onClick={() => setAddPlatform(plat)}
                     className={`group flex-1 flex items-center justify-center gap-2 py-2 px-3 text-xs font-bold transition-all cursor-pointer select-none ${
                       active
-                        ? "bg-white text-[#7A2253] shadow-xs relative z-10"
+                        ? "bg-white text-[#C21B5C] shadow-xs relative z-10"
                         : "bg-[#FAFAFB] text-[#6B6B76] hover:bg-zinc-100 hover:text-[#18181B]"
                     }`}
                   >
@@ -608,7 +608,7 @@ export default function DashboardSocialsPage() {
                 ). This will be added as a secondary account — username only, no follower count.
               </div>
             ) : (
-              <div className="rounded-[5px] border border-[#FCE7F3] bg-[#F7EEF2]/60 px-3 py-2 text-xs text-[#7A2253] leading-relaxed">
+              <div className="rounded-[5px] border border-[#FFEDE6] bg-[#FFEDE6]/60 px-3 py-2 text-xs text-[#C21B5C] leading-relaxed">
                 This will be your primary account. We fetch followers/subscribers from this account only.
               </div>
             )}
@@ -617,7 +617,7 @@ export default function DashboardSocialsPage() {
             {existingPrimaryForAddPlatform ? (
               <div className="space-y-3 pt-1">
                 <div className="flex items-center gap-2">
-                  <div className="flex flex-1 items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                  <div className="flex flex-1 items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB]">
                       {addPlatform === "instagram" && <InstagramIcon className="h-4 w-4 text-[#E1306C]" />}
                       {addPlatform === "youtube" && <YoutubeIcon className="h-4 w-4 text-[#FF0000]" />}
@@ -647,7 +647,7 @@ export default function DashboardSocialsPage() {
                     type="button"
                     disabled={!currentDraftValue.trim() || addingSecondary}
                     onClick={handleAddSecondaryAccount}
-                    className="h-9 px-4 rounded-[5px] bg-[#7A2253] hover:bg-[#621b42] text-white text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5 shrink-0"
+                    className="h-9 px-4 rounded-[5px] bg-[#C21B5C] hover:bg-[#A3164E] text-white text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5 shrink-0"
                   >
                     {addingSecondary ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
                     <span>{addingSecondary ? "Adding..." : "Add"}</span>
@@ -659,7 +659,7 @@ export default function DashboardSocialsPage() {
                 {/* Primary flow: handle -> Fetch -> Confirm & Link */}
                 {addPlatform === "instagram" && (
                   <div className="space-y-3 pt-1">
-                    <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                    <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#E1306C]">
                         <InstagramIcon className="h-4 w-4" />
                       </span>
@@ -677,7 +677,7 @@ export default function DashboardSocialsPage() {
 
                 {addPlatform === "youtube" && (
                   <div className="space-y-3 pt-1">
-                    <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                    <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#FF0000]">
                         <YoutubeIcon className="h-4 w-4" />
                       </span>
@@ -695,7 +695,7 @@ export default function DashboardSocialsPage() {
 
                 {addPlatform === "facebook" && (
                   <div className="space-y-3 pt-1">
-                    <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                    <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#1877F2]">
                         <FacebookIcon className="h-4 w-4" />
                       </span>
@@ -880,7 +880,7 @@ function PlatformSection({
     <button
       type="button"
       onClick={onAdd}
-      className="inline-flex h-7 shrink-0 items-center gap-1 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-xs font-semibold text-[#18181B] hover:border-[#7A2253]/40 hover:text-[#7A2253] transition-colors cursor-pointer"
+      className="inline-flex h-7 shrink-0 items-center gap-1 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-xs font-semibold text-[#18181B] hover:border-[#C21B5C]/40 hover:text-[#C21B5C] transition-colors cursor-pointer"
     >
       <Plus className="h-3.5 w-3.5" />
       Add
@@ -889,7 +889,7 @@ function PlatformSection({
 
   return (
     <section className="rounded-[5px] border border-[#ECECF0] bg-white">
-      <div className="flex items-center justify-between gap-2 rounded-t-[5px] border-b border-[#ECECF0] bg-[#7A2253]/[0.07] px-3 py-2.5">
+      <div className="flex items-center justify-between gap-2 rounded-t-[5px] border-b border-[#ECECF0] bg-[#C21B5C]/[0.07] px-3 py-2.5">
         <div className="flex min-w-0 items-center gap-2">
           <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] ${row.iconBg}`}>{row.icon}</span>
           <h3 className="truncate text-[14px] font-semibold text-[#18181B]">
@@ -1039,7 +1039,7 @@ function AccountRow({
             @{cleanHandle}
           </span>
           {isPrimary && (
-            <span className="shrink-0 rounded-[3px] border border-[#7A2253]/25 bg-[#F7EEF2] px-1.5 py-px text-[9.5px] font-bold uppercase tracking-wider text-[#7A2253]">
+            <span className="shrink-0 rounded-[3px] border border-[#C21B5C]/25 bg-[#FFEDE6] px-1.5 py-px text-[9.5px] font-bold uppercase tracking-wider text-[#C21B5C]">
               Primary
             </span>
           )}
@@ -1076,7 +1076,7 @@ function AccountRow({
                 disabled={isRefreshing}
                 className={menuItem}
               >
-                <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-[#7A2253]" : ""}`} />
+                <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-[#C21B5C]" : ""}`} />
                 {isRefreshing ? "Refreshing…" : "Refresh count"}
               </button>
             ) : (

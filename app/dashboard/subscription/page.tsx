@@ -44,7 +44,7 @@ import type { Subscription } from "@/types";
 
 type PlanState = "trial" | "active" | "expired" | "cancelled";
 
-const ICON_BOX = "flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]";
+const ICON_BOX = "flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C]";
 const PLAN_ICONS: Record<PaidPlanKey, ReactNode> = {
   starter: <Sparkles className="h-4 w-4" />,
   pro: <Crown className="h-4 w-4" />,
@@ -85,7 +85,7 @@ function useMockSubscription(real: Subscription | null | undefined): Subscriptio
 function UsageRow({ label, used, limit, detail }: { label: string; used: number | null; limit: number; detail?: string }) {
   const unlimited = isUnlimited(limit);
   const pct = used === null || unlimited || limit <= 0 ? 0 : Math.min(100, Math.round((used / limit) * 100));
-  const barColor = pct >= 100 ? "bg-[#E11D48]" : pct >= 80 ? "bg-amber-500" : "bg-[#7A2253]";
+  const barColor = pct >= 100 ? "bg-[#E11D48]" : pct >= 80 ? "bg-amber-500" : "bg-[#C21B5C]";
   return (
     <StatCard
       label={label}
@@ -164,7 +164,7 @@ function PlanPage() {
     state === "active"
       ? { text: "Active", cls: "bg-emerald-50 text-emerald-700 border-emerald-200" }
       : state === "trial"
-        ? { text: "Trial", cls: "bg-[#FFF5F7] text-[#7A2253] border-[#FCE7F3]" }
+        ? { text: "Trial", cls: "bg-[#FFF5F7] text-[#C21B5C] border-[#FFEDE6]" }
         : state === "expired"
           ? { text: "Expired · Profile private", cls: "bg-rose-50 text-rose-700 border-rose-200" }
           : { text: `Cancelled · ends ${endDateShort || "soon"}`, cls: "bg-amber-50 text-amber-700 border-amber-200" };
@@ -247,7 +247,7 @@ function PlanPage() {
             <p className="text-[13px] text-[#3F3F46]">
               Trial ends in {trial.daysLeft ?? 0} {trial.daysLeft === 1 ? "day" : "days"}. After that your profile goes private. Keep it public from {cheapest}/month.
             </p>
-            <a href="#plans" className="inline-flex h-8 shrink-0 items-center justify-center rounded-[5px] bg-[#7A2253] px-3 text-[13px] font-medium text-white hover:bg-[#631841] transition-colors">
+            <a href="#plans" className="inline-flex h-8 shrink-0 items-center justify-center rounded-[5px] bg-[#C21B5C] px-3 text-[13px] font-medium text-white hover:bg-[#A3164E] transition-colors">
               Choose plan
             </a>
           </div>
@@ -265,7 +265,7 @@ function PlanPage() {
       {/* c. Usage */}
       <section className="space-y-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C]">
             <Activity className="h-4 w-4" />
           </div>
           <h2 className="text-[16px] font-semibold text-[#18181B]">Usage</h2>
@@ -279,7 +279,7 @@ function PlanPage() {
       <section id="plans" className="space-y-3 scroll-mt-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C]">
               <Crown className="h-4 w-4" />
             </div>
             <h2 className="text-[16px] font-semibold text-[#18181B]">Plans</h2>
@@ -293,7 +293,7 @@ function PlanPage() {
                 aria-selected={billingCycle === value}
                 onClick={() => setBillingCycle(value)}
                 className={`h-7 px-3 rounded-[5px] text-[13px] font-medium transition-colors cursor-pointer ${
-                  billingCycle === value ? "bg-[#7A2253] text-white" : "text-[#6B6B76] hover:text-[#18181B]"
+                  billingCycle === value ? "bg-[#C21B5C] text-white" : "text-[#6B6B76] hover:text-[#18181B]"
                 }`}
               >
                 {value === "monthly" ? "Monthly" : "Yearly"}
@@ -311,7 +311,7 @@ function PlanPage() {
             return (
               <div
                 key={key}
-                className={`relative flex flex-col rounded-[5px] border bg-white p-4 shadow-none ${p.popular ? "border-[#7A2253] ring-1 ring-[#7A2253]" : "border-[#ECECF0]"}`}
+                className={`relative flex flex-col rounded-[5px] border bg-white p-4 shadow-none ${p.popular ? "border-[#C21B5C] ring-1 ring-[#C21B5C]" : "border-[#ECECF0]"}`}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5 min-w-0">
@@ -322,7 +322,7 @@ function PlanPage() {
                     </div>
                   </div>
                   {p.popular && (
-                    <span className="shrink-0 h-6 inline-flex items-center rounded-[5px] bg-[#7A2253] px-2 text-[12px] font-medium text-white">Popular</span>
+                    <span className="shrink-0 h-6 inline-flex items-center rounded-[5px] bg-[#C21B5C] px-2 text-[12px] font-medium text-white">Popular</span>
                   )}
                 </div>
 
@@ -335,7 +335,7 @@ function PlanPage() {
                     {billingCycle === "yearly" && (
                       <>
                         {formatMoney(planPrice(key, "yearly"))} billed yearly ·{" "}
-                        <span className="font-medium text-[#7A2253]">Save {yearlySavingsPercent(key)}%</span>
+                        <span className="font-medium text-[#C21B5C]">Save {yearlySavingsPercent(key)}%</span>
                       </>
                     )}
                   </p>
@@ -344,7 +344,7 @@ function PlanPage() {
                 <ul className="mt-3 flex-1 space-y-1.5 border-t border-[#ECECF0] pt-3 text-[13px] text-[#3F3F46]">
                   {planFeatureLines(key).map((line) => (
                     <li key={line} className="flex gap-1.5">
-                      <span aria-hidden="true" className="text-[#7A2253]">•</span>
+                      <span aria-hidden="true" className="text-[#C21B5C]">•</span>
                       <span>{line}</span>
                     </li>
                   ))}
@@ -364,8 +364,8 @@ function PlanPage() {
                       prefill={{ email: profile.email, name: profile.displayName }}
                       className={
                         isHigher
-                          ? "w-full h-9 rounded-[5px] bg-[#7A2253] hover:bg-[#631841] text-white text-[13px] font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-none"
-                          : "w-full h-9 rounded-[5px] border border-[#7A2253] bg-white text-[#7A2253] hover:bg-[#F7EEF2] text-[13px] font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-none"
+                          ? "w-full h-9 rounded-[5px] bg-[#C21B5C] hover:bg-[#A3164E] text-white text-[13px] font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-none"
+                          : "w-full h-9 rounded-[5px] border border-[#C21B5C] bg-white text-[#C21B5C] hover:bg-[#FFEDE6] text-[13px] font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-none"
                       }
                       onSuccess={() => handlePurchaseSuccess(key)}
                     />

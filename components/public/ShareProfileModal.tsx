@@ -165,7 +165,7 @@ export function ShareProfileModal({ isOpen, onClose, displayName, username, shar
     { label: "Email", color: "#52525B", icon: <Mail className="h-5 w-5" />, href: `mailto:?subject=${enc(`${name} on Inflixo`)}&body=${enc(`${shareText}: ${link}`)}` },
   ];
 
-  const tileCls = "flex min-h-[44px] flex-col items-center gap-1.5 rounded-[5px] py-1 text-[11px] font-medium text-[#52525B] hover:text-[#18181B] cursor-pointer focus-visible:outline-2 focus-visible:outline-[#7A2253]";
+  const tileCls = "flex min-h-[44px] flex-col items-center gap-1.5 rounded-[5px] py-1 text-[11px] font-medium text-[#52525B] hover:text-[#18181B] cursor-pointer focus-visible:outline-2 focus-visible:outline-[#C21B5C]";
   const tileIcon = (q: (typeof quickShare)[number]) => (
     <span className="flex h-10 w-10 items-center justify-center rounded-full text-white" style={{ background: q.color }}>
       {q.icon}
@@ -181,12 +181,12 @@ export function ShareProfileModal({ isOpen, onClose, displayName, username, shar
       size="sm"
       wrapHeader
       closeOnBackdropClick
-      headerClassName="bg-[#7A2253]/[0.07]! py-3! px-4! sm:px-4!"
+      headerClassName="bg-[#C21B5C]/[0.07]! py-3! px-4! sm:px-4!"
     >
-      <div className="flex-1 divide-y divide-[#EADBE3] overflow-y-auto">
+      <div className="flex-1 divide-y divide-[#F6E0DC] overflow-y-auto">
         {/* QR + name */}
         <div className="flex flex-col items-center gap-2 px-4 py-4">
-          <div className="relative rounded-[5px] border border-[#EADBE3] bg-white p-1.5">
+          <div className="relative rounded-[5px] border border-[#F6E0DC] bg-white p-1.5">
             {qr ? (
               <svg
                 role="img"
@@ -224,7 +224,7 @@ export function ShareProfileModal({ isOpen, onClose, displayName, username, shar
             onClick={handleCopy}
             aria-live="polite"
             className={`inline-flex h-9 shrink-0 items-center gap-1.5 rounded-[5px] px-3 text-[13px] font-semibold transition-colors cursor-pointer ${
-              copied ? "bg-emerald-600 text-white" : "bg-[#7A2253] text-white hover:bg-[#681c46]"
+              copied ? "bg-emerald-600 text-white" : "bg-[#C21B5C] text-white hover:bg-[#A3164E]"
             }`}
           >
             {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
@@ -251,11 +251,11 @@ export function ShareProfileModal({ isOpen, onClose, displayName, username, shar
       </div>
 
       {/* Footer */}
-      <div className="flex shrink-0 gap-2 border-t border-[#EADBE3] px-4 py-3">
+      <div className="flex shrink-0 gap-2 border-t border-[#F6E0DC] px-4 py-3">
         <button
           type="button"
           onClick={handleDownloadQr}
-          className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-[5px] border border-[#E4E4E7] bg-white text-[13px] font-semibold text-[#18181B] hover:border-[#7A2253] hover:text-[#7A2253] cursor-pointer"
+          className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-[5px] border border-[#E4E4E7] bg-white text-[13px] font-semibold text-[#18181B] hover:border-[#C21B5C] hover:text-[#C21B5C] cursor-pointer"
         >
           <Download className="h-4 w-4" />
           Download QR
@@ -264,7 +264,7 @@ export function ShareProfileModal({ isOpen, onClose, displayName, username, shar
           <button
             type="button"
             onClick={handleNativeShare}
-            className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] text-[13px] font-semibold text-white hover:bg-[#681c46] cursor-pointer"
+            className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-[5px] bg-[#C21B5C] text-[13px] font-semibold text-white hover:bg-[#A3164E] cursor-pointer"
           >
             <Share2 className="h-4 w-4" />
             Share via App

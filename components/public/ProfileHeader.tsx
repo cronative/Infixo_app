@@ -220,8 +220,8 @@ function getPlatformRowStyles(platform: string) {
   switch (p) {
     case "instagram":
       return {
-        boxBg: "bg-[#FDF2F8]",
-        boxBorder: "border-[#FCE7F3]",
+        boxBg: "bg-[#FFF6F2]",
+        boxBorder: "border-[#FFEDE6]",
         unit: "Followers",
       };
     case "youtube":

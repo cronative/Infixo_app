@@ -479,7 +479,7 @@ export default function DashboardMediaKitPage() {
       );
     }
     return (
-      <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#7A2253]/10 text-[#7A2253] shrink-0">
+      <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#C21B5C]/10 text-[#C21B5C] shrink-0">
         <Briefcase className="h-5 w-5" />
       </div>
     );
@@ -623,7 +623,7 @@ export default function DashboardMediaKitPage() {
               <button
                 type="button"
                 onClick={() => handlePublishPackage(activeMenuPkg)}
-                className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-[13px] font-semibold text-[#7A2253] hover:bg-[#F7EEF2] transition-colors cursor-pointer"
+                className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-[13px] font-semibold text-[#C21B5C] hover:bg-[#FFEDE6] transition-colors cursor-pointer"
               >
                 <Eye className="h-3.5 w-3.5" />
                 <span>Publish</span>
@@ -763,7 +763,7 @@ export default function DashboardMediaKitPage() {
                       {email && (
                         <div>
                           <span className="text-[#A1A1AA]">Email:</span>{" "}
-                          <a href={`mailto:${email}`} className="text-[#7A2253] hover:underline font-medium">
+                          <a href={`mailto:${email}`} className="text-[#C21B5C] hover:underline font-medium">
                             {email}
                           </a>
                         </div>
@@ -797,7 +797,7 @@ export default function DashboardMediaKitPage() {
                             }
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[#7A2253] hover:underline"
+                            className="text-[#C21B5C] hover:underline"
                           >
                             {req.websiteOrSocial || req.website_or_social}
                           </a>
@@ -820,7 +820,7 @@ export default function DashboardMediaKitPage() {
                                 [req.id]: !prev[req.id],
                               }))
                             }
-                            className="mt-1 text-[11px] font-semibold text-[#7A2253] hover:underline cursor-pointer"
+                            className="mt-1 text-[11px] font-semibold text-[#C21B5C] hover:underline cursor-pointer"
                           >
                             {isExpanded ? "Show less" : "Read full message"}
                           </button>
@@ -834,7 +834,7 @@ export default function DashboardMediaKitPage() {
                         {email && (
                           <a
                             href={`mailto:${email}?subject=${encodeURIComponent(`Re: ${pkgTitle} collab with ${creatorName}`)}`}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 transition-opacity"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[5px] bg-[#C21B5C] text-white text-xs font-semibold hover:opacity-95 transition-opacity"
                           >
                             <Mail className="h-3.5 w-3.5" />
                             <span>Reply on email</span>
@@ -858,7 +858,7 @@ export default function DashboardMediaKitPage() {
                         <select
                           value={currentStatus}
                           onChange={(e) => handleUpdateStatus(req.id, e.target.value as "new" | "replied" | "closed")}
-                          className="h-7 px-2 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-medium text-[#18181B] outline-none focus:border-[#7A2253] cursor-pointer"
+                          className="h-7 px-2 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-medium text-[#18181B] outline-none focus:border-[#C21B5C] cursor-pointer"
                         >
                           <option value="new">New</option>
                           <option value="replied">Replied</option>
@@ -902,12 +902,12 @@ export default function DashboardMediaKitPage() {
             >
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <h4 className="text-sm font-bold text-[#7A2253]">{example.title}</h4>
-                  <span className="text-[10px] font-semibold text-[#7A2253] bg-[#7A2253]/[0.08] px-2 py-0.5 rounded-[5px]">
+                  <h4 className="text-sm font-bold text-[#C21B5C]">{example.title}</h4>
+                  <span className="text-[10px] font-semibold text-[#C21B5C] bg-[#C21B5C]/[0.08] px-2 py-0.5 rounded-[5px]">
                     {example.badge}
                   </span>
                 </div>
-                <span className="text-xs font-bold text-[#7A2253]">{example.minPrice}–{example.maxPrice}</span>
+                <span className="text-xs font-bold text-[#C21B5C]">{example.minPrice}–{example.maxPrice}</span>
               </div>
 
               <p className="text-xs text-[#52525B] font-normal">{example.description}</p>
@@ -917,7 +917,7 @@ export default function DashboardMediaKitPage() {
                 <button
                   type="button"
                   onClick={() => handleApplyTemplate(example)}
-                  className="px-3 py-1 rounded-[5px] bg-[#7A2253] text-white text-xs font-semibold hover:opacity-95 shadow-sm shadow-[#7A2253]/20 transition-all cursor-pointer"
+                  className="px-3 py-1 rounded-[5px] bg-[#C21B5C] text-white text-xs font-semibold hover:opacity-95 shadow-sm shadow-[#C21B5C]/20 transition-all cursor-pointer"
                 >
                   Use Template
                 </button>
@@ -949,7 +949,7 @@ export default function DashboardMediaKitPage() {
           <ModalBody className="p-4 sm:p-5 space-y-4 text-left max-h-[70vh] overflow-y-auto">
             {/* Section A: Audience Snapshot */}
             <div className="space-y-3 pb-3 border-b border-[#ECECF0]">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#7A2253]">Audience Snapshot</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#C21B5C]">Audience Snapshot</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="block text-xs font-medium text-[#18181B]">Avg. Reel Views</label>
@@ -958,7 +958,7 @@ export default function DashboardMediaKitPage() {
                     value={settingAvgReelViews}
                     onChange={(e) => setSettingAvgReelViews(e.target.value)}
                     placeholder="e.g., 45K or 1.2M"
-                    className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
+                    className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1">
@@ -968,7 +968,7 @@ export default function DashboardMediaKitPage() {
                     value={settingEngagementRate}
                     onChange={(e) => setSettingEngagementRate(e.target.value)}
                     placeholder="e.g., 4.8%"
-                    className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
+                    className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:outline-none"
                   />
                 </div>
               </div>
@@ -980,7 +980,7 @@ export default function DashboardMediaKitPage() {
                   value={settingTopCities}
                   onChange={(e) => setSettingTopCities(e.target.value)}
                   placeholder="e.g., Mumbai, Delhi, Bengaluru (up to 3)"
-                  className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
+                  className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:outline-none"
                 />
               </div>
 
@@ -991,7 +991,7 @@ export default function DashboardMediaKitPage() {
                   value={settingPastBrands}
                   onChange={(e) => setSettingPastBrands(e.target.value)}
                   placeholder="e.g., Chai Tapri Co., Masala Munch Snacks, Monsoon Sips"
-                  className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
+                  className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:outline-none"
                 />
                 <p className="text-[11px] text-[#6B6B76]">Separate multiple brands with commas.</p>
               </div>
@@ -999,7 +999,7 @@ export default function DashboardMediaKitPage() {
 
             {/* Section B: Contact & Routing */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#7A2253]">Contact Options</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#C21B5C]">Contact Options</h4>
 
               <div className="space-y-1">
                 <label className="block text-xs font-medium text-[#18181B]">
@@ -1010,7 +1010,7 @@ export default function DashboardMediaKitPage() {
                   value={settings.whatsappNumber || ""}
                   onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
                   placeholder="+91 9876543210"
-                  className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
+                  className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:outline-none"
                 />
               </div>
 
@@ -1023,7 +1023,7 @@ export default function DashboardMediaKitPage() {
                   value={settings.sponsorEmail || ""}
                   onChange={(e) => setSettings({ ...settings, sponsorEmail: e.target.value })}
                   placeholder={profile.email || "collabs@yourdomain.com"}
-                  className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
+                  className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:outline-none"
                 />
               </div>
 
@@ -1033,7 +1033,7 @@ export default function DashboardMediaKitPage() {
                     type="checkbox"
                     checked={settingAllowWhatsapp}
                     onChange={(e) => setSettingAllowWhatsapp(e.target.checked)}
-                    className="rounded accent-[#7A2253]"
+                    className="rounded accent-[#C21B5C]"
                   />
                   <span>Show &quot;Prefer WhatsApp?&quot; direct link in collab sheet</span>
                 </label>
@@ -1042,7 +1042,7 @@ export default function DashboardMediaKitPage() {
                     type="checkbox"
                     checked={settingAllowEmail}
                     onChange={(e) => setSettingAllowEmail(e.target.checked)}
-                    className="rounded accent-[#7A2253]"
+                    className="rounded accent-[#C21B5C]"
                   />
                   <span>Show &quot;Email instead&quot; direct link in collab sheet</span>
                 </label>
@@ -1057,7 +1057,7 @@ export default function DashboardMediaKitPage() {
                   value={settings.minBudget || ""}
                   onChange={(e) => setSettings({ ...settings, minBudget: e.target.value })}
                   placeholder="₹0 (Accept all deals)"
-                  className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none"
+                  className="w-full h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-xs font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:outline-none"
                 />
               </div>
             </div>
@@ -1067,13 +1067,13 @@ export default function DashboardMediaKitPage() {
             <button
               type="button"
               onClick={() => setIsContactModalOpen(false)}
-              className="px-4 py-2 rounded-[5px] border border-[#ECECF0] text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#7A2253] transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-[5px] border border-[#ECECF0] text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#C21B5C] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="h-9 px-5 rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+              className="h-9 px-5 rounded-[5px] bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs transition-all cursor-pointer shadow-xs inline-flex items-center gap-1.5"
             >
               Save Settings
             </button>

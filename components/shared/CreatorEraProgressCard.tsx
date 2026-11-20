@@ -52,7 +52,7 @@ export function CreatorEraProgressCard({
             onClick={() => setSheetOpen(true)}
           />
           <div className="flex items-center gap-1.5 text-[13px] font-medium text-[#18181B]">
-            <Sparkles className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
+            <Sparkles className="h-3.5 w-3.5 text-[#C21B5C] shrink-0" />
             <span>{milestoneText}</span>
           </div>
         </div>
@@ -68,11 +68,11 @@ export function CreatorEraProgressCard({
               aria-valuemax={100}
             >
               <div
-                className="h-full rounded-full bg-[#7A2253] transition-all duration-500"
+                className="h-full rounded-full bg-[#C21B5C] transition-all duration-500"
                 style={{ width: `${progress.progressPercent}%` }}
               />
             </div>
-            <span className="text-[12px] font-medium text-[#7A2253] tabular-nums shrink-0">
+            <span className="text-[12px] font-medium text-[#C21B5C] tabular-nums shrink-0">
               {progress.progressPercent}%
             </span>
           </div>
@@ -81,7 +81,7 @@ export function CreatorEraProgressCard({
             <button
               type="button"
               onClick={onShareClick}
-              className="inline-flex h-8 items-center gap-1.5 px-3 rounded-[5px] bg-[#7A2253] text-white hover:bg-[#631841] text-[13px] font-medium transition-colors cursor-pointer shrink-0"
+              className="inline-flex h-8 items-center gap-1.5 px-3 rounded-[5px] bg-[#C21B5C] text-white hover:bg-[#A3164E] text-[13px] font-medium transition-colors cursor-pointer shrink-0"
               title="Share Creator Era card"
             >
               <Share2 className="h-3.5 w-3.5" />

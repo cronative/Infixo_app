@@ -138,7 +138,7 @@ export function LimitReachedModal({
       size="xl"
       title="You've reached your limit"
       description={`You've used ${usedCount} ${resourceSingular} in your ${planName} plan.`}
-      icon={<AlertCircle className="h-5 w-5 text-[#7A2253]" />}
+      icon={<AlertCircle className="h-5 w-5 text-[#C21B5C]" />}
     >
       <ModalBody className="p-5 sm:p-6 space-y-4 text-left overflow-y-auto">
         {/* 2-Column Responsive Layout */}
@@ -146,7 +146,7 @@ export function LimitReachedModal({
           {/* Left Column (7 cols): Encouragement + Usage Card */}
           <div className="md:col-span-7 flex flex-col justify-between space-y-4">
             {/* Encouraging Card */}
-            <div className="rounded-[5px] bg-gradient-to-r from-[#FFF5F7] to-[#FDF2F8] border border-[#FCE7F3] p-4 flex items-center justify-between gap-3 relative overflow-hidden">
+            <div className="rounded-[5px] bg-gradient-to-r from-[#FFF5F7] to-[#FFF6F2] border border-[#FFEDE6] p-4 flex items-center justify-between gap-3 relative overflow-hidden">
               <div className="min-w-0 flex-1 space-y-1">
                 <h4 className="font-bold text-sm text-[#18181B] flex items-center gap-1.5">
                   <span>You&apos;re doing great!</span>
@@ -161,8 +161,8 @@ export function LimitReachedModal({
               <div className="relative shrink-0 flex items-center justify-center w-16 h-16 select-none" aria-hidden="true">
                 <span className="absolute -top-1 -right-1 h-3 w-1 bg-amber-400 rotate-45 rounded-full opacity-80" />
                 <span className="absolute top-1 -right-2 h-1 w-3 bg-rose-400 rotate-12 rounded-full opacity-80" />
-                <span className="absolute -top-2 right-4 h-3 w-1 bg-[#7A2253] rotate-12 rounded-full opacity-60" />
-                <div className="w-12 h-10 rounded-[6px] bg-gradient-to-br from-[#FCE7F3] to-[#FBCFE8] border border-[#F472B6]/40 shadow-xs rotate-[-10deg] flex items-center justify-center text-[#7A2253]">
+                <span className="absolute -top-2 right-4 h-3 w-1 bg-[#C21B5C] rotate-12 rounded-full opacity-60" />
+                <div className="w-12 h-10 rounded-[6px] bg-gradient-to-br from-[#FFEDE6] to-[#F9CFC6] border border-[#F472B6]/40 shadow-xs rotate-[-10deg] flex items-center justify-center text-[#C21B5C]">
                   <span className="text-base font-bold">⭐</span>
                 </div>
               </div>
@@ -174,7 +174,7 @@ export function LimitReachedModal({
               <div className="rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] p-3.5 space-y-2.5">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253] shrink-0">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFF6F2] border border-[#FFEDE6] text-[#C21B5C] shrink-0">
                       {resourceIcon}
                     </div>
                     <span className="text-xs font-semibold text-[#18181B] truncate">
@@ -182,14 +182,14 @@ export function LimitReachedModal({
                     </span>
                   </div>
 
-                  <span className="text-xs font-bold text-[#7A2253] whitespace-nowrap">
+                  <span className="text-xs font-bold text-[#C21B5C] whitespace-nowrap">
                     {usedCount} of {effectiveMax} used
                   </span>
                 </div>
 
                 {/* Progress bar (100% full since limit reached) */}
                 <div className="h-2 w-full bg-[#ECECF0] rounded-full overflow-hidden">
-                  <div className="h-full bg-[#7A2253] rounded-full w-full" />
+                  <div className="h-full bg-[#C21B5C] rounded-full w-full" />
                 </div>
 
                 <p className="text-[11px] text-[#6B6B76]">
@@ -200,7 +200,7 @@ export function LimitReachedModal({
           </div>
 
           {/* Right Column (5 cols): Plan Upgrade Card */}
-          <div className="md:col-span-5 rounded-[5px] border border-[#FCE7F3] bg-white p-4 sm:p-4.5 space-y-3.5 flex flex-col justify-between shadow-2xs">
+          <div className="md:col-span-5 rounded-[5px] border border-[#FFEDE6] bg-white p-4 sm:p-4.5 space-y-3.5 flex flex-col justify-between shadow-2xs">
             {/* Plan Header */}
             <div>
               <div className="flex items-center justify-between gap-1.5 mb-2.5">
@@ -208,7 +208,7 @@ export function LimitReachedModal({
                   <Crown className="h-4 w-4 text-amber-500 fill-amber-500/20 shrink-0" />
                   <span>{targetPlanTitle}</span>
                 </span>
-                <span className="rounded-[5px] bg-[#7A2253] px-2 py-0.5 text-[9px] font-bold text-white uppercase tracking-wider shrink-0">
+                <span className="rounded-[5px] bg-[#C21B5C] px-2 py-0.5 text-[9px] font-bold text-white uppercase tracking-wider shrink-0">
                   Most Popular
                 </span>
               </div>
@@ -226,7 +226,7 @@ export function LimitReachedModal({
                   <span className="font-semibold text-[#18181B]">
                     or {formatPlanPrice(targetUpgradePlan, "yearly", pricingCurrency)} / year
                   </span>
-                  <span className="rounded-full bg-[#FCE7F3] px-2 py-0.5 text-[10px] font-bold text-[#7A2253]">
+                  <span className="rounded-full bg-[#FFEDE6] px-2 py-0.5 text-[10px] font-bold text-[#C21B5C]">
                     Save {yearlySavingsPercent(targetUpgradePlan, pricingCurrency)}%
                   </span>
                 </div>
@@ -251,7 +251,7 @@ export function LimitReachedModal({
             <Link
               href="/dashboard/subscription"
               onClick={onClose}
-              className="w-full bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs py-2.5 px-4 rounded-[5px] transition-all cursor-pointer shadow-xs inline-flex items-center justify-center gap-1.5 group"
+              className="w-full bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs py-2.5 px-4 rounded-[5px] transition-all cursor-pointer shadow-xs inline-flex items-center justify-center gap-1.5 group"
             >
               <Sparkles className="h-3.5 w-3.5" />
               <span>Upgrade to {PLANS[targetUpgradePlan].name}</span>
@@ -261,13 +261,13 @@ export function LimitReachedModal({
         </div>
 
         {/* Bottom Banner: Why upgrade? & Social Proof */}
-        <div className="rounded-[5px] bg-[#FFF5F7] border border-[#FCE7F3] p-3 sm:p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-left">
+        <div className="rounded-[5px] bg-[#FFF5F7] border border-[#FFEDE6] p-3 sm:p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-left">
           <div className="flex items-start sm:items-center gap-2.5 min-w-0">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-white border border-[#FCE7F3] text-[#7A2253]">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-white border border-[#FFEDE6] text-[#C21B5C]">
               <Sparkles className="h-4 w-4" />
             </div>
             <div>
-              <p className="text-xs font-bold text-[#7A2253]">
+              <p className="text-xs font-bold text-[#C21B5C]">
                 Why upgrade?
               </p>
               <p className="text-[11px] text-[#6B6B76] mt-0.5">
@@ -278,7 +278,7 @@ export function LimitReachedModal({
 
           <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
             <div className="flex -space-x-1.5 overflow-hidden">
-              <div className="inline-flex h-6 w-6 rounded-full ring-2 ring-white bg-[#7A2253] text-white text-[9px] font-bold items-center justify-center">
+              <div className="inline-flex h-6 w-6 rounded-full ring-2 ring-white bg-[#C21B5C] text-white text-[9px] font-bold items-center justify-center">
                 NE
               </div>
               <div className="inline-flex h-6 w-6 rounded-full ring-2 ring-white bg-amber-600 text-white text-[9px] font-bold items-center justify-center">
@@ -288,8 +288,8 @@ export function LimitReachedModal({
                 RD
               </div>
             </div>
-            <TrendingUp className="h-3.5 w-3.5 text-[#7A2253] shrink-0" />
-            <span className="text-[11px] font-semibold text-[#7A2253]">
+            <TrendingUp className="h-3.5 w-3.5 text-[#C21B5C] shrink-0" />
+            <span className="text-[11px] font-semibold text-[#C21B5C]">
               {socialProofText}
             </span>
           </div>

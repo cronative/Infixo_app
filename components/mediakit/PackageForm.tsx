@@ -33,7 +33,7 @@ import {
 
 // ── Shared field styles (same as the rest of the Media Kit page) ──
 const input =
-  "h-10 w-full rounded-[5px] border border-[#ECECF0] bg-white px-3 text-[13px] font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none";
+  "h-10 w-full rounded-[5px] border border-[#ECECF0] bg-white px-3 text-[13px] font-medium text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:outline-none";
 const label = "block text-[12px] font-semibold text-[#18181B]";
 const hint = "text-[11px] text-[#6B6B76]";
 
@@ -55,7 +55,7 @@ function Segmented<T extends string>({ value, options, onChange }: { value: T | 
           aria-pressed={value === o.value}
           onClick={() => onChange(o.value)}
           className={`h-9 rounded-[5px] border px-3 text-[12px] font-semibold transition-colors cursor-pointer ${
-            value === o.value ? "border-[#7A2253] bg-[#7A2253] text-white" : "border-[#ECECF0] bg-white text-[#52525B] hover:bg-[#FAFAFB]"
+            value === o.value ? "border-[#C21B5C] bg-[#C21B5C] text-white" : "border-[#ECECF0] bg-white text-[#52525B] hover:bg-[#FAFAFB]"
           }`}
         >
           {o.label}
@@ -68,7 +68,7 @@ function Segmented<T extends string>({ value, options, onChange }: { value: T | 
 function Check({ checked, onChange, children }: { checked: boolean; onChange: (v: boolean) => void; children: ReactNode }) {
   return (
     <label className="inline-flex cursor-pointer items-center gap-2 text-[12px] font-medium text-[#18181B]">
-      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="h-4 w-4 accent-[#7A2253]" />
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="h-4 w-4 accent-[#C21B5C]" />
       {children}
     </label>
   );
@@ -353,7 +353,7 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
                 aria-pressed={on}
                 onClick={() => togglePlatform(p.value)}
                 className={`inline-flex h-9 items-center gap-1.5 rounded-[5px] border px-3 text-[12px] font-semibold cursor-pointer ${
-                  on ? "border-[#7A2253] bg-[#F7EEF2] text-[#7A2253]" : "border-[#ECECF0] bg-white text-[#52525B] hover:bg-[#FAFAFB]"
+                  on ? "border-[#C21B5C] bg-[#FFEDE6] text-[#C21B5C]" : "border-[#ECECF0] bg-white text-[#52525B] hover:bg-[#FAFAFB]"
                 }`}
               >
                 {PLATFORM_ICON[p.value]}
@@ -418,7 +418,7 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
               ))}
               <div className="flex flex-wrap gap-1.5">
                 {p.types.map((t) => (
-                  <button key={t} type="button" onClick={() => addItem(pv, t)} className="inline-flex items-center gap-1 rounded-[5px] border border-dashed border-[#D4D4D8] px-2 py-1 text-[11px] font-medium text-[#52525B] hover:border-[#7A2253] hover:text-[#7A2253] cursor-pointer">
+                  <button key={t} type="button" onClick={() => addItem(pv, t)} className="inline-flex items-center gap-1 rounded-[5px] border border-dashed border-[#D4D4D8] px-2 py-1 text-[11px] font-medium text-[#52525B] hover:border-[#C21B5C] hover:text-[#C21B5C] cursor-pointer">
                     <Plus className="h-3 w-3" />{t}
                   </button>
                 ))}
@@ -439,7 +439,7 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
             ))}
           </div>
         )}
-        <button type="button" onClick={() => setCustomLines([...customLines, ""])} className="inline-flex items-center gap-1 text-[12px] font-semibold text-[#7A2253] cursor-pointer">
+        <button type="button" onClick={() => setCustomLines([...customLines, ""])} className="inline-flex items-center gap-1 text-[12px] font-semibold text-[#C21B5C] cursor-pointer">
           <Plus className="h-3.5 w-3.5" /> Add another deliverable (free text)
         </button>
       </Group>
@@ -456,7 +456,7 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
                 aria-pressed={on}
                 onClick={() => toggleIn(inc, setInclusions)}
                 className={`rounded-[5px] border px-2.5 py-1.5 text-[12px] font-medium cursor-pointer ${
-                  on ? "border-[#7A2253] bg-[#F7EEF2] text-[#7A2253]" : "border-[#ECECF0] bg-white text-[#52525B] hover:bg-[#FAFAFB]"
+                  on ? "border-[#C21B5C] bg-[#FFEDE6] text-[#C21B5C]" : "border-[#ECECF0] bg-white text-[#52525B] hover:bg-[#FAFAFB]"
                 }`}
               >
                 {on ? "✓ " : ""}{inc}
@@ -473,7 +473,7 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
             <label className={label} htmlFor="pk-price">
               Package price (₹) {priceRequired && <span className="text-[#C2414B]">*</span>}
             </label>
-            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253]">
+            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C]">
               <span className="flex h-10 w-9 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[13px] font-semibold text-[#6B6B76]">₹</span>
               <input
                 id="pk-price"
@@ -533,7 +533,7 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
             {CONTENT_LANGUAGES.map((l) => {
               const on = languages.includes(l);
               return (
-                <button key={l} type="button" aria-pressed={on} onClick={() => toggleIn(l, setLanguages)} className={`rounded-[5px] border px-2.5 py-1 text-[12px] font-medium cursor-pointer ${on ? "border-[#7A2253] bg-[#F7EEF2] text-[#7A2253]" : "border-[#ECECF0] bg-white text-[#52525B]"}`}>
+                <button key={l} type="button" aria-pressed={on} onClick={() => toggleIn(l, setLanguages)} className={`rounded-[5px] border px-2.5 py-1 text-[12px] font-medium cursor-pointer ${on ? "border-[#C21B5C] bg-[#FFEDE6] text-[#C21B5C]" : "border-[#ECECF0] bg-white text-[#52525B]"}`}>
                   {l}
                 </button>
               );
@@ -605,7 +605,7 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
               key={t}
               type="button"
               onClick={() => setTab(t)}
-              className={`inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-[5px] text-[12px] font-semibold cursor-pointer ${tab === t ? "bg-[#7A2253] text-white" : "text-[#52525B]"}`}
+              className={`inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-[5px] text-[12px] font-semibold cursor-pointer ${tab === t ? "bg-[#C21B5C] text-white" : "text-[#52525B]"}`}
             >
               {t === "edit" ? <PencilLine className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
               {t === "edit" ? "Details" : "Preview"}
@@ -625,7 +625,7 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
                     role="tab"
                     aria-selected={previewMode === m}
                     onClick={() => setPreviewMode(m)}
-                    className={`h-7 flex-1 rounded-[5px] text-[12px] font-semibold cursor-pointer ${previewMode === m ? "bg-[#7A2253] text-white" : "text-[#52525B] hover:text-[#18181B]"}`}
+                    className={`h-7 flex-1 rounded-[5px] text-[12px] font-semibold cursor-pointer ${previewMode === m ? "bg-[#C21B5C] text-white" : "text-[#52525B] hover:text-[#18181B]"}`}
                   >
                     {m === "profile" ? "Profile" : "Media kit"}
                   </button>
@@ -655,10 +655,10 @@ export function PackageForm({ isOpen, onClose, initial, isEdit = false, pricesPl
         <button type="button" onClick={onClose} className="h-10 rounded-[5px] border border-[#ECECF0] bg-white px-4 text-[12px] font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] cursor-pointer">
           Cancel
         </button>
-        <button type="button" disabled={Boolean(saving)} onClick={() => submit("draft")} className="h-10 rounded-[5px] border border-[#7A2253]/40 bg-white px-4 text-[12px] font-semibold text-[#7A2253] hover:bg-[#F7EEF2] cursor-pointer disabled:opacity-60">
+        <button type="button" disabled={Boolean(saving)} onClick={() => submit("draft")} className="h-10 rounded-[5px] border border-[#C21B5C]/40 bg-white px-4 text-[12px] font-semibold text-[#C21B5C] hover:bg-[#FFEDE6] cursor-pointer disabled:opacity-60">
           {saving === "draft" ? "Saving…" : "Save draft"}
         </button>
-        <button type="button" disabled={Boolean(saving)} onClick={() => submit("publish")} className="h-10 rounded-[5px] bg-[#7A2253] px-5 text-[12px] font-semibold text-white hover:opacity-95 cursor-pointer disabled:opacity-60">
+        <button type="button" disabled={Boolean(saving)} onClick={() => submit("publish")} className="h-10 rounded-[5px] bg-[#C21B5C] px-5 text-[12px] font-semibold text-white hover:opacity-95 cursor-pointer disabled:opacity-60">
           {saving === "publish" ? "Publishing…" : isEdit && !initial?.isDraft ? "Save & publish" : "Publish package"}
         </button>
       </ModalFooter>

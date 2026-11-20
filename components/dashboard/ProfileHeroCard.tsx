@@ -62,7 +62,7 @@ export function ProfileHeroCard({
                 name={name}
                 className="h-24 w-24 rounded-full object-cover"
                 textClassName="text-2xl font-extrabold text-white"
-                style={{ backgroundColor: "#7A2253" }}
+                style={{ backgroundColor: "#C21B5C" }}
               />
             </div>
           </div>
@@ -78,10 +78,10 @@ export function ProfileHeroCard({
           type="button"
           onClick={onCopyLink}
           title="Copy profile link"
-          className="group mt-0.5 inline-flex items-center gap-1.5 text-[13px] text-[#6B6B76] hover:text-[#7A2253] cursor-pointer"
+          className="group mt-0.5 inline-flex items-center gap-1.5 text-[13px] text-[#6B6B76] hover:text-[#C21B5C] cursor-pointer"
         >
           inflixo.com/{handle}
-          <Copy className="h-3.5 w-3.5 text-[#A1A1AA] group-hover:text-[#7A2253]" />
+          <Copy className="h-3.5 w-3.5 text-[#A1A1AA] group-hover:text-[#C21B5C]" />
         </button>
 
         {(chips.length > 0 || location) && (
@@ -103,7 +103,7 @@ export function ProfileHeroCard({
         {profile.bio?.trim() ? (
           <p className="mt-3 text-[14px] leading-5 text-[#3F3F46]">{profile.bio}</p>
         ) : (
-          <button type="button" onClick={onEdit} className="mt-3 text-[13px] italic text-[#6B6B76] hover:text-[#7A2253] cursor-pointer">
+          <button type="button" onClick={onEdit} className="mt-3 text-[13px] italic text-[#6B6B76] hover:text-[#C21B5C] cursor-pointer">
             No bio added yet — add one
           </button>
         )}
@@ -155,7 +155,7 @@ export function ProfileHeroCard({
           <button
             type="button"
             onClick={onEdit}
-            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[5px] bg-[#7A2253] px-4 text-[14px] font-semibold text-white hover:opacity-95 cursor-pointer"
+            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[5px] bg-[#C21B5C] px-4 text-[14px] font-semibold text-white hover:opacity-95 cursor-pointer"
           >
             <Pencil className="h-4 w-4" />
             Edit profile

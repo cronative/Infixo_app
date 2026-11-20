@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
     <linearGradient id="inflixo-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#7A2253" />
-      <stop offset="100%" stop-color="#B0437A" />
+      <stop offset="0%" stop-color="#FF6A1A" />
+      <stop offset="100%" stop-color="#E8246F" />
     </linearGradient>
   </defs>
   <rect width="512" height="512" fill="url(#inflixo-gradient)" />

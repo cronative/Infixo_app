@@ -161,8 +161,8 @@ export default function DashboardPreviewPage() {
       <div className="flex items-center justify-between gap-3 rounded-[5px] border border-[#ECECF0] bg-white px-3.5 py-2 shadow-none flex-wrap">
         {/* Left: Active theme */}
         <div className="flex items-center gap-2.5 flex-wrap">
-          <span className="h-6 inline-flex items-center gap-1.5 text-[12px] font-medium text-[#7A2253] bg-[#F7EEF2] px-2 rounded-[5px]">
-            <Sparkles className="h-3.5 w-3.5 text-[#7A2253]" />
+          <span className="h-6 inline-flex items-center gap-1.5 text-[12px] font-medium text-[#C21B5C] bg-[#FFEDE6] px-2 rounded-[5px]">
+            <Sparkles className="h-3.5 w-3.5 text-[#C21B5C]" />
             <span>Active theme: {activeThemeMeta.name}</span>
           </span>
 
@@ -176,7 +176,7 @@ export default function DashboardPreviewPage() {
             className="inline-flex h-8 items-center gap-1.5 text-[13px] font-medium text-[#18181B] px-3 rounded-[5px] bg-white hover:bg-[#FAFAFB] border border-[#ECECF0] transition-colors cursor-pointer"
             title="Refresh preview canvas"
           >
-            <RotateCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-[#7A2253]" : ""}`} />
+            <RotateCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-[#C21B5C]" : ""}`} />
             <span>Refresh</span>
           </button>
         </div>

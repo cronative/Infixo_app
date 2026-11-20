@@ -41,7 +41,7 @@ import { OverLimitBadge } from "@/components/ui/OverLimitBadge";
 const MAX_TITLE = 60;
 const MAX_CHILDREN = 10;
 const primaryButton = "dash-btn-primary";
-const fieldClass = "relative flex items-center h-11 rounded-[5px] border border-zinc-200 bg-white focus-within:border-[#7A2253] focus-within:ring-1 focus-within:ring-[#7A2253]/20 overflow-hidden";
+const fieldClass = "relative flex items-center h-11 rounded-[5px] border border-zinc-200 bg-white focus-within:border-[#C21B5C] focus-within:ring-1 focus-within:ring-[#C21B5C]/20 overflow-hidden";
 const fieldIconClass = "flex h-full w-12 shrink-0 items-center justify-center border-r border-zinc-200 bg-white text-zinc-500";
 const fieldInputClass = "w-full h-full px-3.5 text-xs sm:text-[13px] font-medium text-zinc-900 placeholder:text-zinc-400 placeholder:font-normal focus:outline-none bg-transparent";
 
@@ -144,7 +144,7 @@ function LinkIconBox({ kind, url, iconUrl, small = false }: { kind: "link" | "gr
   const size = small ? "h-6 w-6" : "h-8 w-8";
   if (kind === "group") {
     return (
-      <div className={`${size} rounded-[5px] flex items-center justify-center shrink-0 bg-[#F7EEF2] text-[#7A2253]`}>
+      <div className={`${size} rounded-[5px] flex items-center justify-center shrink-0 bg-[#FFEDE6] text-[#C21B5C]`}>
         <Folder className={small ? "h-3.5 w-3.5" : "h-4 w-4"} />
       </div>
     );
@@ -163,7 +163,7 @@ function LinkIconBox({ kind, url, iconUrl, small = false }: { kind: "link" | "gr
     );
   }
   return (
-    <div className={`${size} rounded-[5px] flex items-center justify-center shrink-0 bg-[#F7EEF2] text-[#7A2253]`}>
+    <div className={`${size} rounded-[5px] flex items-center justify-center shrink-0 bg-[#FFEDE6] text-[#C21B5C]`}>
       <Globe className={small ? "h-3.5 w-3.5" : "h-4 w-4"} />
     </div>
   );
@@ -464,13 +464,13 @@ export default function DashboardLinksPage() {
                       className="min-w-0 flex-1 text-left cursor-pointer group"
                     >
                       <span className="flex items-center gap-1.5 min-w-0 flex-wrap">
-                        <span className={`line-clamp-2 break-words text-[14px] font-semibold transition-colors ${isExpired ? "text-zinc-600 line-through" : "text-[#18181B] group-hover:text-[#7A2253]"}`} title={link.title}>{link.title}</span>
+                        <span className={`line-clamp-2 break-words text-[14px] font-semibold transition-colors ${isExpired ? "text-zinc-600 line-through" : "text-[#18181B] group-hover:text-[#C21B5C]"}`} title={link.title}>{link.title}</span>
                         {isExpired && (
                           <span className="shrink-0 h-5 inline-flex items-center text-[11px] font-bold bg-zinc-200 text-zinc-700 px-1.5 rounded-[5px] leading-none uppercase tracking-wider">Expired</span>
                         )}
                         {limit !== null && index >= limit && <OverLimitBadge />}
                         {link.pinned && !isExpired && (
-                          <span className="shrink-0 h-6 inline-flex items-center text-[12px] font-medium bg-[#F7EEF2] text-[#7A2253] px-2 rounded-[5px] leading-none">Pinned</span>
+                          <span className="shrink-0 h-6 inline-flex items-center text-[12px] font-medium bg-[#FFEDE6] text-[#C21B5C] px-2 rounded-[5px] leading-none">Pinned</span>
                         )}
                         {isGroup && <ChevronDown className={`h-3.5 w-3.5 shrink-0 text-[#A1A1AA] transition-transform ${isOpen ? "rotate-180" : ""}`} />}
                       </span>
@@ -601,7 +601,7 @@ export default function DashboardLinksPage() {
         <div className="relative border-b border-zinc-100 bg-white px-5 sm:px-6 pt-5 pb-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF6F2] border border-[#FFEDE6] text-[#C21B5C]">
                 <LinkIcon className="h-5 w-5 stroke-[2.2]" />
               </div>
               <div>
@@ -629,7 +629,7 @@ export default function DashboardLinksPage() {
                   type="button"
                   onClick={() => setMode(value)}
                   aria-pressed={mode === value}
-                  className={`py-2 px-3 rounded-[5px] text-center transition-all cursor-pointer ${mode === value ? "bg-[#7A2253] text-white shadow-xs" : "bg-transparent text-zinc-700 hover:bg-zinc-50"}`}
+                  className={`py-2 px-3 rounded-[5px] text-center transition-all cursor-pointer ${mode === value ? "bg-[#C21B5C] text-white shadow-xs" : "bg-transparent text-zinc-700 hover:bg-zinc-50"}`}
                 >
                   <span className="block text-xs sm:text-[13px] font-bold">{value === "link" ? "Single link" : "Group"}</span>
                   <span className={`block text-[11px] font-normal mt-0.5 ${mode === value ? "text-white/80" : "text-zinc-400"}`}>
@@ -708,7 +708,7 @@ export default function DashboardLinksPage() {
                       <button
                         type="button"
                         onClick={() => setExpiresAtLocal("")}
-                        className="text-[11px] sm:text-xs text-[#7A2253] hover:underline font-medium cursor-pointer"
+                        className="text-[11px] sm:text-xs text-[#C21B5C] hover:underline font-medium cursor-pointer"
                       >
                         Clear
                       </button>
@@ -732,7 +732,7 @@ export default function DashboardLinksPage() {
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer shrink-0">
                     <input id="link-pin" type="checkbox" checked={pinned} onChange={(e) => setPinned(e.target.checked)} className="sr-only peer" />
-                    <div className="w-9 h-5 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#7A2253]"></div>
+                    <div className="w-9 h-5 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#C21B5C]"></div>
                   </label>
                 </div>
               </div>
@@ -783,7 +783,7 @@ export default function DashboardLinksPage() {
                       <button
                         type="button"
                         onClick={() => setExpiresAtLocal("")}
-                        className="text-[11px] sm:text-xs text-[#7A2253] hover:underline font-medium cursor-pointer"
+                        className="text-[11px] sm:text-xs text-[#C21B5C] hover:underline font-medium cursor-pointer"
                       >
                         Clear
                       </button>
@@ -808,7 +808,7 @@ export default function DashboardLinksPage() {
                   <div className="space-y-2.5">
                     {children.map((row, index) => (
                       <div key={row.key} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                        <div className="relative flex-1 flex items-center h-10 rounded-[5px] border border-zinc-200 bg-white focus-within:border-[#7A2253] focus-within:ring-1 focus-within:ring-[#7A2253]/20 overflow-hidden">
+                        <div className="relative flex-1 flex items-center h-10 rounded-[5px] border border-zinc-200 bg-white focus-within:border-[#C21B5C] focus-within:ring-1 focus-within:ring-[#C21B5C]/20 overflow-hidden">
                           <div className="flex h-full w-9 shrink-0 items-center justify-center border-r border-zinc-200 bg-white text-zinc-500 font-semibold text-xs">T</div>
                           <input
                             type="text"
@@ -820,7 +820,7 @@ export default function DashboardLinksPage() {
                             className="w-full h-full px-3 text-xs font-medium text-zinc-900 placeholder:text-zinc-400 placeholder:font-normal focus:outline-none bg-transparent"
                           />
                         </div>
-                        <div className="relative flex-1 flex items-center h-10 rounded-[5px] border border-zinc-200 bg-white focus-within:border-[#7A2253] focus-within:ring-1 focus-within:ring-[#7A2253]/20 overflow-hidden">
+                        <div className="relative flex-1 flex items-center h-10 rounded-[5px] border border-zinc-200 bg-white focus-within:border-[#C21B5C] focus-within:ring-1 focus-within:ring-[#C21B5C]/20 overflow-hidden">
                           <div className="flex h-full w-9 shrink-0 items-center justify-center border-r border-zinc-200 bg-white text-zinc-500"><LinkIcon className="h-3.5 w-3.5" /></div>
                           <input
                             type="url"
@@ -857,7 +857,7 @@ export default function DashboardLinksPage() {
                     <button
                       type="button"
                       onClick={() => setChildren((rows) => [...rows, blankChild()])}
-                      className="inline-flex h-8 items-center gap-1.5 rounded-[5px] border border-[#7A2253] bg-white px-3 text-xs font-bold text-[#7A2253] hover:bg-[#FFF5F8] transition-all cursor-pointer"
+                      className="inline-flex h-8 items-center gap-1.5 rounded-[5px] border border-[#C21B5C] bg-white px-3 text-xs font-bold text-[#C21B5C] hover:bg-[#FFF6F2] transition-all cursor-pointer"
                     >
                       <Plus className="h-3.5 w-3.5" />
                       <span>Add link</span>
@@ -880,7 +880,7 @@ export default function DashboardLinksPage() {
             <button
               type="submit"
               disabled={saving}
-              className="h-10 px-5 rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white font-bold text-xs transition-all cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="h-10 px-5 rounded-[5px] bg-[#C21B5C] hover:opacity-95 text-white font-bold text-xs transition-all cursor-pointer shadow-xs inline-flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5 stroke-[2.5]" />}
               <span>{saving ? "Saving..." : editing ? "Save changes" : "Add link"}</span>

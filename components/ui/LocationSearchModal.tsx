@@ -97,8 +97,8 @@ export function LocationSearchModal({
           type="button"
           onClick={() => setMode("search")}
           className={`flex-1 rounded-[5px] py-1.5 text-xs font-semibold transition-colors cursor-pointer ${mode === "search"
-            ? "bg-white text-[#7A2253] shadow-xs border border-[#ECECF0]"
-            : "text-[#6B6B76] hover:text-[#7A2253]"
+            ? "bg-white text-[#C21B5C] shadow-xs border border-[#ECECF0]"
+            : "text-[#6B6B76] hover:text-[#C21B5C]"
             }`}
         >
           Search Cities
@@ -107,8 +107,8 @@ export function LocationSearchModal({
           type="button"
           onClick={() => setMode("custom")}
           className={`flex-1 rounded-[5px] py-1.5 text-xs font-semibold transition-colors cursor-pointer ${mode === "custom"
-            ? "bg-white text-[#7A2253] shadow-xs border border-[#ECECF0]"
-            : "text-[#6B6B76] hover:text-[#7A2253]"
+            ? "bg-white text-[#C21B5C] shadow-xs border border-[#ECECF0]"
+            : "text-[#6B6B76] hover:text-[#C21B5C]"
             }`}
         >
           Custom Location
@@ -119,7 +119,7 @@ export function LocationSearchModal({
         {mode === "search" ? (
           <div className="space-y-3">
             {/* Search Input */}
-            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                 <Search className="h-4 w-4" />
               </span>
@@ -148,11 +148,11 @@ export function LocationSearchModal({
                     className="w-full flex items-center justify-between rounded-[5px] p-2.5 text-left border border-[#ECECF0] bg-white hover:border-[#D4D4D8] hover:bg-[#F4F4F5] transition-colors group cursor-pointer"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-[5px] bg-[#FAFAFB] text-[#6B6B76] group-hover:bg-[#F4F4F5] group-hover:text-[#7A2253] transition-colors shrink-0">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-[5px] bg-[#FAFAFB] text-[#6B6B76] group-hover:bg-[#F4F4F5] group-hover:text-[#C21B5C] transition-colors shrink-0">
                         <Building className="h-3.5 w-3.5" />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-[#7A2253] group-hover:text-[#7A2253] transition-colors">
+                        <p className="text-xs font-bold text-[#C21B5C] group-hover:text-[#C21B5C] transition-colors">
                           {loc.city}
                         </p>
                         <p className="text-[11px] text-[#6B6B76] font-medium">
@@ -160,14 +160,14 @@ export function LocationSearchModal({
                         </p>
                       </div>
                     </div>
-                    <span className="text-xs font-semibold text-[#7A2253] opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-xs font-semibold text-[#C21B5C] opacity-0 group-hover:opacity-100 transition-opacity">
                       Select →
                     </span>
                   </button>
                 ))
               ) : (
                 <div className="py-6 text-center space-y-2">
-                  <p className="text-xs font-bold text-[#7A2253]">No matching location found</p>
+                  <p className="text-xs font-bold text-[#C21B5C]">No matching location found</p>
                   <p className="text-xs text-[#6B6B76]">
                     Switch to the <b>Custom Location</b> tab above to enter your exact city.
                   </p>
@@ -179,7 +179,7 @@ export function LocationSearchModal({
           <div className="space-y-3.5 text-left">
             <div className="space-y-1">
               <label className="block text-[13px] font-medium text-[#18181B]">City <span className="text-rose-500">*</span></label>
-              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Building className="h-4 w-4" />
                 </span>
@@ -195,7 +195,7 @@ export function LocationSearchModal({
 
             <div className="space-y-1">
               <label className="block text-[13px] font-medium text-[#18181B]">State or Region <span className="text-[#6B6B76] font-normal">(Optional)</span></label>
-              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Navigation className="h-4 w-4" />
                 </span>
@@ -211,7 +211,7 @@ export function LocationSearchModal({
 
             <div className="space-y-1">
               <label className="block text-[13px] font-medium text-[#18181B]">Country <span className="text-rose-500">*</span></label>
-              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Globe className="h-4 w-4" />
                 </span>
@@ -229,7 +229,7 @@ export function LocationSearchModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-[5px] border border-[#ECECF0] text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#7A2253] transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-[5px] border border-[#ECECF0] text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#C21B5C] transition-colors cursor-pointer"
               >
                 Cancel
               </button>
@@ -237,7 +237,7 @@ export function LocationSearchModal({
                 type="button"
                 onClick={handleSaveCustom}
                 disabled={!customCity.trim() || !customCountry.trim()}
-                className="bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs py-2 px-4.5 rounded-[5px] transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
+                className="bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs py-2 px-4.5 rounded-[5px] transition-all cursor-pointer shadow-md shadow-[#C21B5C]/20 inline-flex items-center gap-1.5 disabled:opacity-50"
               >
                 Save Location
               </button>

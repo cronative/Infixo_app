@@ -11,21 +11,21 @@
   --color-muted-surface: #ECECF0;
 
   /* TEXT */
-  --color-ink: #7A2253;
+  --color-ink: #A3164E;
   --color-ink-muted: #52525B;
   --color-caption: #6B6B76;
   --color-very-muted: #A1A1AA;
 
   /* BRAND & BUTTONS */
-  --color-primary: #7A2253;
-  --color-primary-hover: #631841;
-  --color-primary-tint: #fdf2f8;
-  --color-primary-gradient: #7A2253;
+  --color-primary: #C21B5C;
+  --color-primary-hover: #A3164E;
+  --color-primary-tint: #FFF6F2;
+  --color-primary-gradient: #C21B5C;
 
   /* BORDERS & DIVIDERS */
   --color-border: #ECECF0;
-  --color-border-hover: #7A2253;
-  --color-border-active: #7A2253;
+  --color-border-hover: #C21B5C;
+  --color-border-active: #C21B5C;
 
   /* STATUS COLORS */
   --color-success: #10b981;
@@ -66,7 +66,7 @@
   --primary-soft: var(--color-primary-tint);
   --inflixo-purple: var(--color-primary);
   --inflixo-purple-dark: var(--color-primary-hover);
-  --inflixo-purple-secondary: #B0437A;
+  --inflixo-purple-secondary: #E8246F;
   --inflixo-purple-light: var(--color-primary-tint);
   --inflixo-lavender: var(--color-surface-alt);
   --inflixo-blue: #1877f2;
@@ -79,63 +79,63 @@
   --radius-input: 5px;
 
   /* Shadows */
-  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(122, 34, 83, 0.04);
-  --shadow-elevated: 0 12px 30px rgba(122, 34, 83, 0.09);
-  --shadow-premium: 0 12px 30px rgba(122, 34, 83, 0.09);
-  --shadow-hover: 0 4px 16px rgba(122, 34, 83, 0.09);
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(194, 27, 92, 0.04);
+  --shadow-elevated: 0 12px 30px rgba(194, 27, 92, 0.09);
+  --shadow-premium: 0 12px 30px rgba(194, 27, 92, 0.09);
+  --shadow-hover: 0 4px 16px rgba(194, 27, 92, 0.09);
 
-  --gradient-premium: #7A2253;
-  --gradient-gold: #7A2253;
-  --gradient-energy: #7A2253;
+  --gradient-premium: #C21B5C;
+  --gradient-gold: #C21B5C;
+  --gradient-energy: #C21B5C;
 
   /* Global Design Tokens */
   --bg-page: #ffffff;
   --bg-surface: #ffffff;
   --bg-card: #ffffff;
-  --bg-card-hover: #fdf2f8;
+  --bg-card-hover: #FFF6F2;
   --bg-muted: #e2e8f0;
-  --text-primary: #7A2253;
+  --text-primary: #A3164E;
   --text-secondary: #475569;
   --text-muted: #64748b;
   --border-card: #e2e8f0;
-  --border-card-hover: #fbcfe8;
-  --accent-color: #7A2253;
-  --accent-glow: rgba(122, 34, 83, 0.18);
-  --btn-primary-bg: #7A2253;
-  --btn-primary-hover: #631841;
+  --border-card-hover: #F9CFC6;
+  --accent-color: #C21B5C;
+  --accent-glow: rgba(194, 27, 92, 0.18);
+  --btn-primary-bg: #C21B5C;
+  --btn-primary-hover: #A3164E;
   --btn-primary-text: #ffffff;
-  --badge-bg: #fdf2f8;
-  --badge-text: #7A2253;
-  --badge-border: #fbcfe8;
-  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(122, 34, 83, 0.04);
+  --badge-bg: #FFF6F2;
+  --badge-text: #C21B5C;
+  --badge-border: #F9CFC6;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(194, 27, 92, 0.04);
   --radius-sm: 5px;
   --radius-md: 5px;
   --radius-lg: 5px;
 }
 
 .bg-primary-gradient {
-  background: #7A2253 !important;
+  background: #C21B5C !important;
 }
 
 .text-primary-gradient {
-  color: #7A2253 !important;
-  -webkit-text-fill-color: #7A2253 !important;
+  color: #C21B5C !important;
+  -webkit-text-fill-color: #C21B5C !important;
 }
 
 .btn-brand-gradient {
-  background: #7A2253 !important;
+  background: #C21B5C !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(122, 34, 83, 0.22);
+  box-shadow: 0 4px 14px rgba(194, 27, 92, 0.22);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-brand-gradient:hover {
-  background: #631841 !important;
+  background: #A3164E !important;
   opacity: 1;
 }
 
 .badge-brand-gradient {
-  background: #7A2253 !important;
+  background: #C21B5C !important;
   color: #ffffff !important;
 }
 
@@ -750,7 +750,7 @@ body {
 
 .hover-lift:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 28px -6px rgba(122, 34, 83, 0.14), 0 6px 12px -4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 12px 28px -6px rgba(194, 27, 92, 0.14), 0 6px 12px -4px rgba(0, 0, 0, 0.04);
 }
 
 /* 44x44 minimum tap area for small controls without changing their visual size. */
@@ -818,7 +818,7 @@ body {
 }
 
 .glass-card-dark {
-  background: #7A2253;
+  background: #C21B5C;
   border: 1px solid #334155;
 }
 
@@ -828,7 +828,7 @@ body {
 
 .hover-glow:hover {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(122, 34, 83, 0.18);
+  box-shadow: 0 0 0 3px rgba(194, 27, 92, 0.18);
 }
 
 @keyframes toastProgress {
@@ -1205,9 +1205,9 @@ body {
    LANDING PAGE DESIGN TOKENS & TYPOGRAPHY SYSTEM
    ============================================================ */
 .landing-scope {
-  --brand: #7A2253;
-  --brand-strong: #631841;
-  --brand-soft: #fdf2f8;
+  --brand: #C21B5C;
+  --brand-strong: #A3164E;
+  --brand-soft: #FFF6F2;
   --ink: #18181B;
   --muted: #52525B;
   --line: #E4E4E7;
@@ -1275,25 +1275,25 @@ body {
 }
 
 /* ============================================================
-   BRAND UTILITIES (#7A2253)
+   BRAND UTILITIES (#C21B5C)
    ============================================================ */
 .brand-grad {
-  background-color: #7A2253;
+  background-color: #C21B5C;
 }
 
 .brand-grad-btn {
-  background-color: #7A2253;
+  background-color: #C21B5C;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px 0 rgba(122, 34, 83, 0.25);
+  box-shadow: 0 4px 14px 0 rgba(194, 27, 92, 0.25);
 }
 
 .brand-grad-btn:hover {
-  background-color: #631841;
-  box-shadow: 0 6px 20px 0 rgba(122, 34, 83, 0.35);
+  background-color: #A3164E;
+  box-shadow: 0 6px 20px 0 rgba(194, 27, 92, 0.35);
 }
 
 .brand-grad-text {
-  color: #7A2253;
+  color: #C21B5C;
 }
 
 /* ============================================================
@@ -1311,11 +1311,11 @@ body {
 
 .fanbase-shimmer-light {
   background: linear-gradient(90deg,
-      #7A2253 0%,
-      #9B2C6B 22%,
+      #C21B5C 0%,
+      #E8246F 22%,
       #ec4899 48%,
-      #9B2C6B 74%,
-      #7A2253 100%);
+      #E8246F 74%,
+      #C21B5C 100%);
   background-size: 200% auto;
   color: transparent;
   -webkit-background-clip: text;
@@ -1329,7 +1329,7 @@ body {
       #ffffff 0%,
       #fed7aa 25%,
       #ffffff 50%,
-      #fbcfe8 75%,
+      #F9CFC6 75%,
       #ffffff 100%);
   background-size: 200% auto;
   color: transparent;
@@ -1397,9 +1397,9 @@ nextjs-portal,
   --border: #ECECF0;
   --text: #18181B;
   --muted: #6B6B76;
-  --primary: #7A2253;
-  --primary-hover: #63193F;
-  --tint: #F7EEF2;
+  --primary: #C21B5C;
+  --primary-hover: #A3164E;
+  --tint: #FFEDE6;
   --success: #15803D;
   --warning: #B45309;
   --danger: #DC2626;

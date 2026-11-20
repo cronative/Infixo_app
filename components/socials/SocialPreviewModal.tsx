@@ -65,7 +65,7 @@ export function SocialPreviewCard({
             {brandIcon}
           </div>
           <div>
-            <p className="text-sm font-bold text-[#7A2253] leading-tight">
+            <p className="text-sm font-bold text-[#C21B5C] leading-tight">
               {username}
             </p>
             <p className="text-xs font-semibold text-[#64748b] mt-0.5">
@@ -76,7 +76,7 @@ export function SocialPreviewCard({
         <button
           type="button"
           onClick={onClose}
-          className="flex h-7 w-7 items-center justify-center rounded-lg text-[#94a3b8] hover:text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+          className="flex h-7 w-7 items-center justify-center rounded-lg text-[#94a3b8] hover:text-[#C21B5C] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
           aria-label="Close"
         >
           <X className="h-4 w-4" />
@@ -89,7 +89,7 @@ export function SocialPreviewCard({
           type="button"
           onClick={onClose}
           disabled={loading}
-          className="flex-1 rounded-xl border border-[#cbd5e1] bg-white py-2 text-xs font-semibold text-[#7A2253] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+          className="flex-1 rounded-xl border border-[#cbd5e1] bg-white py-2 text-xs font-semibold text-[#C21B5C] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
         >
           Cancel
         </button>
@@ -97,7 +97,7 @@ export function SocialPreviewCard({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#7A2253] hover:opacity-95 py-2 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 disabled:opacity-60 active:scale-98"
+          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#C21B5C] hover:opacity-95 py-2 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#C21B5C]/20 disabled:opacity-60 active:scale-98"
         >
           {loading ? (
             <>
@@ -175,7 +175,7 @@ export function SocialPreviewModal({
             {brandIcon}
           </div>
           <div>
-            <p className="text-sm font-bold text-[#7A2253] leading-tight">
+            <p className="text-sm font-bold text-[#C21B5C] leading-tight">
               {username}
             </p>
             <p className="text-xs font-semibold text-[#64748b] mt-0.5">
@@ -190,7 +190,7 @@ export function SocialPreviewModal({
           type="button"
           onClick={onClose}
           disabled={loading}
-          className="flex-1 h-9 px-4 rounded-lg border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#7A2253] transition-colors cursor-pointer"
+          className="flex-1 h-9 px-4 rounded-lg border border-[#e2e8f0] bg-white text-xs font-semibold text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#C21B5C] transition-colors cursor-pointer"
         >
           Cancel
         </button>
@@ -198,7 +198,7 @@ export function SocialPreviewModal({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className="flex-1 h-9 bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs px-4 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center justify-center gap-1.5 disabled:opacity-60 active:scale-98"
+          className="flex-1 h-9 bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs px-4 rounded-lg transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#C21B5C]/20 inline-flex items-center justify-center gap-1.5 disabled:opacity-60 active:scale-98"
         >
           {loading ? (
             <>

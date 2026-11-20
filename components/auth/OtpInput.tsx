@@ -149,8 +149,8 @@ export const OtpInput = forwardRef<OtpInputHandle, OtpInputProps>(
                 hasError
                   ? "border-[#DC2626] bg-rose-50/20 text-[#DC2626] ring-2 ring-[#DC2626]/20"
                   : digit
-                  ? "border-[#7A2253] bg-white text-[#18181B] ring-2 ring-[#7A2253]/20 shadow-xs"
-                  : "border-[#E4E4E7] bg-zinc-50 text-[#18181B] focus:border-[#7A2253] focus:bg-white focus:ring-2 focus:ring-[#7A2253]/15"
+                  ? "border-[#C21B5C] bg-white text-[#18181B] ring-2 ring-[#C21B5C]/20 shadow-xs"
+                  : "border-[#E4E4E7] bg-zinc-50 text-[#18181B] focus:border-[#C21B5C] focus:bg-white focus:ring-2 focus:ring-[#C21B5C]/15"
               } ${disabled ? "opacity-50 cursor-not-allowed bg-zinc-100" : ""}`}
             />
           );

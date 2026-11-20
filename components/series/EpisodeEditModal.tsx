@@ -411,7 +411,7 @@ export function EpisodeEditModal({
                 type="button"
                 onClick={() => setIsBulkMode(false)}
                 disabled={saving}
-                className="text-xs text-[#7A2253] font-medium hover:underline cursor-pointer"
+                className="text-xs text-[#C21B5C] font-medium hover:underline cursor-pointer"
               >
                 Switch to single link
               </button>
@@ -427,7 +427,7 @@ export function EpisodeEditModal({
                 disabled={saving}
                 rows={7}
                 placeholder={`https://${seriesPlatform.toLowerCase() === "instagram" ? "instagram.com/reel/..." : seriesPlatform.toLowerCase() === "facebook" ? "facebook.com/watch/..." : "youtube.com/watch?v=..."}\nhttps://${seriesPlatform.toLowerCase() === "instagram" ? "instagram.com/reel/..." : seriesPlatform.toLowerCase() === "facebook" ? "facebook.com/watch/..." : "youtube.com/watch?v=..."}`}
-                className="w-full rounded-[4px] border border-[#ECECF0] bg-white p-3 font-mono text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none transition-colors"
+                className="w-full rounded-[4px] border border-[#ECECF0] bg-white p-3 font-mono text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:outline-none transition-colors"
               />
               {bulkError && <p className="mt-1.5 text-xs text-rose-500 font-medium">{bulkError}</p>}
             </div>
@@ -456,13 +456,13 @@ export function EpisodeEditModal({
                   value={bulkStartNumber}
                   disabled={saving}
                   onChange={(e) => setBulkStartNumber(Math.max(1, parseInt(e.target.value, 10) || 1))}
-                  className="w-14 rounded-[4px] border border-[#ECECF0] bg-white px-2 py-1 text-xs text-center text-[#18181B] focus:outline-none focus:border-[#7A2253]"
+                  className="w-14 rounded-[4px] border border-[#ECECF0] bg-white px-2 py-1 text-xs text-center text-[#18181B] focus:outline-none focus:border-[#C21B5C]"
                 />
               </div>
             </div>
 
             {bulkProgress && (
-              <div className="flex items-center gap-2 rounded-[4px] bg-[#7A2253]/10 p-2 text-xs font-medium text-[#7A2253]">
+              <div className="flex items-center gap-2 rounded-[4px] bg-[#C21B5C]/10 p-2 text-xs font-medium text-[#C21B5C]">
                 <Loader2 className="h-4 w-4 animate-spin shrink-0" />
                 <span>{bulkProgress}</span>
               </div>
@@ -481,7 +481,7 @@ export function EpisodeEditModal({
             <button
               type="submit"
               disabled={saving || parsedBulkLinks.length === 0}
-              className="h-9 px-4 rounded-[5px] bg-[#7A2253] text-xs font-semibold text-white shadow-xs hover:bg-[#601a41] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-1.5"
+              className="h-9 px-4 rounded-[5px] bg-[#C21B5C] text-xs font-semibold text-white shadow-xs hover:bg-[#A3164E] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-1.5"
             >
               {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
               <span>
@@ -508,7 +508,7 @@ export function EpisodeEditModal({
                   <button
                     type="button"
                     onClick={() => setIsBulkMode(true)}
-                    className="inline-flex items-center gap-1 text-xs text-[#7A2253] font-medium hover:underline cursor-pointer"
+                    className="inline-flex items-center gap-1 text-xs text-[#C21B5C] font-medium hover:underline cursor-pointer"
                   >
                     <ListPlus className="h-3.5 w-3.5" />
                     <span>Paste multiple links</span>
@@ -546,7 +546,7 @@ export function EpisodeEditModal({
                   } py-2 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:outline-none transition-colors ${
                     showUrlErr
                       ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-edit-error"
-                      : "border-[#ECECF0] focus:border-[#7A2253]"
+                      : "border-[#ECECF0] focus:border-[#C21B5C]"
                   }`}
                 />
                 {detectedPlatform && detectedPlatform !== "Other" && (
@@ -600,12 +600,12 @@ export function EpisodeEditModal({
                   } py-2 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:outline-none transition-colors ${
                     showTitleErr
                       ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-edit-error"
-                      : "border-[#ECECF0] focus:border-[#7A2253]"
+                      : "border-[#ECECF0] focus:border-[#C21B5C]"
                   }`}
                 />
                 {loadingTitle && (
                   <span
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center pointer-events-none text-[#7A2253]"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center pointer-events-none text-[#C21B5C]"
                     title="Fetching title..."
                   >
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -638,7 +638,7 @@ export function EpisodeEditModal({
                 className={`w-full rounded-[4px] border bg-white px-3 py-2 text-xs text-[#18181B] focus:outline-none transition-colors ${
                   showNumberErr
                     ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-edit-error"
-                    : "border-[#ECECF0] focus:border-[#7A2253]"
+                    : "border-[#ECECF0] focus:border-[#C21B5C]"
                 }`}
               />
               {showNumberErr && <p className="mt-1 text-xs text-rose-500 font-medium">{showNumberErr}</p>}
@@ -657,7 +657,7 @@ export function EpisodeEditModal({
             <button
               type="submit"
               disabled={saving || hasAnyError}
-              className="h-9 px-4 rounded-[5px] bg-[#7A2253] text-xs font-semibold text-white shadow-xs hover:bg-[#601a41] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-1.5"
+              className="h-9 px-4 rounded-[5px] bg-[#C21B5C] text-xs font-semibold text-white shadow-xs hover:bg-[#A3164E] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-1.5"
             >
               {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
               <span>

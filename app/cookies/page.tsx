@@ -9,7 +9,7 @@ import { openCookiePreferences } from "@/lib/cookieConsent";
 
 export default function CookiePolicyPage() {
   return (
-    <div className="min-h-dvh bg-white text-[#181716] flex flex-col font-sans selection:bg-[#7A2253]/10 selection:text-[#7A2253]">
+    <div className="min-h-dvh bg-white text-[#181716] flex flex-col font-sans selection:bg-[#C21B5C]/10 selection:text-[#C21B5C]">
       {/* Navbar */}
       <header className="safe-top sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#E7E3DC]">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 sm:px-8">
@@ -28,7 +28,7 @@ export default function CookiePolicyPage() {
       <main className="mx-auto max-w-4xl px-5 sm:px-8 py-12 sm:py-16 flex-1 text-left space-y-10">
         {/* Header Banner */}
         <div className="space-y-3 border-b border-[#E7E3DC] pb-8">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#7A2253]/[0.09] border border-[#7A2253]/20 px-3 py-1 text-xs font-bold text-[#7A2253]">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#C21B5C]/[0.09] border border-[#C21B5C]/20 px-3 py-1 text-xs font-bold text-[#C21B5C]">
             <Cookie className="h-4 w-4" />
             <span>PRIVACY &amp; TRANSPARENCY</span>
           </div>
@@ -53,7 +53,7 @@ export default function CookiePolicyPage() {
           <button
             type="button"
             onClick={() => openCookiePreferences()}
-            className="inline-flex items-center gap-2 shrink-0 rounded-xl bg-[#7A2253] hover:bg-brand-hover text-white px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all shadow-xs cursor-pointer tap-scale"
+            className="inline-flex items-center gap-2 shrink-0 rounded-xl bg-[#C21B5C] hover:bg-brand-hover text-white px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all shadow-xs cursor-pointer tap-scale"
           >
             <Sliders className="h-4 w-4" />
             <span>Cookie Preferences</span>
@@ -159,7 +159,7 @@ export default function CookiePolicyPage() {
             </p>
             <div className="rounded-2xl bg-white border border-[#E7E3DC] p-4 space-y-1 text-xs sm:text-sm font-semibold text-[#181716]">
               <p>TrustIQ Labs PVT LTD — Inflixo Compliance Division</p>
-              <p className="text-[#7A2253]">Email: privacy@inflixo.com</p>
+              <p className="text-[#C21B5C]">Email: privacy@inflixo.com</p>
             </div>
           </section>
         </div>

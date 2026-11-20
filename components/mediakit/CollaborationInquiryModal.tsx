@@ -124,7 +124,7 @@ export function CollaborationInquiryModal({
       size="md"
       title={`Collaborate with ${creatorName}`}
       description="Send a direct brand collaboration inquiry to the creator."
-      icon={<Briefcase className="h-4 w-4 text-[#7A2253]" />}
+      icon={<Briefcase className="h-4 w-4 text-[#C21B5C]" />}
     >
       {isSuccess ? (
         <div className="p-8 text-center space-y-3">
@@ -141,7 +141,7 @@ export function CollaborationInquiryModal({
             <button
               type="button"
               onClick={handleClose}
-              className="bg-[#7A2253] hover:bg-brand-hover text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-colors cursor-pointer"
+              className="bg-[#C21B5C] hover:bg-brand-hover text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-colors cursor-pointer"
             >
               Done
             </button>
@@ -156,7 +156,7 @@ export function CollaborationInquiryModal({
                 <label className="text-[13px] font-medium text-[#18181B] block">
                   Brand / Company Name <span className="text-[#C2414B]">*</span>
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Building2 className="h-4 w-4" />
                   </span>
@@ -175,7 +175,7 @@ export function CollaborationInquiryModal({
                 <label className="text-[13px] font-medium text-[#18181B] block">
                   Your Name <span className="text-[#C2414B]">*</span>
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <User className="h-4 w-4" />
                   </span>
@@ -197,7 +197,7 @@ export function CollaborationInquiryModal({
                 <label className="text-[13px] font-medium text-[#18181B] block">
                   Business Email <span className="text-[#C2414B]">*</span>
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Mail className="h-4 w-4" />
                   </span>
@@ -216,7 +216,7 @@ export function CollaborationInquiryModal({
                 <label className="text-[13px] font-medium text-[#18181B] block">
                   Phone / WhatsApp
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Phone className="h-4 w-4" />
                   </span>
@@ -237,7 +237,7 @@ export function CollaborationInquiryModal({
                 <label className="text-[13px] font-medium text-[#18181B] block">
                   Estimated Budget
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#17845B] font-bold text-sm">
                     ₹
                   </span>
@@ -260,7 +260,7 @@ export function CollaborationInquiryModal({
                 <label className="text-[13px] font-medium text-[#18181B] block">
                   Campaign Timeline
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Calendar className="h-4 w-4" />
                   </span>
@@ -280,7 +280,7 @@ export function CollaborationInquiryModal({
               <label className="text-[13px] font-medium text-[#18181B] block">
                 Deliverables / Format
               </label>
-              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Tag className="h-4 w-4" />
                 </span>
@@ -299,7 +299,7 @@ export function CollaborationInquiryModal({
               <label className="text-[13px] font-medium text-[#18181B] block">
                 Campaign Brief &amp; Notes
               </label>
-              <div className="flex items-start rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <div className="flex items-start rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76] pt-2.5 self-start">
                   <FileText className="h-4 w-4" />
                 </span>
@@ -318,14 +318,14 @@ export function CollaborationInquiryModal({
             <button
               type="button"
               onClick={handleClose}
-              className="h-9 px-4 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#7A2253] transition-colors cursor-pointer"
+              className="h-9 px-4 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#C21B5C] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="h-9 inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-brand-hover px-4.5 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm disabled:opacity-50"
+              className="h-9 inline-flex items-center gap-1.5 rounded-[5px] bg-[#C21B5C] hover:bg-brand-hover px-4.5 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 cursor-pointer shadow-xs hover:shadow-sm disabled:opacity-50"
             >
               {submitting ? (
                 <>

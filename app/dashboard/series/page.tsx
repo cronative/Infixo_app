@@ -585,7 +585,7 @@ export default function MySeriesPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-[#7A2253]" />
+        <Loader2 className="h-6 w-6 animate-spin text-[#C21B5C]" />
       </div>
     );
   }
@@ -628,7 +628,7 @@ export default function MySeriesPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search series by title..."
-            className="w-full rounded-[5px] border border-[#ECECF0] bg-white pl-9 pr-3 py-2 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20"
+            className="w-full rounded-[5px] border border-[#ECECF0] bg-white pl-9 pr-3 py-2 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:outline-none focus:ring-1 focus:ring-[#C21B5C]/20"
           />
         </div>
       )}
@@ -636,7 +636,7 @@ export default function MySeriesPage() {
       {/* C6: Empty State (0 Series) */}
       {seriesList.length === 0 && (
         <div className="rounded-[5px] border-2 border-dashed border-zinc-200 bg-white p-8 sm:p-12 text-center space-y-4">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[5px] bg-[#7A2253]/10 text-[#7A2253]">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[5px] bg-[#C21B5C]/10 text-[#C21B5C]">
             <Film className="h-6 w-6" />
           </div>
           <div className="space-y-1 max-w-md mx-auto">
@@ -649,7 +649,7 @@ export default function MySeriesPage() {
             <button
               type="button"
               onClick={handleOpenCreateSeries}
-              className="inline-flex h-10 items-center gap-2 rounded-[5px] bg-[#7A2253] px-5 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 hover:bg-[#601a41] transition-colors cursor-pointer"
+              className="inline-flex h-10 items-center gap-2 rounded-[5px] bg-[#C21B5C] px-5 text-xs font-semibold text-white shadow-md shadow-[#C21B5C]/20 hover:bg-[#A3164E] transition-colors cursor-pointer"
             >
               <Plus className="h-4 w-4" />
               <span>Create Series</span>
@@ -747,7 +747,7 @@ export default function MySeriesPage() {
                             setSeriesToEdit(series);
                             setUpsertModalOpen(true);
                           }}
-                          className="inline-flex items-center gap-0.5 text-[#7A2253] font-semibold hover:underline ml-1 cursor-pointer"
+                          className="inline-flex items-center gap-0.5 text-[#C21B5C] font-semibold hover:underline ml-1 cursor-pointer"
                         >
                           + Add genre
                         </button>
@@ -766,7 +766,7 @@ export default function MySeriesPage() {
                         setActiveMenuId(null);
                         setActiveShareId(activeShareId === series.id ? null : series.id);
                       }}
-                      className="inline-flex h-8 items-center gap-1 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-[13px] font-medium text-[#3F3F46] hover:bg-[#FAFAFB] hover:text-[#7A2253] transition-colors cursor-pointer"
+                      className="inline-flex h-8 items-center gap-1 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-[13px] font-medium text-[#3F3F46] hover:bg-[#FAFAFB] hover:text-[#C21B5C] transition-colors cursor-pointer"
                     >
                       <Share2 className="h-3.5 w-3.5" />
                       <span className="hidden sm:inline">Share</span>
@@ -890,7 +890,7 @@ export default function MySeriesPage() {
                                         setInlineEditingEpNumberId(null);
                                       }
                                     }}
-                                    className="w-9 h-6 rounded-[5px] border border-[#7A2253] bg-white p-0 text-center font-mono text-[12px] font-medium text-[#18181B] focus:outline-none"
+                                    className="w-9 h-6 rounded-[5px] border border-[#C21B5C] bg-white p-0 text-center font-mono text-[12px] font-medium text-[#18181B] focus:outline-none"
                                     autoFocus
                                   />
                                 ) : (
@@ -899,7 +899,7 @@ export default function MySeriesPage() {
                                       setInlineEditingEpNumberId(ep.id);
                                       setInlineNumberValue(ep.episodeNumber || epIndex + 1);
                                     }}
-                                    className="font-mono text-[12px] font-medium text-[#6B6B76] hover:text-[#7A2253] hover:bg-zinc-100 px-1 py-0.5 rounded cursor-pointer shrink-0 text-center select-none"
+                                    className="font-mono text-[12px] font-medium text-[#6B6B76] hover:text-[#C21B5C] hover:bg-zinc-100 px-1 py-0.5 rounded cursor-pointer shrink-0 text-center select-none"
                                     title="Click to edit episode number"
                                   >
                                     {formatEpisodeNumber(ep.episodeNumber || epIndex + 1)}
@@ -921,7 +921,7 @@ export default function MySeriesPage() {
                                           setInlineEditingEpId(null);
                                         }
                                       }}
-                                      className="w-full rounded-[5px] border border-[#7A2253] bg-white px-1.5 py-0.5 text-[13px] font-medium text-[#18181B] focus:outline-none"
+                                      className="w-full rounded-[5px] border border-[#C21B5C] bg-white px-1.5 py-0.5 text-[13px] font-medium text-[#18181B] focus:outline-none"
                                       autoFocus
                                     />
                                   ) : (
@@ -930,7 +930,7 @@ export default function MySeriesPage() {
                                         setInlineEditingEpId(ep.id);
                                         setInlineTitleValue(ep.title);
                                       }}
-                                      className="font-medium text-[#18181B] hover:text-[#7A2253] cursor-pointer line-clamp-2 break-words block hover:underline"
+                                      className="font-medium text-[#18181B] hover:text-[#C21B5C] cursor-pointer line-clamp-2 break-words block hover:underline"
                                       title="Click to edit title inline"
                                     >
                                       {ep.title}
@@ -942,7 +942,7 @@ export default function MySeriesPage() {
                               {/* Right: Platform Icon + Actions (far right, no middle empty space) */}
                               <div className="flex items-center gap-1.5 shrink-0">
                                 {/* Platform Icon in 32px / 5px box */}
-                                <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] shrink-0" title={ep.platform || "Video"}>
+                                <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFEDE6] shrink-0" title={ep.platform || "Video"}>
                                   {ep.platform === "YouTube" && (
                                     <YoutubeIcon className="h-4 w-4 text-red-500" />
                                   )}
@@ -960,7 +960,7 @@ export default function MySeriesPage() {
                                   <button
                                     type="button"
                                     onClick={() => handleOpenEditEpisode(series, ep)}
-                                    className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#6B6B76] hover:text-[#7A2253] hover:bg-white border border-transparent hover:border-[#ECECF0] cursor-pointer transition-colors"
+                                    className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#6B6B76] hover:text-[#C21B5C] hover:bg-white border border-transparent hover:border-[#ECECF0] cursor-pointer transition-colors"
                                     title="Edit title and link"
                                   >
                                     <Pencil className="h-4 w-4" />
@@ -1009,7 +1009,7 @@ export default function MySeriesPage() {
                         <button
                           type="button"
                           onClick={() => setLimitModalOpen(true)}
-                          className="font-semibold text-[#7A2253] hover:underline cursor-pointer"
+                          className="font-semibold text-[#C21B5C] hover:underline cursor-pointer"
                         >
                           Upgrade for more
                         </button>
@@ -1018,9 +1018,9 @@ export default function MySeriesPage() {
                       <button
                         type="button"
                         onClick={() => handleOpenAddEpisode(series)}
-                        className="w-full flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-[5px] border-2 border-dashed border-[#7A2253]/30 bg-[#7A2253]/[0.02] hover:bg-[#7A2253]/[0.06] hover:border-[#7A2253]/60 text-xs font-semibold text-[#7A2253] transition-colors cursor-pointer group"
+                        className="w-full flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-[5px] border-2 border-dashed border-[#C21B5C]/30 bg-[#C21B5C]/[0.02] hover:bg-[#C21B5C]/[0.06] hover:border-[#C21B5C]/60 text-xs font-semibold text-[#C21B5C] transition-colors cursor-pointer group"
                       >
-                        <Plus className="h-4 w-4 text-[#7A2253] group-hover:scale-110 transition-transform" />
+                        <Plus className="h-4 w-4 text-[#C21B5C] group-hover:scale-110 transition-transform" />
                         <span>+ Add Episode</span>
                       </button>
                     )}

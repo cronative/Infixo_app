@@ -81,9 +81,9 @@ export function BrandLeadQualifierModal({
         <ModalBody className="p-4 sm:p-5 space-y-3.5 text-left">
           {/* Deliverable Summary Badge */}
           <div className="rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] p-3 flex items-center gap-3">
-            <Package className="h-4 w-4 text-[#7A2253] shrink-0" />
+            <Package className="h-4 w-4 text-[#C21B5C] shrink-0" />
             <div className="min-w-0 text-xs">
-              <p className="font-bold text-[#7A2253] truncate">{packageName}</p>
+              <p className="font-bold text-[#C21B5C] truncate">{packageName}</p>
               {deliverableText && <p className="text-[#6B6B76] font-medium truncate mt-0.5">{deliverableText}</p>}
             </div>
           </div>
@@ -92,7 +92,7 @@ export function BrandLeadQualifierModal({
             <label className="block text-[13px] font-medium text-[#18181B]">
               Brand or Agency name <span className="text-[#C2414B]">*</span>
             </label>
-            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                 <Building2 className="h-4 w-4" />
               </span>
@@ -111,7 +111,7 @@ export function BrandLeadQualifierModal({
             <label className="block text-[13px] font-medium text-[#18181B]">
               Campaign budget <span className="text-[#C2414B]">*</span>
             </label>
-            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#17845B] font-bold text-sm">
                 ₹
               </span>
@@ -130,7 +130,7 @@ export function BrandLeadQualifierModal({
             <label className="block text-[13px] font-medium text-[#18181B]">
               Selected package
             </label>
-            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                 <Package className="h-4 w-4" />
               </span>
@@ -138,7 +138,7 @@ export function BrandLeadQualifierModal({
                 type="text"
                 value={selectedDeliverable}
                 onChange={(e) => setSelectedDeliverable(e.target.value)}
-                className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#7A2253] bg-transparent outline-none"
+                className="flex-1 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#C21B5C] bg-transparent outline-none"
               />
             </div>
           </div>
@@ -148,7 +148,7 @@ export function BrandLeadQualifierModal({
           <button
             type="button"
             onClick={onClose}
-            className="h-9 px-4 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#7A2253] transition-colors cursor-pointer"
+            className="h-9 px-4 rounded-[5px] border border-[#ECECF0] bg-white text-xs font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] hover:text-[#C21B5C] transition-colors cursor-pointer"
           >
             Cancel
           </button>

@@ -320,7 +320,7 @@ export default function DashboardReviewsPage() {
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center gap-2 rounded-[5px] bg-[#7A2253] px-4 py-2 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-[5px] bg-[#C21B5C] px-4 py-2 text-xs font-semibold text-white shadow-md shadow-[#C21B5C]/20 transition-all hover:opacity-95 cursor-pointer"
             >
               <Plus className="h-4 w-4" />
               <span>Request review</span>
@@ -399,7 +399,7 @@ export default function DashboardReviewsPage() {
                       aria-checked={isVisible}
                       onClick={() => handleToggleVisible(rev)}
                       className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors cursor-pointer ${
-                        isVisible ? "bg-[#7A2253]" : "bg-[#D4D4D8]"
+                        isVisible ? "bg-[#C21B5C]" : "bg-[#D4D4D8]"
                       }`}
                     >
                       <span
@@ -434,10 +434,10 @@ export default function DashboardReviewsPage() {
         showCloseButton={false}
         className="rounded-[5px] border border-zinc-200/80 shadow-2xl overflow-hidden"
       >
-        <div className="relative border-b border-zinc-100 bg-gradient-to-b from-[#FFF9FB]/80 to-white px-5 sm:px-6 pt-5 pb-4">
+        <div className="relative border-b border-zinc-100 bg-gradient-to-b from-[#FFF6F2]/80 to-white px-5 sm:px-6 pt-5 pb-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-gradient-to-tr from-[#7A2253] via-[#942767] to-[#C2414B] text-white shadow-md shadow-[#7A2253]/25">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] bg-gradient-to-tr from-[#C21B5C] via-[#E8246F] to-[#C2414B] text-white shadow-md shadow-[#C21B5C]/25">
                 <Star className="h-5 w-5 fill-white/20 stroke-[2.2]" />
               </div>
               <div>
@@ -445,7 +445,7 @@ export default function DashboardReviewsPage() {
                   <h3 className="font-display text-lg font-bold tracking-tight text-zinc-900">
                     Request a Review
                   </h3>
-                  <span className="inline-flex items-center gap-1 rounded-[5px] bg-pink-50 border border-pink-200/60 px-2 py-0.5 text-[10px] font-bold text-[#7A2253]">
+                  <span className="inline-flex items-center gap-1 rounded-[5px] bg-pink-50 border border-pink-200/60 px-2 py-0.5 text-[10px] font-bold text-[#C21B5C]">
                     <ShieldCheck className="h-3 w-3" />
                     Verified
                   </span>
@@ -469,8 +469,8 @@ export default function DashboardReviewsPage() {
 
         <form onSubmit={handleCreateRequest} className="flex flex-col flex-1 min-h-0">
           <ModalBody className="p-5 sm:p-6 space-y-4 text-left">
-            <div className="flex items-center gap-3 p-3.5 rounded-[5px] bg-[#FFF9FB] border border-[#FCE7F1] text-xs text-[#7A2253]">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#FDF2F7] text-[#7A2253] shadow-xs">
+            <div className="flex items-center gap-3 p-3.5 rounded-[5px] bg-[#FFF6F2] border border-[#FFEDE6] text-xs text-[#C21B5C]">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#FFF6F2] text-[#C21B5C] shadow-xs">
                 <Send className="h-4 w-4" />
               </div>
               <div>
@@ -491,7 +491,7 @@ export default function DashboardReviewsPage() {
                   Brand you collaborated with
                 </span>
               </div>
-              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Building2 className="h-4 w-4" />
                 </span>
@@ -533,7 +533,7 @@ export default function DashboardReviewsPage() {
                   We&apos;ll send the review request to this email
                 </span>
               </div>
-              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Mail className="h-4 w-4" />
                 </span>
@@ -559,7 +559,7 @@ export default function DashboardReviewsPage() {
                   Helps brand remember the project
                 </span>
               </div>
-              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <Tag className="h-4 w-4" />
                 </span>
@@ -582,7 +582,7 @@ export default function DashboardReviewsPage() {
                   Brand will submit: <strong className="text-zinc-800 font-semibold">1–5★ Rating</strong> · <strong className="text-zinc-800 font-semibold">Feedback</strong> · <strong className="text-zinc-800 font-semibold">Brand Logo</strong>
                 </span>
               </div>
-              <span className="shrink-0 text-[10px] font-bold text-[#7A2253] bg-pink-50 border border-pink-200/70 px-2 py-0.5 rounded-[5px] uppercase tracking-wider">
+              <span className="shrink-0 text-[10px] font-bold text-[#C21B5C] bg-pink-50 border border-pink-200/70 px-2 py-0.5 rounded-[5px] uppercase tracking-wider">
                 Live Review
               </span>
             </div>
@@ -600,7 +600,7 @@ export default function DashboardReviewsPage() {
             <button
               type="submit"
               disabled={isSubmitting || !clientName.trim() || !clientEmail.trim()}
-              className="h-10 px-5 rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs shadow-md shadow-[#7A2253]/20 transition-all cursor-pointer inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="h-10 px-5 rounded-[5px] bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs shadow-md shadow-[#C21B5C]/20 transition-all cursor-pointer inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send className="h-3.5 w-3.5" />
               <span>{isSubmitting ? "Sending..." : "Send Invitation"}</span>

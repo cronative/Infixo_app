@@ -14,8 +14,8 @@ import { getInitials } from "@/lib/avatar";
 
 const STATUS_CONFIG: Record<CollaborationStatus, { label: string; bg: string; text: string; border: string }> = {
   NEW: { label: "New", bg: "bg-[#EAF7F0]", text: "text-[#17845B]", border: "border-[#17845B]/20" },
-  VIEWED: { label: "Viewed", bg: "bg-[#7A2253]/[0.09]", text: "text-[#7A2253]", border: "border-[#7A2253]/20" },
-  REPLIED: { label: "Replied", bg: "bg-[#7A2253]/[0.09]", text: "text-[#7A2253]", border: "border-[#7A2253]/20" },
+  VIEWED: { label: "Viewed", bg: "bg-[#C21B5C]/[0.09]", text: "text-[#C21B5C]", border: "border-[#C21B5C]/20" },
+  REPLIED: { label: "Replied", bg: "bg-[#C21B5C]/[0.09]", text: "text-[#C21B5C]", border: "border-[#C21B5C]/20" },
   CLOSED: { label: "Closed", bg: "bg-[#FAFAFB]", text: "text-[#6B6B76]", border: "border-[#ECECF0]" },
 };
 
@@ -178,12 +178,12 @@ export default function DashboardRequestsPage() {
               type="button"
               onClick={() => setActiveTab(tab)}
               className={`flex items-center gap-1.5 h-8 px-3 rounded-[5px] text-[13px] font-medium transition-all cursor-pointer whitespace-nowrap ${isSelected
-                ? "bg-[#F7EEF2] text-[#7A2253]"
+                ? "bg-[#FFEDE6] text-[#C21B5C]"
                 : "text-[#6B6B76] hover:text-[#18181B] hover:bg-[#FAFAFB]"
                 }`}
             >
               <span>{tab === "ALL" ? "All Inquiries" : STATUS_CONFIG[tab].label}</span>
-              <span className={`text-[11px] px-1.5 py-0.2 rounded-[5px] ${isSelected ? "bg-[#7A2253]/10 text-[#7A2253]" : "bg-[#FAFAFB] text-[#6B6B76]"}`}>
+              <span className={`text-[11px] px-1.5 py-0.2 rounded-[5px] ${isSelected ? "bg-[#C21B5C]/10 text-[#C21B5C]" : "bg-[#FAFAFB] text-[#6B6B76]"}`}>
                 {count}
               </span>
             </button>
@@ -218,20 +218,20 @@ export default function DashboardRequestsPage() {
                 className="group px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-3 hover:bg-[#FAFAFB] transition-colors cursor-pointer text-left"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253] font-semibold text-[12px] shrink-0">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C] font-semibold text-[12px] shrink-0">
                     {getInitials(req.senderName)}
                   </div>
 
                   <div className="min-w-0 flex-1 space-y-0.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-semibold text-[14px] text-[#18181B] line-clamp-2 break-words group-hover:text-[#7A2253] transition-colors" title={req.senderName}>{req.senderName}</h3>
+                      <h3 className="font-semibold text-[14px] text-[#18181B] line-clamp-2 break-words group-hover:text-[#C21B5C] transition-colors" title={req.senderName}>{req.senderName}</h3>
                       {req.companyName && (
                         <span className="text-[12px] font-medium text-[#6B6B76] line-clamp-2 break-words">
                           • {req.companyName}
                         </span>
                       )}
                       {req.approxBudget && (
-                        <span className="h-6 inline-flex items-center text-[12px] font-medium text-[#7A2253] bg-[#F7EEF2] px-2 rounded-[5px] line-clamp-2 break-words">
+                        <span className="h-6 inline-flex items-center text-[12px] font-medium text-[#C21B5C] bg-[#FFEDE6] px-2 rounded-[5px] line-clamp-2 break-words">
                           {req.approxBudget}
                         </span>
                       )}
@@ -302,26 +302,26 @@ export default function DashboardRequestsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#6B6B76]">
                   {selectedRequest.companyName && (
                     <div className="flex items-center gap-1.5">
-                      <Building2 className="h-3.5 w-3.5 text-[#7A2253]" />
+                      <Building2 className="h-3.5 w-3.5 text-[#C21B5C]" />
                       <span className="line-clamp-2 break-words"><strong>Company:</strong> {selectedRequest.companyName}</span>
                     </div>
                   )}
 
                   <div className="flex items-center gap-1.5">
-                    <Mail className="h-3.5 w-3.5 text-[#7A2253]" />
+                    <Mail className="h-3.5 w-3.5 text-[#C21B5C]" />
                     <span className="line-clamp-2 break-words"><strong>Email:</strong> {selectedRequest.email}</span>
                   </div>
 
                   {selectedRequest.campaignType && (
                     <div className="flex items-center gap-1.5">
-                      <MessageSquare className="h-3.5 w-3.5 text-[#7A2253]" />
+                      <MessageSquare className="h-3.5 w-3.5 text-[#C21B5C]" />
                       <span className="line-clamp-2 break-words"><strong>Type:</strong> {selectedRequest.campaignType}</span>
                     </div>
                   )}
 
                   {selectedRequest.approxBudget && (
                     <div className="flex items-center gap-1.5">
-                      <DollarSign className="h-3.5 w-3.5 text-[#7A2253]" />
+                      <DollarSign className="h-3.5 w-3.5 text-[#C21B5C]" />
                       <span className="line-clamp-2 break-words"><strong>Budget:</strong> {selectedRequest.approxBudget}</span>
                     </div>
                   )}
@@ -333,7 +333,7 @@ export default function DashboardRequestsPage() {
                 <label className="block text-[13px] font-medium text-[#18181B]">
                   Message / Requirement:
                 </label>
-                <div className="rounded-[5px] border border-[#ECECF0] bg-white p-3 text-xs text-[#7A2253] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
+                <div className="rounded-[5px] border border-[#ECECF0] bg-white p-3 text-xs text-[#C21B5C] leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto">
                   {selectedRequest.message}
                 </div>
               </div>
@@ -351,7 +351,7 @@ export default function DashboardRequestsPage() {
                       disabled={isUpdating}
                       onClick={() => handleStatusChange(st)}
                       className={`tap-scale py-1.5 px-2 rounded-[5px] text-xs font-bold transition-all border cursor-pointer ${selectedRequest.status === st
-                        ? "bg-[#7A2253]/[0.08] text-[#7A2253] border-[#7A2253]/30"
+                        ? "bg-[#C21B5C]/[0.08] text-[#C21B5C] border-[#C21B5C]/30"
                         : "border-[#ECECF0] bg-white text-[#6B6B76] hover:bg-[#F4F4F5]"
                         }`}
                     >
@@ -374,7 +374,7 @@ export default function DashboardRequestsPage() {
               <div className="flex items-center gap-2">
                 <a
                   href={`mailto:${selectedRequest.email}?subject=Collaboration with ${encodeURIComponent(profile.displayName || "Inflixo Creator")}`}
-                  className="tap-scale bg-[#7A2253] hover:opacity-95 text-white font-semibold text-xs h-9 px-3.5 rounded-[5px] transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#7A2253]/20 inline-flex items-center gap-1.5"
+                  className="tap-scale bg-[#C21B5C] hover:opacity-95 text-white font-semibold text-xs h-9 px-3.5 rounded-[5px] transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#C21B5C]/20 inline-flex items-center gap-1.5"
                 >
                   <Mail className="h-3.5 w-3.5" />
                   <span>Reply via Email</span>

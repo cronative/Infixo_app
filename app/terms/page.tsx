@@ -34,7 +34,7 @@ export default function TermsOfServicePage() {
       relatedNotice={
         <>
           Are you a creator? The{" "}
-          <Link href="/creator-terms" className="font-medium text-[#7A2253] underline underline-offset-2">
+          <Link href="/creator-terms" className="font-medium text-[#C21B5C] underline underline-offset-2">
             Creator Terms &amp; Conditions
           </Link>{" "}
           add creator-specific rules to these Terms.

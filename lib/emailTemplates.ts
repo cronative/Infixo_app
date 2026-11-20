@@ -1,7 +1,7 @@
 import { HEADLINE, TAGLINE } from "@/lib/brand";
 // ---------------------------------------------------------------------------
 // Inflixo — Modern, Premium, Responsive Email Design System & Engine
-// Primary Brand Palette: #7A2253 (Inflixo Maroon)
+// Primary Brand Palette: #C21B5C (Inflixo Maroon)
 // Layout: 720px spacious responsive container with email-safe tables & inline CSS.
 // ---------------------------------------------------------------------------
 
@@ -78,7 +78,7 @@ export function getAppBaseUrl(): string {
 function renderHeader(tagline: string = "For Creators. By Creators."): string {
   const baseUrl = getAppBaseUrl();
   return `
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #7A2253; border-radius: 8px 8px 0 0;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #C21B5C; border-radius: 8px 8px 0 0;">
       <tr>
         <td style="padding: 20px 28px; text-align: left;">
           <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="width: auto;">
@@ -140,7 +140,7 @@ function renderFooter(senderContext?: string): string {
           </div>
 
           <!-- Official Brand Tagline & Mission -->
-          <p style="color: #7A2253; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 4px 0;">
+          <p style="color: #C21B5C; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 4px 0;">
             ${TAGLINE}
           </p>
           <p style="color: #64748B; font-size: 12px; font-weight: 500; margin: 0 0 16px 0;">
@@ -153,14 +153,14 @@ function renderFooter(senderContext?: string): string {
           </p>
 
           <!-- Navigation Links -->
-          <p style="color: #7A2253; font-size: 12px; font-weight: 700; margin: 0 0 14px 0;">
-            <a href="${baseUrl}" target="_blank" style="color: #7A2253; text-decoration: none;">inflixo.com</a>
+          <p style="color: #C21B5C; font-size: 12px; font-weight: 700; margin: 0 0 14px 0;">
+            <a href="${baseUrl}" target="_blank" style="color: #C21B5C; text-decoration: none;">inflixo.com</a>
             &nbsp;•&nbsp;
-            <a href="${baseUrl}/privacy" target="_blank" style="color: #7A2253; text-decoration: none;">Privacy Policy</a>
+            <a href="${baseUrl}/privacy" target="_blank" style="color: #C21B5C; text-decoration: none;">Privacy Policy</a>
             &nbsp;•&nbsp;
-            <a href="${baseUrl}/terms" target="_blank" style="color: #7A2253; text-decoration: none;">Terms of Service</a>
+            <a href="${baseUrl}/terms" target="_blank" style="color: #C21B5C; text-decoration: none;">Terms of Service</a>
             &nbsp;•&nbsp;
-            <a href="mailto:support@inflixo.com" style="color: #7A2253; text-decoration: none;">Help &amp; Support</a>
+            <a href="mailto:support@inflixo.com" style="color: #C21B5C; text-decoration: none;">Help &amp; Support</a>
           </p>
 
           <!-- Copyright -->
@@ -176,8 +176,8 @@ function renderFooter(senderContext?: string): string {
 
 function renderHeroBadge(badgeText: string): string {
   return `
-    <div style="display: inline-block; background-color: #FAF5F7; border: 1px solid #F3E8EE; border-radius: 5px; padding: 4px 12px; margin-bottom: 16px;">
-      <span style="color: #7A2253; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+    <div style="display: inline-block; background-color: #FFF6F2; border: 1px solid #FFEDE6; border-radius: 5px; padding: 4px 12px; margin-bottom: 16px;">
+      <span style="color: #C21B5C; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
         ${badgeText}
       </span>
     </div>
@@ -194,13 +194,13 @@ function renderCtaButton(label: string, url: string, microCopy?: string): string
   return `
     <div style="text-align: center; margin: 28px 0 20px 0;">
       <!--[if mso]>
-      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${url}" style="height:46px;v-text-anchor:middle;width:240px;" arcsize="12%" stroke="f" fillcolor="#7A2253">
+      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${url}" style="height:46px;v-text-anchor:middle;width:240px;" arcsize="12%" stroke="f" fillcolor="#C21B5C">
         <w:anchorlock/>
         <center style="color:#ffffff;font-family:sans-serif;font-size:14px;font-weight:bold;">${label}</center>
       </v:roundrect>
       <![endif]-->
       <!--[if !mso]><!-->
-      <a href="${url}" target="_blank" style="background-color: #7A2253; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 700; padding: 13px 28px; border-radius: 5px; display: inline-block; line-height: 1; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+      <a href="${url}" target="_blank" style="background-color: #C21B5C; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 700; padding: 13px 28px; border-radius: 5px; display: inline-block; line-height: 1; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
         ${label}
       </a>
       <!--<![endif]-->
@@ -212,7 +212,7 @@ function renderCtaButton(label: string, url: string, microCopy?: string): string
 function renderTrustFootnote(text: string, email?: string): string {
   const emailSnippet = email ? ` for <strong style="color: #475569;">${email}</strong>` : "";
   return `
-    <div style="background-color: #FAF5F7; border: 1px solid #ECECF0; border-radius: 5px; padding: 12px 16px; text-align: center; margin-top: 24px;">
+    <div style="background-color: #FFF6F2; border: 1px solid #ECECF0; border-radius: 5px; padding: 12px 16px; text-align: center; margin-top: 24px;">
       <p style="color: #64748B; font-size: 11.5px; font-weight: 500; margin: 0; line-height: 1.5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
         🔒 <strong>Secure Link</strong> • ${text}${emailSnippet}
       </p>
@@ -228,9 +228,9 @@ function renderInfoTable(items: { label: string; value: string; isLink?: boolean
         <td style="padding: 10px 14px; border-bottom: 1px solid #ECECF0; color: #64748B; font-size: 12.5px; font-weight: 700; width: 35%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
           ${item.label}
         </td>
-        <td style="padding: 10px 14px; border-bottom: 1px solid #ECECF0; color: #7A2253; font-size: 12.5px; font-weight: 800; width: 65%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+        <td style="padding: 10px 14px; border-bottom: 1px solid #ECECF0; color: #C21B5C; font-size: 12.5px; font-weight: 800; width: 65%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
           ${item.isLink
-          ? `<a href="${item.value}" target="_blank" style="color: #7A2253; text-decoration: underline;">View Content ↗</a>`
+          ? `<a href="${item.value}" target="_blank" style="color: #C21B5C; text-decoration: underline;">View Content ↗</a>`
           : item.value
         }
         </td>
@@ -350,8 +350,8 @@ export function renderEmailTemplate(type: EmailTemplateType, options: EmailTempl
           Use the 4-digit code below to log in to your Inflixo Creator Studio.
         </p>
 
-        <div style="background-color: #FAF5F7; border: 1.5px dashed #7A2253; border-radius: 5px; padding: 20px 16px; text-align: center; margin-bottom: 20px;">
-          <div style="font-size: 42px; font-weight: 900; letter-spacing: 16px; color: #7A2253; font-family: 'Courier New', Courier, monospace; line-height: 1; padding-left: 16px;">
+        <div style="background-color: #FFF6F2; border: 1.5px dashed #C21B5C; border-radius: 5px; padding: 20px 16px; text-align: center; margin-bottom: 20px;">
+          <div style="font-size: 42px; font-weight: 900; letter-spacing: 16px; color: #C21B5C; font-family: 'Courier New', Courier, monospace; line-height: 1; padding-left: 16px;">
             ${code}
           </div>
         </div>
@@ -471,7 +471,7 @@ export function renderEmailTemplate(type: EmailTemplateType, options: EmailTempl
         <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 25px 0 10px 0;">
           <tr>
             <td style="padding-right: 8px; padding-bottom: 8px;">
-              <a href="mailto:${clientEmail}?subject=Re:%20${encodeURIComponent(projectTitle || "Collaboration")}%20collab" style="display: inline-block; background-color: #7A2253; color: #ffffff; font-size: 13px; font-weight: 700; text-decoration: none; padding: 10px 18px; border-radius: 6px;">
+              <a href="mailto:${clientEmail}?subject=Re:%20${encodeURIComponent(projectTitle || "Collaboration")}%20collab" style="display: inline-block; background-color: #C21B5C; color: #ffffff; font-size: 13px; font-weight: 700; text-decoration: none; padding: 10px 18px; border-radius: 6px;">
                 Reply to brand
               </a>
             </td>

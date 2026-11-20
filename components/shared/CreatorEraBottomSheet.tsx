@@ -94,7 +94,7 @@ export function CreatorEraBottomSheet({ isOpen, onClose, era, creatorName }: Cre
           onClick={() => setOpen(isOpenPanel ? null : id)}
           aria-expanded={isOpenPanel}
           className="flex w-full items-center justify-between gap-3 px-3.5 py-2.5 text-left text-[13px] font-semibold text-[#18181B] cursor-pointer"
-          style={{ backgroundColor: "color-mix(in srgb, var(--accent, #7A2253) 7%, transparent)" }}
+          style={{ backgroundColor: "color-mix(in srgb, var(--accent, #C21B5C) 7%, transparent)" }}
         >
           <span>{title}</span>
           <ChevronDown className={`h-4 w-4 shrink-0 text-[#6B6B76] transition-transform duration-200 ${isOpenPanel ? "rotate-180" : ""}`} />
@@ -212,7 +212,7 @@ export function CreatorEraBottomSheet({ isOpen, onClose, era, creatorName }: Cre
           <Link
             href="/signup"
             onClick={onClose}
-            className="tap-scale block w-full rounded-[8px] bg-[#7A2253] px-4 py-2.5 text-center text-white hover:bg-[#631841] transition-colors"
+            className="tap-scale block w-full rounded-[8px] bg-[#C21B5C] px-4 py-2.5 text-center text-white hover:bg-[#A3164E] transition-colors"
           >
             <span className="block text-[13px] font-bold">Are you a creator? Your Era is waiting. ✨</span>
             <span className="mt-0.5 block text-[12px] font-medium text-white/85">

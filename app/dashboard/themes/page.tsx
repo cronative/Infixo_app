@@ -201,7 +201,7 @@ export default function DashboardThemesPage() {
   };
 
   const statusLine = isPreviewDifferent ? (
-    <>Previewing: <strong className="font-semibold text-[#7A2253]">{previewDisplayName}</strong> · not applied</>
+    <>Previewing: <strong className="font-semibold text-[#C21B5C]">{previewDisplayName}</strong> · not applied</>
   ) : (
     <>Active: <strong className="font-semibold text-[#18181B]">{previewDisplayName}</strong></>
   );
@@ -209,7 +209,7 @@ export default function DashboardThemesPage() {
   const applyButton = isThemeLocked(previewThemeKey) ? (
     <Link
       href="/dashboard/subscription#plans"
-      className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#601b41] text-white px-4 h-8 text-[13px] font-medium transition-colors cursor-pointer"
+      className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#C21B5C] hover:bg-[#A3164E] text-white px-4 h-8 text-[13px] font-medium transition-colors cursor-pointer"
     >
       <Lock className="h-3.5 w-3.5" />
       <span>Upgrade to apply</span>
@@ -219,7 +219,7 @@ export default function DashboardThemesPage() {
       type="button"
       onClick={handleApplyTheme}
       disabled={isApplying}
-      className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#601b41] text-white px-4 h-8 text-[13px] font-medium transition-colors cursor-pointer disabled:opacity-50"
+      className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#C21B5C] hover:bg-[#A3164E] text-white px-4 h-8 text-[13px] font-medium transition-colors cursor-pointer disabled:opacity-50"
     >
       {isApplying ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5 stroke-[2.5]" />}
       <span>{isApplying ? "Applying..." : "Apply theme"}</span>
@@ -245,7 +245,7 @@ export default function DashboardThemesPage() {
                   onClick={() => setGroupFilter(filter.id)}
                   className={`shrink-0 h-8 rounded-[5px] border px-3 text-[13px] font-medium transition-colors cursor-pointer ${
                     isSelected
-                      ? "border-[#7A2253] bg-[#7A2253] text-white shadow-none"
+                      ? "border-[#C21B5C] bg-[#C21B5C] text-white shadow-none"
                       : "border-[#ECECF0] bg-white text-[#6B6B76] hover:border-[#D4D4D8] hover:bg-[#FAFAFB] hover:text-[#18181B]"
                   }`}
                 >
@@ -391,7 +391,7 @@ function ThemeCard({
       onBlur={() => setHovered(false)}
       className={`group relative flex flex-col justify-between w-full rounded-[5px] border p-2 text-left transition-all duration-200 cursor-pointer shadow-none ${
         isSelected
-          ? "border-2 border-[#7A2253] bg-white"
+          ? "border-2 border-[#C21B5C] bg-white"
           : "border-[#ECECF0] bg-white hover:border-[#D4D4D8]"
       }`}
     >
@@ -402,7 +402,7 @@ function ThemeCard({
       >
         {/* If selected (previewing), show circular maroon checkmark badge in top-right */}
         {isSelected && (
-          <div className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#7A2253] text-white shadow-none z-10">
+          <div className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#C21B5C] text-white shadow-none z-10">
             <Check className="h-3.5 w-3.5 stroke-[3]" />
           </div>
         )}
@@ -427,7 +427,7 @@ function ThemeCard({
           <div className="flex items-center gap-1.5">
             <p
               className={`line-clamp-2 break-words text-sm font-bold ${
-                isSelected ? "text-[#7A2253]" : "text-[#18181B]"
+                isSelected ? "text-[#C21B5C]" : "text-[#18181B]"
               } leading-tight`}
             >
               {displayName}
@@ -438,7 +438,7 @@ function ThemeCard({
               </span>
             )}
             {isLocked && !isActive && (
-              <span className="shrink-0 inline-flex items-center gap-0.5 rounded-[3px] bg-[#FFF5F7] border border-[#FCE7F3] px-1.5 py-0.2 text-[10px] font-bold text-[#7A2253]" title="Available on Pro and VIP">
+              <span className="shrink-0 inline-flex items-center gap-0.5 rounded-[3px] bg-[#FFF5F7] border border-[#FFEDE6] px-1.5 py-0.2 text-[10px] font-bold text-[#C21B5C]" title="Available on Pro and VIP">
                 <Lock className="h-2.5 w-2.5" />
                 Pro
               </span>

@@ -5,14 +5,14 @@ import { GlobalFooter } from "@/components/shared/GlobalFooter";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-between bg-white text-[#7A2253] selection:bg-[#7A2253]/10 selection:text-[#7A2253]">
+    <div className="flex min-h-dvh flex-col items-center justify-between bg-white text-[#C21B5C] selection:bg-[#C21B5C]/10 selection:text-[#C21B5C]">
       {/* Header */}
       <header className="w-full border-b border-[#e2e8f0] bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
           <Logo size="sm" />
           <Link
             href="/login"
-            className="rounded-lg bg-[#7A2253] px-4 py-1.5 text-xs font-bold text-white transition-all hover:opacity-95 shadow-xs"
+            className="rounded-lg bg-[#C21B5C] px-4 py-1.5 text-xs font-bold text-white transition-all hover:opacity-95 shadow-xs"
           >
             Sign In
           </Link>
@@ -23,13 +23,13 @@ export default function NotFound() {
       <main className="flex w-full flex-1 flex-col items-center justify-center px-4 py-16 text-center">
         <div className="w-full max-w-lg rounded-3xl border border-[#e2e8f0] bg-white p-8 sm:p-12 shadow-sm space-y-6">
           {/* Badge */}
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#7A2253]/10 px-3.5 py-1 text-xs font-black text-[#7A2253] border border-[#7A2253]/20">
-            <Compass className="h-3.5 w-3.5 text-[#7A2253]" />
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#C21B5C]/10 px-3.5 py-1 text-xs font-black text-[#C21B5C] border border-[#C21B5C]/20">
+            <Compass className="h-3.5 w-3.5 text-[#C21B5C]" />
             <span>404 — PAGE NOT FOUND</span>
           </div>
 
           <div className="space-y-2">
-            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-[#7A2253]">
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-[#C21B5C]">
               Lost in the Link Universe?
             </h1>
             <p className="text-sm font-medium text-[#64748b] max-w-md mx-auto leading-relaxed">
@@ -41,7 +41,7 @@ export default function NotFound() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <Link
               href="/"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#7A2253] px-6 py-3 text-xs font-bold text-white shadow-sm transition-all hover:opacity-95 hover:-translate-y-0.5 cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#C21B5C] px-6 py-3 text-xs font-bold text-white shadow-sm transition-all hover:opacity-95 hover:-translate-y-0.5 cursor-pointer"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Homepage</span>
@@ -49,9 +49,9 @@ export default function NotFound() {
 
             <Link
               href="/login"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-[#7A2253] bg-white px-6 py-3 text-xs font-extrabold text-[#7A2253] transition-all hover:bg-[#7A2253]/10 hover:-translate-y-0.5 cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-[#C21B5C] bg-white px-6 py-3 text-xs font-extrabold text-[#C21B5C] transition-all hover:bg-[#C21B5C]/10 hover:-translate-y-0.5 cursor-pointer"
             >
-              <Sparkles className="h-4 w-4 text-[#7A2253]" />
+              <Sparkles className="h-4 w-4 text-[#C21B5C]" />
               <span>Claim Your Username</span>
             </Link>
           </div>

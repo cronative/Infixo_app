@@ -108,7 +108,7 @@ export function Modal({
           <div className={`flex items-center justify-between border-b border-[#ECECF0] bg-white px-5 sm:px-6 py-4 shrink-0 ${headerClassName}`}>
             <div className="flex items-center gap-3 min-w-0 pr-2">
               {icon && (
-                <div className={`flex h-10 w-10 items-center justify-center rounded-[5px] ${iconBoxClassName || "bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]"} shrink-0`}>
+                <div className={`flex h-10 w-10 items-center justify-center rounded-[5px] ${iconBoxClassName || "bg-[#FFF6F2] border border-[#FFEDE6] text-[#C21B5C]"} shrink-0`}>
                   {icon}
                 </div>
               )}
@@ -168,7 +168,7 @@ export function ModalHeader({
     <div className={`flex items-center justify-between border-b border-[#ECECF0] bg-white px-5 sm:px-6 py-4 shrink-0 ${className}`}>
       <div className="flex items-center gap-3 min-w-0 pr-2">
         {icon && (
-          <div className={`flex h-10 w-10 items-center justify-center rounded-[5px] ${iconBoxClassName || "bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]"} shrink-0`}>
+          <div className={`flex h-10 w-10 items-center justify-center rounded-[5px] ${iconBoxClassName || "bg-[#FFF6F2] border border-[#FFEDE6] text-[#C21B5C]"} shrink-0`}>
             {icon}
           </div>
         )}

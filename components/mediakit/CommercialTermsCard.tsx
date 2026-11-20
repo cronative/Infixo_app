@@ -31,13 +31,13 @@ const BARTER_OPTIONS: { value: BarterPolicy; label: string }[] = [
 
 const GSTIN_RE = /^[0-9]{2}[A-Z0-9]{13}$/;
 const input =
-  "h-9 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-[13px] text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none";
+  "h-9 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-[13px] text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:outline-none";
 const label = "block text-[12px] font-semibold text-[#18181B]";
 
 function Toggle({ checked, onChange, children }: { checked: boolean; onChange: (v: boolean) => void; children: React.ReactNode }) {
   return (
     <label className="flex cursor-pointer items-center gap-2 text-[13px] font-medium text-[#18181B]">
-      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="h-4 w-4 accent-[#7A2253]" />
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="h-4 w-4 accent-[#C21B5C]" />
       {children}
     </label>
   );
@@ -148,7 +148,7 @@ export function CommercialTermsCard({
                 type="button"
                 onClick={() => setPaymentTerms(p)}
                 className={`rounded-[5px] border px-2 py-1 text-[12px] font-medium transition-colors cursor-pointer ${
-                  paymentTerms === p ? "border-[#7A2253] bg-[#F7EEF2] text-[#7A2253]" : "border-[#ECECF0] bg-white text-[#52525B] hover:bg-[#FAFAFB]"
+                  paymentTerms === p ? "border-[#C21B5C] bg-[#FFEDE6] text-[#C21B5C]" : "border-[#ECECF0] bg-white text-[#52525B] hover:bg-[#FAFAFB]"
                 }`}
               >
                 {p}
@@ -169,7 +169,7 @@ export function CommercialTermsCard({
                   aria-pressed={barter === o.value}
                   onClick={() => setBarter(barter === o.value ? "" : o.value)}
                   className={`h-8 rounded-[5px] px-3 text-[12px] font-semibold transition-colors cursor-pointer ${
-                    barter === o.value ? "bg-[#7A2253] text-white" : "text-[#52525B] hover:text-[#18181B]"
+                    barter === o.value ? "bg-[#C21B5C] text-white" : "text-[#52525B] hover:text-[#18181B]"
                   }`}
                 >
                   {o.label}
@@ -227,7 +227,7 @@ export function CommercialTermsCard({
                   key={s}
                   type="button"
                   onClick={() => setAddOns([...addOns, { label: s, price: "" }])}
-                  className="inline-flex items-center gap-1 rounded-[5px] border border-dashed border-[#D4D4D8] px-2 py-1 text-[12px] font-medium text-[#52525B] hover:border-[#7A2253] hover:text-[#7A2253] cursor-pointer"
+                  className="inline-flex items-center gap-1 rounded-[5px] border border-dashed border-[#D4D4D8] px-2 py-1 text-[12px] font-medium text-[#52525B] hover:border-[#C21B5C] hover:text-[#C21B5C] cursor-pointer"
                 >
                   <Plus className="h-3 w-3" />
                   {s}
@@ -236,7 +236,7 @@ export function CommercialTermsCard({
               <button
                 type="button"
                 onClick={() => setAddOns([...addOns, { label: "", price: "" }])}
-                className="inline-flex items-center gap-1 rounded-[5px] border border-dashed border-[#D4D4D8] px-2 py-1 text-[12px] font-medium text-[#52525B] hover:border-[#7A2253] hover:text-[#7A2253] cursor-pointer"
+                className="inline-flex items-center gap-1 rounded-[5px] border border-dashed border-[#D4D4D8] px-2 py-1 text-[12px] font-medium text-[#52525B] hover:border-[#C21B5C] hover:text-[#C21B5C] cursor-pointer"
               >
                 <Plus className="h-3 w-3" />
                 Custom

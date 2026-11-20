@@ -114,7 +114,7 @@ export function ReportProfileModal({
               <button
                 type="button"
                 onClick={handleClose}
-                className="w-full inline-flex items-center justify-center h-10 px-4 rounded-[5px] bg-[#7A2253] text-white text-xs font-bold hover:opacity-95 transition-all cursor-pointer shadow-xs"
+                className="w-full inline-flex items-center justify-center h-10 px-4 rounded-[5px] bg-[#C21B5C] text-white text-xs font-bold hover:opacity-95 transition-all cursor-pointer shadow-xs"
               >
                 Done
               </button>
@@ -124,7 +124,7 @@ export function ReportProfileModal({
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Header */}
             <div className="flex items-start gap-3 pr-8">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#7A2253]/10 text-[#7A2253]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#C21B5C]/10 text-[#C21B5C]">
                 <Flag className="h-4.5 w-4.5" />
               </div>
               <div className="min-w-0">
@@ -158,7 +158,7 @@ export function ReportProfileModal({
                       key={r.id}
                       className={`flex items-center gap-2.5 px-3 py-2 rounded-[5px] border text-xs cursor-pointer transition-colors ${
                         isChecked
-                          ? "border-[#7A2253] bg-[#7A2253]/5 font-semibold text-[#7A2253]"
+                          ? "border-[#C21B5C] bg-[#C21B5C]/5 font-semibold text-[#C21B5C]"
                           : "border-[#ECECF0] hover:bg-[#FAFAFB] text-[#27272A]"
                       }`}
                     >
@@ -168,7 +168,7 @@ export function ReportProfileModal({
                         value={r.id}
                         checked={isChecked}
                         onChange={() => setSelectedReason(r.id)}
-                        className="accent-[#7A2253] h-3.5 w-3.5 cursor-pointer"
+                        className="accent-[#C21B5C] h-3.5 w-3.5 cursor-pointer"
                       />
                       <span>{r.label}</span>
                     </label>
@@ -189,7 +189,7 @@ export function ReportProfileModal({
                 value={details}
                 onChange={(e) => setDetails(e.target.value)}
                 placeholder="Provide any links or context to help our review..."
-                className="w-full rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] px-3 py-2 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:bg-white focus:outline-hidden resize-none transition-colors"
+                className="w-full rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] px-3 py-2 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:bg-white focus:outline-hidden resize-none transition-colors"
               />
             </div>
 
@@ -204,7 +204,7 @@ export function ReportProfileModal({
                 value={reporterEmail}
                 onChange={(e) => setReporterEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] px-3 py-2 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:bg-white focus:outline-hidden transition-colors"
+                className="w-full rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] px-3 py-2 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:bg-white focus:outline-hidden transition-colors"
               />
             </div>
 
@@ -221,7 +221,7 @@ export function ReportProfileModal({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-[5px] bg-[#7A2253] text-white text-xs font-bold hover:opacity-95 disabled:opacity-50 transition-all cursor-pointer shadow-xs"
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-[5px] bg-[#C21B5C] text-white text-xs font-bold hover:opacity-95 disabled:opacity-50 transition-all cursor-pointer shadow-xs"
               >
                 {isSubmitting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                 <span>Submit Report</span>

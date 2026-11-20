@@ -42,7 +42,7 @@ export const Chip = forwardRef<HTMLDivElement, ChipProps>(
     switch (variant) {
       case "eyebrow":
         variantClass =
-          "bg-[#F7EDEF] text-[#7A2253] uppercase tracking-wider text-[11px] font-bold border border-[#7A2253]/15";
+          "bg-[#FFEDE6] text-[#C21B5C] uppercase tracking-wider text-[11px] font-bold border border-[#C21B5C]/15";
         break;
       case "pill":
         variantClass =
@@ -50,18 +50,18 @@ export const Chip = forwardRef<HTMLDivElement, ChipProps>(
         break;
       case "filter":
         variantClass = selected
-          ? "bg-[#7A2253] text-white border-[#7A2253] shadow-xs cursor-pointer"
-          : "bg-white text-[#52525B] border-[#E4E4E7] hover:border-[#7A2253] hover:text-[#7A2253] cursor-pointer";
+          ? "bg-[#C21B5C] text-white border-[#C21B5C] shadow-xs cursor-pointer"
+          : "bg-white text-[#52525B] border-[#E4E4E7] hover:border-[#C21B5C] hover:text-[#C21B5C] cursor-pointer";
         break;
       case "brand":
-        variantClass = "bg-[#7A2253] text-white shadow-xs";
+        variantClass = "bg-[#C21B5C] text-white shadow-xs";
         break;
       case "soft":
-        variantClass = "bg-[#fdf2f8] text-[#7A2253] border border-[#7A2253]/20";
+        variantClass = "bg-[#FFF6F2] text-[#C21B5C] border border-[#C21B5C]/20";
         break;
       case "outline":
         variantClass =
-          "bg-transparent text-[#52525B] border border-[#E4E4E7] hover:border-[#7A2253] hover:text-[#7A2253]";
+          "bg-transparent text-[#52525B] border border-[#E4E4E7] hover:border-[#C21B5C] hover:text-[#C21B5C]";
         break;
       case "neutral":
       default:

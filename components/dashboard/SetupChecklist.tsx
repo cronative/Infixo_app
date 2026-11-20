@@ -182,7 +182,7 @@ export function SetupChecklist({
           <span className="h-1.5 min-w-[60px] flex-1 overflow-hidden rounded-full bg-[#F4F4F5]">
             <span
               style={{ width: `${Math.max(5, progressPercent)}%` }}
-              className="block h-full rounded-full bg-[#7A2253] transition-all duration-500 ease-out"
+              className="block h-full rounded-full bg-[#C21B5C] transition-all duration-500 ease-out"
             />
           </span>
           {nextItem && (
@@ -232,7 +232,7 @@ export function SetupChecklist({
                       <Check className="h-3 w-3 text-white" strokeWidth={3} />
                     </div>
                   ) : (
-                    <div className="h-5 w-5 rounded-full border-2 border-[#D4D4D8] group-hover:border-[#7A2253] transition-colors shrink-0" />
+                    <div className="h-5 w-5 rounded-full border-2 border-[#D4D4D8] group-hover:border-[#C21B5C] transition-colors shrink-0" />
                   )}
 
                   {/* Title */}
@@ -240,7 +240,7 @@ export function SetupChecklist({
                     className={`text-[14px] font-semibold transition-colors ${
                       item.isDone
                         ? "text-[#8E8E93] line-through"
-                        : "text-[#18181B] group-hover:text-[#7A2253]"
+                        : "text-[#18181B] group-hover:text-[#C21B5C]"
                     }`}
                   >
                     {item.title}
@@ -267,7 +267,7 @@ export function SetupChecklist({
                     item.actionHref ? (
                       <Link
                         href={item.actionHref}
-                        className="inline-flex h-8 items-center justify-center px-4 rounded-[5px] bg-[#7A2253] text-white hover:bg-[#631841] text-[13px] font-semibold transition-colors cursor-pointer shadow-2xs"
+                        className="inline-flex h-8 items-center justify-center px-4 rounded-[5px] bg-[#C21B5C] text-white hover:bg-[#A3164E] text-[13px] font-semibold transition-colors cursor-pointer shadow-2xs"
                       >
                         {item.actionLabel}
                       </Link>
@@ -275,7 +275,7 @@ export function SetupChecklist({
                       <button
                         type="button"
                         onClick={item.onAction}
-                        className="inline-flex h-8 items-center justify-center px-4 rounded-[5px] bg-[#7A2253] text-white hover:bg-[#631841] text-[13px] font-semibold transition-colors cursor-pointer shadow-2xs"
+                        className="inline-flex h-8 items-center justify-center px-4 rounded-[5px] bg-[#C21B5C] text-white hover:bg-[#A3164E] text-[13px] font-semibold transition-colors cursor-pointer shadow-2xs"
                       >
                         {item.actionLabel}
                       </button>

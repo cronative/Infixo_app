@@ -62,7 +62,7 @@ const blank: ProductForm = {
 const FETCH_FAILED = "Couldn't fetch details. Please add them manually.";
 const FETCH_BLOCKED_MSG = "Couldn't auto-fetch details from this link. You can fill them in manually.";
 const SEARCH_THRESHOLD = 6;
-const fieldClass = "flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors";
+const fieldClass = "flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors";
 const iconBoxClass = "flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]";
 const inputClass = "flex-1 min-w-0 h-10 px-3.5 text-xs sm:text-sm font-medium text-[#18181B] placeholder:text-[#6B6B76]/50 bg-transparent outline-none";
 const primaryButton = "dash-btn-primary";
@@ -355,7 +355,7 @@ export default function ProductsPage() {
       <div className="flex items-start gap-8">
         <div className="flex-1 min-w-0 space-y-5">
           {showSearch && (
-        <div className="relative flex items-center h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 gap-2 w-full sm:w-64 focus-within:border-[#7A2253] transition-colors">
+        <div className="relative flex items-center h-9 rounded-[5px] border border-[#ECECF0] bg-white px-3 gap-2 w-full sm:w-64 focus-within:border-[#C21B5C] transition-colors">
           <Search className="h-4 w-4 text-[#A1A1AA] shrink-0" />
           <input
             type="text"
@@ -401,7 +401,7 @@ export default function ProductsPage() {
           />
         ) : (
           <div className="rounded-[5px] border-2 border-dashed border-[#ECECF0] bg-white/40 p-8 sm:p-10 text-center flex flex-col items-center justify-center">
-            <div className="relative mb-3 flex h-12 w-12 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
+            <div className="relative mb-3 flex h-12 w-12 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C]">
               <ShoppingBag className="h-6 w-6" />
             </div>
             <h4 className="font-semibold text-[16px] text-[#18181B]">Add your first product</h4>
@@ -444,7 +444,7 @@ export default function ProductsPage() {
                     </span>
                   )}
                   {product.couponCode && (
-                    <span className="h-5 inline-flex items-center rounded-[5px] bg-[#FFF5F8] border border-[#7A2253]/25 px-1.5 text-[11px] font-semibold text-[#7A2253] shrink-0 font-mono">
+                    <span className="h-5 inline-flex items-center rounded-[5px] bg-[#FFF6F2] border border-[#C21B5C]/25 px-1.5 text-[11px] font-semibold text-[#C21B5C] shrink-0 font-mono">
                       Code: {product.couponCode}
                     </span>
                   )}
@@ -467,7 +467,7 @@ export default function ProductsPage() {
                 </h2>
                 {limit !== null && products.indexOf(product) >= limit && <OverLimitBadge className="self-start" />}
                 {product.price !== null && (
-                  <p className="font-bold text-base text-[#7A2253] tabular-nums">{formatRupees(product.price)}</p>
+                  <p className="font-bold text-base text-[#C21B5C] tabular-nums">{formatRupees(product.price)}</p>
                 )}
                 {product.note && (
                   <p className="text-[12px] text-[#6B6B76] line-clamp-1" title={product.note}>{product.note}</p>
@@ -602,12 +602,12 @@ export default function ProductsPage() {
                       <ProductImage src={form.image} name="Product preview" className="h-16 w-16 rounded-[5px] shrink-0 border border-[#ECECF0] bg-white" />
                       <div className="min-w-0 flex-1">
                         <span className="block text-xs font-semibold text-[#18181B]">{imageBusy ? "Preparing..." : "Image added"}</span>
-                        <span className="block text-[11px] text-[#7A2253] font-medium">Replace</span>
+                        <span className="block text-[11px] text-[#C21B5C] font-medium">Replace</span>
                       </div>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center text-center">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#6B6B76] group-hover:text-[#7A2253] mb-1">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#6B6B76] group-hover:text-[#C21B5C] mb-1">
                         <ImageIcon className="h-5 w-5" />
                       </div>
                       <span className="text-xs font-semibold text-[#18181B]">{imageBusy ? "Preparing..." : "Upload image"}</span>
@@ -727,7 +727,7 @@ export default function ProductsPage() {
                   aria-labelledby="product-toppick-label"
                   onClick={() => setForm({ ...form, isTopPick: !form.isTopPick })}
                   className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 ${
-                    form.isTopPick ? "bg-[#7A2253]" : "bg-[#ECECF0]"
+                    form.isTopPick ? "bg-[#C21B5C]" : "bg-[#ECECF0]"
                   }`}
                 >
                   <span
@@ -751,7 +751,7 @@ export default function ProductsPage() {
                   aria-labelledby="product-affiliate-label"
                   onClick={() => setForm({ ...form, isAffiliate: !form.isAffiliate })}
                   className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 ${
-                    form.isAffiliate ? "bg-[#7A2253]" : "bg-[#ECECF0]"
+                    form.isAffiliate ? "bg-[#C21B5C]" : "bg-[#ECECF0]"
                   }`}
                 >
                   <span
@@ -782,7 +782,7 @@ export default function ProductsPage() {
             <button
               type="submit"
               disabled={busy || imageBusy}
-              className="h-10 px-5 rounded-[5px] bg-[#7A2253] text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 hover:opacity-95 disabled:opacity-50 inline-flex items-center gap-1.5"
+              className="h-10 px-5 rounded-[5px] bg-[#C21B5C] text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#C21B5C]/20 hover:opacity-95 disabled:opacity-50 inline-flex items-center gap-1.5"
             >
               {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
               <span>{editing ? (busy ? "Saving…" : "Save changes") : (busy ? "Adding…" : "Add product")}</span>

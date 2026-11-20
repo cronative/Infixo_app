@@ -37,7 +37,7 @@ export function StatCardGrid({ cols = 4, children, className = "" }: { cols?: ke
 }
 
 const actionCls =
-  "relative z-10 shrink-0 text-[12px] font-medium text-[#7A2253] hover:underline underline-offset-2 cursor-pointer whitespace-nowrap";
+  "relative z-10 shrink-0 text-[12px] font-medium text-[#C21B5C] hover:underline underline-offset-2 cursor-pointer whitespace-nowrap";
 
 /**
  * The one stat/metric card for the dashboard: label on top, value below,
@@ -48,7 +48,7 @@ export function StatCard({ label, value, href, badge, action, footer, className 
 
   return (
     <div
-      className={`group relative flex min-h-[72px] min-w-0 flex-col justify-start rounded-[5px] border border-[#E8E8EC] bg-white px-4 py-3.5 shadow-none transition-colors hover:border-[#7A2253] ${className}`}
+      className={`group relative flex min-h-[72px] min-w-0 flex-col justify-start rounded-[5px] border border-[#E8E8EC] bg-white px-4 py-3.5 shadow-none transition-colors hover:border-[#C21B5C] ${className}`}
     >
       {/* Stretched link: whole card clickable while the action stays its own control. */}
       {href && (
@@ -67,7 +67,7 @@ export function StatCard({ label, value, href, badge, action, footer, className 
             </span>
             {badge != null && badge !== false && (
               typeof badge === "string" ? (
-                <span className="inline-flex shrink-0 items-center rounded-full border border-[#7A2253]/20 bg-[#F7EEF2] px-2 py-0.5 text-[11px] font-semibold leading-4 text-[#7A2253] whitespace-nowrap">
+                <span className="inline-flex shrink-0 items-center rounded-full border border-[#C21B5C]/20 bg-[#FFEDE6] px-2 py-0.5 text-[11px] font-semibold leading-4 text-[#C21B5C] whitespace-nowrap">
                   {badge}
                 </span>
               ) : (
@@ -88,7 +88,7 @@ export function StatCard({ label, value, href, badge, action, footer, className 
             </button>
           )
         ) : (
-          href && <ChevronRight className="mt-2.5 h-4 w-4 shrink-0 text-[#A1A1AA] transition-colors group-hover:text-[#7A2253]" aria-hidden />
+          href && <ChevronRight className="mt-2.5 h-4 w-4 shrink-0 text-[#A1A1AA] transition-colors group-hover:text-[#C21B5C]" aria-hidden />
         )}
       </div>
 

@@ -44,13 +44,13 @@ export function ConfirmModal({
         isDestructive ? (
           <Trash2 className="h-5 w-5 text-rose-600" />
         ) : (
-          <AlertCircle className="h-5 w-5 text-[#7A2253]" />
+          <AlertCircle className="h-5 w-5 text-[#C21B5C]" />
         )
       }
       iconBoxClassName={
         isDestructive
           ? "bg-rose-50 border border-rose-200 text-rose-600"
-          : "bg-[#FFF0F5] border border-[#FCE7F1] text-[#7A2253]"
+          : "bg-[#FFF6F2] border border-[#FFEDE6] text-[#C21B5C]"
       }
       wrapHeader
     >
@@ -77,7 +77,7 @@ export function ConfirmModal({
           className={`h-10 font-semibold text-xs px-5 rounded-[5px] transition-all cursor-pointer shadow-md inline-flex items-center gap-1.5 disabled:opacity-50 text-white ${
             isDestructive
               ? "bg-rose-600 hover:bg-rose-700 shadow-rose-600/20"
-              : "bg-[#7A2253] hover:opacity-95 shadow-[#7A2253]/20"
+              : "bg-[#C21B5C] hover:opacity-95 shadow-[#C21B5C]/20"
           }`}
         >
           {loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}

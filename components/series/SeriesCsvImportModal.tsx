@@ -33,7 +33,7 @@ import { getPlanQuota } from '@/services/subscriptionLimits';
 import { YoutubeIcon, InstagramIcon, FacebookIcon } from '@/components/shared/BrandIcons';
 
 const fieldClass =
-  'w-full rounded-lg border border-[#ECECF0] bg-white px-3 py-2 text-base sm:text-sm text-[#18181B] placeholder:text-[#A1A1AA] focus:outline-none focus:border-[#7A2253] focus:ring-2 focus:ring-[#7A2253]/10 transition-colors';
+  'w-full rounded-lg border border-[#ECECF0] bg-white px-3 py-2 text-base sm:text-sm text-[#18181B] placeholder:text-[#A1A1AA] focus:outline-none focus:border-[#C21B5C] focus:ring-2 focus:ring-[#C21B5C]/10 transition-colors';
 
 interface TableRow {
   id: string;
@@ -399,7 +399,7 @@ export function SeriesCsvImportModal({
       size="xl"
       closeOnEscape={!busy}
       showCloseButton={!busy}
-      icon={<Upload className="h-4 w-4 text-[#7A2253]" />}
+      icon={<Upload className="h-4 w-4 text-[#C21B5C]" />}
       description="Add multiple video titles, part numbers, and links together at once."
     >
       <ModalBody className="space-y-4 p-4 sm:p-5">
@@ -414,7 +414,7 @@ export function SeriesCsvImportModal({
               }}
               className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 transition-all cursor-pointer ${
                 mode === 'table'
-                  ? 'bg-white text-[#7A2253] shadow-xs'
+                  ? 'bg-white text-[#C21B5C] shadow-xs'
                   : 'text-[#6B6B76] hover:text-[#18181B]'
               }`}
             >
@@ -429,7 +429,7 @@ export function SeriesCsvImportModal({
               }}
               className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 transition-all cursor-pointer ${
                 mode === 'file'
-                  ? 'bg-white text-[#7A2253] shadow-xs'
+                  ? 'bg-white text-[#C21B5C] shadow-xs'
                   : 'text-[#6B6B76] hover:text-[#18181B]'
               }`}
             >
@@ -442,7 +442,7 @@ export function SeriesCsvImportModal({
             <button
               type="button"
               onClick={downloadTemplate}
-              className="hidden sm:inline-flex items-center gap-1 text-xs font-medium text-[#7A2253] hover:underline"
+              className="hidden sm:inline-flex items-center gap-1 text-xs font-medium text-[#C21B5C] hover:underline"
               title="Download standard CSV template"
             >
               <Download className="h-3.5 w-3.5" />
@@ -461,7 +461,7 @@ export function SeriesCsvImportModal({
               <span className="text-xs text-[#6B6B76]">
                 Current: <strong className="text-[#18181B]">{existingEpisodes.length}</strong>{' '}
                 {existingEpisodes.length === 1 ? 'episode' : 'episodes'} · Next part starts at{' '}
-                <strong className="text-[#7A2253]">#{nextPartNumber}</strong>
+                <strong className="text-[#C21B5C]">#{nextPartNumber}</strong>
               </span>
             )}
           </div>
@@ -521,7 +521,7 @@ export function SeriesCsvImportModal({
                 <label htmlFor="import-new-series-title" className="block text-xs font-medium text-[#18181B]">
                   New series title <span className="text-red-500">*</span>
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Film className="h-4 w-4" />
                   </span>
@@ -563,14 +563,14 @@ export function SeriesCsvImportModal({
                         onClick={() => setNewSeriesPlatform(p)}
                         className={`flex h-9 items-center justify-center gap-1.5 rounded-lg border text-xs font-semibold transition-colors cursor-pointer ${
                           isSelected
-                            ? 'border-[#7A2253] bg-[#7A2253]/[0.06] text-[#7A2253] ring-1 ring-[#7A2253]'
+                            ? 'border-[#C21B5C] bg-[#C21B5C]/[0.06] text-[#C21B5C] ring-1 ring-[#C21B5C]'
                             : 'border-[#ECECF0] bg-white text-[#52525B] hover:bg-[#FAFAFB]'
                         }`}
                       >
                         {p === 'YouTube' && <YoutubeIcon className="h-3.5 w-3.5 text-red-500" />}
                         {p === 'Instagram' && <InstagramIcon className="h-3.5 w-3.5 text-pink-500" />}
                         {p === 'Facebook' && <FacebookIcon className="h-3.5 w-3.5 text-blue-600" />}
-                        {p === 'Mix' && <Globe className="h-3.5 w-3.5 text-[#7A2253]" />}
+                        {p === 'Mix' && <Globe className="h-3.5 w-3.5 text-[#C21B5C]" />}
                         <span>{p === 'Mix' ? 'Mix (All)' : p}</span>
                       </button>
                     );
@@ -593,7 +593,7 @@ export function SeriesCsvImportModal({
                   disabled={busy}
                   className="inline-flex h-8 items-center gap-1 rounded-lg border border-[#ECECF0] bg-white px-2.5 text-xs font-semibold text-[#18181B] hover:bg-zinc-50 transition-colors cursor-pointer"
                 >
-                  <Plus className="h-3.5 w-3.5 text-[#7A2253]" />
+                  <Plus className="h-3.5 w-3.5 text-[#C21B5C]" />
                   <span>Add Row</span>
                 </button>
                 <button
@@ -602,7 +602,7 @@ export function SeriesCsvImportModal({
                   disabled={busy}
                   className="inline-flex h-8 items-center gap-1 rounded-lg border border-[#ECECF0] bg-white px-2.5 text-xs font-semibold text-[#18181B] hover:bg-zinc-50 transition-colors cursor-pointer"
                 >
-                  <Plus className="h-3.5 w-3.5 text-[#7A2253]" />
+                  <Plus className="h-3.5 w-3.5 text-[#C21B5C]" />
                   <span>+3 Rows</span>
                 </button>
                 <button
@@ -610,11 +610,11 @@ export function SeriesCsvImportModal({
                   onClick={() => setIsPasteOpen(!isPasteOpen)}
                   className={`inline-flex h-8 items-center gap-1 rounded-lg border px-2.5 text-xs font-semibold transition-colors cursor-pointer ${
                     isPasteOpen
-                      ? 'border-[#7A2253] bg-[#7A2253]/5 text-[#7A2253]'
+                      ? 'border-[#C21B5C] bg-[#C21B5C]/5 text-[#C21B5C]'
                       : 'border-[#ECECF0] bg-white text-[#18181B] hover:bg-zinc-50'
                   }`}
                 >
-                  <ClipboardPaste className="h-3.5 w-3.5 text-[#7A2253]" />
+                  <ClipboardPaste className="h-3.5 w-3.5 text-[#C21B5C]" />
                   <span>Paste Links</span>
                 </button>
                 <button
@@ -645,7 +645,7 @@ export function SeriesCsvImportModal({
             {isPasteOpen && (
               <div className="rounded-xl border border-blue-200 bg-blue-50/60 p-3.5 space-y-2 animate-in fade-in duration-150">
                 <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold text-[#7A2253]">
+                  <p className="text-xs font-semibold text-[#C21B5C]">
                     Paste Multiple Video Links or Lines
                   </p>
                   <button
@@ -674,7 +674,7 @@ export function SeriesCsvImportModal({
                       ? `https://www.facebook.com/watch/?v=123456\nhttps://fb.watch/xyz/`
                       : `https://www.youtube.com/watch?v=VIDEO_1\nhttps://www.instagram.com/reel/REEL_2/`
                   }
-                  className="w-full rounded-lg border border-blue-200 bg-white p-2.5 font-mono text-xs text-[#18181B] placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#7A2253]/20"
+                  className="w-full rounded-lg border border-blue-200 bg-white p-2.5 font-mono text-xs text-[#18181B] placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#C21B5C]/20"
                 />
                 <div className="flex items-center justify-end gap-2">
                   <button
@@ -688,7 +688,7 @@ export function SeriesCsvImportModal({
                     type="button"
                     onClick={handleApplyPastedText}
                     disabled={!pasteText.trim()}
-                    className="rounded-lg bg-[#7A2253] px-3 py-1 text-xs font-semibold text-white hover:bg-brand-hover disabled:opacity-50"
+                    className="rounded-lg bg-[#C21B5C] px-3 py-1 text-xs font-semibold text-white hover:bg-brand-hover disabled:opacity-50"
                   >
                     Populate Rows
                   </button>
@@ -722,7 +722,7 @@ export function SeriesCsvImportModal({
                             disabled={busy}
                             value={row.part}
                             onChange={(e) => updateRow(row.id, 'part', parseInt(e.target.value, 10) || 1)}
-                            className="w-16 rounded-md border border-[#D4D4D8] px-2 py-1.5 font-mono text-xs font-semibold text-[#18181B] focus:border-[#7A2253] focus:outline-none"
+                            className="w-16 rounded-md border border-[#D4D4D8] px-2 py-1.5 font-mono text-xs font-semibold text-[#18181B] focus:border-[#C21B5C] focus:outline-none"
                           />
                         </td>
                         <td className="py-2 px-3 align-top">
@@ -732,7 +732,7 @@ export function SeriesCsvImportModal({
                             value={row.title}
                             placeholder={`e.g. Part ${row.part}: Introduction`}
                             onChange={(e) => updateRow(row.id, 'title', e.target.value)}
-                            className="w-full rounded-md border border-[#D4D4D8] px-2.5 py-1.5 text-xs text-[#18181B] placeholder:text-zinc-400 focus:border-[#7A2253] focus:outline-none"
+                            className="w-full rounded-md border border-[#D4D4D8] px-2.5 py-1.5 text-xs text-[#18181B] placeholder:text-zinc-400 focus:border-[#C21B5C] focus:outline-none"
                           />
                         </td>
                         <td className="py-2 px-3 align-top">
@@ -755,7 +755,7 @@ export function SeriesCsvImportModal({
                                 className={`w-full rounded-md border px-2.5 py-1.5 text-xs text-[#18181B] placeholder:text-zinc-400 focus:outline-none transition-colors ${
                                   !isLinkValidForPlatform
                                     ? 'border-red-400 bg-red-50/20 focus:border-red-500 ring-1 ring-red-400'
-                                    : 'border-[#D4D4D8] focus:border-[#7A2253]'
+                                    : 'border-[#D4D4D8] focus:border-[#C21B5C]'
                                 }`}
                               />
                             </div>
@@ -821,7 +821,7 @@ export function SeriesCsvImportModal({
               <button
                 type="button"
                 onClick={downloadTemplate}
-                className="inline-flex items-center gap-1.5 font-semibold text-[#7A2253] hover:underline"
+                className="inline-flex items-center gap-1.5 font-semibold text-[#C21B5C] hover:underline"
               >
                 <Download className="h-3.5 w-3.5" />
                 <span>Download standard CSV template</span>
@@ -834,7 +834,7 @@ export function SeriesCsvImportModal({
                 type="file"
                 accept=".csv,text/csv"
                 disabled={busy}
-                className={`${fieldClass} file:mr-3 file:rounded-md file:border-0 file:bg-[#7A2253]/10 file:px-3 file:py-1 file:text-xs file:font-semibold file:text-[#7A2253] cursor-pointer`}
+                className={`${fieldClass} file:mr-3 file:rounded-md file:border-0 file:bg-[#C21B5C]/10 file:px-3 file:py-1 file:text-xs file:font-semibold file:text-[#C21B5C] cursor-pointer`}
                 onChange={(event) => {
                   void handleFileSelected(event.target.files?.[0]);
                 }}
@@ -945,7 +945,7 @@ export function SeriesCsvImportModal({
           type="button"
           onClick={() => void handleImportVideos()}
           disabled={!canImport}
-          className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#7A2253] px-4 text-xs sm:text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#C21B5C] px-4 text-xs sm:text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {busy ? (
             <Loader2 className="h-4 w-4 animate-spin" />

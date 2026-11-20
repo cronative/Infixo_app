@@ -22,12 +22,12 @@ export function DashboardBottomNav() {
             href={item.href}
             aria-current={active ? "page" : undefined}
             className={`flex h-14 w-full flex-col items-center justify-center gap-1 text-[11px] transition-colors ${
-              active ? "font-semibold text-[#7A2253]" : "font-medium text-[#6B6B76] active:text-[#18181B]"
+              active ? "font-semibold text-[#C21B5C]" : "font-medium text-[#6B6B76] active:text-[#18181B]"
             }`}
           >
             <span
               className={`flex h-7 w-12 items-center justify-center rounded-[5px] transition-colors ${
-                active ? "bg-[#7A2253]/[0.09]" : ""
+                active ? "bg-[#C21B5C]/[0.09]" : ""
               }`}
             >
               <Icon className={`h-5 w-5 shrink-0 ${active ? "stroke-[2.2]" : ""}`} />

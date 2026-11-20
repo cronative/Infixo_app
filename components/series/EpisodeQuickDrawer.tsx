@@ -115,7 +115,7 @@ export function EpisodeQuickDrawer({
       case "facebook":
         return "bg-[#1877F2]";
       default:
-        return "bg-[#7A2253]";
+        return "bg-[#C21B5C]";
     }
   }
 
@@ -238,7 +238,7 @@ export function EpisodeQuickDrawer({
                   type="button"
                   onClick={() => setActiveSeasonIndex(idx)}
                   className={`tap-scale px-3 py-1.5 rounded-[5px] text-xs font-bold transition-all shrink-0 cursor-pointer border ${activeSeasonIndex === idx
-                      ? "bg-[#7A2253] text-white border-[#7A2253] shadow-xs"
+                      ? "bg-[#C21B5C] text-white border-[#C21B5C] shadow-xs"
                       : "bg-white text-zinc-700 border-zinc-200 hover:border-zinc-300"
                     }`}
                 >
@@ -278,10 +278,10 @@ export function EpisodeQuickDrawer({
                       rel="noopener noreferrer"
                       className="group flex items-center justify-between gap-3 px-3.5 py-3 transition-colors hover:bg-zinc-50 text-left"
                     >
-                      <span className="text-xs sm:text-[13px] font-semibold text-zinc-900 group-hover:text-[#7A2253] transition-colors truncate">
+                      <span className="text-xs sm:text-[13px] font-semibold text-zinc-900 group-hover:text-[#C21B5C] transition-colors truncate">
                         Ep {partNum} · {epTitleStr}
                       </span>
-                      <ExternalLink className="h-3.5 w-3.5 text-zinc-400 group-hover:text-[#7A2253] shrink-0" />
+                      <ExternalLink className="h-3.5 w-3.5 text-zinc-400 group-hover:text-[#C21B5C] shrink-0" />
                     </a>
                   );
                 })}

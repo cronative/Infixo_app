@@ -81,7 +81,7 @@ const THEME_STYLES: Record<
     platformPillBg: "rgba(255, 255, 255, 0.05)",
   },
   "sunset-velvet": {
-    wrapperBg: "radial-gradient(135% 150% at 50% 0%, #2e0d19 0%, #170710 50%, #0a0307 100%)",
+    wrapperBg: "radial-gradient(135% 150% at 50% 0%, #5C0C2B 0%, #5C0C2B 50%, #5C0C2B 100%)",
     glow1: "radial-gradient(circle, rgba(251, 113, 133, 0.3) 0%, transparent 70%)",
     glow2: "radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, transparent 70%)",
     accentColor: "#FDA4AF",

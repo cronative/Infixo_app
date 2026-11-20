@@ -555,7 +555,7 @@ export default function DashboardSetupPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-2">
           <div>
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-[#7A2253]" />
+              <Sparkles className="h-4 w-4 text-[#C21B5C]" />
               <h3 className="text-xs sm:text-sm font-bold text-[#18181B]">Where I started</h3>
             </div>
             <p className="text-[11px] text-[#6B6B76] mt-0.5">
@@ -568,7 +568,7 @@ export default function DashboardSetupPage() {
               type="button"
               onClick={handleSaveIntro}
               disabled={isSavingIntro}
-              className="h-8 px-3 rounded-[5px] bg-[#7A2253] text-white text-xs font-semibold hover:bg-[#601b41] disabled:opacity-50 transition-colors cursor-pointer"
+              className="h-8 px-3 rounded-[5px] bg-[#C21B5C] text-white text-xs font-semibold hover:bg-[#A3164E] disabled:opacity-50 transition-colors cursor-pointer"
             >
               {isSavingIntro ? "Saving..." : "Save intro"}
             </button>
@@ -580,7 +580,7 @@ export default function DashboardSetupPage() {
           placeholder="e.g. I shot my first 50 videos on an iPhone 8 with window light. Upgrade only when your gear holds you back."
           rows={2}
           maxLength={150}
-          className="w-full rounded-[5px] border border-[#ECECF0] p-2.5 text-xs text-[#18181B] placeholder-[#A1A1AA] focus:border-[#7A2253] focus:outline-hidden transition-colors resize-none"
+          className="w-full rounded-[5px] border border-[#ECECF0] p-2.5 text-xs text-[#18181B] placeholder-[#A1A1AA] focus:border-[#C21B5C] focus:outline-hidden transition-colors resize-none"
         />
       </div>
 
@@ -593,7 +593,7 @@ export default function DashboardSetupPage() {
             onClick={() => setSelectedCategoryFilter("All")}
             className={`shrink-0 rounded-[5px] px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
               selectedCategoryFilter === "All"
-                ? "bg-[#7A2253] text-white shadow-xs"
+                ? "bg-[#C21B5C] text-white shadow-xs"
                 : "border border-[#ECECF0] bg-white text-[#52525B] hover:border-[#D4D4D8] hover:text-[#18181B]"
             }`}
           >
@@ -606,7 +606,7 @@ export default function DashboardSetupPage() {
             onClick={() => setSelectedCategoryFilter("Hardware & Gear")}
             className={`shrink-0 rounded-[5px] border px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
               selectedCategoryFilter === "Hardware & Gear"
-                ? "border-[#7A2253] bg-[#7A2253] text-white shadow-xs"
+                ? "border-[#C21B5C] bg-[#C21B5C] text-white shadow-xs"
                 : "border-[#ECECF0] bg-white text-[#52525B] hover:border-[#D4D4D8] hover:text-[#18181B]"
             }`}
           >
@@ -619,7 +619,7 @@ export default function DashboardSetupPage() {
             onClick={() => setSelectedCategoryFilter("Software & AI")}
             className={`shrink-0 rounded-[5px] border px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
               selectedCategoryFilter === "Software & AI"
-                ? "border-[#7A2253] bg-[#7A2253] text-white shadow-xs"
+                ? "border-[#C21B5C] bg-[#C21B5C] text-white shadow-xs"
                 : "border-[#ECECF0] bg-white text-[#52525B] hover:border-[#D4D4D8] hover:text-[#18181B]"
             }`}
           >
@@ -636,12 +636,12 @@ export default function DashboardSetupPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search gear or software..."
-            className="h-9 w-full rounded-[5px] border border-[#ECECF0] bg-white pl-9 pr-8 text-xs text-[#18181B] placeholder-[#A1A1AA] focus:border-[#7A2253] focus:outline-hidden transition-colors"
+            className="h-9 w-full rounded-[5px] border border-[#ECECF0] bg-white pl-9 pr-8 text-xs text-[#18181B] placeholder-[#A1A1AA] focus:border-[#C21B5C] focus:outline-hidden transition-colors"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#A1A1AA] hover:text-[#7A2253] cursor-pointer"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#A1A1AA] hover:text-[#C21B5C] cursor-pointer"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -653,7 +653,7 @@ export default function DashboardSetupPage() {
       {loading ? (
         <div className="flex min-h-[220px] items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white">
           <div className="flex items-center gap-2 text-xs font-semibold text-[#6B6B76]">
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#7A2253] border-t-transparent" />
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#C21B5C] border-t-transparent" />
             <span>Loading your creator setup...</span>
           </div>
         </div>
@@ -671,7 +671,7 @@ export default function DashboardSetupPage() {
               <button
                 type="button"
                 onClick={() => handleOpenModal()}
-                className="inline-flex items-center gap-2 rounded-[5px] bg-[#7A2253] h-9 px-4 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95 cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-[5px] bg-[#C21B5C] h-9 px-4 text-xs font-semibold text-white shadow-md shadow-[#C21B5C]/20 transition-all hover:opacity-95 cursor-pointer"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Add Your First Gear</span>
@@ -765,7 +765,7 @@ export default function DashboardSetupPage() {
                   {/* Budget alternative callout */}
                   {item.budgetAlt && (
                     <div className="mt-2 rounded-[5px] border border-[#F4F4F5] bg-[#FAFAFB] px-2 py-1 text-[11px] leading-tight text-[#52525B]">
-                      <span className="font-semibold text-[#7A2253]">Starting out? Try this instead: </span>
+                      <span className="font-semibold text-[#C21B5C]">Starting out? Try this instead: </span>
                       <span>{item.budgetAlt}</span>
                     </div>
                   )}
@@ -784,7 +784,7 @@ export default function DashboardSetupPage() {
                         href={item.linkUrl}
                         target="_blank"
                         rel={item.isAffiliate ? "sponsored noopener" : "noopener noreferrer"}
-                        className="inline-flex items-center gap-1 text-xs font-bold text-[#7A2253] transition-colors hover:underline cursor-pointer truncate"
+                        className="inline-flex items-center gap-1 text-xs font-bold text-[#C21B5C] transition-colors hover:underline cursor-pointer truncate"
                       >
                         <span>View Product</span>
                         <span className="text-sm font-bold">&rarr;</span>
@@ -864,11 +864,11 @@ export default function DashboardSetupPage() {
                       onClick={() => setCategory(cat)}
                       className={`flex flex-col items-center justify-center p-2.5 h-16 rounded-[5px] border text-center transition-all cursor-pointer ${
                         isSelected
-                          ? "border-[#7A2253] bg-[#FFF0F5] text-[#7A2253] ring-1 ring-[#7A2253]"
+                          ? "border-[#C21B5C] bg-[#FFF6F2] text-[#C21B5C] ring-1 ring-[#C21B5C]"
                           : "border-[#ECECF0] bg-white text-[#52525B] hover:bg-[#FAFAFB] hover:border-[#D4D4D8]"
                       }`}
                     >
-                      <div className={`mb-1 shrink-0 ${isSelected ? "text-[#7A2253]" : "text-[#6B6B76]"}`}>
+                      <div className={`mb-1 shrink-0 ${isSelected ? "text-[#C21B5C]" : "text-[#6B6B76]"}`}>
                         {icon}
                       </div>
                       <span className="text-[11px] font-semibold line-clamp-2 break-words w-full leading-tight">
@@ -886,7 +886,7 @@ export default function DashboardSetupPage() {
                 <label className="block text-[13px] font-medium text-[#18181B]">
                   Item Name <span className="text-rose-500">*</span>
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Tag className="h-4 w-4" />
                   </div>
@@ -905,7 +905,7 @@ export default function DashboardSetupPage() {
                 <label className="block text-[13px] font-medium text-[#18181B]">
                   Brand / Maker
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Building2 className="h-4 w-4" />
                   </div>
@@ -926,7 +926,7 @@ export default function DashboardSetupPage() {
                 <label className="block text-[13px] font-medium text-[#18181B]">
                   Using since
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <List className="h-4 w-4" />
                   </div>
@@ -947,7 +947,7 @@ export default function DashboardSetupPage() {
                   </label>
                   <span className="text-[11px] text-[#A1A1AA] font-mono">{budgetAlt.length}/80</span>
                 </div>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Sparkles className="h-4 w-4" />
                   </div>
@@ -971,7 +971,7 @@ export default function DashboardSetupPage() {
                 </label>
                 <span className="text-[11px] text-[#A1A1AA] font-mono">{whyLoveIt.length}/120</span>
               </div>
-              <div className="flex rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+              <div className="flex rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                 <div className="flex w-10 shrink-0 items-start justify-center pt-2.5 border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                   <FileText className="h-4 w-4" />
                 </div>
@@ -992,7 +992,7 @@ export default function DashboardSetupPage() {
                 <label className="block text-[13px] font-medium text-[#18181B]">
                   Product / Affiliate / Store Link
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <LinkIcon className="h-4 w-4" />
                   </div>
@@ -1015,7 +1015,7 @@ export default function DashboardSetupPage() {
                   type="checkbox"
                   checked={isAffiliate}
                   onChange={(e) => setIsAffiliate(e.target.checked)}
-                  className="h-4 w-4 rounded-[3px] border-[#D4D4D8] text-[#7A2253] focus:ring-[#7A2253] cursor-pointer"
+                  className="h-4 w-4 rounded-[3px] border-[#D4D4D8] text-[#C21B5C] focus:ring-[#C21B5C] cursor-pointer"
                 />
                 <span className="text-xs font-semibold text-[#18181B]">
                   This is an affiliate link{" "}
@@ -1066,7 +1066,7 @@ export default function DashboardSetupPage() {
                     </div>
                   ) : (
                     <div className="flex flex-col items-center text-center">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#7A2253] mb-1">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-[5px] text-[#C21B5C] mb-1">
                         <Camera className="h-5 w-5" />
                       </div>
                       <span className="text-xs font-semibold text-[#18181B]">Upload Image</span>
@@ -1076,8 +1076,8 @@ export default function DashboardSetupPage() {
                 </div>
 
                 {/* Tips Box */}
-                <div className="flex flex-col justify-center rounded-[5px] bg-[#FFF0F5] border border-[#FCE7F1] p-3 text-left">
-                  <div className="flex items-center gap-1.5 font-bold text-xs text-[#7A2253] mb-1">
+                <div className="flex flex-col justify-center rounded-[5px] bg-[#FFF6F2] border border-[#FFEDE6] p-3 text-left">
+                  <div className="flex items-center gap-1.5 font-bold text-xs text-[#C21B5C] mb-1">
                     <span>💡</span>
                     <span>Tips</span>
                   </div>
@@ -1091,13 +1091,13 @@ export default function DashboardSetupPage() {
             </div>
 
             {/* Show on public profile Switch Banner */}
-            <div className="flex items-center justify-between rounded-[5px] border border-[#FCE7F1] bg-[#FFF0F5] px-4 py-3">
+            <div className="flex items-center justify-between rounded-[5px] border border-[#FFEDE6] bg-[#FFF6F2] px-4 py-3">
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-white border border-[#FCE7F1] text-[#7A2253]">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-white border border-[#FFEDE6] text-[#C21B5C]">
                   <Globe className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-[#7A2253]">Show on public profile</p>
+                  <p className="text-xs font-bold text-[#C21B5C]">Show on public profile</p>
                   <p className="text-[11px] text-[#6B6B76]">Turn off to keep as private gear reference.</p>
                 </div>
               </div>
@@ -1107,7 +1107,7 @@ export default function DashboardSetupPage() {
                 aria-checked={isActive}
                 onClick={() => setIsActive(!isActive)}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isActive ? "bg-[#7A2253]" : "bg-zinc-200"
+                  isActive ? "bg-[#C21B5C]" : "bg-zinc-200"
                 }`}
               >
                 <span
@@ -1131,7 +1131,7 @@ export default function DashboardSetupPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="h-10 px-5 rounded-[5px] bg-[#7A2253] text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 hover:bg-[#601b41] disabled:opacity-60"
+              className="h-10 px-5 rounded-[5px] bg-[#C21B5C] text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#C21B5C]/20 hover:bg-[#A3164E] disabled:opacity-60"
             >
               {isSubmitting ? "Saving..." : editingItem ? "Update Gear" : "Add to Setup"}
             </button>

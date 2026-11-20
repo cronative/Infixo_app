@@ -124,13 +124,13 @@ export function SectionOrderManager() {
     <section className="space-y-4 rounded-[5px] border border-[#ECECF0] bg-white p-4 text-left shadow-xs sm:p-5">
       <div className="flex items-center justify-between border-b border-[#ECECF0] pb-3.5">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-[5px] bg-[#7A225314] text-[#7A2253] border border-[#7A2253]/20 shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-[5px] bg-[#C21B5C14] text-[#C21B5C] border border-[#C21B5C]/20 shrink-0">
             <Layers className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="font-display text-base font-bold text-[#7A2253] flex items-center gap-2">
+            <h2 className="font-display text-base font-bold text-[#C21B5C] flex items-center gap-2">
               Profile Sections &amp; Layout
-              {saving && <Loader2 className="h-3.5 w-3.5 animate-spin text-[#7A2253]" />}
+              {saving && <Loader2 className="h-3.5 w-3.5 animate-spin text-[#C21B5C]" />}
             </h2>
             <p className="text-xs text-[#6B6B76] font-medium mt-0.5">
               Customize the order and visibility of sections displayed on your public creator page.
@@ -141,7 +141,7 @@ export function SectionOrderManager() {
         <button
           type="button"
           onClick={handleResetDefault}
-          className="inline-flex cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-3 py-1.5 text-xs font-semibold text-[#6B6B76] shadow-xs transition-all hover:-translate-y-0.5 hover:border-[#D4D4D8] hover:bg-[#FAFAFB] hover:text-[#7A2253] hover:shadow-sm"
+          className="inline-flex cursor-pointer items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-3 py-1.5 text-xs font-semibold text-[#6B6B76] shadow-xs transition-all hover:-translate-y-0.5 hover:border-[#D4D4D8] hover:bg-[#FAFAFB] hover:text-[#C21B5C] hover:shadow-sm"
           title="Reset to default order"
         >
           <RotateCcw className="h-3.5 w-3.5" />
@@ -175,10 +175,10 @@ export function SectionOrderManager() {
                   </span>
 
                   <div className="min-w-0 space-y-0.5">
-                    <p className="text-xs font-bold text-[#7A2253] line-clamp-2 break-words flex items-center gap-1.5">
+                    <p className="text-xs font-bold text-[#C21B5C] line-clamp-2 break-words flex items-center gap-1.5">
                       {info.name}
                       {isAbout && (
-                        <span className="text-[10px] font-semibold text-[#7A2253] bg-[#7A225314] border border-[#7A2253]/20 px-1.5 py-0.2 rounded-[5px]">
+                        <span className="text-[10px] font-semibold text-[#C21B5C] bg-[#C21B5C14] border border-[#C21B5C]/20 px-1.5 py-0.2 rounded-[5px]">
                           Locked
                         </span>
                       )}
@@ -194,7 +194,7 @@ export function SectionOrderManager() {
                     onClick={() => handleToggleVisibility(section.sectionKey)}
                     disabled={isAbout}
                     className={`flex h-7 w-7 items-center justify-center rounded-[5px] border transition-colors cursor-pointer ${section.isVisible
-                      ? "border-[#ECECF0] bg-[#FAFAFB] text-[#7A2253] hover:bg-[#F4F4F5] hover:text-[#7A2253]"
+                      ? "border-[#ECECF0] bg-[#FAFAFB] text-[#C21B5C] hover:bg-[#F4F4F5] hover:text-[#C21B5C]"
                       : "border-[#C1443A]/20 bg-[#C1443A]/10 text-[#C1443A]"
                       } disabled:opacity-40 disabled:cursor-not-allowed`}
                     title={section.isVisible ? "Hide section from profile" : "Show section on profile"}
@@ -211,7 +211,7 @@ export function SectionOrderManager() {
                     type="button"
                     onClick={() => handleMove(idx, "up")}
                     disabled={isFirst}
-                    className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76] hover:text-[#7A2253] hover:bg-[#F4F4F5] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76] hover:text-[#C21B5C] hover:bg-[#F4F4F5] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                     title="Move up"
                   >
                     <ArrowUp className="h-3.5 w-3.5" />
@@ -222,7 +222,7 @@ export function SectionOrderManager() {
                     type="button"
                     onClick={() => handleMove(idx, "down")}
                     disabled={isLast}
-                    className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76] hover:text-[#7A2253] hover:bg-[#F4F4F5] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76] hover:text-[#C21B5C] hover:bg-[#F4F4F5] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                     title="Move down"
                   >
                     <ArrowDown className="h-3.5 w-3.5" />

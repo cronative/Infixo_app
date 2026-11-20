@@ -36,7 +36,7 @@ export const mail = (email: string): Inline => ({ href: `mailto:${email}`, text:
 export const section = (id: string, title: string, ...blocks: LegalBlock[]): LegalSection => ({ id, title, blocks });
 
 const LINK_CLASS =
-  "font-medium text-[#7A2253] underline underline-offset-2 decoration-[#7A2253]/40 hover:decoration-[#7A2253] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7A2253] rounded-[5px]";
+  "font-medium text-[#C21B5C] underline underline-offset-2 decoration-[#C21B5C]/40 hover:decoration-[#C21B5C] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C21B5C] rounded-[5px]";
 
 export function renderInline(content: Inline[]): ReactNode[] {
   return content.map((part, i) => {

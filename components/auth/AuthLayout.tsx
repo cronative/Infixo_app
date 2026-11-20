@@ -24,7 +24,7 @@ export function AuthLayout({
         <div className="absolute left-4 top-4 z-20 sm:left-6 sm:top-6">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 rounded-[5px] px-2.5 py-1.5 text-xs font-semibold text-[#52525B] transition-colors hover:bg-zinc-100 hover:text-[#7A2253]"
+            className="inline-flex items-center gap-1.5 rounded-[5px] px-2.5 py-1.5 text-xs font-semibold text-[#52525B] transition-colors hover:bg-zinc-100 hover:text-[#C21B5C]"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>Back to home</span>

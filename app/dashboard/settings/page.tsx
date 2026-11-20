@@ -147,7 +147,7 @@ export default function DashboardSettingsPage() {
       <section className="rounded-[5px] border border-[#ECECF0] bg-white p-4 sm:p-5 shadow-none">
         {/* Header Row */}
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C]">
             <User className="h-4 w-4" />
           </div>
           <div>
@@ -188,7 +188,7 @@ export default function DashboardSettingsPage() {
       <section className="rounded-[5px] border border-[#ECECF0] bg-white p-4 sm:p-5 shadow-none">
         {/* Header Row */}
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C]">
             <Eye className="h-4 w-4" />
           </div>
           <div>
@@ -223,7 +223,7 @@ export default function DashboardSettingsPage() {
 
         {/* Notice Info Box */}
         <div className="rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0] p-3 flex items-center gap-2.5 mt-4 text-[12px] text-[#3F3F46] leading-relaxed">
-          <Info className="h-4 w-4 shrink-0 text-[#7A2253]" />
+          <Info className="h-4 w-4 shrink-0 text-[#C21B5C]" />
           <span>When enabled, your public profile can appear in Google and other search engine results.</span>
         </div>
       </section>
@@ -290,7 +290,7 @@ export default function DashboardSettingsPage() {
                 <label className="text-[12px] font-medium text-[#6B6B76] block mb-1.5">
                   Email Address
                 </label>
-                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+                <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                     <Mail className="h-4 w-4" />
                   </span>
@@ -316,7 +316,7 @@ export default function DashboardSettingsPage() {
                 <button
                   type="submit"
                   disabled={isUpdatingEmail}
-                  className="h-8 rounded-[5px] bg-[#7A2253] hover:bg-[#661842] text-white px-4 text-[13px] font-medium transition-colors cursor-pointer disabled:opacity-50"
+                  className="h-8 rounded-[5px] bg-[#C21B5C] hover:bg-[#A3164E] text-white px-4 text-[13px] font-medium transition-colors cursor-pointer disabled:opacity-50"
                 >
                   {isUpdatingEmail ? "Saving..." : "Save changes"}
                 </button>
@@ -422,7 +422,7 @@ function SwitchToggle({
       disabled={disabled}
       onClick={() => onChange(!checked)}
       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 ${
-        checked ? "bg-[#7A2253]" : "bg-[#ECECF0]"
+        checked ? "bg-[#C21B5C]" : "bg-[#ECECF0]"
       }`}
     >
       <span

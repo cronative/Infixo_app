@@ -29,7 +29,7 @@ export function PublicTeamGroups({
   primaryTextColor,
   secondaryTextColor,
   mutedTextColor,
-  accentColor = "#7A2253",
+  accentColor = "#C21B5C",
   borderColor,
   cardBgColor,
   isInformational = false,
@@ -152,9 +152,9 @@ export function PublicTeamGroups({
                             style={
                               isEditorial
                                 ? {
-                                    backgroundColor: "#FAF0F5",
-                                    color: "#7A2253",
-                                    borderColor: "#F5D9E6",
+                                    backgroundColor: "#FFF6F2",
+                                    color: "#C21B5C",
+                                    borderColor: "#F6E0DC",
                                   }
                                 : {
                                     backgroundColor:
@@ -196,7 +196,7 @@ export function PublicTeamGroups({
                             }}
                             style={
                               isEditorial
-                                ? { color: "#7A2253" }
+                                ? { color: "#C21B5C" }
                                 : { color: "var(--accent-text)" }
                             }
                             className="inline-flex items-center gap-1 text-[11px] font-semibold hover:underline"

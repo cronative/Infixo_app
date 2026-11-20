@@ -284,7 +284,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                 className="h-8 w-8 rounded-full border border-[#E4E4E7] object-cover"
               />
             ) : (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#7A2253] text-white font-bold text-xs shrink-0 select-none">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#C21B5C] text-white font-bold text-xs shrink-0 select-none">
                 {getInitials(displayName)}
               </div>
             )}
@@ -331,19 +331,19 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                       aria-current={active ? "page" : undefined}
                       className={`group relative flex h-[36px] items-center rounded-[5px] overflow-hidden px-3 gap-2.5 text-left transition-colors ${
                         active
-                          ? "bg-[#7A2253]/[0.08] text-[#7A2253] font-semibold"
+                          ? "bg-[#C21B5C]/[0.08] text-[#C21B5C] font-semibold"
                           : "text-[#52525B] hover:bg-[#F4F4F5] hover:text-[#18181B]"
                       }`}
                     >
                       {active && (
-                        <span className="absolute left-0 top-0 bottom-0 h-full w-[3px] bg-[#7A2253]" />
+                        <span className="absolute left-0 top-0 bottom-0 h-full w-[3px] bg-[#C21B5C]" />
                       )}
 
                       <Icon
                         strokeWidth={1.75}
                         className={`h-[18px] w-[18px] shrink-0 transition-colors ${
                           active
-                            ? "text-[#7A2253]"
+                            ? "text-[#C21B5C]"
                             : "text-[#71717A] group-hover:text-[#18181B]"
                         }`}
                       />
@@ -354,7 +354,7 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
 
                       {/* New-request count badge for Media Kit & Rates */}
                       {item.href === "/dashboard/mediakit" && newCollabCount > 0 && (
-                        <span className="ml-auto inline-flex items-center justify-center rounded-full bg-[#7A2253] text-white text-[11px] font-bold h-4.5 min-w-[18px] px-1.5 shrink-0 shadow-none">
+                        <span className="ml-auto inline-flex items-center justify-center rounded-full bg-[#C21B5C] text-white text-[11px] font-bold h-4.5 min-w-[18px] px-1.5 shrink-0 shadow-none">
                           {newCollabCount > 9 ? "9+" : newCollabCount}
                         </span>
                       )}
@@ -381,19 +381,19 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
                 aria-current={active ? "page" : undefined}
                 className={`group relative flex h-[36px] items-center rounded-[5px] overflow-hidden px-3 gap-2.5 text-left transition-colors ${
                   active
-                    ? "bg-[#7A2253]/[0.08] text-[#7A2253] font-semibold"
+                    ? "bg-[#C21B5C]/[0.08] text-[#C21B5C] font-semibold"
                     : "text-[#52525B] hover:bg-[#F4F4F5] hover:text-[#18181B]"
                 }`}
               >
                 {active && (
-                  <span className="absolute left-0 top-0 bottom-0 h-full w-[3px] bg-[#7A2253]" />
+                  <span className="absolute left-0 top-0 bottom-0 h-full w-[3px] bg-[#C21B5C]" />
                 )}
 
                 <Icon
                   strokeWidth={1.75}
                   className={`h-[18px] w-[18px] shrink-0 transition-colors ${
                     active
-                      ? "text-[#7A2253]"
+                      ? "text-[#C21B5C]"
                       : "text-[#71717A] group-hover:text-[#18181B]"
                   }`}
                 />
@@ -410,9 +410,9 @@ export function DashboardSideDrawer({ isOpen, onClose }: DashboardSideDrawerProp
               href="/dashboard/subscription"
               onClick={onClose}
               title="Upgrade to Pro"
-              className="flex h-[40px] items-center rounded-[5px] bg-[#7A2253]/[0.08] hover:bg-[#7A2253]/[0.12] text-[#7A2253] transition-colors px-3 gap-2.5"
+              className="flex h-[40px] items-center rounded-[5px] bg-[#C21B5C]/[0.08] hover:bg-[#C21B5C]/[0.12] text-[#C21B5C] transition-colors px-3 gap-2.5"
             >
-              <Sparkles className="h-[18px] w-[18px] shrink-0 text-[#7A2253]" strokeWidth={1.75} />
+              <Sparkles className="h-[18px] w-[18px] shrink-0 text-[#C21B5C]" strokeWidth={1.75} />
               <span className="line-clamp-2 break-words text-[14px] font-semibold leading-none">
                 Upgrade to Pro
               </span>

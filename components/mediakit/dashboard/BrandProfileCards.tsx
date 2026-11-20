@@ -8,7 +8,7 @@ import { MEDIAKIT_PROMISE_PRESETS, type MediaKitSettings } from "@/types";
 import { CONTENT_LANGUAGES } from "@/lib/collabPackage";
 
 const input =
-  "h-10 w-full rounded-[5px] border border-[#ECECF0] bg-white px-3 text-[13px] text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none";
+  "h-10 w-full rounded-[5px] border border-[#ECECF0] bg-white px-3 text-[13px] text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:outline-none";
 const label = "block text-[12px] font-semibold text-[#18181B]";
 const muted = "text-[13px] text-[#A1A1AA]";
 
@@ -20,7 +20,7 @@ export function EditButton({ onClick, label: text = "Edit" }: { onClick: () => v
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex h-8 items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-[12px] font-semibold text-[#7A2253] hover:bg-[#F7EEF2] cursor-pointer"
+      className="inline-flex h-8 items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-[12px] font-semibold text-[#C21B5C] hover:bg-[#FFEDE6] cursor-pointer"
     >
       <Pencil className="h-3.5 w-3.5" />
       {text}
@@ -33,7 +33,7 @@ function InfoRow({ icon, title, children }: { icon: ReactNode; title: string; ch
   return (
     <div className="grid grid-cols-1 gap-1 border-t border-[#F4F4F5] py-3 first:border-t-0 sm:grid-cols-[150px_minmax(0,1fr)] sm:gap-3">
       <span className="flex items-center gap-2 text-[13px] font-semibold text-[#18181B]">
-        <span className="text-[#7A2253]">{icon}</span>
+        <span className="text-[#C21B5C]">{icon}</span>
         {title}
       </span>
       <div className="min-w-0 text-[13px] leading-5 text-[#3F3F46]">{children}</div>
@@ -56,11 +56,11 @@ function TagInput({ value, onChange, max, placeholder, suggestions = [] }: { val
   const unused = suggestions.filter((s) => !value.some((v) => v.toLowerCase() === s.toLowerCase()));
   return (
     <div className="space-y-2">
-      <div className="flex min-h-10 flex-wrap items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-2 py-1.5 focus-within:border-[#7A2253]">
+      <div className="flex min-h-10 flex-wrap items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-2 py-1.5 focus-within:border-[#C21B5C]">
         {value.map((t) => (
-          <span key={t} className="inline-flex items-center gap-1 rounded-[5px] bg-[#F7EEF2] px-2 py-1 text-[12px] font-semibold text-[#7A2253]">
+          <span key={t} className="inline-flex items-center gap-1 rounded-[5px] bg-[#FFEDE6] px-2 py-1 text-[12px] font-semibold text-[#C21B5C]">
             {t}
-            <button type="button" aria-label={`Remove ${t}`} onClick={() => onChange(value.filter((x) => x !== t))} className="cursor-pointer text-[#7A2253]/70 hover:text-[#7A2253]">
+            <button type="button" aria-label={`Remove ${t}`} onClick={() => onChange(value.filter((x) => x !== t))} className="cursor-pointer text-[#C21B5C]/70 hover:text-[#C21B5C]">
               <X className="h-3 w-3" />
             </button>
           </span>
@@ -86,7 +86,7 @@ function TagInput({ value, onChange, max, placeholder, suggestions = [] }: { val
       {value.length < max && unused.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {unused.slice(0, 8).map((s) => (
-            <button key={s} type="button" onClick={() => add(s)} className="rounded-[5px] border border-dashed border-[#D4D4D8] px-2 py-0.5 text-[12px] font-medium text-[#52525B] hover:border-[#7A2253] hover:text-[#7A2253] cursor-pointer">
+            <button key={s} type="button" onClick={() => add(s)} className="rounded-[5px] border border-dashed border-[#D4D4D8] px-2 py-0.5 text-[12px] font-medium text-[#52525B] hover:border-[#C21B5C] hover:text-[#C21B5C] cursor-pointer">
               + {s}
             </button>
           ))}
@@ -103,7 +103,7 @@ function SaveFooter({ saving, onCancel }: { saving: boolean; onCancel: () => voi
       <button type="button" onClick={onCancel} className="h-10 rounded-[5px] border border-[#ECECF0] bg-white px-4 text-[12px] font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] cursor-pointer">
         Cancel
       </button>
-      <button type="submit" disabled={saving} className="h-10 rounded-[5px] bg-[#7A2253] px-5 text-[12px] font-semibold text-white hover:opacity-95 cursor-pointer disabled:opacity-60">
+      <button type="submit" disabled={saving} className="h-10 rounded-[5px] bg-[#C21B5C] px-5 text-[12px] font-semibold text-white hover:opacity-95 cursor-pointer disabled:opacity-60">
         {saving ? "Saving…" : "Save"}
       </button>
     </ModalFooter>
@@ -176,7 +176,7 @@ export function AboutBrandsCard({ settings, defaultLocation, defaultSignature, o
         {settings.intro ? (
           <p className="whitespace-pre-line break-words text-[14px] leading-[22px] text-[#3F3F46]">{settings.intro}</p>
         ) : (
-          <button type="button" onClick={() => setOpen(true)} className="w-full rounded-[5px] border border-dashed border-[#D4D4D8] p-3 text-left text-[13px] text-[#6B6B76] hover:border-[#7A2253] cursor-pointer">
+          <button type="button" onClick={() => setOpen(true)} className="w-full rounded-[5px] border border-dashed border-[#D4D4D8] p-3 text-left text-[13px] text-[#6B6B76] hover:border-[#C21B5C] cursor-pointer">
             Add a short intro brands read first: what you create, where, and for whom.
           </button>
         )}
@@ -191,7 +191,7 @@ export function AboutBrandsCard({ settings, defaultLocation, defaultSignature, o
             {nicheList.length ? (
               <span className="flex flex-wrap gap-1.5">
                 {nicheList.map((n) => (
-                  <span key={n} className="rounded-[5px] bg-[#F7EEF2] px-2 py-0.5 text-[12px] font-semibold text-[#7A2253]">
+                  <span key={n} className="rounded-[5px] bg-[#FFEDE6] px-2 py-0.5 text-[12px] font-semibold text-[#C21B5C]">
                     {n}
                   </span>
                 ))}
@@ -250,7 +250,7 @@ export function AboutBrandsCard({ settings, defaultLocation, defaultSignature, o
                 <span className={label}>Availability</span>
                 <div className="inline-flex rounded-[5px] border border-[#ECECF0] bg-white p-0.5">
                   {(["open", "busy"] as const).map((a) => (
-                    <button key={a} type="button" aria-pressed={availability === a} onClick={() => setAvailability(a)} className={`h-8 rounded-[5px] px-3 text-[12px] font-semibold cursor-pointer ${availability === a ? "bg-[#7A2253] text-white" : "text-[#52525B]"}`}>
+                    <button key={a} type="button" aria-pressed={availability === a} onClick={() => setAvailability(a)} className={`h-8 rounded-[5px] px-3 text-[12px] font-semibold cursor-pointer ${availability === a ? "bg-[#C21B5C] text-white" : "text-[#52525B]"}`}>
                       {a === "open" ? "Open for collabs" : "Busy"}
                     </button>
                   ))}
@@ -313,7 +313,7 @@ export function PreferencesCard({ settings, onSave }: { settings: MediaKitSettin
             <ul className="space-y-1.5">
               {promiseList.map((p) => (
                 <li key={p} className="flex items-start gap-2">
-                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#7A2253]" strokeWidth={3} />
+                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#C21B5C]" strokeWidth={3} />
                   <span>{p}</span>
                 </li>
               ))}
@@ -341,12 +341,12 @@ export function PreferencesCard({ settings, onSave }: { settings: MediaKitSettin
                 {MEDIAKIT_PROMISE_PRESETS.map((p) => {
                   const on = promises.includes(p);
                   return (
-                    <label key={p} className={`flex cursor-pointer items-center gap-2.5 rounded-[5px] border px-3 py-2.5 text-[13px] ${on ? "border-[#7A2253] bg-[#F7EEF2] text-[#18181B]" : "border-[#ECECF0] bg-white text-[#3F3F46]"}`}>
+                    <label key={p} className={`flex cursor-pointer items-center gap-2.5 rounded-[5px] border px-3 py-2.5 text-[13px] ${on ? "border-[#C21B5C] bg-[#FFEDE6] text-[#18181B]" : "border-[#ECECF0] bg-white text-[#3F3F46]"}`}>
                       <input
                         type="checkbox"
                         checked={on}
                         onChange={() => setPromises(on ? promises.filter((x) => x !== p) : promises.length < 4 ? [...promises, p] : promises)}
-                        className="h-4 w-4 accent-[#7A2253]"
+                        className="h-4 w-4 accent-[#C21B5C]"
                       />
                       {p}
                     </label>

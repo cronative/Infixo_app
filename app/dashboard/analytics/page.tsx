@@ -110,7 +110,7 @@ export default function DashboardAnalyticsPage() {
                 onClick={() => setPeriod(value)}
                 aria-pressed={period === value}
                 className={`h-7 px-3 rounded-[5px] text-[13px] font-medium transition-all cursor-pointer ${
-                  period === value ? "bg-[#7A2253] text-white" : "text-[#6B6B76] hover:text-[#18181B]"
+                  period === value ? "bg-[#C21B5C] text-white" : "text-[#6B6B76] hover:text-[#18181B]"
                 }`}
               >
                 {value === "7d" ? "7 days" : "30 days"}
@@ -273,9 +273,9 @@ function Section<T>({
 
   return (
     <section id={id} className="flex min-w-0 scroll-mt-20 flex-col self-stretch rounded-[5px] border border-[#ECECF0] bg-white">
-      <header className="flex items-center justify-between gap-3 rounded-t-[5px] border-b border-[#ECECF0] bg-[#7A2253]/[0.07] px-4 py-2.5">
+      <header className="flex items-center justify-between gap-3 rounded-t-[5px] border-b border-[#ECECF0] bg-[#C21B5C]/[0.07] px-4 py-2.5">
         <span className="flex min-w-0 items-center gap-2">
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[5px] bg-white text-[#7A2253]">{icon}</span>
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[5px] bg-white text-[#C21B5C]">{icon}</span>
           <h2 className="truncate text-[14px] font-semibold text-[#18181B]">{title}</h2>
         </span>
         {!loading && total !== undefined && (
@@ -292,7 +292,7 @@ function Section<T>({
           <button
             type="button"
             onClick={onCopyLink}
-            className="inline-flex h-7 shrink-0 items-center gap-1 rounded-[5px] border border-[#E4E4E7] bg-white px-2 text-[12px] font-medium text-[#18181B] hover:border-[#7A2253] hover:text-[#7A2253] cursor-pointer"
+            className="inline-flex h-7 shrink-0 items-center gap-1 rounded-[5px] border border-[#E4E4E7] bg-white px-2 text-[12px] font-medium text-[#18181B] hover:border-[#C21B5C] hover:text-[#C21B5C] cursor-pointer"
           >
             <Copy className="h-3 w-3" />
             Copy link
@@ -305,7 +305,7 @@ function Section<T>({
             <button
               type="button"
               onClick={() => setShowAll((v) => !v)}
-              className="mt-auto border-t border-[#ECECF0] px-4 py-2 text-left text-[13px] font-medium text-[#7A2253] hover:underline underline-offset-2 cursor-pointer"
+              className="mt-auto border-t border-[#ECECF0] px-4 py-2 text-left text-[13px] font-medium text-[#C21B5C] hover:underline underline-offset-2 cursor-pointer"
             >
               {showAll ? "Show less" : `View all (${items.length})`}
             </button>

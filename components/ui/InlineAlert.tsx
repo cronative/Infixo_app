@@ -24,8 +24,8 @@ export function InlineAlert({
       icon: <AlertCircle className="h-4 w-4 shrink-0 text-[#DC2626]" />,
     },
     info: {
-      container: "border-[#7A2253]/25 bg-[#FDF2F8] text-[#7A2253]",
-      icon: <Info className="h-4 w-4 shrink-0 text-[#7A2253]" />,
+      container: "border-[#C21B5C]/25 bg-[#FFF6F2] text-[#C21B5C]",
+      icon: <Info className="h-4 w-4 shrink-0 text-[#C21B5C]" />,
     },
     success: {
       container: "border-[#16A34A]/30 bg-[#F0FDF4] text-[#16A34A]",

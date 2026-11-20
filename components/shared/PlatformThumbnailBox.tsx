@@ -107,7 +107,7 @@ export function PlatformThumbnailBox({
         };
       case "Instagram":
         return {
-          bgGradient: "bg-gradient-to-br from-[#28051f] via-[#1c0525] to-[#0c0d12]",
+          bgGradient: "bg-gradient-to-br from-[#5C0C2B] via-[#1c0525] to-[#0c0d12]",
           glowColor: "rgba(220, 39, 67, 0.28)",
           badgeBg: "bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white shadow-pink-950/60",
           icon: <InstagramIcon className={size === "sm" ? "h-5 w-5 text-white" : "h-7 w-7 text-white"} />,
@@ -170,9 +170,9 @@ export function PlatformThumbnailBox({
         };
       default:
         return {
-          bgGradient: "bg-gradient-to-br from-[#7A2253] via-[#0d1c44] to-[#0a0e1a]",
-          glowColor: "rgba(122, 34, 83, 0.35)",
-          badgeBg: "bg-gradient-to-tr from-[#7A2253] to-[#2563eb] text-white shadow-indigo-950/60",
+          bgGradient: "bg-gradient-to-br from-[#C21B5C] via-[#0d1c44] to-[#0a0e1a]",
+          glowColor: "rgba(194, 27, 92, 0.35)",
+          badgeBg: "bg-gradient-to-tr from-[#C21B5C] to-[#2563eb] text-white shadow-indigo-950/60",
           icon: <Play className={size === "sm" ? "h-5 w-5 fill-white text-white" : "h-6 w-6 fill-white text-white translate-x-0.5"} />,
           watermark: <Film className="h-32 w-32 text-blue-500/10" />,
           pillLabel: badgeText || "Series",

@@ -41,7 +41,7 @@ interface MilestoneStoryModalProps {
 const THEME_OPTIONS: { id: StoryThemeKey; label: string; previewColor: string; bgClass: string }[] = [
   { id: "midnight-gold", label: "Midnight Gold", previewColor: "#E6C583", bgClass: "from-[#201736] to-[#0c0915]" },
   { id: "neon-cyber", label: "Neon Cyber", previewColor: "#38BDF8", bgClass: "from-[#150930] to-[#090918]" },
-  { id: "sunset-velvet", label: "Sunset Velvet", previewColor: "#FB7185", bgClass: "from-[#2e0d19] to-[#170710]" },
+  { id: "sunset-velvet", label: "Sunset Velvet", previewColor: "#FB7185", bgClass: "from-[#5C0C2B] to-[#5C0C2B]" },
   { id: "minimal-luxe", label: "Minimal Luxe", previewColor: "#E2E8F0", bgClass: "from-[#1e2029] to-[#101115]" },
 ];
 

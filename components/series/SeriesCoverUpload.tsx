@@ -147,10 +147,10 @@ export function SeriesCoverUpload({
             fileInputRef.current?.click();
           }
         }}
-        className={`group relative w-full overflow-hidden rounded-[5px] border transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7A2253]/30 ${value
+        className={`group relative w-full overflow-hidden rounded-[5px] border transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C21B5C]/30 ${value
           ? "aspect-[16/9] border-[#ECECF0] bg-zinc-950"
           : isDragging
-            ? "h-20 border-dashed border-[#7A2253] bg-[#7A2253]/[0.05]"
+            ? "h-20 border-dashed border-[#C21B5C] bg-[#C21B5C]/[0.05]"
             : "h-20 border-dashed border-[#D4D4D8] bg-[#FAFAFB] hover:border-[#A1A1AA] hover:bg-[#F4F4F5]"
           }`}
       >

@@ -279,7 +279,7 @@ export function DashboardSidebar() {
               className="h-9 w-9 rounded-full border border-[#E4E4E7] object-cover"
             />
           ) : (
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#7A2253] text-white font-bold text-xs shrink-0 select-none">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#C21B5C] text-white font-bold text-xs shrink-0 select-none">
               {getInitials(displayName)}
             </div>
           )}
@@ -339,20 +339,20 @@ export function DashboardSidebar() {
                       collapsed ? "justify-center px-0" : "px-3 gap-2.5"
                     } ${
                       active
-                        ? "bg-[#7A2253]/[0.08] text-[#7A2253] font-semibold"
+                        ? "bg-[#C21B5C]/[0.08] text-[#C21B5C] font-semibold"
                         : "text-[#52525B] hover:bg-[#F4F4F5] hover:text-[#18181B]"
                     }`}
                   >
-                    {/* 3px left indicator bar in #7A2253 (full height) */}
+                    {/* 3px left indicator bar in #C21B5C (full height) */}
                     {active && (
-                      <span className="absolute left-0 top-0 bottom-0 h-full w-[3px] bg-[#7A2253]" />
+                      <span className="absolute left-0 top-0 bottom-0 h-full w-[3px] bg-[#C21B5C]" />
                     )}
 
                     <Icon
                       strokeWidth={1.75}
                       className={`h-[18px] w-[18px] shrink-0 transition-colors ${
                         active
-                          ? "text-[#7A2253]"
+                          ? "text-[#C21B5C]"
                           : "text-[#71717A] group-hover:text-[#18181B]"
                       }`}
                     />
@@ -365,12 +365,12 @@ export function DashboardSidebar() {
 
                     {/* New-request count badge for Media Kit & Rates */}
                     {item.href === "/dashboard/mediakit" && newCollabCount > 0 && !collapsed && (
-                      <span className="ml-auto inline-flex items-center justify-center rounded-full bg-[#7A2253] text-white text-[11px] font-bold h-4.5 min-w-[18px] px-1.5 shrink-0 shadow-none">
+                      <span className="ml-auto inline-flex items-center justify-center rounded-full bg-[#C21B5C] text-white text-[11px] font-bold h-4.5 min-w-[18px] px-1.5 shrink-0 shadow-none">
                         {newCollabCount > 9 ? "9+" : newCollabCount}
                       </span>
                     )}
                     {item.href === "/dashboard/mediakit" && newCollabCount > 0 && collapsed && (
-                      <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[#7A2253]" />
+                      <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[#C21B5C]" />
                     )}
                   </Link>
                 );
@@ -397,18 +397,18 @@ export function DashboardSidebar() {
                 collapsed ? "justify-center px-0" : "px-3 gap-2.5"
               }`}
               style={{
-                backgroundColor: active ? "rgba(122, 34, 83, 0.08)" : undefined,
+                backgroundColor: active ? "rgba(194, 27, 92, 0.08)" : undefined,
               }}
             >
               {active && (
-                <span className="absolute left-0 top-0 bottom-0 h-full w-[3px] bg-[#7A2253]" />
+                <span className="absolute left-0 top-0 bottom-0 h-full w-[3px] bg-[#C21B5C]" />
               )}
 
               <Icon
                 strokeWidth={1.75}
                 className={`h-[18px] w-[18px] shrink-0 transition-colors ${
                   active
-                    ? "text-[#7A2253]"
+                    ? "text-[#C21B5C]"
                     : "text-[#71717A] group-hover:text-[#18181B]"
                 }`}
               />
@@ -417,7 +417,7 @@ export function DashboardSidebar() {
                 <span
                   className={`line-clamp-2 break-words text-[14px] leading-normal ${
                     active
-                      ? "text-[#7A2253] font-semibold"
+                      ? "text-[#C21B5C] font-semibold"
                       : "text-[#52525B] font-medium group-hover:text-[#18181B]"
                   }`}
                 >
@@ -433,11 +433,11 @@ export function DashboardSidebar() {
           <Link
             href="/dashboard/subscription"
             title="Upgrade to Pro"
-            className={`flex h-[40px] items-center rounded-[5px] bg-[#7A2253]/[0.08] hover:bg-[#7A2253]/[0.12] text-[#7A2253] transition-colors ${
+            className={`flex h-[40px] items-center rounded-[5px] bg-[#C21B5C]/[0.08] hover:bg-[#C21B5C]/[0.12] text-[#C21B5C] transition-colors ${
               collapsed ? "justify-center px-0" : "px-3 gap-2.5"
             }`}
           >
-            <Sparkles className="h-[18px] w-[18px] shrink-0 text-[#7A2253]" strokeWidth={1.75} />
+            <Sparkles className="h-[18px] w-[18px] shrink-0 text-[#C21B5C]" strokeWidth={1.75} />
             {!collapsed && (
               <span className="line-clamp-2 break-words text-[14px] font-semibold leading-none">
                 Upgrade to Pro

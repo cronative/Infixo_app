@@ -44,14 +44,14 @@ export function MediaKitSummary({
             // eslint-disable-next-line @next/next/no-img-element
             <img src={photoUrl} alt="" className="h-14 w-14 shrink-0 rounded-[5px] object-cover" />
           ) : (
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[5px] bg-[#7A2253] text-[18px] font-bold text-white">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[5px] bg-[#C21B5C] text-[18px] font-bold text-white">
               {getInitials(name || handle)}
             </span>
           )}
           <div className="min-w-0">
             <p className="truncate text-[17px] font-bold leading-6 text-[#18181B]">{name || handle}</p>
             {category && (
-              <span className="mt-0.5 inline-block max-w-full truncate rounded-[5px] bg-[#F7EEF2] px-2 py-0.5 text-[12px] font-semibold text-[#7A2253]">
+              <span className="mt-0.5 inline-block max-w-full truncate rounded-[5px] bg-[#FFEDE6] px-2 py-0.5 text-[12px] font-semibold text-[#C21B5C]">
                 {category}
               </span>
             )}
@@ -60,7 +60,7 @@ export function MediaKitSummary({
         </div>
 
         <div className={`${stat} md:px-4`}>
-          <Users className="h-4 w-4 text-[#7A2253]" aria-hidden />
+          <Users className="h-4 w-4 text-[#C21B5C]" aria-hidden />
           <span className={value}>{fanbase}</span>
           <span className={label}>Total fanbase</span>
         </div>
@@ -73,17 +73,17 @@ export function MediaKitSummary({
             {platforms.facebook && <FacebookIcon className="h-4 w-4 text-[#1877F2]" />}
           </span>
           <span className={value}>{platformCount}</span>
-          <span className={`${label} group-hover:text-[#7A2253]`}>{platformCount === 1 ? "Platform" : "Platforms"}</span>
+          <span className={`${label} group-hover:text-[#C21B5C]`}>{platformCount === 1 ? "Platform" : "Platforms"}</span>
         </Link>
 
         <div className={`${stat} md:px-4`}>
-          <Layers className="h-4 w-4 text-[#7A2253]" aria-hidden />
+          <Layers className="h-4 w-4 text-[#C21B5C]" aria-hidden />
           <span className={value}>{packageCount}</span>
           <span className={label}>{packageCount === 1 ? "Collab package" : "Collab packages"}</span>
         </div>
 
         <div className={`${stat} col-span-2 md:col-span-1 md:px-4`}>
-          <Mail className="h-4 w-4 text-[#7A2253]" aria-hidden />
+          <Mail className="h-4 w-4 text-[#C21B5C]" aria-hidden />
           <span title={contactEmail} className="truncate text-[15px] font-bold leading-6 text-[#18181B]">
             {contactEmail || "Not set"}
           </span>
@@ -94,7 +94,7 @@ export function MediaKitSummary({
           <button
             type="button"
             onClick={onEdit}
-            className="inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-[13px] font-semibold text-[#7A2253] hover:bg-[#F7EEF2] cursor-pointer md:w-auto"
+            className="inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white px-3 text-[13px] font-semibold text-[#C21B5C] hover:bg-[#FFEDE6] cursor-pointer md:w-auto"
           >
             <Pencil className="h-3.5 w-3.5" />
             Edit

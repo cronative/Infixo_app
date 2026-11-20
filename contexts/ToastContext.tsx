@@ -34,10 +34,10 @@ function ToastItem({
     progressClass = "bg-rose-500";
     icon = <AlertCircle className="h-4 w-4 stroke-[2.5]" />;
   } else if (toast.type === "info") {
-    chipClass = "bg-indigo-50 text-[#7A2253] border-indigo-100";
+    chipClass = "bg-indigo-50 text-[#C21B5C] border-indigo-100";
     borderClass = "border-indigo-100";
-    progressClass = "bg-[#7A2253]";
-    icon = <Sparkles className="h-4 w-4 text-[#7A2253]" />;
+    progressClass = "bg-[#C21B5C]";
+    icon = <Sparkles className="h-4 w-4 text-[#C21B5C]" />;
   }
 
   const durationSec = ((toast.duration || 3500) / 1000).toFixed(1);
@@ -64,7 +64,7 @@ function ToastItem({
             toast.action?.onClick();
             onDismiss(toast.id);
           }}
-          className="shrink-0 rounded-[5px] bg-[#7A2253] px-2.5 py-1 text-xs font-semibold text-white hover:bg-[#601a41] transition-colors cursor-pointer shadow-xs"
+          className="shrink-0 rounded-[5px] bg-[#C21B5C] px-2.5 py-1 text-xs font-semibold text-white hover:bg-[#A3164E] transition-colors cursor-pointer shadow-xs"
         >
           {toast.action.label}
         </button>

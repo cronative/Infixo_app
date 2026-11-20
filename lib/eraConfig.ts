@@ -38,7 +38,7 @@ export const ERA_CONFIG: Record<EraName, EraConfig> = {
   Flourishing: { name: "Flourishing", color: "#8B5CF6", award: "Flourish Laurel", Icon: LaurelIcon },
   Inspiring: { name: "Inspiring", color: "#4F46E5", award: "Inspire Torch", Icon: TorchIcon },
   Leading: { name: "Leading", color: "#DC2626", award: "Leader Shield", Icon: Shield },
-  Legendary: { name: "Legendary", color: "#7A1F4F", accent: "#D4AF37", award: "Legend Crown", Icon: Crown },
+  Legendary: { name: "Legendary", color: "#C21B5C", accent: "#D4AF37", award: "Legend Crown", Icon: Crown },
 };
 
 /** Rising → Legendary. */

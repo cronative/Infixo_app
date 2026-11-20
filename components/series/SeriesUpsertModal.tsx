@@ -623,7 +623,7 @@ export function SeriesUpsertModal({
               <div
                 className={`flex items-center rounded-[5px] border ${(titleTouched || submitted) && seriesTitleError
                     ? "border-rose-500 bg-rose-50/20 focus-within:border-rose-600 has-series-error"
-                    : "border-[#ECECF0] focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10"
+                    : "border-[#ECECF0] focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10"
                   } bg-white overflow-hidden transition-colors`}
               >
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
@@ -663,7 +663,7 @@ export function SeriesUpsertModal({
                 rows={2}
                 maxLength={160}
                 disabled={saving}
-                className="w-full rounded-[5px] border border-[#ECECF0] bg-white px-3 py-2 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none focus:ring-1 focus:ring-[#7A2253]/20 resize-none"
+                className="w-full rounded-[5px] border border-[#ECECF0] bg-white px-3 py-2 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:outline-none focus:ring-1 focus:ring-[#C21B5C]/20 resize-none"
               />
             </div>
 
@@ -712,9 +712,9 @@ export function SeriesUpsertModal({
                         aria-checked={isSelected}
                         disabled={saving}
                         onClick={() => handlePlatformChange(p)}
-                        className={`flex items-center justify-center gap-2 py-2.5 px-3 text-xs sm:text-[13px] font-semibold transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7A2253]/30 z-10 ${
+                        className={`flex items-center justify-center gap-2 py-2.5 px-3 text-xs sm:text-[13px] font-semibold transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C21B5C]/30 z-10 ${
                           isSelected
-                            ? "bg-[#7A2253] text-white shadow-xs"
+                            ? "bg-[#C21B5C] text-white shadow-xs"
                             : "bg-white text-[#52525B] hover:bg-zinc-100 hover:text-[#18181B]"
                         }`}
                       >
@@ -839,11 +839,11 @@ export function SeriesUpsertModal({
                               className={`w-full rounded-[4px] border bg-white px-3 py-1.5 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:outline-none transition-colors ${
                                 showTitleErr
                                   ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-series-error"
-                                  : "border-[#ECECF0] focus:border-[#7A2253]"
+                                  : "border-[#ECECF0] focus:border-[#C21B5C]"
                               }`}
                             />
                             {row.loadingTitle && (
-                              <span className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[11px] text-[#7A2253]">
+                              <span className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[11px] text-[#C21B5C]">
                                 <Loader2 className="h-3 w-3 animate-spin" />
                               </span>
                             )}
@@ -882,7 +882,7 @@ export function SeriesUpsertModal({
                             className={`w-full rounded-[4px] border bg-white px-3 py-1.5 text-xs text-[#18181B] placeholder:text-[#A1A1AA] focus:outline-none transition-colors ${
                               showUrlErr
                                 ? "border-rose-500 bg-rose-50/20 focus:border-rose-600 has-series-error"
-                                : "border-[#ECECF0] focus:border-[#7A2253]"
+                                : "border-[#ECECF0] focus:border-[#C21B5C]"
                             }`}
                           />
                           {showUrlErr && (
@@ -905,7 +905,7 @@ export function SeriesUpsertModal({
                       type="button"
                       onClick={handleAddRow}
                       disabled={saving}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-[#7A2253] hover:text-[#601a41] hover:underline cursor-pointer py-1"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-[#C21B5C] hover:text-[#A3164E] hover:underline cursor-pointer py-1"
                     >
                       <Plus className="h-3.5 w-3.5" />
                       <span>+ Add episode</span>
@@ -939,7 +939,7 @@ export function SeriesUpsertModal({
             <button
               type="submit"
               disabled={saving}
-              className="h-10 inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] px-5 text-xs font-semibold text-white shadow-md shadow-[#7A2253]/20 hover:opacity-95 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              className="h-10 inline-flex items-center gap-1.5 rounded-[5px] bg-[#C21B5C] px-5 text-xs font-semibold text-white shadow-md shadow-[#C21B5C]/20 hover:opacity-95 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {saving ? (
                 <>

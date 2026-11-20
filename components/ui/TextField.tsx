@@ -44,7 +44,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           className={`group flex h-10 items-center rounded-[5px] border overflow-hidden transition-all duration-150 focus-within:ring-2 ${
             error
               ? "border-[#DC2626] focus-within:border-[#DC2626] focus-within:ring-[#DC2626]/15 bg-rose-50/20"
-              : "border-[#ECECF0] focus-within:border-[#7A2253] focus-within:ring-[#7A2253]/10"
+              : "border-[#ECECF0] focus-within:border-[#C21B5C] focus-within:ring-[#C21B5C]/10"
           } ${disabled ? "opacity-60 cursor-not-allowed bg-[#FAFAFB]" : "bg-white"}`}
         >
           {leftIcon && (
@@ -52,7 +52,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
               className={`flex h-10 w-10 shrink-0 items-center justify-center border-r transition-colors ${
                 error
                   ? "border-[#DC2626]/30 bg-rose-50 text-[#DC2626]"
-                  : "border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76] group-focus-within:text-[#7A2253]"
+                  : "border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76] group-focus-within:text-[#C21B5C]"
               }`}
             >
               {leftIcon}

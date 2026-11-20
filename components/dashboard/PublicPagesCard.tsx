@@ -48,7 +48,7 @@ export function PublicPagesCard({ handle, profileUrl }: { handle: string; profil
           return (
             <li key={label} className="flex items-center gap-1 rounded-[5px] border border-[#ECECF0] bg-white pr-1 transition-colors hover:border-[#D4D4D8]">
               <a href={url} target="_blank" rel="noopener noreferrer" className="flex min-w-0 flex-1 items-center gap-2.5 py-2 pl-2.5">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C]">
                   <Icon className="h-4 w-4" />
                 </span>
                 <span className="min-w-0">

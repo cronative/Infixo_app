@@ -68,14 +68,14 @@ export function LanguageSelect({
         onClick={() => setIsOpen(!isOpen)}
         className={`flex h-11 w-full items-center justify-between rounded-[5px] border bg-white px-4 text-left shadow-xs transition-all focus:outline-none ${
           isOpen
-            ? "border-[#7A2253] ring-2 ring-[#7A2253]/10"
+            ? "border-[#C21B5C] ring-2 ring-[#C21B5C]/10"
             : error
             ? "border-rose-400"
-            : "border-[#ECECF0] hover:border-[#7A2253]/40"
+            : "border-[#ECECF0] hover:border-[#C21B5C]/40"
         }`}
       >
         <div className="flex items-center gap-2.5 min-w-0">
-          <Globe className="h-4 w-4 text-[#7A2253] shrink-0" />
+          <Globe className="h-4 w-4 text-[#C21B5C] shrink-0" />
           {value ? (
             <span className="truncate text-sm font-medium text-[#18181B]">
               {selectedLang ? `${selectedLang.name} (${selectedLang.nativeName})` : value}
@@ -94,7 +94,7 @@ export function LanguageSelect({
         <div className="absolute left-0 right-0 top-full z-50 mt-1.5 max-h-72 w-full overflow-hidden rounded-[5px] border border-[#ECECF0] bg-white p-2 shadow-xl ring-1 ring-black/5 animate-in fade-in-50 slide-in-from-top-2">
           {/* Search Box */}
           <div className="mb-2 px-1">
-            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+            <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
                 <Search className="h-3.5 w-3.5" />
               </span>
@@ -129,7 +129,7 @@ export function LanguageSelect({
                     }}
                     className={`flex w-full items-center justify-between rounded-[5px] px-3 py-2 text-left text-xs transition-colors cursor-pointer ${
                       isSelected
-                        ? "bg-[#FFF0F5] text-[#7A2253] font-bold"
+                        ? "bg-[#FFF6F2] text-[#C21B5C] font-bold"
                         : "text-[#18181B] hover:bg-[#F4F4F5]"
                     }`}
                   >
@@ -137,7 +137,7 @@ export function LanguageSelect({
                       <span className="font-semibold">{l.name}</span>
                       <span className="text-[#A1A1AA] font-normal">({l.nativeName})</span>
                     </div>
-                    {isSelected && <Check className="h-4 w-4 text-[#7A2253] stroke-[3]" />}
+                    {isSelected && <Check className="h-4 w-4 text-[#C21B5C] stroke-[3]" />}
                   </button>
                 );
               })

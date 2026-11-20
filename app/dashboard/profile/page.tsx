@@ -242,7 +242,7 @@ export default function DashboardProfilePage() {
                     src={profile.photoDataUrl}
                     name={profile.displayName || profile.username || "Creator"}
                     className="w-20 h-20 sm:w-22 sm:h-22 rounded-full border-2 border-[#ECECF0] shadow-xs"
-                    textClassName="text-xl font-extrabold text-[#7A2253]"
+                    textClassName="text-xl font-extrabold text-[#C21B5C]"
                     fallbackBgClass="bg-[#FAFAFB]"
                   />
 
@@ -262,8 +262,8 @@ export default function DashboardProfilePage() {
                     ref={photoButtonRef}
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className={`inline-flex items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] px-4 py-2 text-xs font-semibold text-[#7A2253] transition-all cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7A2253] focus-visible:ring-offset-2 ${
-                      highlightPhoto ? "ring-2 ring-[#7A2253] ring-offset-2 animate-pulse" : ""
+                    className={`inline-flex items-center gap-1.5 rounded-[5px] border border-[#ECECF0] bg-white hover:bg-[#FAFAFB] px-4 py-2 text-xs font-semibold text-[#C21B5C] transition-all cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C21B5C] focus-visible:ring-offset-2 ${
+                      highlightPhoto ? "ring-2 ring-[#C21B5C] ring-offset-2 animate-pulse" : ""
                     }`}
                   >
                     <Camera className="h-3.5 w-3.5" />
@@ -294,7 +294,7 @@ export default function DashboardProfilePage() {
                     className={`flex items-center h-11 rounded-[5px] border overflow-hidden transition-colors ${
                       errors.displayName
                         ? "border-[#C2414B] bg-rose-50/20 focus-within:border-[#C2414B]"
-                        : "border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-1 focus-within:ring-[#7A2253]"
+                        : "border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-1 focus-within:ring-[#C21B5C]"
                     }`}
                   >
                     <span className="flex h-11 w-11 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
@@ -372,7 +372,7 @@ export default function DashboardProfilePage() {
                   onClick={handleSuggestBio}
                   className="dash-btn-secondary h-8! text-[13px] font-medium"
                 >
-                  <Sparkles className="h-3.5 w-3.5 text-[#7A2253]" />
+                  <Sparkles className="h-3.5 w-3.5 text-[#C21B5C]" />
                   <span>Suggest bio</span>
                 </button>
                 <span className="whitespace-nowrap text-[12px] text-[#6B6B76]">
@@ -392,7 +392,7 @@ export default function DashboardProfilePage() {
                 value={profile.bio || ""}
                 placeholder="Write a clear introduction to your content and creator identity..."
                 onChange={(e) => updateProfile({ bio: e.target.value })}
-                className={`w-full rounded-[5px] border bg-white p-3 text-[13px] font-normal text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:ring-1 focus:ring-[#7A2253] outline-none min-h-[88px] resize-y transition-colors ${
+                className={`w-full rounded-[5px] border bg-white p-3 text-[13px] font-normal text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:ring-1 focus:ring-[#C21B5C] outline-none min-h-[88px] resize-y transition-colors ${
                   errors.bio ? "border-[#C2414B] bg-rose-50/20" : "border-[#ECECF0]"
                 }`}
               />

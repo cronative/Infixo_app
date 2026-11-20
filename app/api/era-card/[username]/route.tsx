@@ -56,7 +56,7 @@ export async function GET(
   };
 
   const themeDef = getThemeDefinition(resolveThemeKey(themeKey));
-  const accentColor = themeDef?.tokens?.["--accent"] || "#7A2253";
+  const accentColor = themeDef?.tokens?.["--accent"] || "#C21B5C";
 
   return new ImageResponse(
     (
@@ -69,7 +69,7 @@ export async function GET(
           justifyContent: "space-between",
           alignItems: "center",
           padding: "100px 80px",
-          background: "linear-gradient(170deg, #1e0513 0%, #0d0208 55%, #180410 100%)",
+          background: "linear-gradient(170deg, #5C0C2B 0%, #5C0C2B 55%, #5C0C2B 100%)",
           color: "#ffffff",
           fontFamily: "system-ui, sans-serif",
           position: "relative",
@@ -141,7 +141,7 @@ export async function GET(
               fontSize: "20px",
               fontWeight: 700,
               letterSpacing: "0.05em",
-              color: "#fbcfe8",
+              color: "#F9CFC6",
             }}
           >
             ✦ OFFICIAL CREATOR ERA
@@ -166,7 +166,7 @@ export async function GET(
               height: "200px",
               borderRadius: "50%",
               padding: "6px",
-              background: `linear-gradient(135deg, #fbcfe8, ${accentColor})`,
+              background: `linear-gradient(135deg, #F9CFC6, ${accentColor})`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -191,13 +191,13 @@ export async function GET(
                   width: "188px",
                   height: "188px",
                   borderRadius: "50%",
-                  background: "#2a0d1d",
+                  background: "#5C0C2B",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   fontSize: "68px",
                   fontWeight: 900,
-                  color: "#fbcfe8",
+                  color: "#F9CFC6",
                 }}
               >
                 {displayName.charAt(0).toUpperCase()}
@@ -293,7 +293,7 @@ export async function GET(
           <div style={{ fontWeight: 600 }}>
             inflixo.com/{handle}
           </div>
-          <div style={{ fontWeight: 800, color: "#fbcfe8", letterSpacing: "0.05em" }}>
+          <div style={{ fontWeight: 800, color: "#F9CFC6", letterSpacing: "0.05em" }}>
             #MyCreatorEra
           </div>
         </div>

@@ -23,7 +23,7 @@ import { EraAwardMedal } from "@/components/shared/EraBadge";
 import type { DashboardMetricKey, DashboardSummary } from "@/lib/dashboardSummary";
 
 const CARD = "rounded-[5px] border border-[#E8E8EC] bg-white";
-const BRAND = "#7A2253";
+const BRAND = "#C21B5C";
 
 export function DashboardCard({ title, action, children, className = "" }: { title: string; action?: ReactNode; children: ReactNode; className?: string }) {
   return (
@@ -54,7 +54,7 @@ export function BrandInboxCard({
     return (
       <section className={`${CARD} flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between`}>
         <div className="flex min-w-0 items-start gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C]">
             <Inbox className="h-4 w-4" />
           </span>
           <div className="min-w-0">
@@ -81,7 +81,7 @@ export function BrandInboxCard({
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
         {rows.map((row) => (
           <div key={row.label} className="flex items-center gap-3 rounded-[5px] border border-[#F0F0F3] bg-[#FAFAFB] px-3 py-2.5">
-            <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] ${row.hot ? "bg-[#7A2253] text-white" : "bg-white text-[#7A2253] border border-[#ECECF0]"}`}>
+            <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] ${row.hot ? "bg-[#C21B5C] text-white" : "bg-white text-[#C21B5C] border border-[#ECECF0]"}`}>
               {row.icon}
             </span>
             <div className="min-w-0 flex-1">
@@ -91,7 +91,7 @@ export function BrandInboxCard({
             <Link
               href={row.href}
               className={`inline-flex h-8 shrink-0 items-center rounded-[5px] px-3 text-[13px] font-medium transition-colors ${
-                row.hot ? "bg-[#7A2253] text-white hover:bg-[#631841]" : "border border-[#ECECF0] bg-white text-[#18181B] hover:border-[#7A2253]"
+                row.hot ? "bg-[#C21B5C] text-white hover:bg-[#A3164E]" : "border border-[#ECECF0] bg-white text-[#18181B] hover:border-[#C21B5C]"
               }`}
             >
               {row.cta}
@@ -157,11 +157,11 @@ export function WeeklyMetrics({ metrics, loading }: { metrics: DashboardSummary[
   if (!loading && !hasWeeklyActivity(metrics)) {
     return (
       <section className="flex items-center gap-3 rounded-[5px] border border-[#ECECF0] bg-white px-3.5 py-3" aria-label="Last 7 days">
-        <Eye className="h-4 w-4 shrink-0 text-[#7A2253]" aria-hidden />
+        <Eye className="h-4 w-4 shrink-0 text-[#C21B5C]" aria-hidden />
         <p className="min-w-0 flex-1 text-[13px] text-[#3F3F46]">
           <span className="font-semibold text-[#18181B]">No visits in the last 7 days.</span> Add your Inflixo link to your Instagram bio to start getting fans.
         </p>
-        <Link href="/dashboard/analytics" className="shrink-0 text-[13px] font-medium text-[#7A2253] hover:underline underline-offset-2">
+        <Link href="/dashboard/analytics" className="shrink-0 text-[13px] font-medium text-[#C21B5C] hover:underline underline-offset-2">
           Analytics
         </Link>
       </section>
@@ -171,7 +171,7 @@ export function WeeklyMetrics({ metrics, loading }: { metrics: DashboardSummary[
     <section className="space-y-2.5">
       <div className="flex items-center justify-between">
         <h2 className="text-[14px] font-semibold text-[#18181B]">Last 7 days</h2>
-        <Link href="/dashboard/analytics" className="text-[13px] font-medium text-[#7A2253] hover:underline underline-offset-2">
+        <Link href="/dashboard/analytics" className="text-[13px] font-medium text-[#C21B5C] hover:underline underline-offset-2">
           All analytics
         </Link>
       </div>
@@ -206,7 +206,7 @@ export function WeeklyMetrics({ metrics, loading }: { metrics: DashboardSummary[
 function PerformerRow({ icon, label, title, count, unit, sub }: { icon: ReactNode; label: string; title?: string; count?: number; unit: string; sub?: string | null }) {
   return (
     <li className="flex items-center gap-3 py-2.5">
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#F7EEF2] text-[#7A2253]">{icon}</span>
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-[#FFEDE6] text-[#C21B5C]">{icon}</span>
       <div className="min-w-0 flex-1">
         <p className="text-[12px] uppercase tracking-wide text-[#8E8E93]">{label}</p>
         <p className="truncate text-[14px] font-medium text-[#18181B]" title={title}>{title ?? "—"}</p>
@@ -250,7 +250,7 @@ const SOURCE_COLORS: Record<string, string> = {
   YouTube: "#FF0000",
   WhatsApp: "#25D366",
   "Shared link": "#0EA5E9",
-  Direct: "#7A2253",
+  Direct: "#C21B5C",
   Other: "#A1A1AA",
 };
 
@@ -288,8 +288,8 @@ export function TrafficSources({ sources }: { sources: DashboardSummary["sources
 
 export function QuickActions({ addEpisodeHref }: { addEpisodeHref: string }) {
   const cls =
-    "flex min-w-[112px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-[5px] border border-[#E8E8EC] bg-white px-3 py-3 text-center text-[13px] font-medium text-[#18181B] transition-colors hover:border-[#7A2253] hover:text-[#7A2253] cursor-pointer @xl:min-w-0";
-  const icon = "h-4 w-4 text-[#7A2253]";
+    "flex min-w-[112px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-[5px] border border-[#E8E8EC] bg-white px-3 py-3 text-center text-[13px] font-medium text-[#18181B] transition-colors hover:border-[#C21B5C] hover:text-[#C21B5C] cursor-pointer @xl:min-w-0";
+  const icon = "h-4 w-4 text-[#C21B5C]";
   const actions: { label: string; icon: ReactNode; href?: string; onClick?: () => void }[] = [
     { label: "Add Episode", icon: <Clapperboard className={icon} />, href: addEpisodeHref },
     { label: "Add Link", icon: <Link2 className={icon} />, href: "/dashboard/links?new=true" },
@@ -339,7 +339,7 @@ export function EraProgressCard({ fans, onShare }: { fans: number; onShare: () =
             </p>
           </div>
         </div>
-        <button type="button" onClick={onShare} className="shrink-0 text-[13px] font-medium text-[#7A2253] hover:underline underline-offset-2 cursor-pointer">
+        <button type="button" onClick={onShare} className="shrink-0 text-[13px] font-medium text-[#C21B5C] hover:underline underline-offset-2 cursor-pointer">
           Share Era
         </button>
       </div>
@@ -376,17 +376,17 @@ export function SmartAlerts({ alerts }: { alerts: SmartAlert[] }) {
         <div
           key={a.id}
           className={`flex items-center gap-3 rounded-[5px] border px-3.5 py-2.5 ${
-            a.tone === "warn" ? "border-amber-200 bg-amber-50" : "border-[#F3D9E5] bg-[#FDF5F9]"
+            a.tone === "warn" ? "border-amber-200 bg-amber-50" : "border-[#F6E0DC] bg-[#FFF6F2]"
           }`}
         >
-          <AlertTriangle className={`h-4 w-4 shrink-0 ${a.tone === "warn" ? "text-amber-600" : "text-[#7A2253]"}`} />
+          <AlertTriangle className={`h-4 w-4 shrink-0 ${a.tone === "warn" ? "text-amber-600" : "text-[#C21B5C]"}`} />
           <p className="min-w-0 flex-1 text-[13px] font-medium text-[#18181B]">{a.text}</p>
           {a.cta.href ? (
-            <Link href={a.cta.href} className="shrink-0 text-[13px] font-semibold text-[#7A2253] hover:underline underline-offset-2">
+            <Link href={a.cta.href} className="shrink-0 text-[13px] font-semibold text-[#C21B5C] hover:underline underline-offset-2">
               {a.cta.label}
             </Link>
           ) : (
-            <button type="button" onClick={a.cta.onClick} className="shrink-0 text-[13px] font-semibold text-[#7A2253] hover:underline underline-offset-2 cursor-pointer">
+            <button type="button" onClick={a.cta.onClick} className="shrink-0 text-[13px] font-semibold text-[#C21B5C] hover:underline underline-offset-2 cursor-pointer">
               {a.cta.label}
             </button>
           )}

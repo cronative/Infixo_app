@@ -22,7 +22,7 @@ const CAMPAIGN_TYPES = ["Cafe Visit & Review", "Food Delivery Experience", "Prod
 const DURATION_RE = /^\d{1,2}:\d{2}(:\d{2})?$/;
 
 const input =
-  "h-10 w-full rounded-[5px] border border-[#ECECF0] bg-white px-3 text-[13px] text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#7A2253] focus:outline-none";
+  "h-10 w-full rounded-[5px] border border-[#ECECF0] bg-white px-3 text-[13px] text-[#18181B] placeholder:text-[#A1A1AA] focus:border-[#C21B5C] focus:outline-none";
 const label = "block text-[12px] font-semibold text-[#18181B]";
 
 function PlatformGlyph({ platform, className = "h-3.5 w-3.5" }: { platform?: string; className?: string }) {
@@ -44,7 +44,7 @@ function platformFromUrl(url: string): Platform | "" {
 function CollabTile({ c, onEdit, onDelete, className = "" }: { c: CreatorCollaboration; onEdit: () => void; onDelete: () => void; className?: string }) {
   return (
     <article className={`group overflow-hidden rounded-[5px] border border-[#ECECF0] bg-white ${c.isActive ? "" : "opacity-60"} ${className}`}>
-      <div className="relative h-[104px] bg-[#F7EEF2]">
+      <div className="relative h-[104px] bg-[#FFEDE6]">
         {c.thumbnailUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={c.thumbnailUrl} alt="" className="h-full w-full object-cover" />
@@ -52,7 +52,7 @@ function CollabTile({ c, onEdit, onDelete, className = "" }: { c: CreatorCollabo
           // eslint-disable-next-line @next/next/no-img-element
           <img src={c.brandLogoUrl} alt="" className="h-full w-full object-contain p-6" />
         ) : (
-          <span className="flex h-full w-full items-center justify-center text-[28px] font-bold text-[#7A2253]/60">{c.brandName.slice(0, 1).toUpperCase()}</span>
+          <span className="flex h-full w-full items-center justify-center text-[28px] font-bold text-[#C21B5C]/60">{c.brandName.slice(0, 1).toUpperCase()}</span>
         )}
         {c.campaignUrl && (
           <a
@@ -72,7 +72,7 @@ function CollabTile({ c, onEdit, onDelete, className = "" }: { c: CreatorCollabo
           </span>
         )}
         <div className="absolute right-1.5 top-1.5 flex gap-1">
-          <button type="button" onClick={onEdit} aria-label={`Edit ${c.brandName}`} className="flex h-6 w-6 items-center justify-center rounded-[5px] bg-white/95 text-[#3F3F46] shadow-xs hover:text-[#7A2253] cursor-pointer">
+          <button type="button" onClick={onEdit} aria-label={`Edit ${c.brandName}`} className="flex h-6 w-6 items-center justify-center rounded-[5px] bg-white/95 text-[#3F3F46] shadow-xs hover:text-[#C21B5C] cursor-pointer">
             <Pencil className="h-3.5 w-3.5" />
           </button>
           <button type="button" onClick={onDelete} aria-label={`Delete ${c.brandName}`} className="flex h-6 w-6 items-center justify-center rounded-[5px] bg-white/95 text-[#3F3F46] shadow-xs hover:text-[#C2414B] cursor-pointer">
@@ -89,7 +89,7 @@ function CollabTile({ c, onEdit, onDelete, className = "" }: { c: CreatorCollabo
           {c.campaignTitle && <p className="truncate text-[11px] text-[#6B6B76]">{c.campaignTitle}</p>}
         </div>
         {c.campaignUrl && (
-          <a href={c.campaignUrl} target="_blank" rel="noopener noreferrer" aria-label="Open campaign" className="shrink-0 text-[#7A2253] hover:opacity-80">
+          <a href={c.campaignUrl} target="_blank" rel="noopener noreferrer" aria-label="Open campaign" className="shrink-0 text-[#C21B5C] hover:opacity-80">
             <ExternalLink className="h-4 w-4" />
           </a>
         )}
@@ -198,11 +198,11 @@ export function PastCollaborationsCard({ creatorId, onCountChange }: { creatorId
         action={
           <div className="flex items-center gap-2">
             {items.length > 3 && (
-              <button type="button" onClick={() => setShowAll((v) => !v)} className="text-[13px] font-semibold text-[#7A2253] hover:underline cursor-pointer">
+              <button type="button" onClick={() => setShowAll((v) => !v)} className="text-[13px] font-semibold text-[#C21B5C] hover:underline cursor-pointer">
                 {showAll ? "Show less" : `View all (${items.length})`}
               </button>
             )}
-            <button type="button" onClick={openNew} className="inline-flex h-8 items-center gap-1 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-[12px] font-semibold text-[#7A2253] hover:bg-[#F7EEF2] cursor-pointer">
+            <button type="button" onClick={openNew} className="inline-flex h-8 items-center gap-1 rounded-[5px] border border-[#ECECF0] bg-white px-2.5 text-[12px] font-semibold text-[#C21B5C] hover:bg-[#FFEDE6] cursor-pointer">
               <Plus className="h-3.5 w-3.5" /> Add
             </button>
           </div>
@@ -215,7 +215,7 @@ export function PastCollaborationsCard({ creatorId, onCountChange }: { creatorId
             ))}
           </div>
         ) : items.length === 0 ? (
-          <button type="button" onClick={openNew} className="flex w-full flex-col items-center gap-1 rounded-[5px] border border-dashed border-[#D4D4D8] px-4 py-8 text-center hover:border-[#7A2253] cursor-pointer">
+          <button type="button" onClick={openNew} className="flex w-full flex-col items-center gap-1 rounded-[5px] border border-dashed border-[#D4D4D8] px-4 py-8 text-center hover:border-[#C21B5C] cursor-pointer">
             <Megaphone className="h-6 w-6 text-[#A1A1AA]" />
             <span className="text-[13px] font-semibold text-[#18181B]">Add your first brand collaboration</span>
             <span className="text-[12px] text-[#6B6B76]">Brand, campaign type, video link and cover — shown on your media kit.</span>
@@ -257,7 +257,7 @@ export function PastCollaborationsCard({ creatorId, onCountChange }: { creatorId
                 <input id="pc-type" maxLength={120} value={editing.campaignTitle || ""} onChange={(e) => patch({ campaignTitle: e.target.value })} placeholder="e.g. Cafe Visit & Review" className={`${input} ${errors.campaignTitle ? "border-[#C2414B]" : ""}`} />
                 <div className="flex flex-wrap gap-1.5">
                   {CAMPAIGN_TYPES.map((t) => (
-                    <button key={t} type="button" onClick={() => patch({ campaignTitle: t })} className={`rounded-[5px] border px-2 py-0.5 text-[12px] font-medium cursor-pointer ${editing.campaignTitle === t ? "border-[#7A2253] bg-[#F7EEF2] text-[#7A2253]" : "border-[#ECECF0] text-[#52525B] hover:border-[#7A2253]"}`}>
+                    <button key={t} type="button" onClick={() => patch({ campaignTitle: t })} className={`rounded-[5px] border px-2 py-0.5 text-[12px] font-medium cursor-pointer ${editing.campaignTitle === t ? "border-[#C21B5C] bg-[#FFEDE6] text-[#C21B5C]" : "border-[#ECECF0] text-[#52525B] hover:border-[#C21B5C]"}`}>
                       {t}
                     </button>
                   ))}
@@ -312,7 +312,7 @@ export function PastCollaborationsCard({ creatorId, onCountChange }: { creatorId
                 <textarea id="pc-desc" rows={2} maxLength={1000} value={editing.description || ""} onChange={(e) => patch({ description: e.target.value })} placeholder="e.g. 1 reel + 2 stories, 48K views in a week" className={`${input} h-auto resize-none py-2.5`} />
               </div>
               <label className="flex cursor-pointer items-center gap-2 text-[13px] font-medium text-[#18181B]">
-                <input type="checkbox" checked={editing.isActive !== false} onChange={(e) => patch({ isActive: e.target.checked })} className="h-4 w-4 accent-[#7A2253]" />
+                <input type="checkbox" checked={editing.isActive !== false} onChange={(e) => patch({ isActive: e.target.checked })} className="h-4 w-4 accent-[#C21B5C]" />
                 Show on my media kit
               </label>
             </ModalBody>
@@ -320,7 +320,7 @@ export function PastCollaborationsCard({ creatorId, onCountChange }: { creatorId
               <button type="button" onClick={() => setEditing(null)} className="h-10 rounded-[5px] border border-[#ECECF0] bg-white px-4 text-[12px] font-semibold text-[#6B6B76] hover:bg-[#F4F4F5] cursor-pointer">
                 Cancel
               </button>
-              <button type="submit" disabled={saving} className="h-10 rounded-[5px] bg-[#7A2253] px-5 text-[12px] font-semibold text-white hover:opacity-95 cursor-pointer disabled:opacity-60">
+              <button type="submit" disabled={saving} className="h-10 rounded-[5px] bg-[#C21B5C] px-5 text-[12px] font-semibold text-white hover:opacity-95 cursor-pointer disabled:opacity-60">
                 {saving ? "Saving…" : editing.id ? "Save changes" : "Add collaboration"}
               </button>
             </ModalFooter>

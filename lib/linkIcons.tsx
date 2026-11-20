@@ -448,8 +448,8 @@ export function getPlatformFromUrl(rawUrl: string): PlatformInfo {
     name: bare || "Link",
     destinationLabel: bare || "External Link",
     isKnownApp: false,
-    bgClass: "bg-[#7A2253] text-white",
-    textClass: "text-[#7A2253]",
+    bgClass: "bg-[#C21B5C] text-white",
+    textClass: "text-[#C21B5C]",
     renderIcon: (compact?: boolean) => (
       <span className={compact ? "text-[11px] font-bold uppercase text-white" : "text-xs font-bold uppercase text-white"}>
         {initialLetter}

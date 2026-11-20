@@ -24,7 +24,7 @@ export function GlobalFooter({
 
   // Always a white footer (every theme), so the colours are fixed for white, not taken from the theme.
   const linkBtnClasses =
-    "tap-44 px-2 py-1 rounded-[5px] text-[12px] font-medium text-[#52525B] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer select-none inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-[#7A2253]";
+    "tap-44 px-2 py-1 rounded-[5px] text-[12px] font-medium text-[#52525B] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-colors cursor-pointer select-none inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-[#C21B5C]";
 
   const linkBtnStyle = {};
 
@@ -41,7 +41,7 @@ export function GlobalFooter({
           onClick={(e) => {
             if (disabled) e.preventDefault();
           }}
-          className="inline-flex items-center gap-1 font-semibold text-[#7A2253] hover:opacity-85 transition-opacity cursor-pointer"
+          className="inline-flex items-center gap-1 font-semibold text-[#C21B5C] hover:opacity-85 transition-opacity cursor-pointer"
           aria-label="Inflixo Homepage"
         >
           <span>Inflixo</span>

@@ -146,7 +146,7 @@ export function GenreMultiSelect({
       >
         {/* Sticky search on top */}
         <div className="sticky top-0 z-10 border-b border-[#F4F4F5] bg-white p-2 sm:p-2.5">
-          <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] focus-within:bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+          <div className="flex items-center rounded-[5px] border border-[#ECECF0] bg-[#FAFAFB] focus-within:bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-white text-[#6B6B76]">
               <Search className="h-3.5 w-3.5" />
             </span>
@@ -201,7 +201,7 @@ export function GenreMultiSelect({
                         onClick={() => toggleGenre(g)}
                         className={`inline-flex h-7 items-center gap-1 rounded-[5px] border px-2.5 text-xs transition-colors cursor-pointer shrink-0 ${
                           isSelected
-                            ? "border-[#7A2253] bg-[#7A2253]/[0.08] font-semibold text-[#7A2253]"
+                            ? "border-[#C21B5C] bg-[#C21B5C]/[0.08] font-semibold text-[#C21B5C]"
                             : isMaxReached
                             ? "opacity-40 cursor-not-allowed border-[#ECECF0] bg-white text-[#6B6B76]"
                             : "border-[#ECECF0] bg-white text-[#52525B] hover:border-[#D4D4D8] hover:bg-[#FAFAFB] hover:text-[#18181B]"

@@ -191,9 +191,9 @@ export function SeriesSharePopover({
           <button
             type="button"
             onClick={handleNativeShare}
-            className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#7A2253] hover:bg-[#fdf2f8] transition-colors cursor-pointer border-t border-zinc-100 mt-1"
+            className="flex w-full items-center gap-2 rounded-[5px] px-2.5 py-2 text-xs font-medium text-[#C21B5C] hover:bg-[#FFF6F2] transition-colors cursor-pointer border-t border-zinc-100 mt-1"
           >
-            <Share2 className="h-4 w-4 text-[#7A2253]" />
+            <Share2 className="h-4 w-4 text-[#C21B5C]" />
             <span>More share options…</span>
           </button>
         )}

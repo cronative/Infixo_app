@@ -143,7 +143,7 @@ export default function VerifyOtpPage() {
     <AuthLayout showBackToHome={false}>
       <AuthCard
         eyebrow="VERIFICATION"
-        eyebrowIcon={<ShieldCheck className="h-3.5 w-3.5 text-[#7A2253]" />}
+        eyebrowIcon={<ShieldCheck className="h-3.5 w-3.5 text-[#C21B5C]" />}
         title="Check your email"
         subtitle={
           <div className="flex flex-col items-center gap-1">
@@ -153,7 +153,7 @@ export default function VerifyOtpPage() {
               <button
                 type="button"
                 onClick={() => router.push("/login")}
-                className="ml-2 inline-flex items-center gap-0.5 text-xs font-bold text-[#7A2253] underline hover:opacity-80 cursor-pointer"
+                className="ml-2 inline-flex items-center gap-0.5 text-xs font-bold text-[#C21B5C] underline hover:opacity-80 cursor-pointer"
                 title="Edit email address"
               >
                 <Edit3 className="h-3 w-3" />
@@ -174,7 +174,7 @@ export default function VerifyOtpPage() {
           <div className="flex justify-center">
             <Chip
               variant="pill"
-              icon={<Clock className="h-3.5 w-3.5 text-[#7A2253]" />}
+              icon={<Clock className="h-3.5 w-3.5 text-[#C21B5C]" />}
               className="text-[11.5px] sm:text-xs"
             >
               Code expires in 10 minutes. It usually arrives in a few seconds.
@@ -247,7 +247,7 @@ export default function VerifyOtpPage() {
             {countdown > 0 && attemptsLeft > 0 ? (
               <p>
                 Didn&apos;t get it? Resend code in{" "}
-                <span className="font-mono font-bold text-[#7A2253]">
+                <span className="font-mono font-bold text-[#C21B5C]">
                   {timerFormatted}
                 </span>
               </p>
@@ -258,7 +258,7 @@ export default function VerifyOtpPage() {
                   type="button"
                   onClick={handleResend}
                   disabled={resending}
-                  className="font-bold text-[#7A2253] underline hover:opacity-80 cursor-pointer disabled:opacity-50"
+                  className="font-bold text-[#C21B5C] underline hover:opacity-80 cursor-pointer disabled:opacity-50"
                 >
                   {resending ? "Sending code…" : "Resend code"}
                 </button>

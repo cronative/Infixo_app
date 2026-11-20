@@ -11,7 +11,7 @@ export const metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-dvh bg-white text-[#181716] flex flex-col font-sans selection:bg-[#7A2253]/10 selection:text-[#7A2253]">
+    <div className="min-h-dvh bg-white text-[#181716] flex flex-col font-sans selection:bg-[#C21B5C]/10 selection:text-[#C21B5C]">
       {/* Navbar */}
       <header className="safe-top sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#E7E3DC]">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 sm:px-8">
@@ -30,7 +30,7 @@ export default function PrivacyPolicyPage() {
       <main className="mx-auto max-w-4xl px-5 sm:px-8 py-12 sm:py-16 flex-1 text-left space-y-10">
         {/* Header Banner */}
         <div className="space-y-3 border-b border-[#E7E3DC] pb-8">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#7A2253]/[0.09] border border-[#7A2253]/20 px-3 py-1 text-xs font-bold text-[#7A2253]">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#C21B5C]/[0.09] border border-[#C21B5C]/20 px-3 py-1 text-xs font-bold text-[#C21B5C]">
             <ShieldCheck className="h-4 w-4" />
             <span>LEGAL &amp; PRIVACY COMPLIANCE</span>
           </div>
@@ -86,8 +86,8 @@ export default function PrivacyPolicyPage() {
           </section>
 
           {/* Section 3 - CRITICAL GOOGLE / YOUTUBE MANDATORY DISCLOSURE */}
-          <section className="space-y-3 rounded-2xl border border-[#7A2253]/25 bg-[#7A2253]/[0.03] p-5 sm:p-6 text-[#181716]">
-            <div className="flex items-center gap-2 text-[#7A2253]">
+          <section className="space-y-3 rounded-2xl border border-[#C21B5C]/25 bg-[#C21B5C]/[0.03] p-5 sm:p-6 text-[#181716]">
+            <div className="flex items-center gap-2 text-[#C21B5C]">
               <Lock className="h-5 w-5 shrink-0" />
               <h2 className="font-display text-lg sm:text-xl font-bold tracking-tight">
                 3. YouTube API Services Compliance &amp; Google User Data
@@ -105,7 +105,7 @@ export default function PrivacyPolicyPage() {
                     href="https://www.youtube.com/t/terms"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-bold text-[#7A2253] underline hover:text-brand-hover inline-flex items-center gap-0.5"
+                    className="font-bold text-[#C21B5C] underline hover:text-brand-hover inline-flex items-center gap-0.5"
                   >
                     YouTube Terms of Service
                     <ExternalLink className="h-3 w-3" />
@@ -117,7 +117,7 @@ export default function PrivacyPolicyPage() {
                     href="https://policies.google.com/privacy"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-bold text-[#7A2253] underline hover:text-brand-hover inline-flex items-center gap-0.5"
+                    className="font-bold text-[#C21B5C] underline hover:text-brand-hover inline-flex items-center gap-0.5"
                   >
                     Google Privacy Policy
                     <ExternalLink className="h-3 w-3" />
@@ -129,7 +129,7 @@ export default function PrivacyPolicyPage() {
                     href="https://security.google.com/settings/security/permissions"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-bold text-[#7A2253] underline hover:text-brand-hover inline-flex items-center gap-0.5"
+                    className="font-bold text-[#C21B5C] underline hover:text-brand-hover inline-flex items-center gap-0.5"
                   >
                     Google Security Settings Page
                     <ExternalLink className="h-3 w-3" />
@@ -156,7 +156,7 @@ export default function PrivacyPolicyPage() {
                 href="https://www.facebook.com/privacy/policy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-bold text-[#7A2253] underline hover:text-brand-hover inline-flex items-center gap-0.5"
+                className="font-bold text-[#C21B5C] underline hover:text-brand-hover inline-flex items-center gap-0.5"
               >
                 Meta Privacy Policy
                 <ExternalLink className="h-3 w-3" />
@@ -206,7 +206,7 @@ export default function PrivacyPolicyPage() {
               </li>
               <li>
                 <strong>Complete Account Erasure Request:</strong> To delete your entire Inflixo account, profile data, series links, and database records, submit a deletion request by emailing{" "}
-                <strong className="text-[#7A2253]">privacy@inflixo.com</strong> with the subject line <em>&quot;Data Deletion Request&quot;</em> from your registered account email. All personal data will be permanently wiped from our active databases within 30 days.
+                <strong className="text-[#C21B5C]">privacy@inflixo.com</strong> with the subject line <em>&quot;Data Deletion Request&quot;</em> from your registered account email. All personal data will be permanently wiped from our active databases within 30 days.
               </li>
             </ol>
           </section>
@@ -217,7 +217,7 @@ export default function PrivacyPolicyPage() {
               8. Children&apos;s Privacy
             </h2>
             <p>
-              Inflixo is intended for content creators and viewers who are at least 13 years of age (or 18+ for paid subscriptions and commercial services). We do not knowingly collect personal information from children under 13. If you become aware that a child has provided us with personal information without parental consent, please contact us at <strong className="text-[#7A2253]">privacy@inflixo.com</strong>, and we will promptly delete such records.
+              Inflixo is intended for content creators and viewers who are at least 13 years of age (or 18+ for paid subscriptions and commercial services). We do not knowingly collect personal information from children under 13. If you become aware that a child has provided us with personal information without parental consent, please contact us at <strong className="text-[#C21B5C]">privacy@inflixo.com</strong>, and we will promptly delete such records.
             </p>
           </section>
 
@@ -230,9 +230,9 @@ export default function PrivacyPolicyPage() {
               In compliance with the <strong>Information Technology Act, 2000</strong>, the <strong>Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021</strong>, and the <strong>Digital Personal Data Protection Act, 2023</strong> (India), the contact details of our designated Grievance Officer are published below:
             </p>
             <div className="rounded-2xl bg-white border border-[#E7E3DC] p-5 space-y-2 text-xs sm:text-sm font-semibold text-[#181716]">
-              <p className="font-bold text-base text-[#7A2253]">Grievance Officer</p>
+              <p className="font-bold text-base text-[#C21B5C]">Grievance Officer</p>
               <p>TrustIQ Labs PVT LTD — Legal &amp; Compliance Division</p>
-              <p className="text-[#54514D]">Email: <a href="mailto:grievance@inflixo.com" className="text-[#7A2253] underline">grievance@inflixo.com</a> (copy to <a href="mailto:privacy@inflixo.com" className="text-[#7A2253] underline">privacy@inflixo.com</a>)</p>
+              <p className="text-[#54514D]">Email: <a href="mailto:grievance@inflixo.com" className="text-[#C21B5C] underline">grievance@inflixo.com</a> (copy to <a href="mailto:privacy@inflixo.com" className="text-[#C21B5C] underline">privacy@inflixo.com</a>)</p>
               <p className="text-[#797570] font-normal text-xs pt-1">
                 Response Timelines: All legitimate privacy grievances will be acknowledged within twenty-four (24) hours and resolved within fifteen (15) days of receipt.
               </p>
@@ -259,7 +259,7 @@ export default function PrivacyPolicyPage() {
             </p>
             <div className="rounded-2xl bg-white border border-[#E7E3DC] p-4 space-y-1 text-xs sm:text-sm font-semibold text-[#181716]">
               <p>TrustIQ Labs PVT LTD — Inflixo</p>
-              <p className="text-[#7A2253]">Email: privacy@inflixo.com</p>
+              <p className="text-[#C21B5C]">Email: privacy@inflixo.com</p>
             </div>
           </section>
         </div>

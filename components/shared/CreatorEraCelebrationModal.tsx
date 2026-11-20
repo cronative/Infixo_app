@@ -83,7 +83,7 @@ export function CreatorEraCelebrationModal({
   }
 
   // Pre-generate confetti pieces
-  const confettiColors = ["#7A2253", "#F472B6", "#FBBF24", "#38BDF8", "#34D399", "#A855F7", "#F87171"];
+  const confettiColors = ["#C21B5C", "#F472B6", "#FBBF24", "#38BDF8", "#34D399", "#A855F7", "#F87171"];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-300">
@@ -130,15 +130,15 @@ export function CreatorEraCelebrationModal({
       `}</style>
 
       {/* Main Celebration Card */}
-      <div className="relative z-10 w-full max-w-sm sm:max-w-md bg-white rounded-[16px] border border-[#FCE7F3] shadow-2xl p-6 sm:p-8 text-center space-y-5 animate-in zoom-in-95 duration-300">
+      <div className="relative z-10 w-full max-w-sm sm:max-w-md bg-white rounded-[16px] border border-[#FFEDE6] shadow-2xl p-6 sm:p-8 text-center space-y-5 animate-in zoom-in-95 duration-300">
         {/* Glow Icon */}
-        <div className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-[#7A2253] to-[#F472B6] text-white shadow-xl shadow-[#7A2253]/25 ring-8 ring-[#FFF0F5]">
+        <div className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-[#C21B5C] to-[#F472B6] text-white shadow-xl shadow-[#C21B5C]/25 ring-8 ring-[#FFF6F2]">
           <Sparkles className="h-10 w-10 animate-spin" style={{ animationDuration: "6s" }} />
         </div>
 
         {/* Text */}
         <div className="space-y-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF0F5] border border-[#FCE7F3] text-xs font-bold text-[#7A2253]">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF6F2] border border-[#FFEDE6] text-xs font-bold text-[#C21B5C]">
             ✦ NEW CREATOR ERA UNLOCKED
           </span>
           <h2 className="text-2xl sm:text-3xl font-black text-[#18181B] tracking-tight leading-tight">
@@ -152,9 +152,9 @@ export function CreatorEraCelebrationModal({
         </div>
 
         {/* Card Preview Banner */}
-        <div className="p-3 bg-[#FFF5F7] rounded-[10px] border border-[#FCE7F3] flex items-center justify-between gap-3 text-left">
+        <div className="p-3 bg-[#FFF5F7] rounded-[10px] border border-[#FFEDE6] flex items-center justify-between gap-3 text-left">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#7A2253] text-white font-extrabold text-xs">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#C21B5C] text-white font-extrabold text-xs">
               {era.stage}
             </div>
             <div className="min-w-0">
@@ -162,7 +162,7 @@ export function CreatorEraCelebrationModal({
               <p className="text-[11px] text-[#6B6B76]">1080×1920 Story PNG ready to post</p>
             </div>
           </div>
-          <span className="text-[11px] font-bold text-[#7A2253] shrink-0">#MyCreatorEra</span>
+          <span className="text-[11px] font-bold text-[#C21B5C] shrink-0">#MyCreatorEra</span>
         </div>
 
         {/* Buttons */}
@@ -171,7 +171,7 @@ export function CreatorEraCelebrationModal({
             type="button"
             onClick={handleShare}
             disabled={sharing}
-            className="tap-scale w-full flex items-center justify-center gap-2 py-3 px-5 rounded-[8px] bg-[#7A2253] hover:bg-[#631841] text-white text-xs sm:text-sm font-bold shadow-md shadow-[#7A2253]/20 transition-all cursor-pointer disabled:opacity-60"
+            className="tap-scale w-full flex items-center justify-center gap-2 py-3 px-5 rounded-[8px] bg-[#C21B5C] hover:bg-[#A3164E] text-white text-xs sm:text-sm font-bold shadow-md shadow-[#C21B5C]/20 transition-all cursor-pointer disabled:opacity-60"
           >
             <Share2 className="h-4 w-4" />
             <span>{sharing ? "Preparing Card..." : "Share Era Card"}</span>

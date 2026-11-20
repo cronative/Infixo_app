@@ -69,7 +69,7 @@ export function LegalDocument({
         <li key={s.id}>
           <a
             href={`#${s.id}`}
-            className="flex gap-2 rounded-[5px] py-0.5 text-[#54514D] hover:text-[#7A2253] focus-visible:outline-2 focus-visible:outline-[#7A2253]"
+            className="flex gap-2 rounded-[5px] py-0.5 text-[#54514D] hover:text-[#C21B5C] focus-visible:outline-2 focus-visible:outline-[#C21B5C]"
           >
             <span className="w-5 shrink-0 tabular-nums text-[#A8A29E]">{i + 1}.</span>
             <span>{s.title}</span>
@@ -83,7 +83,7 @@ export function LegalDocument({
     <div className="flex min-h-dvh flex-col bg-white font-sans text-[#181716]">
       <a
         href="#legal-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-[5px] focus:bg-white focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-[#7A2253] focus:outline-2 focus:outline-[#7A2253]"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-[5px] focus:bg-white focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-[#C21B5C] focus:outline-2 focus:outline-[#C21B5C]"
       >
         Skip to content
       </a>
@@ -93,7 +93,7 @@ export function LegalDocument({
           <Logo size="md" />
           <Link
             href="/"
-            className="inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-[#E7E3DC] px-3 text-xs font-semibold text-[#54514D] hover:border-[#7A2253]/30 hover:text-[#7A2253]"
+            className="inline-flex h-9 items-center gap-1.5 rounded-[5px] border border-[#E7E3DC] px-3 text-xs font-semibold text-[#54514D] hover:border-[#C21B5C]/30 hover:text-[#C21B5C]"
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             Home
@@ -103,7 +103,7 @@ export function LegalDocument({
 
       <main id="legal-content" className="mx-auto w-full max-w-[960px] flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
         <div className="border-b border-[#E7E3DC] pb-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7A2253]">Legal</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#C21B5C]">Legal</p>
           <h1 className="mt-2 font-display text-[28px] font-bold leading-tight tracking-tight sm:text-4xl">{title}</h1>
           <p className="mt-2 text-sm text-[#797570]">
             <span className="whitespace-nowrap">Last updated: {lastUpdated}</span>
@@ -147,7 +147,7 @@ export function LegalDocument({
               {sections.map((s, i) => (
                 <section key={s.id} id={s.id} aria-labelledby={`${s.id}-title`} className="scroll-mt-24">
                   <h2 id={`${s.id}-title`} className="text-lg font-bold leading-snug text-[#181716] sm:text-xl">
-                    <span className="mr-1.5 tabular-nums text-[#7A2253]">{i + 1}.</span>
+                    <span className="mr-1.5 tabular-nums text-[#C21B5C]">{i + 1}.</span>
                     {s.title}
                   </h2>
                   <div className="mt-3 space-y-4 break-words text-[15px] leading-[1.7] text-[#44403C] sm:text-base">

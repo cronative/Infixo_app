@@ -11,7 +11,7 @@ import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import { NotificationBell } from "@/components/dashboard/NotificationBell";
 
 const ICON_BTN =
-  "flex h-10 w-10 cursor-pointer items-center justify-center rounded-[5px] text-[#3F3F46] transition-colors hover:bg-[#fdf2f8] hover:text-[#7A2253] active:bg-[#fce7f3]";
+  "flex h-10 w-10 cursor-pointer items-center justify-center rounded-[5px] text-[#3F3F46] transition-colors hover:bg-[#FFF6F2] hover:text-[#C21B5C] active:bg-[#FFEDE6]";
 
 /** Native-style mobile app bar: menu · brand (or title) · profile shortcuts. */
 export function DashboardMobileHeader({

@@ -1046,7 +1046,7 @@ export function MediaKitV2Content({
               <button
                 type="button"
                 onClick={() => onEnquirePackage?.(null)}
-                className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] px-3 text-[14px] font-semibold text-white cursor-pointer"
+                className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-[5px] bg-[#C21B5C] px-3 text-[14px] font-semibold text-white cursor-pointer"
               >
                 <MessageSquare className="h-4 w-4" />
                 <span>Enquire</span>

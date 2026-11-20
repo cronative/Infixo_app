@@ -125,21 +125,21 @@ export default function LoginPage() {
             By continuing, you agree to Inflixo&apos;s{" "}
             <Link
               href="/terms"
-              className="text-[#52525B] underline hover:text-[#7A2253]"
+              className="text-[#52525B] underline hover:text-[#C21B5C]"
             >
               Terms
             </Link>
             ,{" "}
             <Link
               href="/creator-terms"
-              className="text-[#52525B] underline hover:text-[#7A2253]"
+              className="text-[#52525B] underline hover:text-[#C21B5C]"
             >
               Creator Terms
             </Link>{" "}
             and{" "}
             <Link
               href="/privacy"
-              className="text-[#52525B] underline hover:text-[#7A2253]"
+              className="text-[#52525B] underline hover:text-[#C21B5C]"
             >
               Privacy Policy
             </Link>
@@ -153,8 +153,8 @@ export default function LoginPage() {
             <div className="flex justify-center">
               <Chip
                 variant="soft"
-                icon={<Sparkles className="h-3.5 w-3.5 text-[#7A2253]" />}
-                className="font-bold text-[#7A2253]"
+                icon={<Sparkles className="h-3.5 w-3.5 text-[#C21B5C]" />}
+                className="font-bold text-[#C21B5C]"
               >
                 inflixo.com/{claimedUsername} is waiting for you
               </Chip>
@@ -210,19 +210,19 @@ export default function LoginPage() {
           <div className="pt-2 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-[#52525B]">
             <Chip
               variant="pill"
-              icon={<Clapperboard className="h-3.5 w-3.5 text-[#7A2253]" />}
+              icon={<Clapperboard className="h-3.5 w-3.5 text-[#C21B5C]" />}
             >
               Series
             </Chip>
             <Chip
               variant="pill"
-              icon={<Users className="h-3.5 w-3.5 text-[#7A2253]" />}
+              icon={<Users className="h-3.5 w-3.5 text-[#C21B5C]" />}
             >
               Total fans
             </Chip>
             <Chip
               variant="pill"
-              icon={<BadgeCheck className="h-3.5 w-3.5 text-[#7A2253]" />}
+              icon={<BadgeCheck className="h-3.5 w-3.5 text-[#C21B5C]" />}
             >
               Brand reviews
             </Chip>

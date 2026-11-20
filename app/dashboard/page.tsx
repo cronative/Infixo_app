@@ -401,7 +401,7 @@ export default function DashboardOverviewPage() {
           <button
             type="button"
             onClick={() => setShareOpen(true)}
-            className="inline-flex h-8 items-center justify-center gap-1.5 px-3.5 rounded-[5px] bg-[#7A2253] text-white hover:opacity-95 text-[13px] font-medium transition-opacity cursor-pointer"
+            className="inline-flex h-8 items-center justify-center gap-1.5 px-3.5 rounded-[5px] bg-[#C21B5C] text-white hover:opacity-95 text-[13px] font-medium transition-opacity cursor-pointer"
           >
             <Share2 className="h-3.5 w-3.5" />
             <span>Share</span>
@@ -437,7 +437,7 @@ export default function DashboardOverviewPage() {
               </h3>
               <Link
                 href="/dashboard/series?new=true"
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-[5px] bg-[#7A2253] text-white text-[12px] font-semibold hover:bg-[#631841] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-[5px] bg-[#C21B5C] text-white text-[12px] font-semibold hover:bg-[#A3164E] transition-colors cursor-pointer"
               >
                 <Plus className="h-3 w-3" />
                 <span>Add</span>
@@ -450,7 +450,7 @@ export default function DashboardOverviewPage() {
                   <p className="text-[13px] font-medium text-[#18181B]">No series yet</p>
                   <Link
                     href="/dashboard/series?new=true"
-                    className="mt-2.5 inline-flex items-center gap-1 px-3 py-1.5 rounded-[5px] bg-[#7A2253] text-white text-[12px] font-semibold hover:bg-[#631841] transition-colors cursor-pointer"
+                    className="mt-2.5 inline-flex items-center gap-1 px-3 py-1.5 rounded-[5px] bg-[#C21B5C] text-white text-[12px] font-semibold hover:bg-[#A3164E] transition-colors cursor-pointer"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     <span>Add series</span>
@@ -476,12 +476,12 @@ export default function DashboardOverviewPage() {
                           }}
                         />
                       ) : (
-                        <div className="h-10 w-10 rounded-[5px] bg-[#F7EEF2] text-[#7A2253] flex items-center justify-center shrink-0 border border-[#7A2253]/10">
+                        <div className="h-10 w-10 rounded-[5px] bg-[#FFEDE6] text-[#C21B5C] flex items-center justify-center shrink-0 border border-[#C21B5C]/10">
                           <Film className="h-4 w-4" />
                         </div>
                       )}
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-[13px] font-medium text-[#18181B] group-hover:text-[#7A2253] transition-colors">
+                        <p className="truncate text-[13px] font-medium text-[#18181B] group-hover:text-[#C21B5C] transition-colors">
                           {item.title}
                         </p>
                         <p className="text-[12px] text-[#6B6B76] mt-0.5">
@@ -498,7 +498,7 @@ export default function DashboardOverviewPage() {
             <div className="p-2 border-t border-[#ECECF0] bg-white text-center mt-auto">
               <Link
                 href="/dashboard/series"
-                className="inline-flex items-center justify-center gap-1 text-[12px] font-semibold text-[#7A2253] hover:text-[#631841] transition-colors"
+                className="inline-flex items-center justify-center gap-1 text-[12px] font-semibold text-[#C21B5C] hover:text-[#A3164E] transition-colors"
               >
                 <span>Manage →</span>
               </Link>
@@ -513,7 +513,7 @@ export default function DashboardOverviewPage() {
               </h3>
               <Link
                 href="/dashboard/products?new=true"
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-[5px] bg-[#7A2253] text-white text-[12px] font-semibold hover:bg-[#631841] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-[5px] bg-[#C21B5C] text-white text-[12px] font-semibold hover:bg-[#A3164E] transition-colors cursor-pointer"
               >
                 <Plus className="h-3 w-3" />
                 <span>Add</span>
@@ -526,7 +526,7 @@ export default function DashboardOverviewPage() {
                   <p className="text-[13px] font-medium text-[#18181B]">No products yet</p>
                   <Link
                     href="/dashboard/products?new=true"
-                    className="mt-2.5 inline-flex items-center gap-1 px-3 py-1.5 rounded-[5px] bg-[#7A2253] text-white text-[12px] font-semibold hover:bg-[#631841] transition-colors cursor-pointer"
+                    className="mt-2.5 inline-flex items-center gap-1 px-3 py-1.5 rounded-[5px] bg-[#C21B5C] text-white text-[12px] font-semibold hover:bg-[#A3164E] transition-colors cursor-pointer"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     <span>Add product</span>
@@ -552,12 +552,12 @@ export default function DashboardOverviewPage() {
                           }}
                         />
                       ) : (
-                        <div className="h-10 w-10 rounded-[5px] bg-[#F7EEF2] text-[#7A2253] flex items-center justify-center shrink-0 border border-[#7A2253]/10">
+                        <div className="h-10 w-10 rounded-[5px] bg-[#FFEDE6] text-[#C21B5C] flex items-center justify-center shrink-0 border border-[#C21B5C]/10">
                           <ShoppingBag className="h-4 w-4" />
                         </div>
                       )}
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-[13px] font-medium text-[#18181B] group-hover:text-[#7A2253] transition-colors">
+                        <p className="truncate text-[13px] font-medium text-[#18181B] group-hover:text-[#C21B5C] transition-colors">
                           {item.name}
                         </p>
                         <p className="text-[12px] font-semibold text-[#18181B] mt-0.5">
@@ -574,7 +574,7 @@ export default function DashboardOverviewPage() {
             <div className="p-2 border-t border-[#ECECF0] bg-white text-center mt-auto">
               <Link
                 href="/dashboard/products"
-                className="inline-flex items-center justify-center gap-1 text-[12px] font-semibold text-[#7A2253] hover:text-[#631841] transition-colors"
+                className="inline-flex items-center justify-center gap-1 text-[12px] font-semibold text-[#C21B5C] hover:text-[#A3164E] transition-colors"
               >
                 <span>Manage →</span>
               </Link>
@@ -589,7 +589,7 @@ export default function DashboardOverviewPage() {
               </h3>
               <Link
                 href="/dashboard/links?new=true"
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-[5px] bg-[#7A2253] text-white text-[12px] font-semibold hover:bg-[#631841] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-[5px] bg-[#C21B5C] text-white text-[12px] font-semibold hover:bg-[#A3164E] transition-colors cursor-pointer"
               >
                 <Plus className="h-3 w-3" />
                 <span>Add</span>
@@ -602,7 +602,7 @@ export default function DashboardOverviewPage() {
                   <p className="text-[13px] font-medium text-[#18181B]">No links yet</p>
                   <Link
                     href="/dashboard/links?new=true"
-                    className="mt-2.5 inline-flex items-center gap-1 px-3 py-1.5 rounded-[5px] bg-[#7A2253] text-white text-[12px] font-semibold hover:bg-[#631841] transition-colors cursor-pointer"
+                    className="mt-2.5 inline-flex items-center gap-1 px-3 py-1.5 rounded-[5px] bg-[#C21B5C] text-white text-[12px] font-semibold hover:bg-[#A3164E] transition-colors cursor-pointer"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     <span>Add link</span>
@@ -632,7 +632,7 @@ export default function DashboardOverviewPage() {
                     >
                       <div className="h-10 w-10 rounded-[5px] bg-[#FAFAFB] border border-[#ECECF0] flex items-center justify-center shrink-0 overflow-hidden">
                         {isGroup ? (
-                          <Folder className="h-4 w-4 text-[#7A2253]" />
+                          <Folder className="h-4 w-4 text-[#C21B5C]" />
                         ) : favUrl ? (
                           <img
                             src={favUrl}
@@ -643,11 +643,11 @@ export default function DashboardOverviewPage() {
                             }}
                           />
                         ) : (
-                          <Link2 className="h-4 w-4 text-[#7A2253]" />
+                          <Link2 className="h-4 w-4 text-[#C21B5C]" />
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-[13px] font-medium text-[#18181B] group-hover:text-[#7A2253] transition-colors">
+                        <p className="truncate text-[13px] font-medium text-[#18181B] group-hover:text-[#C21B5C] transition-colors">
                           {titleDisplay}
                         </p>
                         <p className="truncate text-[12px] text-[#6B6B76] mt-0.5">
@@ -664,7 +664,7 @@ export default function DashboardOverviewPage() {
             <div className="p-2 border-t border-[#ECECF0] bg-white text-center mt-auto">
               <Link
                 href="/dashboard/links"
-                className="inline-flex items-center justify-center gap-1 text-[12px] font-semibold text-[#7A2253] hover:text-[#631841] transition-colors"
+                className="inline-flex items-center justify-center gap-1 text-[12px] font-semibold text-[#C21B5C] hover:text-[#A3164E] transition-colors"
               >
                 <span>Manage →</span>
               </Link>
@@ -718,13 +718,13 @@ export default function DashboardOverviewPage() {
                 type="text"
                 readOnly
                 value={profileUrl}
-                className="h-10 flex-1 px-3 text-xs font-mono text-[#7A2253] select-all outline-none bg-transparent"
+                className="h-10 flex-1 px-3 text-xs font-mono text-[#C21B5C] select-all outline-none bg-transparent"
               />
             </div>
             <button
               type="button"
               onClick={handleCopyLink}
-              className="h-10 inline-flex items-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-brand-hover px-4 text-xs font-semibold text-white transition-all shrink-0 cursor-pointer"
+              className="h-10 inline-flex items-center gap-1.5 rounded-[5px] bg-[#C21B5C] hover:bg-brand-hover px-4 text-xs font-semibold text-white transition-all shrink-0 cursor-pointer"
             >
               {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               <span>{copied ? "Copied" : "Copy"}</span>
@@ -771,7 +771,7 @@ export default function DashboardOverviewPage() {
               }}
               className="flex items-center justify-center gap-2 p-2.5 rounded-[5px] border border-[#E4E4E7] hover:bg-[#F4F4F5] text-xs font-semibold text-[#18181B] transition-colors cursor-pointer"
             >
-              <ExternalLink className="h-4 w-4 text-[#7A2253]" />
+              <ExternalLink className="h-4 w-4 text-[#C21B5C]" />
               <span>View QR Code</span>
             </button>
           </div>

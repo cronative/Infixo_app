@@ -137,18 +137,18 @@ export default function AllReviewsClient() {
   if (notFound) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-white px-4 text-center">
-        <div className="w-full max-w-sm rounded-[5px] border border-[#e2e8f0] bg-white p-8 shadow-xl shadow-[#7A2253]/5">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-[5px] bg-[#7A2253] text-white shadow-md shadow-[#7A2253]/20">
+        <div className="w-full max-w-sm rounded-[5px] border border-[#e2e8f0] bg-white p-8 shadow-xl shadow-[#C21B5C]/5">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-[5px] bg-[#C21B5C] text-white shadow-md shadow-[#C21B5C]/20">
             <UserX className="h-7 w-7" />
           </div>
-          <h1 className="mt-5 font-display text-xl font-black text-[#7A2253]">Reviews not available</h1>
+          <h1 className="mt-5 font-display text-xl font-black text-[#C21B5C]">Reviews not available</h1>
           <p className="mt-2 text-sm font-medium text-[#64748b]">
             This creator profile is private or the handle does not exist.
           </p>
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="mt-5 inline-flex h-11 items-center justify-center rounded-[5px] bg-[#7A2253] px-5 text-sm font-bold text-white shadow-md shadow-[#7A2253]/20 transition-all hover:opacity-95"
+            className="mt-5 inline-flex h-11 items-center justify-center rounded-[5px] bg-[#C21B5C] px-5 text-sm font-bold text-white shadow-md shadow-[#C21B5C]/20 transition-all hover:opacity-95"
           >
             Go home
           </button>

@@ -105,7 +105,7 @@ export function NotificationBell() {
   const getIcon = (type: string) => {
     switch (type) {
       case "fan_nudge":
-        return <Heart className="h-3.5 w-3.5 text-[#7A2253] fill-[#7A2253]" />;
+        return <Heart className="h-3.5 w-3.5 text-[#C21B5C] fill-[#C21B5C]" />;
       case "series_follow":
         return <Film className="h-3.5 w-3.5 text-indigo-600" />;
       case "creator_follow":
@@ -115,7 +115,7 @@ export function NotificationBell() {
       case "review_received":
         return <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-400" />;
       default:
-        return <Sparkles className="h-3.5 w-3.5 text-[#7A2253]" />;
+        return <Sparkles className="h-3.5 w-3.5 text-[#C21B5C]" />;
     }
   };
 
@@ -129,11 +129,11 @@ export function NotificationBell() {
         }}
         aria-label="Creator Notifications"
         title="Notifications"
-        className="relative inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white text-[#3F3F46] transition-colors hover:bg-[#FAFAFB] hover:text-[#7A2253]"
+        className="relative inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-[5px] border border-[#ECECF0] bg-white text-[#3F3F46] transition-colors hover:bg-[#FAFAFB] hover:text-[#C21B5C]"
       >
         <Bell className="h-3.5 w-3.5" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#7A2253] px-1 text-[9.5px] font-bold text-white shadow-none">
+          <span className="absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#C21B5C] px-1 text-[9.5px] font-bold text-white shadow-none">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
@@ -147,7 +147,7 @@ export function NotificationBell() {
             <div className="flex items-center gap-1.5">
               <span className="text-[13px] font-bold text-[#18181B]">Notifications</span>
               {unreadCount > 0 && (
-                <span className="rounded-[3px] bg-[#F7EEF2] px-1.5 py-0.2 text-[11px] font-bold text-[#7A2253]">
+                <span className="rounded-[3px] bg-[#FFEDE6] px-1.5 py-0.2 text-[11px] font-bold text-[#C21B5C]">
                   {unreadCount} new
                 </span>
               )}
@@ -158,7 +158,7 @@ export function NotificationBell() {
                 <button
                   type="button"
                   onClick={handleMarkAllRead}
-                  className="text-[11px] font-medium text-[#7A2253] hover:underline cursor-pointer"
+                  className="text-[11px] font-medium text-[#C21B5C] hover:underline cursor-pointer"
                 >
                   Mark all read
                 </button>
@@ -193,7 +193,7 @@ export function NotificationBell() {
                       if (isUnread) handleMarkAsRead(notif.id);
                     }}
                     className={`p-3 transition-colors cursor-pointer ${
-                      isUnread ? "bg-[#FAF5F7] hover:bg-[#F7EEF2]" : "hover:bg-[#FAFAFB]"
+                      isUnread ? "bg-[#FFF6F2] hover:bg-[#FFEDE6]" : "hover:bg-[#FAFAFB]"
                     }`}
                   >
                     <div className="flex items-start gap-2.5">
@@ -223,7 +223,7 @@ export function NotificationBell() {
                                 if (isUnread) handleMarkAsRead(notif.id);
                                 setIsOpen(false);
                               }}
-                              className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#7A2253] hover:underline"
+                              className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#C21B5C] hover:underline"
                             >
                               <span>Take action</span>
                               <ArrowRight className="h-3 w-3" />
@@ -233,7 +233,7 @@ export function NotificationBell() {
                       </div>
 
                       {isUnread && (
-                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#7A2253] shrink-0" />
+                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#C21B5C] shrink-0" />
                       )}
                     </div>
                   </div>

@@ -13,9 +13,9 @@ export const metadata: Metadata = {
 
 export default function CreatorErasPage() {
   return (
-    <div className="min-h-screen bg-[#FFFBFD] text-slate-900 select-none flex flex-col justify-between">
+    <div className="min-h-screen bg-[#FFF6F2] text-slate-900 select-none flex flex-col justify-between">
       {/* Top Navigation */}
-      <header className="w-full border-b border-[#FCE7F3] bg-white/80 backdrop-blur-md sticky top-0 z-30">
+      <header className="w-full border-b border-[#FFEDE6] bg-white/80 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="tap-scale flex items-center gap-2">
             <InflixoWordmark className="h-7" />
@@ -23,7 +23,7 @@ export default function CreatorErasPage() {
 
           <Link
             href="/login"
-            className="tap-scale inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[5px] bg-[#7A2253] hover:bg-[#681c46] text-white text-xs font-bold shadow-2xs transition-colors"
+            className="tap-scale inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[5px] bg-[#C21B5C] hover:bg-[#A3164E] text-white text-xs font-bold shadow-2xs transition-colors"
           >
             <span>Claim Your Link</span>
             <ArrowRight className="h-3 w-3" />
@@ -33,7 +33,7 @@ export default function CreatorErasPage() {
 
       {/* Hero Section */}
       <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center space-y-6">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF0F5] border border-[#FCE7F3] text-xs font-bold text-[#7A2253]">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF6F2] border border-[#FFEDE6] text-xs font-bold text-[#C21B5C]">
           <Sparkles className="h-3.5 w-3.5" />
           <span>OFFICIAL FOLLOWER ACHIEVEMENT SYSTEM</span>
         </div>
@@ -51,7 +51,7 @@ export default function CreatorErasPage() {
         <div className="pt-2">
           <Link
             href="/login"
-            className="tap-scale inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-[8px] bg-[#7A2253] hover:bg-[#681c46] text-white text-sm font-bold shadow-lg shadow-[#7A2253]/20 transition-all hover:scale-[1.02]"
+            className="tap-scale inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-[8px] bg-[#C21B5C] hover:bg-[#A3164E] text-white text-sm font-bold shadow-lg shadow-[#C21B5C]/20 transition-all hover:scale-[1.02]"
           >
             <span>Find yours — claim your Inflixo link</span>
             <ArrowRight className="h-4 w-4" />
@@ -69,17 +69,17 @@ export default function CreatorErasPage() {
             {MAIN_ERAS.map((era, index) => (
               <div
                 key={era.name}
-                className="rounded-[8px] border border-[#FCE7F3] bg-white p-4 sm:p-5 shadow-xs space-y-3 hover:border-[#F472B6]/40 transition-colors"
+                className="rounded-[8px] border border-[#FFEDE6] bg-white p-4 sm:p-5 shadow-xs space-y-3 hover:border-[#F472B6]/40 transition-colors"
               >
                 {/* Era Header */}
                 <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
                   <div className="flex items-center gap-2.5">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-[4px] bg-[#FFF0F5] text-[11px] font-black text-[#7A2253]">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-[4px] bg-[#FFF6F2] text-[11px] font-black text-[#C21B5C]">
                       {index + 1}
                     </span>
                     <h3 className="text-base font-bold text-slate-900">{era.name} Era</h3>
                   </div>
-                  <span className="text-xs font-mono font-bold text-[#7A2253] bg-[#FFF0F5] px-2 py-0.5 rounded-[4px]">
+                  <span className="text-xs font-mono font-bold text-[#C21B5C] bg-[#FFF6F2] px-2 py-0.5 rounded-[4px]">
                     {era.range}
                   </span>
                 </div>
@@ -104,21 +104,21 @@ export default function CreatorErasPage() {
         {/* Feature Highlights */}
         <div className="pt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
           <div className="p-4 rounded-[6px] border border-slate-200/80 bg-white">
-            <ShieldCheck className="h-5 w-5 text-[#7A2253] mb-2" />
+            <ShieldCheck className="h-5 w-5 text-[#C21B5C] mb-2" />
             <h4 className="text-xs font-bold text-slate-900">Peak Fanbase Protected</h4>
             <p className="text-[11px] text-slate-600 mt-0.5">
               Your Creator Era badge reflects your highest reached milestone and never downgrades.
             </p>
           </div>
           <div className="p-4 rounded-[6px] border border-slate-200/80 bg-white">
-            <Check className="h-5 w-5 text-[#7A2253] mb-2" />
+            <Check className="h-5 w-5 text-[#C21B5C] mb-2" />
             <h4 className="text-xs font-bold text-slate-900">Multi-Platform Sum</h4>
             <p className="text-[11px] text-slate-600 mt-0.5">
               Connect 1, 2, or 3 platforms. Your audience is combined into one unified achievement.
             </p>
           </div>
           <div className="p-4 rounded-[6px] border border-slate-200/80 bg-white">
-            <Sparkles className="h-5 w-5 text-[#7A2253] mb-2" />
+            <Sparkles className="h-5 w-5 text-[#C21B5C] mb-2" />
             <h4 className="text-xs font-bold text-slate-900">Story Share Cards</h4>
             <p className="text-[11px] text-slate-600 mt-0.5">
               Generate 1080×1920 Instagram Story cards in your profile&apos;s theme colors on every unlock.
@@ -127,7 +127,7 @@ export default function CreatorErasPage() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="py-10 border-t border-[#FCE7F3] mt-8 text-center space-y-4">
+        <div className="py-10 border-t border-[#FFEDE6] mt-8 text-center space-y-4">
           <h3 className="text-xl font-bold text-slate-900">
             Ready to find your Creator Era?
           </h3>
@@ -136,7 +136,7 @@ export default function CreatorErasPage() {
           </p>
           <Link
             href="/login"
-            className="tap-scale inline-flex items-center gap-2 px-6 py-3 rounded-[8px] bg-[#7A2253] hover:bg-[#681c46] text-white text-xs sm:text-sm font-bold shadow-md transition-colors"
+            className="tap-scale inline-flex items-center gap-2 px-6 py-3 rounded-[8px] bg-[#C21B5C] hover:bg-[#A3164E] text-white text-xs sm:text-sm font-bold shadow-md transition-colors"
           >
             <span>Find yours — claim your Inflixo link</span>
             <ArrowRight className="h-4 w-4" />
@@ -145,7 +145,7 @@ export default function CreatorErasPage() {
       </main>
 
       {/* Footer */}
-      <div className="border-t border-[#FCE7F3] bg-white">
+      <div className="border-t border-[#FFEDE6] bg-white">
         <GlobalFooter />
       </div>
     </div>

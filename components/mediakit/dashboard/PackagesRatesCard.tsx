@@ -41,7 +41,7 @@ export function PackagesRatesCard({
         <div className="rounded-[5px] border border-dashed border-[#D4D4D8] px-4 py-6 text-center">
           <p className="text-[13px] font-semibold text-[#18181B]">Create your first collab package</p>
           <p className="mt-1 text-[12px] text-[#6B6B76]">Reels, store visits and promotions for brands, cafes and shops.</p>
-          <button type="button" onClick={onShowExamples} className="mt-2 inline-flex items-center gap-1 text-[12px] font-semibold text-[#7A2253] hover:underline cursor-pointer">
+          <button type="button" onClick={onShowExamples} className="mt-2 inline-flex items-center gap-1 text-[12px] font-semibold text-[#C21B5C] hover:underline cursor-pointer">
             Not sure what to offer? See examples <ArrowRight className="h-3 w-3" />
           </button>
         </div>
@@ -52,14 +52,14 @@ export function PackagesRatesCard({
             const platforms = items.length ? packagePlatforms(items) : [];
             const summary = items.length ? shortItemsSummary(items) : (pkg.deliverables || []).slice(0, 3).join(" + ");
             return (
-              <li key={pkg.id} className="flex items-stretch gap-3 rounded-[5px] border border-[#ECECF0] bg-white p-2.5 transition-colors hover:border-[#7A2253]/40">
-                <button type="button" onClick={() => onEdit(pkg)} className="h-[72px] w-[72px] shrink-0 overflow-hidden rounded-[5px] bg-[#F7EEF2] cursor-pointer sm:h-[96px] sm:w-[128px]" aria-label={`Edit ${pkg.title}`}>
+              <li key={pkg.id} className="flex items-stretch gap-3 rounded-[5px] border border-[#ECECF0] bg-white p-2.5 transition-colors hover:border-[#C21B5C]/40">
+                <button type="button" onClick={() => onEdit(pkg)} className="h-[72px] w-[72px] shrink-0 overflow-hidden rounded-[5px] bg-[#FFEDE6] cursor-pointer sm:h-[96px] sm:w-[128px]" aria-label={`Edit ${pkg.title}`}>
                   {pkg.coverImage ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={pkg.coverImage} alt="" className="h-full w-full object-cover" />
                   ) : (
                     <span className="flex h-full w-full items-center justify-center gap-1.5">
-                      {platforms.length ? platforms.map((p) => <span key={p}>{ICON[p]}</span>) : platformIcon(pkg.platform) || <Layers className="h-5 w-5 text-[#7A2253]/60" />}
+                      {platforms.length ? platforms.map((p) => <span key={p}>{ICON[p]}</span>) : platformIcon(pkg.platform) || <Layers className="h-5 w-5 text-[#C21B5C]/60" />}
                     </span>
                   )}
                 </button>
@@ -71,7 +71,7 @@ export function PackagesRatesCard({
                         {statusChip(pkg)}
                       </span>
                     </span>
-                    <span className="shrink-0 whitespace-nowrap text-[15px] font-extrabold text-[#7A2253]">{formatPackagePrice(pkg)}</span>
+                    <span className="shrink-0 whitespace-nowrap text-[15px] font-extrabold text-[#C21B5C]">{formatPackagePrice(pkg)}</span>
                   </span>
                   {(platforms.length > 0 || summary) && (
                     <span className="mt-1 flex items-center gap-1.5 text-[12px] font-medium text-[#3F3F46]">
@@ -94,7 +94,7 @@ export function PackagesRatesCard({
                   >
                     <MoreVertical className="h-4 w-4" />
                   </button>
-                  <button type="button" onClick={() => onEdit(pkg)} aria-label={`Edit ${pkg.title}`} className="flex h-8 w-8 items-center justify-center text-[#7A2253] cursor-pointer">
+                  <button type="button" onClick={() => onEdit(pkg)} aria-label={`Edit ${pkg.title}`} className="flex h-8 w-8 items-center justify-center text-[#C21B5C] cursor-pointer">
                     <ChevronRight className="h-5 w-5" />
                   </button>
                 </span>
@@ -106,7 +106,7 @@ export function PackagesRatesCard({
       <button
         type="button"
         onClick={onAdd}
-        className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[5px] border border-[#7A2253] bg-white text-[14px] font-semibold text-[#7A2253] hover:bg-[#F7EEF2] cursor-pointer"
+        className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[5px] border border-[#C21B5C] bg-white text-[14px] font-semibold text-[#C21B5C] hover:bg-[#FFEDE6] cursor-pointer"
       >
         <Plus className="h-4 w-4" />
         Add New Package

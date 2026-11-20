@@ -51,7 +51,7 @@ export async function GET(_req: Request, props: { params: Promise<{ username: st
           flexDirection: "column",
           justifyContent: "space-between",
           padding: "64px 80px",
-          background: "linear-gradient(135deg, #2A0819 0%, #5E1A41 55%, #7A2253 100%)",
+          background: "linear-gradient(135deg, #5C0C2B 0%, #A3164E 55%, #C21B5C 100%)",
           color: "#FFFFFF",
           fontFamily: "sans-serif",
         }}
@@ -79,8 +79,8 @@ export async function GET(_req: Request, props: { params: Promise<{ username: st
                   borderRadius: 999,
                   alignItems: "center",
                   justifyContent: "center",
-                  background: "#F7EEF2",
-                  color: "#7A2253",
+                  background: "#FFEDE6",
+                  color: "#C21B5C",
                   fontSize: 88,
                   fontWeight: 800,
                 }}

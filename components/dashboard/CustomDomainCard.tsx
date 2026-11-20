@@ -150,7 +150,7 @@ export function CustomDomainCard() {
     return (
       <section className="rounded-[5px] border border-[#ECECF0] bg-white p-4 sm:p-5 shadow-xs">
         <div className="flex items-center gap-2 text-xs font-semibold text-[#6B6B76]">
-          <RefreshCw className="h-4 w-4 animate-spin text-[#7A2253]" />
+          <RefreshCw className="h-4 w-4 animate-spin text-[#C21B5C]" />
           <span>Loading domain settings...</span>
         </div>
       </section>
@@ -160,25 +160,25 @@ export function CustomDomainCard() {
   // If creator is on Starter/Free and cannot use custom domains
   if (config && !config.canUseCustomDomain) {
     return (
-      <section className="group relative overflow-hidden rounded-[5px] border border-[#7A2253]/20 bg-white p-4 sm:p-5 shadow-xs">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#7A2253]" aria-hidden="true" />
+      <section className="group relative overflow-hidden rounded-[5px] border border-[#C21B5C]/20 bg-white p-4 sm:p-5 shadow-xs">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#C21B5C]" aria-hidden="true" />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <Globe className="h-4 w-4 text-[#7A2253]" />
+              <Globe className="h-4 w-4 text-[#C21B5C]" />
               <h2 className="text-sm font-bold text-[#18181B]">Custom Domain Mapping</h2>
-              <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#7A2253]/[0.08] px-2 py-0.5 text-[10px] font-bold text-[#7A2253]">
+              <span className="inline-flex items-center gap-1 rounded-[5px] bg-[#C21B5C]/[0.08] px-2 py-0.5 text-[10px] font-bold text-[#C21B5C]">
                 <Lock className="h-2.5 w-2.5" />
                 Pro & VIP Feature
               </span>
             </div>
             <p className="text-xs text-[#6B6B76] leading-relaxed max-w-xl">
-              Connect your own vanity domain (e.g. <span className="font-semibold text-[#7A2253]">links.yourname.com</span> or <span className="font-semibold text-[#7A2253]">yourbrand.in</span>) to your Inflixo creator bio link.
+              Connect your own vanity domain (e.g. <span className="font-semibold text-[#C21B5C]">links.yourname.com</span> or <span className="font-semibold text-[#C21B5C]">yourbrand.in</span>) to your Inflixo creator bio link.
             </p>
           </div>
           <Link
             href="/dashboard/subscription"
-            className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:opacity-95 text-white text-xs font-bold py-2.5 px-4 transition-all shrink-0 cursor-pointer shadow-md shadow-[#7A2253]/20"
+            className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#C21B5C] hover:opacity-95 text-white text-xs font-bold py-2.5 px-4 transition-all shrink-0 cursor-pointer shadow-md shadow-[#C21B5C]/20"
           >
             <Sparkles className="h-3.5 w-3.5" />
             <span>Upgrade to Pro</span>
@@ -194,12 +194,12 @@ export function CustomDomainCard() {
 
   return (
     <section className="group relative overflow-hidden rounded-[5px] border border-[#ECECF0] bg-white p-4 sm:p-5 shadow-xs space-y-4">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#7A2253]" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[#C21B5C]" aria-hidden="true" />
 
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#ECECF0] pb-3">
         <div className="flex items-center gap-2">
-          <Globe className="h-4 w-4 text-[#7A2253]" />
+          <Globe className="h-4 w-4 text-[#C21B5C]" />
           <h2 className="text-sm font-bold text-[#18181B]">Custom Domain Mapping</h2>
         </div>
 
@@ -233,7 +233,7 @@ export function CustomDomainCard() {
       {/* Form */}
       <form onSubmit={handleSaveDomain} className="space-y-3">
         <div className="flex flex-col sm:flex-row gap-2">
-          <div className="flex-1 flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 overflow-hidden transition-colors">
+          <div className="flex-1 flex items-center rounded-[5px] border border-[#ECECF0] bg-white focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 overflow-hidden transition-colors">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[#ECECF0] bg-[#FAFAFB] text-[#6B6B76]">
               <Globe className="h-4 w-4" />
             </span>
@@ -252,7 +252,7 @@ export function CustomDomainCard() {
             <button
               type="submit"
               disabled={saving || !domainInput.trim()}
-              className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-brand-hover text-white text-xs font-bold px-4 py-2 h-10 transition-all cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#C21B5C] hover:bg-brand-hover text-white text-xs font-bold px-4 py-2 h-10 transition-all cursor-pointer disabled:opacity-50"
             >
               {saving ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
               <span>Connect Domain</span>
@@ -264,7 +264,7 @@ export function CustomDomainCard() {
                   type="button"
                   onClick={handleVerifyDNS}
                   disabled={verifying}
-                  className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#7A2253] hover:bg-brand-hover text-white text-xs font-bold px-3 py-2 h-10 transition-all cursor-pointer disabled:opacity-50"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-[5px] bg-[#C21B5C] hover:bg-brand-hover text-white text-xs font-bold px-3 py-2 h-10 transition-all cursor-pointer disabled:opacity-50"
                 >
                   {verifying ? (
                     <RefreshCw className="h-3.5 w-3.5 animate-spin" />
@@ -300,7 +300,7 @@ export function CustomDomainCard() {
                 href={`https://${config?.customDomain}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-[11px] font-bold text-[#7A2253] hover:underline"
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-[#C21B5C] hover:underline"
               >
                 <span>Visit {config?.customDomain}</span>
                 <ExternalLink className="h-3 w-3" />
@@ -322,11 +322,11 @@ export function CustomDomainCard() {
             <div>
               <p className="text-[#6B6B76] font-medium">Target / Points To</p>
               <div className="flex items-center gap-1">
-                <span className="font-mono font-bold text-[#7A2253] line-clamp-2 break-words" title={targetCname}>{targetCname}</span>
+                <span className="font-mono font-bold text-[#C21B5C] line-clamp-2 break-words" title={targetCname}>{targetCname}</span>
                 <button
                   type="button"
                   onClick={() => handleCopyCname(targetCname)}
-                  className="text-[#6B6B76] hover:text-[#7A2253] cursor-pointer"
+                  className="text-[#6B6B76] hover:text-[#C21B5C] cursor-pointer"
                   title="Copy CNAME target"
                 >
                   {copiedTarget ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}

@@ -39,7 +39,7 @@ export function ProductLimitModal({ isOpen, onClose, used, limit, plan }: {
         <Link
           href="/dashboard/subscription"
           onClick={onClose}
-          className="h-10 px-5 rounded-[5px] bg-[#7A2253] text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#7A2253]/20 hover:opacity-95 inline-flex items-center gap-1.5"
+          className="h-10 px-5 rounded-[5px] bg-[#C21B5C] text-white font-semibold text-xs transition-all cursor-pointer shadow-md shadow-[#C21B5C]/20 hover:opacity-95 inline-flex items-center gap-1.5"
         >
           Upgrade to {targetName} ({formatPlanPrice(target, "monthly", "INR")}/month)
         </Link>

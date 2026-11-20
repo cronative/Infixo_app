@@ -22,7 +22,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           </label>
         )}
         <div
-          className={`flex h-10 items-center rounded-[5px] border overflow-hidden transition-colors focus-within:border-[#7A2253] focus-within:ring-2 focus-within:ring-[#7A2253]/10 ${
+          className={`flex h-10 items-center rounded-[5px] border overflow-hidden transition-colors focus-within:border-[#C21B5C] focus-within:ring-2 focus-within:ring-[#C21B5C]/10 ${
             rest.disabled ? "bg-[#FAFAFB] cursor-not-allowed text-[#6B6B76] border-[#ECECF0]" : "bg-white"
           } ${error ? "border-[#C2414B] bg-rose-50/20 focus-within:border-[#C2414B]" : "border-[#ECECF0]"}`}
         >

@@ -109,7 +109,7 @@ export function Logo({
   casing = "title",
   showTagline = true,
   showIcon = true,
-  tone = "maroon",
+  tone = "gulaal",
 }: {
   size?: "sm" | "md" | "lg" | "xl";
   href?: string;
@@ -123,7 +123,7 @@ export function Logo({
   showTagline?: boolean;
   /** false shows only the wordmark and tagline, without the square icon. */
   showIcon?: boolean;
-  /** Wordmark + tagline colour: brand maroon (default), Kesar saffron, or the Kesar→Gulaal gradient. */
+  /** Wordmark + tagline colour: the Kesar→Gulaal brand gradient (default), legacy maroon, or Kesar saffron. */
   tone?: "maroon" | "kesar" | "gulaal";
 }) {
   const router = useRouter();
@@ -203,12 +203,12 @@ export function Logo({
   const badgeStyles = isTransparent
     ? "bg-transparent"
     : ({
-        gradient: "bg-[#7A2253]",
-        black: "bg-[#7A2253]",
-        brand: "bg-[#7A2253]",
+        gradient: "bg-[#C21B5C]",
+        black: "bg-[#C21B5C]",
+        brand: "bg-[#C21B5C]",
         white: "bg-white border border-[#ECECF0]",
-        color: "bg-[#fdf2f8] border border-[#fbcfe8]",
-      }[variant] || "bg-[#7A2253]");
+        color: "bg-[#FFF6F2] border border-[#F9CFC6]",
+      }[variant] || "bg-[#C21B5C]");
 
   /**
    * ============================================================
@@ -216,9 +216,9 @@ export function Logo({
    * ============================================================
    *
    * Dark badge -> white logo
-   * White badge -> #7A2253 logo
+   * White badge -> #C21B5C logo
    * Color badge -> full 3D color logo
-   * Transparent badge -> #7A2253 primary logo
+   * Transparent badge -> #C21B5C primary logo
    */
   const primaryLogoColor: "dark" | "white" | "color" =
     variant === "color"
@@ -311,7 +311,7 @@ export function Logo({
             <span
               className={`
                 font-bold tracking-[0.05em] leading-none select-none whitespace-nowrap mt-0.5
-                ${light ? "text-white/90" : tone === "kesar" ? "text-[#C2410C]" : tone === "gulaal" ? "text-[#C21B5C]" : "text-[#7A2253]"}
+                ${light ? "text-white/90" : tone === "kesar" ? "text-[#C2410C]" : tone === "gulaal" ? "text-[#C21B5C]" : "text-[#C21B5C]"}
                 ${
                   size === "sm"
                     ? "text-[8px]"
