@@ -204,14 +204,14 @@ const PILLARS = [
     text: "Inflixo reads your publicly available follower counts from Instagram, YouTube and Facebook and adds them up. Fans see how big your family is, and brands can see your full reach at a glance.",
   },
   {
-    icon: Ticket,
-    title: "Tour, Tickets & Show Links",
-    text: "Doing a tour, a live show or a meet-up? Add your schedule, ticket links and event pages so fans can find them long after your story disappears.",
+    icon: Link2,
+    title: "Tour, Tickets & Every Link",
+    text: "Tour dates, show tickets, your second account, podcast or WhatsApp channel: every link stays on your page long after your story disappears.",
   },
   {
-    icon: Link2,
-    title: "All Your Accounts & Links",
-    text: "Second account, podcast, WhatsApp channel, website: keep every link that matters to your fans in one organised place.",
+    icon: BarChart3,
+    title: "See What Fans Click",
+    text: "Your dashboard shows how many times each series was opened and how many clicks every episode, link and product got, so you know what your fans really want.",
   },
   {
     icon: Star,
@@ -226,7 +226,7 @@ const PILLARS = [
   {
     icon: Laptop,
     title: "My Setup: Gear & Software",
-    text: "Stop answering the same DM. List your camera, mic, lights and editing apps, and add affiliate links if you like. Digital downloads like presets and guides can go in your Creator Shop too.",
+    text: "Stop answering the same DM. List your camera, mic, lights and editing apps, and add affiliate links if you like. Shop items link to your own store, so buyers pay you directly and Inflixo takes no cut.",
   },
   {
     icon: Play,
@@ -236,6 +236,26 @@ const PILLARS = [
 ];
 
 const FAQS = [
+  {
+    q: "Is the trial free? Do I need a card?",
+    a: `Yes, the ${PLANS.trial.trialDays}-day trial is free and needs no card or UPI. Set up your real page first and decide later.`,
+  },
+  {
+    q: "What happens when my trial ends?",
+    a: "Your public page goes private, but nothing is deleted. Your series, links and settings stay saved, and your page goes live again as soon as you pick a plan.",
+  },
+  {
+    q: "I already use another link in bio. How do I switch?",
+    a: "Sign up, add your videos and links (paste the same links you already use), then replace the link in your Instagram and YouTube bio with inflixo.com/yourname. Most creators finish in a few minutes.",
+  },
+  {
+    q: "Can I see how many people use my page?",
+    a: "Yes. Your dashboard shows series opens and clicks on every episode, link, product and gear item, plus views and requests on your collab packages.",
+  },
+  {
+    q: "Does Inflixo take a cut from my shop?",
+    a: "No. Shop and gear items link to your own store or affiliate link, so buyers pay you directly. Inflixo only charges the plan price.",
+  },
   {
     q: "Do my fans need an app or account to watch?",
     a: "No. Anyone can open your Inflixo link in any mobile or desktop browser, with no signup or app.",
@@ -614,7 +634,7 @@ export default function LandingHomePage() {
               </button>
             </form>
             <p className="mt-2.5 text-[12px] text-[#71717A]">
-              Takes 2 minutes. Your fans don&apos;t need any app or signup.
+              Takes 2 minutes. Free for {PLANS.trial.trialDays} days, no card needed. Your fans don&apos;t need any app.
             </p>
 
             {/* Trust Highlights Row */}
@@ -1013,7 +1033,7 @@ export default function LandingHomePage() {
               Plans designed for Indian creators, priced less than a cup of chai a day.
             </p>
             <div className="mx-auto mt-6 max-w-full rounded-full bg-[#7A2253]/10 border border-[#7A2253]/20 px-4 py-1.5 text-center text-[12px] font-bold text-[#7A2253]">
-              💡 Series-first · Cancel anytime · Built for Indian creators
+              💡 {PLANS.trial.trialDays}-day free trial · No card needed · Cancel anytime
             </div>
           </div>
 
@@ -1036,7 +1056,10 @@ export default function LandingHomePage() {
                   ))}
                 </ul>
               </div>
-              <button onClick={() => handleClaim(username)} className={`${outlineBtn} mt-8`}>
+              <p className="mt-6 rounded-[5px] bg-[#FAF5F8] px-3 py-2 text-[12px] leading-[18px] text-[#52525B]">
+                No card needed. When the trial ends your page goes private, but nothing is deleted. Pick a plan anytime to go live again.
+              </p>
+              <button onClick={() => handleClaim(username)} className={`${outlineBtn} mt-4`}>
                 Start {PLANS.trial.trialDays}-day trial
               </button>
             </div>
@@ -1099,6 +1122,9 @@ export default function LandingHomePage() {
               </button>
             </div>
           </div>
+          <p className="mt-8 text-center text-[13px] text-[#52525B]">
+            Pay securely with UPI, cards or netbanking via Razorpay. Cancel anytime, no lock-in.
+          </p>
         </div>
       </section>
 
