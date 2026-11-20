@@ -2411,7 +2411,36 @@ export function LivePreviewCard({
               colors={aboutColors}
               divided={false}
             >
-            {!isPremiumLayout && !landingDemo && products && products.length > 8 && (
+            {/* Demo shop listing: sort as chips, like the series platform filters. */}
+            {isDemoPlainListing && products && products.length > 8 && (
+              <div className="px-2.5 pt-2.5">
+                <div className="flex items-center justify-center-safe gap-2 overflow-x-auto overflow-y-hidden no-scrollbar py-1 -my-1">
+                  {([
+                    ["latest", "Latest"],
+                    ["price_asc", "Price: Low to High"],
+                    ["price_desc", "Price: High to Low"],
+                  ] as const).map(([key, label]) => {
+                    const isActive = shopSortOrder === key;
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => setShopSortOrder(key)}
+                        aria-pressed={isActive}
+                        className={`tap-scale inline-flex h-9 shrink-0 items-center gap-2 whitespace-nowrap rounded-[5px] border px-3.5 text-[13px] font-semibold transition-colors cursor-pointer ${
+                          isActive
+                            ? "border-(--accent) bg-(--accent) text-(--on-accent)"
+                            : "border-[color-mix(in_srgb,var(--accent-text)_25%,var(--surface-border))] bg-[color-mix(in_srgb,var(--accent-soft)_35%,var(--card-bg))] text-(--text) hover:bg-(--accent-soft)"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+            {!isDemoPlainListing && !isPremiumLayout && !landingDemo && products && products.length > 8 && (
               <div className="flex justify-end border-b border-(--surface-border) px-3 py-2 sm:px-3.5">
 
                     <div className="relative">
