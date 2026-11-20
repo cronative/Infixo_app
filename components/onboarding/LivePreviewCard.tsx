@@ -2222,6 +2222,7 @@ export function LivePreviewCard({
               lockedCount={locked("series")}
               solid={seriesOnlyMode}
               hero={isPremiumLayout || seriesOnlyMode}
+              centered={seriesOnlyMode}
               title={isPremiumLayout || seriesOnlyMode ? "My Series" : "Series"}
               subtitle={landingDemo ? "Start from Episode 1." : isPremiumLayout || seriesOnlyMode ? "Start at Ep 1 & binge in order." : "Watch episodes in the right order."}
               count={isPremiumLayout || seriesOnlyMode ? `${series.length} Series` : `${series.length} series`}
@@ -2230,7 +2231,7 @@ export function LivePreviewCard({
             >
             {availableSeriesPlatforms.length > 0 && (
               <div className="px-2.5 pt-2.5">
-                  <div className="flex items-center gap-2 overflow-x-auto overflow-y-hidden no-scrollbar py-1 -my-1">
+                  <div className={`flex items-center gap-2 overflow-x-auto overflow-y-hidden no-scrollbar py-1 -my-1 ${seriesOnlyMode ? "justify-center-safe" : ""}`}>
                     {["All", ...availableSeriesPlatforms].map((plat) => {
                       const isActive = seriesFilter.toLowerCase() === plat.toLowerCase();
                       return (

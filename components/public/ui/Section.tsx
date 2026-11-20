@@ -45,6 +45,8 @@ export interface SectionHeaderProps {
   solid?: boolean;
   /** Feature header: light accent tint, accent icon tile, bold title, count pill (My Series). */
   hero?: boolean;
+  /** Feature header stacked and centred: icon, title, subtitle, count (series listing page). */
+  centered?: boolean;
 }
 
 /**
@@ -52,17 +54,38 @@ export interface SectionHeaderProps {
  * (beside the title on phones, right-aligned from sm). Plain (tabs layout):
  * accent @ 7% tint, title + subtitle left, muted count right.
  */
-export function SectionHeader({ title, subtitle, count, colors, icon: Icon, hero = false }: SectionHeaderProps) {
+export function SectionHeader({ title, subtitle, count, colors, icon: Icon, hero = false, centered = false }: SectionHeaderProps) {
+  const heroStyle = {
+    // Theme tokens only: a light tint of the accent over the card, with accent text.
+    background: "linear-gradient(100deg, color-mix(in srgb, var(--accent) 16%, var(--card-bg)) 0%, color-mix(in srgb, var(--accent) 7%, var(--card-bg)) 100%)",
+    borderBottom: "1px solid color-mix(in srgb, var(--accent) 18%, var(--card-bg))",
+    color: "var(--accent-text)",
+  };
+  if (hero && centered) {
+    return (
+      <div className="flex flex-col items-center px-4 pb-4 pt-5 text-center" style={heroStyle}>
+        {Icon && (
+          <span className="flex h-11 w-11 items-center justify-center rounded-[5px] bg-(--accent) text-(--on-accent)">
+            <Icon aria-hidden strokeWidth={2} className="h-6 w-6" />
+          </span>
+        )}
+        <h2 style={{ fontFamily: colors.headingFont }} className="mt-2.5 text-[20px] font-bold leading-6 tracking-tight">
+          {title}
+        </h2>
+        {subtitle && <p className="mt-0.5 text-[13px] leading-5 text-(--text-muted)">{subtitle}</p>}
+        {count != null && (
+          <span className="mt-2.5 whitespace-nowrap rounded-[5px] border border-[color-mix(in_srgb,var(--accent)_22%,transparent)] bg-(--card-bg) px-2.5 py-0.5 text-[13px] font-semibold leading-5 text-(--accent-text)">
+            {count}
+          </span>
+        )}
+      </div>
+    );
+  }
   if (hero) {
     return (
       <div
         className="flex items-center gap-2.5 px-3 py-2.5"
-        style={{
-          // Theme tokens only: a light tint of the accent over the card, with accent text.
-          background: "linear-gradient(100deg, color-mix(in srgb, var(--accent) 16%, var(--card-bg)) 0%, color-mix(in srgb, var(--accent) 7%, var(--card-bg)) 100%)",
-          borderBottom: "1px solid color-mix(in srgb, var(--accent) 18%, var(--card-bg))",
-          color: "var(--accent-text)",
-        }}
+        style={heroStyle}
       >
         {Icon && (
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-(--accent) text-(--on-accent)">
@@ -135,6 +158,7 @@ export function SectionCard({
   icon,
   solid: solidProp = false,
   hero = false,
+  centered = false,
   showHeader = true,
   lockedCount = 0,
   as: Tag = "div",
@@ -153,7 +177,7 @@ export function SectionCard({
       style={solid && showHeader ? { borderColor: SECTION_LINE } : undefined}
     >
       {/* Profile / listing pages: every section uses the feature (hero) header, like My Series. */}
-      {showHeader && <SectionHeader icon={icon} solid={solid} hero={hero || fullBleed} title={title} subtitle={subtitle} count={count} colors={colors} />}
+      {showHeader && <SectionHeader icon={icon} solid={solid} hero={hero || fullBleed} centered={centered} title={title} subtitle={subtitle} count={count} colors={colors} />}
       <div>
         {children}
         {lockedCount > 0 && <LockedRow count={lockedCount} />}
