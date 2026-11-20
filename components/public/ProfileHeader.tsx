@@ -95,6 +95,8 @@ export interface ProfileHeaderProps {
     backLabel: string;
   } | null;
   isListingPage?: boolean;
+  /** Compact header: photo left, name / handle / category and socials beside it (series listing page). */
+  compact?: boolean;
   mediaKitHref?: string;
   usesDarkControls?: boolean;
   onShareClick: (e?: React.MouseEvent) => void;
@@ -335,6 +337,7 @@ export function ProfileHeader({
   creatorEra,
   pageHeader,
   isListingPage,
+  compact = false,
   mediaKitHref,
   usesDarkControls = false,
   onShareClick,
@@ -494,7 +497,79 @@ export function ProfileHeader({
       {/* ROW 2: STACKED PROFILE (photo on top, details centered below)       */}
       {/* ============================================================== */}
       {/* Profile block on the header surface (white on light themes), bleeding to the card edges. */}
-      <div className="-mx-[var(--card-px,16px)] mb-[var(--header-mb,4px)] border-b border-(--divider) [border-bottom-width:var(--header-bb,1px)] bg-[var(--header-bg,var(--card-bg))] px-[var(--card-px,16px)] pb-[var(--header-pb,12px)] pt-3">
+      <div className={`-mx-[var(--card-px,16px)] mb-[var(--header-mb,4px)] border-b border-(--divider) [border-bottom-width:var(--header-bb,1px)] bg-[var(--header-bg,var(--card-bg))] px-[var(--card-px,16px)] pt-3 ${compact ? "pb-3" : "pb-[var(--header-pb,12px)]"}`}>
+      {compact ? (
+        <div className="flex w-full items-center gap-3 text-left">
+          <div className="relative shrink-0">
+            <div className="rounded-full p-[2px]" style={{ background: eraCfg ? eraRing(eraCfg) : "var(--avatar-ring)" }}>
+              <div className="rounded-full bg-[var(--header-bg,var(--card-bg))] p-[2px]">
+                <div className="relative h-14 w-14 overflow-hidden rounded-full bg-(--card-bg)">
+                  {hasAvatar && photoUrl ? (
+                    <Image
+                      src={photoUrl}
+                      alt={displayName || "Creator"}
+                      width={112}
+                      height={112}
+                      sizes="56px"
+                      priority
+                      unoptimized={isDataUrl}
+                      onError={() => setFailedSrc(photoUrl)}
+                      className="h-full w-full select-none rounded-full object-cover object-top"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full select-none items-center justify-center rounded-full bg-(--avatar-bg) text-base font-black text-(--avatar-text)">
+                      {initials(displayName || "Creator")}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            {isVerified && (
+              <span className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-white" title="Verified Creator" aria-label="Verified creator">
+                <BadgeCheck className={`h-4 w-4 ${BRAND_VERIFIED_FILL} text-white`} strokeWidth={2.2} />
+              </span>
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h1 ref={nameRef} className="truncate text-[18px] font-bold leading-6 tracking-tight text-(--text)">
+              {displayName || "Creator"}
+            </h1>
+            <p className="flex min-w-0 items-center gap-1.5 text-[12px] leading-5 text-(--text-muted)">
+              <span className="truncate">@{cleanHandle}</span>
+              {formattedTagline?.[0] && (
+                <span className="hidden shrink-0 rounded-full bg-(--accent-soft) px-2 text-[11px] font-medium leading-[18px] text-(--accent-text) min-[420px]:inline">{formattedTagline[0]}</span>
+              )}
+            </p>
+          </div>
+          {allActiveSocials.length > 0 && (
+            <div className="flex shrink-0 items-center gap-1.5">
+              {allActiveSocials.slice(0, 3).map((item) => {
+                const hasUrl = Boolean(item.url && item.url !== "#");
+                const icon = (
+                  <span className="flex h-8 w-8 items-center justify-center rounded-[5px] border border-(--surface-border) bg-(--surface) text-(--text) transition-colors hover:border-(--accent-text) hover:text-(--accent-text)">
+                    {getPlatformIcon(item.platform, "h-4 w-4 text-current")}
+                  </span>
+                );
+                return hasUrl ? (
+                  <a
+                    key={item.platform}
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={`Visit ${item.label || item.platform}`}
+                    aria-label={`Visit ${item.label || item.platform}`}
+                    className="tap-44 tap-scale inline-flex cursor-pointer"
+                  >
+                    {icon}
+                  </a>
+                ) : (
+                  <span key={item.platform} className="inline-flex">{icon}</span>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      ) : (
       <div className="flex w-full flex-col items-center gap-2.5 mx-auto text-center">
         {/* LEFT: Creator Avatar (reduced slightly as requested: 68px on mobile, 76px on sm) */}
         <div className="relative shrink-0">
@@ -606,6 +681,7 @@ export function ProfileHeader({
           )}
         </div>
       </div>
+      )}
 
       {/* ============================================================== */}
       {/* ROW 3: COMPACT CREATOR ERA + TOTAL FANS PILL (5px radius)      */}
@@ -616,7 +692,7 @@ export function ProfileHeader({
             backgroundColor: "color-mix(in srgb, var(--accent) 6%, var(--card-bg))",
             borderColor: "color-mix(in srgb, var(--accent) 16%, var(--surface-border))",
           }}
-          className="mt-3 flex w-full items-center justify-evenly gap-1 rounded-[5px] border px-1 py-1"
+          className={`${compact ? "mt-2.5" : "mt-3"} flex w-full items-center justify-evenly gap-1 rounded-[5px] border px-1 py-1`}
         >
           {/* Creator Era (era colour + tier medal); opens the Era sheet */}
           {currentEra ? (
