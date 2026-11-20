@@ -40,7 +40,7 @@ export function HeroPhoneMockup() {
         </div>
 
         <div className="px-3 pb-4 pt-3 text-left">
-          <div className="flex h-9 w-full items-center justify-center gap-1.5 rounded-xl bg-[#C2410C] text-[12px] font-bold text-white">
+          <div className="flex h-9 w-full items-center justify-center gap-1.5 rounded-xl bg-[#C21B5C] text-[12px] font-bold text-white">
             <Play className="h-3.5 w-3.5 fill-current" />
             Start from Ep 1
           </div>
@@ -51,12 +51,12 @@ export function HeroPhoneMockup() {
               <li
                 key={ep.id}
                 className={`flex items-center gap-2 rounded-lg border px-2 py-1.5 ${
-                  i === 1 ? "border-[#C2410C]/30 bg-[#FFEAD9]" : "border-[#E4E4E7] bg-white"
+                  i === 1 ? "border-[#C21B5C]/30 bg-[#FFEDE6]" : "border-[#E4E4E7] bg-white"
                 }`}
               >
                 <span
                   className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[10px] font-extrabold ${
-                    i === 0 ? "bg-zinc-200 text-[#52525B]" : i === 1 ? "bg-[#C2410C] text-white" : "bg-zinc-100 text-[#52525B]"
+                    i === 0 ? "bg-zinc-200 text-[#52525B]" : i === 1 ? "bg-[#C21B5C] text-white" : "bg-zinc-100 text-[#52525B]"
                   }`}
                 >
                   {ep.episodeNumber}
@@ -65,7 +65,7 @@ export function HeroPhoneMockup() {
                   {shortEpisodeTitle(ep.title)}
                 </span>
                 {i === 0 && <span className="shrink-0 text-[9px] font-bold uppercase text-emerald-600">Watched</span>}
-                {i === 1 && <span className="shrink-0 rounded bg-[#C2410C] px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">Next</span>}
+                {i === 1 && <span className="shrink-0 rounded bg-[#C21B5C] px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">Next</span>}
               </li>
             ))}
           </ol>
