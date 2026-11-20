@@ -2885,7 +2885,7 @@ export function LivePreviewCard({
         <CardSectionsProvider enabled={false}>
           <PlainSectionsProvider enabled={isDemoPlainListing || isCardSectionsMode}>
             {/* data-soft-buttons: solid accent buttons become a light accent tint; data-listing-plain: card hover / tap (globals.css). */}
-            <div className="contents" data-soft-buttons={isCardSectionsMode || undefined} data-listing-plain={isDemoPlainListing || isCardSectionsMode || undefined}>
+            <div className="contents" data-soft-buttons={isCardSectionsMode || undefined} data-listing-plain={isDemoPlainListing || isCardSectionsMode || undefined} data-sections-float={isCardSectionsMode || undefined}>
               {isPremiumLayout ? <SolidSectionsProvider>{cardContent}</SolidSectionsProvider> : cardContent}
             </div>
           </PlainSectionsProvider>

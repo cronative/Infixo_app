@@ -1575,3 +1575,16 @@ nextjs-portal,
 @media (prefers-reduced-motion: reduce) {
   [data-listing-plain] .card-item { transform: none !important; }
 }
+
+/* ============================================================
+   SECTION BLOCKS (demo profile): the profile card stays white; each
+   section is its own softly tinted rounded block, so the white card
+   shows in the gaps between sections.
+   ============================================================ */
+[data-sections-float] .plain-section {
+  background-color: color-mix(in srgb, var(--accent) 4%, var(--surface));
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+  padding: 10px 2px 4px;
+  margin-top: 12px;
+}

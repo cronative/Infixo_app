@@ -220,7 +220,7 @@ export function SectionCard({
   if (plainMode) {
     const countNumber = typeof count === "string" || typeof count === "number" ? String(count).match(/^\d+/)?.[0] ?? String(count) : count;
     return (
-      <Tag id={id} className={`scroll-mt-2 text-left ${className}`}>
+      <Tag id={id} className={`plain-section scroll-mt-2 text-left ${className}`}>
         {showHeader && (
           <div className="px-2.5 pb-1 pt-1 text-center">
             <h2 style={{ fontFamily: colors.headingFont }} className="flex items-center justify-center gap-2 text-[18px] font-bold leading-6 tracking-tight text-(--text)">
