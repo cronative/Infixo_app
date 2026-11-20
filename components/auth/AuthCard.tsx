@@ -41,7 +41,7 @@ export function AuthCard({
             aria-label="Inflixo home"
           >
             <Image
-              src="/images/inflixo-wordmark-title-gulaal.png"
+              src="/images/inflixo-wordmark-title-gulaal-play.png"
               alt="Inflixo"
               width={628}
               height={186}

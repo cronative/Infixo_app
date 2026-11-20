@@ -93,7 +93,7 @@ function renderHeader(tagline: string = "For Creators. By Creators."): string {
                   <![endif]-->
                   <!--[if !mso]><!-->
                   <img
-                    src="${baseUrl}/images/inflixo-wordmark-title-white.png"
+                    src="${baseUrl}/images/inflixo-wordmark-title-white-play.png"
                     alt="Inflixo"
                     height="32"
                     style="height: 32px; width: auto; max-height: 32px; display: block; border: 0; outline: none; text-decoration: none;"
@@ -131,7 +131,7 @@ function renderFooter(senderContext?: string): string {
           <div style="margin-bottom: 8px;">
             <a href="${baseUrl}" target="_blank" style="text-decoration: none; display: inline-block;">
               <img
-                src="${baseUrl}/images/inflixo-wordmark-title-gulaal.png"
+                src="${baseUrl}/images/inflixo-wordmark-title-gulaal-play.png"
                 alt="Inflixo"
                 height="22"
                 style="height: 22px; width: auto; max-height: 22px; display: inline-block; border: 0;"

@@ -144,8 +144,8 @@
   width: auto;
   aspect-ratio: 628 / 186;
   background-color: var(--wordmark);
-  -webkit-mask: url(/images/inflixo-wordmark-title.png) center / contain no-repeat;
-  mask: url(/images/inflixo-wordmark-title.png) center / contain no-repeat;
+  -webkit-mask: url(/images/inflixo-wordmark-title-gulaal-play.png) center / contain no-repeat;
+  mask: url(/images/inflixo-wordmark-title-gulaal-play.png) center / contain no-repeat;
 }
 
 /* ==========================================================================

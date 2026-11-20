@@ -1,5 +1,5 @@
 /**
- * The dashboard header's Inflixo wordmark (/images/inflixo-wordmark-title.png), recoloured with the
+ * The dashboard header's Inflixo wordmark (/images/inflixo-wordmark-title-gulaal-play.png), recoloured with the
  * theme's --wordmark token through a CSS mask (see .inflixo-logo in app/globals.css). Set the height;
  * width follows the PNG's aspect ratio.
  */

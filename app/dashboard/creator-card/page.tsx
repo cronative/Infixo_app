@@ -138,8 +138,8 @@ export default function CreatorCardPage() {
   const themeMeta = ThemeService.getThemeMeta(theme);
 
   const avatar = useExportableImage(profile.photoDataUrl, 480);
-  const wordmark = useExportableAsset("/images/inflixo-wordmark-title-gulaal.png");
-  const wordmarkWhite = useExportableAsset("/images/inflixo-wordmark-title-white.png");
+  const wordmark = useExportableAsset("/images/inflixo-wordmark-title-gulaal-play.png");
+  const wordmarkWhite = useExportableAsset("/images/inflixo-wordmark-title-white-play.png");
   const logoIcon = useExportableAsset("/images/inflixo-logo-icon-gulaal.png");
   const assetsReady =
     avatar.ready && wordmark !== undefined && wordmarkWhite !== undefined && logoIcon !== undefined;

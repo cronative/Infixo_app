@@ -282,12 +282,12 @@ export function Logo({
           <Image
             src={
               light
-                ? "/images/inflixo-wordmark-title-white.png"
+                ? "/images/inflixo-wordmark-title-white-play.png"
                 : tone === "kesar"
                 ? "/images/inflixo-wordmark-title-kesar.png"
                 : tone === "gulaal"
-                ? "/images/inflixo-wordmark-title-gulaal.png"
-                : "/images/inflixo-wordmark-title-gulaal.png"
+                ? "/images/inflixo-wordmark-title-gulaal-play.png"
+                : "/images/inflixo-wordmark-title-gulaal-play.png"
             }
             alt="Inflixo - For Creators. By Creators."
             width={628}

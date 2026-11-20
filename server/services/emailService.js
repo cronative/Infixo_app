@@ -31,7 +31,7 @@ async function sendOtpEmail(toEmail, otpCode) {
           <!-- Inflixo Logo -->
           <div style="margin-bottom: 20px;">
             <img
-              src="${process.env.NEXT_PUBLIC_APP_URL || "https://inflixo.com"}/images/inflixo-wordmark-title.png"
+              src="${process.env.NEXT_PUBLIC_APP_URL || "https://inflixo.com"}/images/inflixo-wordmark-title-gulaal-play.png"
               alt="Inflixo"
               height="26"
               style="height: 26px; width: auto; max-height: 26px; display: inline-block; border: 0;"

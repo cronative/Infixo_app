@@ -69,7 +69,7 @@ export function SyncingLoader({
         <div className="relative flex items-center justify-center px-6 py-3">
           <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#FF6A1A]/20 to-[#E8246F]/20 blur-2xl" />
           <Image
-            src="/images/inflixo-wordmark-title-gulaal.png"
+            src="/images/inflixo-wordmark-title-gulaal-play.png"
             alt="Inflixo"
             width={628}
             height={186}

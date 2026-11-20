@@ -7,7 +7,7 @@ let wordmarkWhite: string | null = null;
 export async function getWordmarkWhiteDataUrl(): Promise<string | null> {
   if (wordmarkWhite) return wordmarkWhite;
   try {
-    const buf = await readFile(path.join(process.cwd(), "public/images/inflixo-wordmark-title-white.png"));
+    const buf = await readFile(path.join(process.cwd(), "public/images/inflixo-wordmark-title-white-play.png"));
     wordmarkWhite = `data:image/png;base64,${buf.toString("base64")}`;
     return wordmarkWhite;
   } catch {
