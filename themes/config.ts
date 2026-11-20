@@ -110,54 +110,55 @@ export type ThemeInput = Omit<ThemeDefinition, "tokens"> & {
 /** Same family as the dashboard; --font-indic keeps Indian scripts rendering. */
 const DASHBOARD_FONT = "var(--font-poppins), 'Poppins', var(--font-indic), system-ui, sans-serif";
 
+/** Inflixo's brand theme (id kept for saved profiles): the Kesar Gulaal gradient. */
 export const INFLIXO_MAROON: ThemeDefinition = {
   id: "inflixo-maroon",
-  name: "Jamun",
+  name: "Gulaal",
   tokens: {
-    "--page-bg": "linear-gradient(160deg, #7A2253 0%, #4A1232 100%)",
+    "--page-bg": "linear-gradient(160deg, #FF6A1A 0%, #E8246F 55%, #A3164E 100%)",
     "--page-overlay": "none",
     "--on-page-text": "#FFFFFF",
     // Card tinted with the accent (5% / 9% / 16% / 18%); no pure white in the card.
-    "--card-bg": "color-mix(in srgb, #7A2253 5%, #FFFFFF)",
-    "--card-border": "color-mix(in srgb, #7A2253 18%, #FFFFFF)",
-    "--card-shadow": "0 20px 60px rgba(40,8,26,.35)",
+    "--card-bg": "color-mix(in srgb, #C21B5C 5%, #FFFFFF)",
+    "--card-border": "color-mix(in srgb, #C21B5C 18%, #FFFFFF)",
+    "--card-shadow": "0 20px 60px rgba(90,15,40,.30)",
     "--card-radius": "24px",
-    "--surface": "color-mix(in srgb, #7A2253 9%, #FFFFFF)",
-    "--surface-border": "color-mix(in srgb, #7A2253 16%, #FFFFFF)",
-    "--text": "#1A1218",
-    "--text-muted": "#6B5A64",
-    "--accent": "#7A2253",
-    "--accent-hover": "#63193F",
+    "--surface": "color-mix(in srgb, #C21B5C 9%, #FFFFFF)",
+    "--surface-border": "color-mix(in srgb, #C21B5C 16%, #FFFFFF)",
+    "--text": "#1C1917",
+    "--text-muted": "#6E5C60",
+    "--accent": "#C21B5C",
+    "--accent-hover": "#A3164E",
     "--on-accent": "#FFFFFF",
-    "--accent-soft": "#F5E9EF",
-    "--divider": "rgba(122,34,83,.16)",
-    "--tab-active": "#7A2253",
-    "--tab-inactive": "#6B5A64",
-    "--tab-indicator": "#7A2253",
+    "--accent-soft": "#FFEDE6",
+    "--divider": "rgba(194,27,92,.16)",
+    "--tab-active": "#C21B5C",
+    "--tab-inactive": "#6E5C60",
+    "--tab-indicator": "#C21B5C",
     "--font-heading": DASHBOARD_FONT,
     "--font-body": DASHBOARD_FONT,
     "--logo-variant": "dark",
-    "--logo-bg": "#7A2253",
+    "--logo-bg": "#C21B5C",
     "--logo-fg": "#FFFFFF",
-    "--wordmark": "#7A2253",
-    "--icon": "#6B5A64",
-    "--icon-active": "#7A2253",
-    "--avatar-bg": "#7A2253",
+    "--wordmark": "#C21B5C",
+    "--icon": "#6E5C60",
+    "--icon-active": "#C21B5C",
+    "--avatar-bg": "#C21B5C",
     "--avatar-text": "#FFFFFF",
-    "--avatar-ring": "linear-gradient(135deg,#F5B8D4,#7A2253)",
+    "--avatar-ring": "linear-gradient(135deg,#FF6A1A,#E8246F)",
     "--nav-shadow": "0 2px 8px rgba(0,0,0,.06)",
     "--nav-shadow-scrolled": "0 4px 12px rgba(0,0,0,.10)",
-    "--cover-from": "#7A2253",
-    "--cover-to": "#3F0E2A",
+    "--cover-from": "#FF6A1A",
+    "--cover-to": "#A3164E",
     "--page-anim": "none",
     "--card-blur": "0px",
     "--accent-text": "var(--accent)",
   },
   listing: {
     group: "basics",
-    subtitle: "Rich & bold",
-    swatches: ["#7A2253", "#FFFFFF", "#F5E9EF"],
-    thumbnail: "linear-gradient(160deg, #7A2253 0%, #4A1232 100%)",
+    subtitle: "Kesar to gulaal",
+    swatches: ["#C21B5C", "#FFFFFF", "#FFEDE6"],
+    thumbnail: "linear-gradient(160deg, #FF6A1A 0%, #E8246F 55%, #A3164E 100%)",
   },
 };
 
@@ -295,7 +296,7 @@ export const KAJAL: ThemeDefinition = {
     "--icon-active": "#F5B8D4",
     "--avatar-bg": "#2A1E26",
     "--avatar-text": "#F5B8D4",
-    "--avatar-ring": "linear-gradient(135deg,#F5B8D4,#7A2253)",
+    "--avatar-ring": "linear-gradient(135deg,#FF6A1A,#E8246F)",
     "--nav-shadow": "0 2px 8px rgba(0,0,0,.4)",
     "--nav-shadow-scrolled": "0 4px 12px rgba(0,0,0,.5)",
     "--cover-from": "#2A1E26",
@@ -655,7 +656,7 @@ export function themeTokenStyle(id: string | null | undefined): CSSProperties {
 }
 
 /**
- * Brand (Jamun) theme tokens for shared widgets rendered outside a profile root (e.g. avatars in the dashboard).
+ * Brand (Gulaal) theme tokens for shared widgets rendered outside a profile root (e.g. avatars in the dashboard).
  * `:where(:root)` has zero specificity, so where a name is also part of the dashboard design system
  * (--surface, --text-muted, --page-bg, --card-shadow in globals.css) the dashboard value still wins
  * outside the profile. Profile roots set every token inline, which overrides both.

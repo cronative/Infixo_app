@@ -119,7 +119,7 @@ function pieces(name: string): Piece[] {
       }));
     }
     case "confetti": {
-      const colours = ["#7A2253", "#F5B8D4", "#FACC15", "#22D3EE", "#A3E635", "#BE185D"];
+      const colours = ["#C21B5C", "#F5B8D4", "#FACC15", "#22D3EE", "#A3E635", "#BE185D"];
       return make(25, (i) => ({
         className: "tba-confetti",
         style: {

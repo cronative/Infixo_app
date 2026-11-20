@@ -49,8 +49,8 @@ async function sendOtpEmail(toEmail, otpCode) {
           </p>
 
           <!-- 4-Digit Code Box -->
-          <div style="background-color: #FAF5F7; border: 1.5px dashed #7A2253; border-radius: 5px; padding: 18px; margin-bottom: 18px;">
-            <span style="font-size: 38px; font-weight: 900; letter-spacing: 14px; color: #7A2253; font-family: 'Courier New', Courier, monospace; line-height: 1; padding-left: 14px;">
+          <div style="background-color: #FFF6F2; border: 1.5px dashed #C21B5C; border-radius: 5px; padding: 18px; margin-bottom: 18px;">
+            <span style="font-size: 38px; font-weight: 900; letter-spacing: 14px; color: #C21B5C; font-family: 'Courier New', Courier, monospace; line-height: 1; padding-left: 14px;">
               ${otpCode}
             </span>
           </div>
