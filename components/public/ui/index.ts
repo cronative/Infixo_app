@@ -16,6 +16,7 @@ export { LinkRow, type LinkRowProps } from "./LinkRow";
 export { LinkGroupRow, type LinkGroupRowProps } from "./LinkGroupRow";
 export { SeriesRow, type SeriesRowProps } from "./SeriesRow";
 export { EpisodeRow, cleanEpisodeTitle, type EpisodeRowProps } from "./EpisodeRow";
+export { EpisodeCard, type EpisodeCardProps } from "./EpisodeCard";
 export { ProductTile, ProductTiles, type ProductTileItem } from "./ProductTile";
 export { PackageRow, packagePrice, packagePlatformKey } from "./PackageRow";
 export { Popover, type PopoverProps } from "./Popover";

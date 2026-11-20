@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -40,7 +41,7 @@ import {
 } from "@/components/public/publicTheme";
 import { PlatformThumbnailBox, extractYouTubeVideoId } from "@/components/shared/PlatformThumbnailBox";
 import { resolveThemeKey } from "@/lib/themeKeys";
-import { EpisodeRow, FooterCta, Section } from "@/components/public/ui";
+import { EpisodeCard, EpisodeRow, FooterCta, Section } from "@/components/public/ui";
 import { getCreatorEra } from "@/lib/creatorEra";
 import { eraRing, getEraConfig } from "@/lib/eraConfig";
 import { getInitials } from "@/lib/avatar";
@@ -282,6 +283,8 @@ export function SeriesDetailClient({
     if (t) setDemoTheme(t);
   }, [creator?.username, initialUsername]);
   const themeKey = resolveThemeKey(demoTheme || creator?.themeKey);
+  /** Card-style episodes + "More series from" card: trying it on the demo creator first. */
+  const isCardDesign = (creator?.username || initialUsername) === "demo_creator";
   const pt = getPublicTheme(themeKey);
   const c = pt.colors;
   const sectionColors = { primary: c.primaryText, secondary: c.secondaryText, muted: c.mutedText };
@@ -460,6 +463,13 @@ export function SeriesDetailClient({
       ? series.language.trim()
       : null;
 
+  const platformName = (platform?: string | null, url?: string | null): string | null => {
+    const p = `${platform || ""} ${url || ""}`;
+    if (/youtube|youtu\.be/i.test(p)) return "YouTube";
+    if (/instagram/i.test(p)) return "Instagram";
+    if (/facebook|fb\.watch/i.test(p)) return "Facebook";
+    return platform?.trim() || null;
+  };
   const renderPlatformIcon = (platform?: string | null, cls: string = "h-3.5 w-3.5") => {
     const p = (platform || "").toLowerCase();
     if (p.includes("youtube")) return <YoutubeIcon className={`${cls} text-red-500 fill-red-500 shrink-0`} />;
@@ -666,7 +676,50 @@ export function SeriesDetailClient({
 
             </div>
 
-            {/* 4. Episodes — shared Section (tinted header, connected divided rows) */}
+            {/* 4. Episodes: card design (demo creator) or the shared Section with divided rows */}
+            {isCardDesign ? (
+              <div>
+                <div className="flex items-end justify-between gap-3 pb-2.5">
+                  <h2 style={{ color: c.primaryText }} className="text-[18px] font-bold leading-6 tracking-tight">Episodes</h2>
+                  <span className="text-[12px] font-medium text-(--text-muted)">Watch in order</span>
+                </div>
+                {seasonsList.length > 1 && (
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-2.5 scrollbar-none">
+                    {seasonsList.map((sn, idx) => (
+                      <button
+                        key={sn.id || idx}
+                        type="button"
+                        onClick={() => setActiveSeasonIndex(idx)}
+                        className={`tap-scale inline-flex h-8 shrink-0 cursor-pointer items-center rounded-full border px-3 text-xs font-semibold transition-all ${
+                          activeSeasonIndex === idx
+                            ? "border-(--accent) bg-(--accent) text-(--on-accent)"
+                            : "border-(--surface-border) bg-transparent text-(--text-muted) hover:text-(--text)"
+                        }`}
+                      >
+                        {sn.title || `Season ${sn.seasonNumber || idx + 1}`} · {sn.episodes?.length || 0}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {currentEpisodes.length === 0 ? (
+                  <p style={{ color: c.mutedText }} className="py-6 text-center text-xs">No episodes added to this series yet.</p>
+                ) : (
+                  <div className="space-y-2.5">
+                    {currentEpisodes.map((ep: Episode, index: number) => (
+                      <EpisodeCard
+                        key={ep.id || index}
+                        number={ep.episodeNumber || index + 1}
+                        title={ep.title}
+                        href={ep.externalUrl}
+                        platform={platformName(ep.platform, ep.externalUrl) || detectedPlatform || undefined}
+                        isFirst={index === 0}
+                        onClick={() => trackEpisodeClick(ep)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
             <Section
               solid
               icon={ListVideo}
@@ -710,8 +763,30 @@ export function SeriesDetailClient({
                 ))
               )}
             </Section>
+            )}
 
-            {/* 5. Series by — Section-style row */}
+            {/* 5. Series by: compact "More series from" card (demo creator) or the Section-style row */}
+            {isCardDesign ? (
+              <Link
+                href={profileUrl}
+                className="tap-scale flex items-center gap-3 rounded-[12px] bg-[color-mix(in_srgb,var(--text)_4%,var(--surface))] p-3 transition-colors hover:bg-(--accent-soft)"
+              >
+                <span className="h-10 w-10 shrink-0 overflow-hidden rounded-full bg-(--accent-soft)">
+                  {creator?.photoDataUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={creator.photoDataUrl} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="flex h-full w-full items-center justify-center text-[13px] font-bold text-(--accent-text)">
+                      {getInitials(creator?.displayName || username)}
+                    </span>
+                  )}
+                </span>
+                <span className="min-w-0 flex-1 text-[13px] leading-5 text-(--text-muted)">
+                  More series from <span className="font-bold text-(--text)">{creator?.displayName || username}</span>
+                </span>
+                <span className="shrink-0 text-[13px] font-bold text-(--accent-text)">View profile</span>
+              </Link>
+            ) : (
             <Section solid icon={UserRound} title="Series by" subtitle="The creator behind this series." colors={sectionColors}>
               <div className="flex items-start gap-3 px-3 py-3 sm:px-3.5">
                 <span
@@ -739,6 +814,7 @@ export function SeriesDetailClient({
               </div>
               <FooterCta href={profileUrl}>View full profile</FooterCta>
             </Section>
+            )}
           </div>
         </div>
       </PublicCard>
