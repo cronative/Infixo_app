@@ -9,14 +9,12 @@ import {
   Check,
   CircleCheck,
   ExternalLink,
-  Globe,
   Menu,
   Minus,
   Play,
   Plus,
   Sparkles,
   X,
-  type LucideIcon,
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { HeroPhoneMockup } from "@/components/landing/HeroPhoneMockup";
@@ -121,14 +119,6 @@ function SectionHeading({ eyebrow, title, sub, center = true }: { eyebrow: strin
       <h2 className="text-[30px] font-extrabold leading-tight tracking-tight text-[#1C1917] sm:text-[42px]">{title}</h2>
       {sub && <p className="text-[16px] leading-relaxed text-[#52525B]">{sub}</p>}
     </div>
-  );
-}
-
-function IconTile({ icon: Icon }: { icon: LucideIcon }) {
-  return (
-    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FFEDE6] text-[#C21B5C]">
-      <Icon className="h-5 w-5" />
-    </span>
   );
 }
 
@@ -651,16 +641,28 @@ export default function LandingHomePage() {
               <Sparkles className="h-3.5 w-3.5" /> Our vision · Coming in the future
             </span>
             <h2 className="mt-4 text-[30px] font-extrabold leading-tight tracking-tight text-[#1C1917] sm:text-[42px]">
-              We&apos;re building something bigger: OTT-style content discovery.
+              Get Discovered Beyond Your Followers.
             </h2>
-            <p className="mt-4 text-[16px] leading-relaxed text-[#52525B]">
-              Today, Inflixo helps you organize your content for your existing audience. Tomorrow, imagine one destination where viewers discover series from many creators, by category: food lovers finding food series, travellers finding travel stories, comedy fans finding comedy, without needing to know a creator&apos;s username first.
+            <div className="mt-4 space-y-3 text-[16px] leading-relaxed text-[#52525B]">
+              <p>Today, Inflixo helps your followers find every part of your series.</p>
+              <p>
+                <span className="font-bold text-[#1C1917]">But here&apos;s the problem.</span> New viewers only find you when the algorithm shows them one video, and they rarely find the rest of your work.
+              </p>
+              <p>
+                <span className="font-bold text-[#C21B5C]">That&apos;s where Inflixo is heading.</span> We&apos;re building OTT-style discovery: viewers browse series from many creators by category, like food, travel and comedy, and watch on the original platform.
+              </p>
+            </div>
+            <Benefits
+              className="mt-6"
+              items={[
+                { title: "New Audiences", text: "Reach people who don't follow you yet." },
+                { title: "Views Stay Yours", text: "Episodes still open on Instagram, YouTube or Facebook." },
+                { title: "Be Ready Early", text: "Your series will be ready the day it launches." },
+              ]}
+            />
+            <p className="mt-6 text-[17px] font-extrabold leading-snug text-[#1C1917]">
+              Discover on Inflixo. <span className="text-[#C21B5C]">Watch on the Original Platform.</span>
             </p>
-            <p className="mt-4 text-[16px] font-bold text-[#1C1917]">Discover on Inflixo. Watch on the original platform.</p>
-            <p className="mt-2 text-[14px] leading-relaxed text-[#52525B]">
-              Episodes would still open on Instagram, YouTube or Facebook, giving creators a chance to reach audiences beyond their current followers.
-            </p>
-            <Benefits className="mt-5" items={["Get discovered by people who don't follow you yet.","Views would still go to your original platform.","Your series will be ready the day discovery launches."]} />
             <p className="mt-5 text-[12px] text-[#71717A]">The OTT-style discovery experience is part of our future roadmap and is not available yet.</p>
           </div>
           <div className="grid grid-cols-2 gap-3" aria-hidden="true">
@@ -685,24 +687,27 @@ export default function LandingHomePage() {
         <div className="mx-auto mt-20 max-w-3xl px-4 text-center sm:px-6">
           <Eyebrow>Vision 2027</Eyebrow>
           <h2 className="mt-3 text-[30px] font-extrabold leading-tight tracking-tight text-[#1C1917] sm:text-[44px]">
-            10,000+ paid creators. One global community.
+            10,000+ Creators. One Global Community.
           </h2>
-          <p className="mt-4 text-[16px] leading-relaxed text-[#52525B]">
-            Every creator begins somewhere: a phone and an idea, years of building an audience, a passion turning into a profession. Our goal is to bring more than 10,000 paid creators into the Inflixo community by 2027, a place to discover one another, learn, collaborate and grow.
-          </p>
 
-          <div className="mt-10 rounded-3xl border border-[#F0CFCB] bg-white p-6 text-left sm:p-8">
-            <div className="flex items-center gap-3">
-              <IconTile icon={Globe} />
-              <h3 className="text-[20px] font-extrabold leading-snug text-[#1C1917] sm:text-[24px]">Imagine 10,000+ creators at one Global Creator Summit.</h3>
+          <div className="mt-10 rounded-[5px] border border-[#F0CFCB] bg-white p-6 text-left sm:p-8">
+            <div className="space-y-3 text-[16px] leading-relaxed text-[#52525B]">
+              <p>Every creator starts with a phone and an idea.</p>
+              <p>
+                <span className="font-bold text-[#1C1917]">But here&apos;s the problem.</span> Most creators grow alone, without people to learn from or collaborate with.
+              </p>
+              <p>
+                <span className="font-bold text-[#C21B5C]">That&apos;s where Inflixo is heading.</span> Our goal is to bring 10,000+ paid creators together by 2027, and one day meet at a Global Creator Summit.
+              </p>
             </div>
-            <p className="mt-4 text-[15px] leading-relaxed text-[#52525B]">
-              Creators from different cities, countries and languages on one stage. Creators who started with an idea, worked late nights on the next video, and built communities one follower at a time. Not competing for attention, but celebrating creativity and inspiring the next generation.
-            </p>
-            <p className="mt-3 text-[15px] leading-relaxed text-[#52525B]">
-              A vision this big can&apos;t be built by one company alone. It needs creators like you, from the beginning.
-            </p>
-            <Benefits className="mt-5" items={["Meet and collaborate with other creators.","Learn from creators who have grown before you.","Be part of the community from the very beginning."]} />
+            <Benefits
+              className="mt-6"
+              items={[
+                { title: "Grow Together", text: "Meet and collaborate with other creators." },
+                { title: "Learn From Others", text: "Creators who have grown before you." },
+                { title: "Be There From Day One", text: "Join the community early." },
+              ]}
+            />
             <p className="mt-5 text-[18px] font-extrabold italic text-[#C21B5C]">&ldquo;We started building this dream together.&rdquo;</p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
               <button onClick={() => handleClaim(username)} className={primaryBtn}>
