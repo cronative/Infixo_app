@@ -548,7 +548,7 @@ export function ProfileHeader({
                 {allActiveSocials.slice(0, 4).map((item) => {
                   const hasUrl = Boolean(item.url && item.url !== "#");
                   const icon = (
-                    <span className="flex h-8 w-8 items-center justify-center rounded-[8px] border border-(--surface-border) bg-(--surface) text-(--text) transition-colors hover:border-(--accent-text) hover:text-(--accent-text)">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-[8px] border border-[color-mix(in_srgb,var(--accent)_25%,transparent)] bg-(--accent-soft) text-(--accent-text) transition-colors hover:bg-(--accent) hover:text-(--on-accent)">
                       {getPlatformIcon(item.platform, "h-4 w-4 text-current")}
                     </span>
                   );
