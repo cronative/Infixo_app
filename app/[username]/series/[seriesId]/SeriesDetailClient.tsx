@@ -42,7 +42,7 @@ import {
 } from "@/components/public/publicTheme";
 import { PlatformThumbnailBox, extractYouTubeVideoId } from "@/components/shared/PlatformThumbnailBox";
 import { resolveThemeKey } from "@/lib/themeKeys";
-import { EpisodeCard, EpisodeRow, FooterCta, Section } from "@/components/public/ui";
+import { EpisodeCard, EpisodeRow, FooterCta, Section, SectionHeader } from "@/components/public/ui";
 import { getCreatorEra } from "@/lib/creatorEra";
 import { eraRing, getEraConfig } from "@/lib/eraConfig";
 import { getInitials } from "@/lib/avatar";
@@ -682,12 +682,14 @@ export function SeriesDetailClient({
             {/* 4. Episodes: card design (demo creator) or the shared Section with divided rows */}
             {isCardDesign ? (
               <div>
-                <div className="flex items-end justify-between gap-3 pb-2.5">
-                  <h2 style={{ color: c.primaryText }} className="flex items-center gap-2 text-[18px] font-bold leading-6 tracking-tight">
-                    Episodes
-                    <span className="rounded-full bg-(--accent-soft) px-2 py-0.5 text-[12px] font-bold leading-4 text-(--accent-text)">{currentEpisodes.length}</span>
-                  </h2>
-                  <span className="text-[12px] font-medium text-(--text-muted)">Watch in order</span>
+                <div className="mb-2.5 overflow-hidden rounded-[5px] border border-(--surface-border)">
+                  <SectionHeader
+                    icon={ListVideo}
+                    title="Episodes"
+                    subtitle="Watch in order, from Episode 1."
+                    count={`${currentEpisodes.length} ${currentEpisodes.length === 1 ? "episode" : "episodes"}`}
+                    colors={sectionColors}
+                  />
                 </div>
                 {seasonsList.length > 1 && (
                   <div className="flex items-center gap-1.5 overflow-x-auto pb-2.5 scrollbar-none">

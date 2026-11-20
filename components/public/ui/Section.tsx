@@ -2,9 +2,8 @@
 
 import { createContext, useContext, type ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
-import { CountPill } from "./CountPill";
 import { LockedRow } from "./LockedRow";
-import { SECTION_BG, SECTION_CARD, SECTION_FG, SECTION_LINE, type SectionColors } from "./tokens";
+import { SECTION_CARD, SECTION_LINE, type SectionColors } from "./tokens";
 
 // ── Solid (premium) mode ─────────────────────────────────────
 
@@ -70,113 +69,39 @@ export interface SectionHeaderProps {
 }
 
 /**
- * Section header. Solid: soft accent tint, accent text, icon left, count pill
- * (beside the title on phones, right-aligned from sm). Plain (tabs layout):
- * accent @ 7% tint, title + subtitle left, muted count right.
+ * The one public section header (same layout as the dashboard):
+ * [icon box]  Title              [count]
+ *             Subtitle
+ * Theme tokens only, so it follows every creator theme. The variant props are
+ * kept for callers but no longer change the layout.
  */
-export function SectionHeader({ title, subtitle, count, colors, icon: Icon, hero = false, centered = false, card = false }: SectionHeaderProps) {
-  if (card) {
-    return (
-      <div className="flex items-start justify-between gap-3 px-1.5 pb-2 pt-1.5">
-        <div className="flex min-w-0 items-center gap-2.5">
-          {Icon && (
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-(--accent) text-(--on-accent)">
-              <Icon aria-hidden strokeWidth={2} className="h-[18px] w-[18px]" />
-            </span>
-          )}
-          <div className="min-w-0">
-            <h2 style={{ fontFamily: colors.headingFont }} className="text-[16px] font-bold leading-5 tracking-tight text-(--text)">
-              {title}
-            </h2>
-            {subtitle && <p className="text-[12px] leading-4 text-(--text-muted)">{subtitle}</p>}
-          </div>
-        </div>
-        {count != null && (
-          <span className="shrink-0 whitespace-nowrap rounded-[6px] border border-[color-mix(in_srgb,var(--accent)_22%,var(--surface-border))] px-2 py-0.5 text-[12px] font-semibold leading-5 text-(--accent-text)">
-            {count}
-          </span>
-        )}
-      </div>
-    );
-  }
-  const heroStyle = {
-    // Theme tokens only: a light tint of the accent over the card, with accent text.
-    background: "linear-gradient(100deg, color-mix(in srgb, var(--accent) 16%, var(--card-bg)) 0%, color-mix(in srgb, var(--accent) 7%, var(--card-bg)) 100%)",
-    borderBottom: "1px solid color-mix(in srgb, var(--accent) 18%, var(--card-bg))",
-    color: "var(--accent-text)",
-  };
-  if (hero && centered) {
-    return (
-      <div className="flex flex-col items-center px-4 py-3 text-center" style={heroStyle}>
-        <div className="flex items-center justify-center gap-2">
-          {Icon && (
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[5px] bg-(--accent) text-(--on-accent)">
-              <Icon aria-hidden strokeWidth={2} className="h-4 w-4" />
-            </span>
-          )}
-          <h2 style={{ fontFamily: colors.headingFont }} className="text-[17px] font-bold leading-6 tracking-tight">
-            {title}
-          </h2>
-          {count != null && (
-            <span className="whitespace-nowrap rounded-[5px] border border-[color-mix(in_srgb,var(--accent)_22%,transparent)] bg-(--card-bg) px-2 py-px text-[12px] font-semibold leading-5 text-(--accent-text)">
-              {count}
-            </span>
-          )}
-        </div>
-        {subtitle && <p className="mt-1 text-[12px] leading-4 text-(--text-muted)">{subtitle}</p>}
-      </div>
-    );
-  }
-  if (hero) {
-    return (
-      <div
-        className="flex items-center gap-2.5 px-3 py-2.5"
-        style={heroStyle}
-      >
-        {Icon && (
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-(--accent) text-(--on-accent)">
-            <Icon aria-hidden strokeWidth={2} className="h-5 w-5" />
-          </span>
-        )}
-        <div className="min-w-0 flex-1">
-          <h2 style={{ fontFamily: colors.headingFont }} className="text-[16px] font-bold leading-5 tracking-tight">
-            {title}
-          </h2>
-          {subtitle && <p className="text-[12px] leading-4 text-(--text-muted)">{subtitle}</p>}
-        </div>
-        {count != null && (
-          <span className="shrink-0 whitespace-nowrap rounded-[5px] border border-[color-mix(in_srgb,var(--accent)_22%,transparent)] bg-(--card-bg) px-2 py-0.5 text-[13px] font-semibold leading-5 text-(--accent-text)">
-            {count}
-          </span>
-        )}
-      </div>
-    );
-  }
-  // Solid header: soft accent tint (series detail page and anything outside the full-bleed profile).
+export function SectionHeader({ title, subtitle, count, colors, icon: Icon }: SectionHeaderProps) {
   return (
     <div
-      className="flex items-center gap-2.5 px-3 py-2.5 transition-colors"
-      style={{ backgroundColor: SECTION_BG, borderBottom: `1px solid ${SECTION_LINE}`, color: SECTION_FG }}
+      className="flex items-center justify-between gap-3 px-3 py-2.5 sm:px-4"
+      style={{
+        background: "var(--card-bg)",
+        borderBottom: "1px solid color-mix(in srgb, var(--accent) 14%, var(--surface-border))",
+      }}
     >
-      {Icon && <Icon aria-hidden strokeWidth={2} style={{ color: SECTION_FG }} className="h-5 w-5 shrink-0" />}
-      <div className="min-w-0 flex-1">
-        <div className="flex min-w-0 items-center gap-2">
-          <h2
-            style={{ color: SECTION_FG, fontFamily: colors.headingFont }}
-            className="min-w-0 text-[14px] font-semibold leading-[18px] tracking-tight text-(--text)"
-          >
+      <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+        {Icon && (
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] bg-(--accent) text-(--on-accent)">
+            <Icon aria-hidden strokeWidth={2} className="h-[18px] w-[18px]" />
+          </span>
+        )}
+        <div className="min-w-0 text-left">
+          <h2 style={{ fontFamily: colors.headingFont }} className="break-words text-[16px] font-bold leading-5 tracking-tight text-(--text)">
             {title}
           </h2>
-          {/* Phones: count beside the title so the subtitle keeps the full width. */}
-          {count != null && <CountPill className="sm:hidden">{count}</CountPill>}
+          {subtitle && <p className="break-words text-[12px] leading-4 text-(--text-muted)">{subtitle}</p>}
         </div>
-        {subtitle && (
-          <p style={{ color: SECTION_FG }} className="text-[12px] leading-4 text-(--text-muted)">
-            {subtitle}
-          </p>
-        )}
       </div>
-      {count != null && <CountPill className="hidden sm:inline">{count}</CountPill>}
+      {count != null && count !== "" && (
+        <span className="shrink-0 whitespace-nowrap rounded-[5px] border border-[color-mix(in_srgb,var(--accent)_22%,var(--surface-border))] bg-(--card-bg) px-2 py-0.5 text-[12px] font-semibold leading-5 text-(--accent-text)">
+          {count}
+        </span>
+      )}
     </div>
   );
 }
@@ -203,8 +128,6 @@ export function SectionCard({
   colors,
   icon,
   solid: solidProp = false,
-  hero = false,
-  centered = false,
   showHeader = true,
   lockedCount = 0,
   as: Tag = "div",
@@ -218,20 +141,9 @@ export function SectionCard({
   const plainMode = useContext(PlainSectionsContext);
   const solid = solidProp || solidCtx;
   if (plainMode) {
-    const countNumber = typeof count === "string" || typeof count === "number" ? String(count).match(/^\d+/)?.[0] ?? String(count) : count;
     return (
       <Tag id={id} className={`plain-section scroll-mt-2 text-left ${className}`}>
-        {showHeader && (
-          <div className="px-2.5 pb-1 pt-1 text-center">
-            <h2 style={{ fontFamily: colors.headingFont }} className="flex items-center justify-center gap-2 text-[18px] font-bold leading-6 tracking-tight text-(--text)">
-              {title}
-              {countNumber != null && countNumber !== "" && (
-                <span className="rounded-full bg-(--accent-soft) px-2 py-0.5 text-[12px] font-bold leading-4 text-(--accent-text)">{countNumber}</span>
-              )}
-            </h2>
-            {subtitle && <p className="mt-0.5 text-[12px] leading-4 text-(--text-muted)">{subtitle}</p>}
-          </div>
-        )}
+        {showHeader && <SectionHeader icon={icon} title={title} subtitle={subtitle} count={count} colors={colors} />}
         <div>
           {children}
           {lockedCount > 0 && <LockedRow count={lockedCount} />}
@@ -245,7 +157,7 @@ export function SectionCard({
         id={id}
         className={`scroll-mt-2 overflow-hidden rounded-[14px] border border-(--surface-border) bg-(--card-bg) p-2 text-left shadow-[0_8px_24px_-12px_color-mix(in_srgb,var(--accent)_25%,transparent)] ${className}`}
       >
-        {showHeader && <SectionHeader icon={icon} card title={title} subtitle={subtitle} count={count} colors={colors} />}
+        {showHeader && <SectionHeader icon={icon} title={title} subtitle={subtitle} count={count} colors={colors} />}
         <div>
           {children}
           {lockedCount > 0 && <LockedRow count={lockedCount} />}
@@ -261,7 +173,7 @@ export function SectionCard({
       style={solid && showHeader ? { borderColor: SECTION_LINE } : undefined}
     >
       {/* Profile / listing pages: every section uses the feature (hero) header, like My Series. */}
-      {showHeader && <SectionHeader icon={icon} solid={solid} hero={hero || fullBleed} centered={centered} title={title} subtitle={subtitle} count={count} colors={colors} />}
+      {showHeader && <SectionHeader icon={icon} title={title} subtitle={subtitle} count={count} colors={colors} />}
       <div>
         {children}
         {lockedCount > 0 && <LockedRow count={lockedCount} />}
