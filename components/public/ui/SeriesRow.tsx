@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import type { Series } from "@/types";
-import { ArrowUpRight, ChevronRight, Layers } from "lucide-react";
+import { ChevronRight, Layers } from "lucide-react";
 import { SeriesCoverLogo } from "@/components/series/SeriesCoverLogo";
 import { getSeriesCoverUrl } from "@/lib/videoUrl";
 import { getSeriesEpisodes } from "@/lib/seriesMetrics";
@@ -32,7 +32,7 @@ export interface SeriesRowProps {
   /** Public series page for this series (all episodes, in order). */
   seriesHref: string;
   onOpenSeries?: (e: React.MouseEvent, series: Series) => void;
-  /** Card look like the episode cards: 12px corners and an outlined "View" button. */
+  /** Card look like the episode cards: 12px corners and an outlined arrow button. */
   variant?: "row" | "card";
 }
 
@@ -107,8 +107,8 @@ export function SeriesRow({ series, seriesHref, onOpenSeries, variant = "row" }:
       }
       arrow={
         isCard ? (
-          <span aria-hidden className="inline-flex h-8 shrink-0 items-center gap-1 rounded-[8px] border border-[color-mix(in_srgb,var(--accent)_45%,transparent)] px-3 text-[12px] font-bold text-(--accent-text) transition-colors group-hover:bg-(--accent-soft)">
-            View <ArrowUpRight className="h-3.5 w-3.5" />
+          <span aria-hidden className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] border border-[color-mix(in_srgb,var(--accent)_45%,transparent)] text-(--accent-text) transition-colors group-hover:bg-(--accent-soft)">
+            <ChevronRight className="h-5 w-5" />
           </span>
         ) : (
         <span aria-hidden className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] bg-(--accent-soft) text-(--accent-text) transition-colors group-hover:bg-[color-mix(in_srgb,var(--accent-text)_18%,var(--accent-soft))]">

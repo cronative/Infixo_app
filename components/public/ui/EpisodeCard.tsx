@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
+import { Play } from "lucide-react";
 import { cleanEpisodeTitle } from "./EpisodeRow";
 
 export interface EpisodeCardProps {
@@ -14,7 +14,7 @@ export interface EpisodeCardProps {
   onClick?: () => void;
 }
 
-/** Episode as its own card: big "01" tile · title + platform · "Watch ↗" button (opens the original video). */
+/** Episode as its own card: big "01" tile · title + platform · play button (opens the original video). */
 export function EpisodeCard({ number, title, href, platform, isFirst = false, onClick }: EpisodeCardProps) {
   const clean = cleanEpisodeTitle(title, number);
   return (
@@ -40,13 +40,14 @@ export function EpisodeCard({ number, title, href, platform, isFirst = false, on
         {platform && <span className="block text-[12px] leading-4 text-(--text-muted)">{platform}</span>}
       </span>
       <span
-        className={`inline-flex h-8 shrink-0 items-center gap-1 rounded-[8px] border px-3 text-[12px] font-bold transition-colors ${
+        aria-hidden
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] border transition-colors ${
           isFirst
             ? "border-(--accent) bg-(--accent) text-(--on-accent)"
             : "border-[color-mix(in_srgb,var(--accent)_45%,transparent)] text-(--accent-text) group-hover:bg-(--accent-soft)"
         }`}
       >
-        Watch <ArrowUpRight className="h-3.5 w-3.5" />
+        <Play className="h-4 w-4 fill-current" />
       </span>
     </a>
   );
