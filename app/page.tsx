@@ -385,7 +385,7 @@ export default function LandingHomePage() {
               🇮🇳 Made in India. Built for creators worldwide.
             </p>
             <h1 className="landing-text-hero font-extrabold tracking-tight text-[#1C1917]">
-              Turn your videos into <span className="bg-gradient-to-r from-[#FF6A1A] to-[#E8246F] bg-clip-text text-transparent">series fans can binge.</span>
+              Turn Your Videos Into <span className="bg-gradient-to-r from-[#FF6A1A] to-[#E8246F] bg-clip-text text-transparent">Series Fans Can Watch in Order.</span>
             </h1>
             <p className="landing-text-18 mx-auto mt-5 max-w-xl text-[#52525B] lg:mx-0">
               You post on Instagram, YouTube and Facebook every day, but your best work gets lost in the feed. Inflixo gives you one profile for your series, links, shop and media kit.
